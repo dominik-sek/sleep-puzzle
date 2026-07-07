@@ -84,8 +84,61 @@
     Od szybkiej ulgi po pełne poukładanie rodzinnego systemu — Ty wybierasz tempo.
   </span>
 
-  <div>
+  <div class="grid grid-cols-3 gap-6">
 
+    <%= render Card::Component.new(classes: "w-auto h-64 bg-surface! border-border-strong!") do |card| %>
+      <% card.with_body do %>
+      <div class="flex flex-col justify-start items-start gap-6">
+        <h3 class="text-accent! font-display text-t3! dark:text-cream">Szybka ulga</h3>
+        <span class="text-t5 font-display text-taupe">Czas trwania wsparcia: X tygodni</span>
+        <p class="text-t5 text-tan text-start">
+          Dla rodziców, którzy chcą szybko odzyskać wieczory i poprawić sen dziecka.
+        </p>
+
+        <a href="#" >
+                <span class="text-t6 text-cream hover:text-accent">
+                  Zobacz szczegóły ->
+                </span>
+        </a>
+      </div>
+      <% end %>
+    <% end %>
+
+    <%= render Card::Component.new(classes: "w-auto h-64 bg-surface! border-border-strong!") do |card| %>
+      <% card.with_body do %>
+        <div class="flex flex-col justify-start items-start gap-6">
+          <h3 class="text-accent! font-display text-t3! dark:text-cream">Szybka ulga</h3>
+          <span class="text-t5 font-display text-taupe">Czas trwania wsparcia: X tygodni</span>
+          <p class="text-t5 text-tan text-start">
+            Dla rodziców, którzy chcą szybko odzyskać wieczory i poprawić sen dziecka.
+          </p>
+
+          <a href="#" >
+                <span class="text-t6 text-cream hover:text-accent">
+                  Zobacz szczegóły ->
+                </span>
+          </a>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%= render Card::Component.new(classes: "w-auto h-64 bg-surface! border-border-strong!") do |card| %>
+      <% card.with_body do %>
+        <div class="flex flex-col justify-start items-start gap-6">
+          <h3 class="text-accent! font-display text-t3! dark:text-cream">Szybka ulga</h3>
+          <span class="text-t5 font-display text-taupe">Czas trwania wsparcia: X tygodni</span>
+          <p class="text-t5 text-tan text-start">
+            Dla rodziców, którzy chcą szybko odzyskać wieczory i poprawić sen dziecka.
+          </p>
+
+          <a href="#" >
+                <span class="text-t6 text-cream hover:text-accent">
+                  Zobacz szczegóły ->
+                </span>
+          </a>
+        </div>
+      <% end %>
+    <% end %>
   </div>
 
   <% end %>
