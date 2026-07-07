@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "rails-vite",
+      "runtimeExecutable": "bundle",
+      "runtimeArgs": ["exec", "foreman", "start", "-f", "Procfile.dev"],
+      "port": 3000
+    }
+  ]
+}

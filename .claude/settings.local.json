@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wsl.exe -d Ubuntu -e bash -lc 'cd /home/dsek4/sleep-puzzle && ls -la bin/ | head -20')"
+    ]
+  }
+}
