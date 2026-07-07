@@ -69,3 +69,5 @@ group :test do
   # Code coverage reporting [https://github.com/simplecov-ruby/simplecov]
   gem "simplecov", require: false
 end
+
+gem "devise", "~> 5.0"
