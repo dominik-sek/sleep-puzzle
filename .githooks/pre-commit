@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+eval "$(~/.local/bin/mise activate bash)"
+
+staged_ruby_files=$(git diff --cached --name-only --diff-filter=ACM -- '*.rb' '*.rake' 'Gemfile' 'Rakefile')
+
+if [ -z "$staged_ruby_files" ]; then
+  exit 0
+fi
+
+echo "Running rubocop -A on staged Ruby files..."
+bundle exec rubocop -A $staged_ruby_files
+
+git add $staged_ruby_files
