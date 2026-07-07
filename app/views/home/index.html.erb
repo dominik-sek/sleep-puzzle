@@ -1,4 +1,45 @@
-<div class="min-h-screen flex items-center justify-center px-6">
+<div class="min-h-screen flex flex-col items-center justify-center">
+  <%= render Section::Component.new(
+    title: "Układamy sen Twojej rodziny jak puzzle.",
+    subtitle: "Kawałek po kawałku pomagam odzyskać spokojne noce, równowagę i czas dla siebie, partnera i dziecka - z empatią, wiedzą i bez presji.",
+    align: :left,
+    background: :ink,
+    bordered: false,
+  ) do |section| %>
+
+    <div>
+      sleep puzzle logo placeholder
+    </div>
+
+    <% section.with_actions do %>
+        <div class="flex gap-4">
+          <%= render Buttons::Component.new(
+            text: "Umów konsultację",
+            pill: true,
+            variant: :primary,
+            classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+          ) %>
+
+          <%= render Buttons::Component.new(
+            text: "Zobacz pakiety",
+            pill: true,
+            variant: :secondary,
+            classes: "hover:cursor-pointer text-t6! py-3 px-6 font-semibold!"
+          ) %>
+
+        </div>
+    <% end %>
+
+  <% end %>
+
+  <%= render Section::Component.new(
+    background: :ink_soft,
+    align: :center,
+    bordered: false,
+    ) do |section| %>
+    cool stuff here
+  <% end %>
+
   <div class="max-w-xl text-center">
     <div class="inline-block bg-surface border border-border-input text-accent text-t6 px-4 py-2 rounded-full mb-6">
       Design system
@@ -27,6 +68,10 @@
       <%= render Alert::Component.new(title: "Heads up", tone: :warning) do %>
         Check your booking details before confirming.
       <% end %>
+    </div>
+
+    <div data-controller="hello" class="mt-8 text-t6 text-taupe">
+      <span data-hello-target="output">Stimulus not connected</span>
     </div>
   </div>
 </div>

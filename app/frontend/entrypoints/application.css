@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @source "../../views";
+@source "../../components";
 
 @theme {
   /* Fonts — Quicksand for body copy, Baloo 2 for display/headings */
@@ -68,32 +69,34 @@
   --color-accent-gold: #d9a441;
 }
 
-body {
-  margin: 0;
-  background-color: var(--color-ink);
-  color: var(--color-cream);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-}
+@layer base {
+  body {
+    margin: 0;
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
 
-* {
-  box-sizing: border-box;
-}
+  * {
+    box-sizing: border-box;
+  }
 
-::selection {
-  background: var(--color-accent);
-  color: var(--color-ink);
-}
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
 
-input::placeholder,
-textarea::placeholder {
-  color: var(--color-taupe);
-}
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-taupe);
+  }
 
-a {
-  color: var(--color-accent);
-}
+  a {
+    color: var(--color-accent);
+  }
 
-a:hover {
-  color: var(--color-accent-hover);
+  a:hover {
+    color: var(--color-accent-hover);
+  }
 }

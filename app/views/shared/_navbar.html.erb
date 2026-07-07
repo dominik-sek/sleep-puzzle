@@ -1,9 +1,30 @@
-<nav class="p-4">
-  <span>
-    <img placeholder="logo"/>
-    <h1 class="font-display font-bold text-t2"> sleep.puzzle </h1>
-  </span>
-  links
-  umow konsult
-  pl/en
-</nav>
+<%= render(Navbar::Component.new(variant: :transparent, sticky: true, classes:"w-full text-t5")) do |navbar| %>
+  <% navbar.with_logo do %>
+    <a href="/" class="flex items-center gap-4 py-2 px-6">
+      <img src="/"/>
+      <span class="font-display text-t3 text-cream">
+        sleep.puzzle
+      </span>
+    </a>
+  <% end %>
+
+  <% navbar.with_item(label: "Pakiety", href: "#") %>
+  <% navbar.with_item(label: "O mnie", href: "#") %>
+  <% navbar.with_item(label: "Blog", href: "#") %>
+  <% navbar.with_item(label: "Sklep", href: "#") %>
+  <% navbar.with_item(label: "Kontakt", href: "#") %>
+
+  <% navbar.with_actions do %>
+    <li class="ml-2 pl-2 border-l border-neutral-200 dark:border-neutral-700 w-full flex items-center">
+      <a href="/login" class="block rounded-md px-3 py-2 text-sm font-medium text-neutral-700 no-underline hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700">
+        Sign in
+      </a>
+      <%= render Buttons::Component.new(
+        text: "Umów konsultację",
+        pill: true,
+        variant: :secondary,
+        classes: "hover:cursor-pointer bg-accent! font-bold! text-ink!"
+      ) %>
+    </li>
+  <% end %>
+<% end %>
