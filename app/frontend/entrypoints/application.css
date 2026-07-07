@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@source "../../views";
+
 @theme {
   /* Fonts — Quicksand for body copy, Baloo 2 for display/headings */
   --font-sans: "Quicksand", sans-serif;
@@ -14,6 +16,32 @@
   --leading-relaxed: 1.7;
   --leading-copy: 1.75;      /* long-form (about page) paragraphs */
   --leading-loose: 1.8;
+
+  /* Text styles — size + line-height + weight bundled per level (font-family still separate: pair with font-display / font-sans) */
+  --text-t1: clamp(2.25rem, 6vw, 4rem);   /* 36–64px, hero */
+  --text-t1--line-height: 1.08;
+  --text-t1--font-weight: 700;
+
+  --text-t2: clamp(1.75rem, 5vw, 2.5rem); /* 28–40px, page/section title */
+  --text-t2--line-height: 1.2;
+  --text-t2--font-weight: 700;
+
+  --text-t3: 1.625rem;                    /* 26px, card/subsection title */
+  --text-t3--line-height: 1.2;
+  --text-t3--font-weight: 700;
+
+  --text-t4: 1.1875rem;                   /* 19px, lead paragraph */
+  --text-t4--line-height: 1.7;
+  --text-t4--font-weight: 400;
+
+  --text-t5: 1rem;                        /* 16px, body */
+  --text-t5--line-height: 1.6;
+  --text-t5--font-weight: 500;
+
+  --text-t6: 0.875rem;                    /* 14px, small/label */
+  --text-t6--line-height: 1.4;
+  --text-t6--font-weight: 700;
+  --text-t6--letter-spacing: 0.02em;
 
   /* Surfaces, darkest to lightest */
   --color-ink: #211e1c;         /* page background */
