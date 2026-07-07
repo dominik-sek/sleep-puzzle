@@ -87,6 +87,7 @@
     <orderEntry type="library" scope="PROVIDED" name="minitest (v6.0.6, ruby-4.0.5-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="msgpack (v1.8.3, ruby-4.0.5-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="mutex_m (v0.3.0, ruby-4.0.5-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="net-http (v0.9.1, ruby-4.0.5-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="net-imap (v0.6.4.1, ruby-4.0.5-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="net-pop (v0.1.2, ruby-4.0.5-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="net-protocol (v0.2.2, ruby-4.0.5-p0) [gem]" level="application" />
