@@ -24,7 +24,7 @@
             text: "Zobacz pakiety",
             pill: true,
             variant: :secondary,
-            classes: "hover:cursor-pointer text-t6! py-3 px-6 font-semibold!"
+            classes: "hover:cursor-pointer text-t6! py-3 px-6 font-semibold! bg-ink-soft! border-accent-coral!"
           ) %>
 
         </div>
@@ -37,41 +37,40 @@
     align: :center,
     bordered: false,
     ) do |section| %>
-    cool stuff here
+    <ul>
+      <li>20+ lat</li>
+    </ul>
   <% end %>
 
-  <div class="max-w-xl text-center">
-    <div class="inline-block bg-surface border border-border-input text-accent text-t6 px-4 py-2 rounded-full mb-6">
-      Design system
-    </div>
-    <h1 class="font-display text-t1 text-cream mb-4">
-      sleep.puzzle
-    </h1>
-    <p class="font-display text-t3 text-accent mb-2">
-      Section title (t3)
-    </p>
-    <p class="text-tan text-t4 mb-4">
-      Lead paragraph (t4) — Quicksand for body copy, Baloo 2 for display type, on a warm dark palette with an amber accent.
-    </p>
-    <p class="text-tan text-t5 mb-8">
-      Body copy (t5) sample text.
-    </p>
-    <div class="flex gap-4 justify-center flex-wrap mb-8">
-      <span class="bg-accent text-ink font-bold px-7 py-4 rounded-full">Primary action</span>
-      <span class="border border-border-input text-cream font-bold px-7 py-4 rounded-full">Secondary action</span>
+  <%= render Section::Component.new(
+    background: :ink,
+    align: :left,
+    bordered: false,
+    ) do |section| %>
+
+  <div class="flex w-full gap-6 items-center">
+    <div class="w-1/4">
+      <img src="" alt="zdjecie" class="border border-border-strong rounded-lg border-px h-full aspect-square" />
     </div>
 
-    <div class="flex flex-col gap-4 text-left">
-      <%= render Alert::Component.new(title: "Saved", tone: :success) do %>
-        Your settings were updated.
-      <% end %>
-      <%= render Alert::Component.new(title: "Heads up", tone: :warning) do %>
-        Check your booking details before confirming.
-      <% end %>
-    </div>
+    <div class="flex flex-col gap-6 w-3/4">
+      <h2 class="text-accent font-display text-t2">Cześć, jestem Karola</h2>
+      <span class="text-cream max-w-3/4">
+        Nazywam się Karola — ta, co układa sen rodzin jak puzzle. Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego.
+      </span>
 
-    <div data-controller="hello" class="mt-8 text-t6 text-taupe">
-      <span data-hello-target="output">Stimulus not connected</span>
+      <span class="text-tan max-w-3/4">
+        „Piasek jest fajny — na plaży. Nie pod powiekami” :) Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą.
+      </span>
+
+      <a href="#">
+        <span class="font-bold text-t6! text-accent">
+          Poznaj mnie lepiej ->
+        </span>
+      </a>
     </div>
   </div>
+
+  <% end %>
+
 </div>
