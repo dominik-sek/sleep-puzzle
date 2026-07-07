@@ -1,1 +1,71 @@
 @import "tailwindcss";
+
+@theme {
+  /* Fonts — Quicksand for body copy, Baloo 2 for display/headings */
+  --font-sans: "Quicksand", sans-serif;
+  --font-display: "Baloo 2", sans-serif;
+
+  /* Line heights, from the prototype's most-tracked-to-loosest copy */
+  --leading-display: 1.08;   /* hero title */
+  --leading-heading: 1.2;    /* section headings */
+  --leading-title: 1.4;      /* card / post titles */
+  --leading-normal: 1.5;
+  --leading-body: 1.6;       /* default paragraph copy */
+  --leading-relaxed: 1.7;
+  --leading-copy: 1.75;      /* long-form (about page) paragraphs */
+  --leading-loose: 1.8;
+
+  /* Surfaces, darkest to lightest */
+  --color-ink: #211e1c;         /* page background */
+  --color-ink-soft: #26221f;    /* alternating section background */
+  --color-surface: #2b2724;     /* card background */
+  --color-surface-dark: #1a1817; /* footer background */
+
+  /* Borders */
+  --color-border: #35302c;        /* hairline / section dividers */
+  --color-border-strong: #3d3833; /* card borders */
+  --color-border-input: #47413b;  /* pill / input borders */
+
+  /* Text */
+  --color-cream: #f5f0e8;    /* primary text */
+  --color-tan: #cfc7bc;      /* secondary text */
+  --color-taupe: #9b948a;    /* muted text */
+  --color-taupe-dark: #57504a; /* faint / placeholder text */
+
+  /* Accent — configurable brand color, default warm amber */
+  --color-accent: #e2933e;
+  --color-accent-hover: #ffb35e;
+  --color-accent-terracotta: #c97a2e;
+  --color-accent-coral: #e3987a;
+  --color-accent-gold: #d9a441;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-taupe);
+}
+
+a {
+  color: var(--color-accent);
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
