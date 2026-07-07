@@ -54,5 +54,13 @@ module Section
       when :left then "text-left"
       end
     end
+
+    def align_items_classes
+      case @align
+      when :center then "items-center"
+      when :right then "items-end"
+      when :left then "items-start"
+      end
+    end
   end
 end
