@@ -1,26 +1,50 @@
-<h2>Log in</h2>
+<div class="min-h-screen w-full flex items-center justify-center">
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+  <%= render Card::Component.new(classes: "w-128 bg-surface! border-border-strong!") do |card| %>
+<div class="w-full flex flex-col items-center">
+  <h2 class="text-t2 font-display"> Zaloguj się</h2>
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <p><%= f.password_field :password, autocomplete: "current-password" %></p>
-  </div>
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
 
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <p><%= f.check_box :remember_me %></p>
-      <p><%= f.label :remember_me %></p>
+    <%= render Forms::Component.new(
+      label: "Email",
+      name: "user[email]",
+      helper_text: "We'll never share your email with anyone else."
+    ) do |c| %>
+      <% c.with_input do %>
+        <input type="email" name="user[email]" id="user_email" class="form-control" placeholder="you@example.com">
+      <% end %>
+    <% end %>
+
+
+    <%= render Forms::Component.new(
+      label: "Password",
+      name: "user[password]",
+      required: true,
+      helper_text: "Must be at least 8 characters long."
+    ) do |c| %>
+      <% c.with_input do %>
+        <input type="password" name="user[password]" id="user_password" class="form-control" placeholder="Enter password...">
+      <% end %>
+    <% end %>
+
+
+    <div class="actions">
+      <%= render Buttons::Component.new(
+        text: "Zaloguj się",
+        pill: true,
+        full_width: true,
+        variant: :primary,
+        type: :submit,
+        classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+      ) %>
+
     </div>
   <% end %>
 
-  <div class="actions">
-    <%= f.submit "Log in" %>
-  </div>
-<% end %>
+  <%= render "devise/shared/links" %>
 
-<%= render "devise/shared/links" %>
+</div>
+  <% end %>
+
+</div>

@@ -16,9 +16,13 @@
 
   <% navbar.with_actions do %>
     <li class="ml-2 pl-2 border-l border-neutral-200 dark:border-neutral-700 w-full flex items-center">
-      <a href="/users/sign_in" class="block rounded-md px-3 py-2 text-sm font-medium text-neutral-700 no-underline hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700">
-        Sign in
-      </a>
+      <% if user_signed_in? %>
+        <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "block rounded-md px-3 py-2 text-sm font-medium text-neutral-700 no-underline hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700 cursor-pointer bg-transparent border-0" %>
+      <% else %>
+        <a href="/users/sign_in" class="block rounded-md px-3 py-2 text-sm font-medium text-neutral-700 no-underline hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700">
+          Sign in
+        </a>
+      <% end %>
       <%= render Buttons::Component.new(
         text: "Umów konsultację",
         pill: true,
