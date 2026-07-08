@@ -30,7 +30,7 @@ module Section
         background_classes,
         align_classes,
         border_classes,
-        "w-full py-8 px-8"
+        "w-full"
       ].compact.reject(&:empty?).join(" ")
     end
 

@@ -3,6 +3,10 @@
 @source "../../views";
 @source "../../components";
 
+@utility section-padding {
+  padding: clamp(50px, 8vw, 90px) clamp(20px, 4vw, 28px);
+}
+
 @theme {
   /* Fonts — Quicksand for body copy, Baloo 2 for display/headings */
   --font-sans: "Quicksand", sans-serif;
