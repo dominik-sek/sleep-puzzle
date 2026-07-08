@@ -32,6 +32,7 @@
 
   <% end %>
 
+
   <%= render Section::Component.new(
     background: :ink_soft,
     align: :center,
@@ -41,6 +42,8 @@
       <li>20+ lat</li>
     </ul>
   <% end %>
+
+
 
   <%= render Section::Component.new(
     background: :ink,
@@ -76,6 +79,43 @@
   <%= render Section::Component.new(
     align: :center,
     background: :ink_soft,
+    bordered: false,
+    ) do |section| %>
+
+    <h2 class="text-cream font-display font-bold text-t2">Jak wygląda współpraca</h2>
+      <div class="flex w-1/2 justify-between ">
+
+        <div class="flex flex-col items-center justify-center gap-4">
+          <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">
+            1
+          </div>
+          <span class="text-t4 font-display">subtitle here</span>
+          <span class="text-taupe">hello</span>
+        </div>
+
+        <div class="flex flex-col items-center justify-center gap-4">
+          <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">
+            2
+          </div>
+          <span class="text-t4 font-display">subtitle here</span>
+          <span class="text-taupe">hello</span>
+        </div>
+
+        <div class="flex flex-col items-center justify-center gap-4">
+          <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">
+            3
+          </div>
+          <span class="text-t4 font-display">subtitle here</span>
+          <span class="text-taupe">hello</span>
+        </div>
+
+      </div>
+
+  <% end %>
+
+  <%= render Section::Component.new(
+    align: :center,
+    background: :ink,
     bordered: false,
     ) do |section| %>
 
@@ -131,7 +171,7 @@
             Dla rodziców, którzy chcą szybko odzyskać wieczory i poprawić sen dziecka.
           </p>
 
-          <a href="#" >
+          <a href="#">
                 <span class="text-t6 text-cream hover:text-accent">
                   Zobacz szczegóły ->
                 </span>
@@ -141,6 +181,34 @@
     <% end %>
   </div>
 
+  <% end %>
+
+
+  <%= render Section::Component.new(
+    align: :center,
+    background: :ink_soft,
+    bordered: false,
+    align: :left
+    ) do |section| %>
+
+<div class="flex gap-6">
+  <div class="flex flex-col gap-6 w-1/2">
+    <h2 class="text-cream font-display font-bold text-t2">Audioprocesy i bajki na dobranoc</h2>
+    <span class="text-tan max-w-3/4">Nagrania do samodzielnej pracy nad rutyną oraz kojące bajki audio dla dzieci — dostępne po zalogowaniu na Twoim koncie.</span>
+    <div>
+      <%= render Buttons::Component.new(
+        text: "Przejdź do sklepu",
+        pill: true,
+        variant: :primary,
+        classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+      ) %>
+    </div>
+  </div>
+
+  <div class="flex w-1/2">
+    bajki karty tutaj - todo after model
+  </div>
+</div>
   <% end %>
 
 </div>

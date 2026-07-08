@@ -32,7 +32,6 @@ module Section
         border_classes,
         "w-full py-8 px-8"
       ].compact.reject(&:empty?).join(" ")
-      # bordered, width, background, align, padding
     end
 
     def border_classes
