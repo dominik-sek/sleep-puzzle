@@ -66,6 +66,9 @@ group :development do
 
   # Run rails server and vite dev server together [https://github.com/ddollar/foreman]
   gem "foreman", require: false
+
+  # Auto-annotate models with schema info [https://github.com/drwl/annotaterb]
+  gem "annotaterb"
 end
 
 group :test do
