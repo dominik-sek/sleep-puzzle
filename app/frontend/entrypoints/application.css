@@ -71,6 +71,7 @@
   --color-accent-terracotta: #c97a2e;
   --color-accent-coral: #e3987a;
   --color-accent-gold: #d9a441;
+  --color-gradient-hero: #C97A2E33;
 }
 
 @layer base {
