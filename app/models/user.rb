@@ -3,6 +3,7 @@
 # Table name: users
 #
 #  id                     :bigint           not null, primary key
+#  avatar_url             :string
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  first_name             :string
@@ -36,11 +37,14 @@ class User < ApplicationRecord
     data = access_token.info
     user = User.where(email: data["email"]).first
 
-    unless user
+    if user
+      user.update(avatar_url: data["image"])
+    else
       user = User.create(
         first_name: data["first_name"],
         last_name: data["last_name"],
         email: data["email"],
+        avatar_url: data["image"],
         password: Devise.friendly_token[0, 20],
         provider: access_token.provider,
         uid: access_token.uid
