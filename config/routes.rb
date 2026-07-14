@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  resources :bookings
-  resources :products
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
@@ -17,4 +15,6 @@ Rails.application.routes.draw do
   root "home#index"
   resources :packages, only: [ :index, :show ]
   resources :dashboard, only: [ :index ]
+  resources :bookings, only: [ :index, :show ]
+  resources :products, only: [ :index, :show ]
 end

@@ -1,0 +1,15 @@
+<%= render Container::Component.new(classes:"flex flex-col gap-6 items-center justify-center") do %>
+<div class="flex flex-col justify-center items-center text-center gap-6 w-1/2">
+  <h1 class="text-t2 text-cream font-display">Umów konsultację</h1>
+  <span class="text-tan text-t5">Wybierz dogodny termin w kalendarzu, a potem uzupełnij krótki formularz zgłoszeniowy</span>
+</div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+    <%= render Card::Component.new do %>
+      calendar card
+    <% end %>
+
+    <%= render Card::Component.new do %>
+      date time card
+    <% end %>
+  </div>
+<% end %>
