@@ -14,7 +14,7 @@
   <% navbar.with_item(label: "Kontakt", href: "#") %>
 
   <% navbar.with_actions do %>
-    <li class="ml-2 pl-2 border-l border-neutral-200 dark:border-neutral-700 w-full flex gap-2 items-center">
+    <li class="ml-2 pl-2 border-l border-border w-full flex gap-2 items-center">
       <% if user_signed_in? %>
         <button type="button"
                 data-navbar-target="trigger"
@@ -24,7 +24,7 @@
                 data-align="end"
                 data-action="click->navbar#toggleMenu pointerenter->navbar#handlePointerEnter pointermove->navbar#handlePointerMove pointerleave->navbar#handlePointerLeave keydown->navbar#handleTriggerKeydown"
                 data-state="closed"
-                class="group hover:cursor-pointer flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-neutral-700 select-none hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-600 dark:focus-visible:outline-neutral-200">
+                class="group hover:cursor-pointer flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-cream select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
           <% if current_user.avatar_url.present? %>
             <%= image_tag current_user.avatar_url, class: "size-6 rounded-full object-cover", alt: "" %>
           <% else %>
@@ -35,9 +35,9 @@
         </button>
 
         <% navbar.with_dropdown_content(id: "profile-content", width: "fit") do %>
-          <%= button_to "Moje konto", dashboard_index_path, method: :get, class: "block rounded-md px-3 py-2 text-sm font-medium text-neutral-700 no-underline hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700 cursor-pointer bg-transparent border-0" %>
+          <%= button_to "Moje konto", dashboard_index_path, method: :get, class: "block rounded-md px-3 py-2 text-sm font-medium text-cream no-underline hover:bg-ink-soft cursor-pointer bg-transparent border-0" %>
           <hr/>
-          <%= button_to "Wyloguj się", destroy_user_session_path, method: :delete, class: "block rounded-md px-3 py-2 text-sm font-medium text-neutral-700 no-underline hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700 cursor-pointer bg-transparent border-0" %>
+          <%= button_to "Wyloguj się", destroy_user_session_path, method: :delete, class: "block rounded-md px-3 py-2 text-sm font-medium text-cream no-underline hover:bg-ink-soft cursor-pointer bg-transparent border-0" %>
         <% end %>
 
       <% else %>

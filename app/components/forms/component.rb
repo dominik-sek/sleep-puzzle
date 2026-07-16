@@ -74,11 +74,11 @@ module Forms
       visibility_class = @label_hidden ? "sr-only" : ""
 
       color_class = if @disabled
-                      "text-neutral-400 dark:text-neutral-500"
+                      "text-taupe-dark"
                     elsif @error.present?
-                      "text-red-700 dark:text-red-400"
+                      "text-red-400"
                     else
-                      "text-neutral-700 dark:text-neutral-300"
+                      "text-cream"
                     end
 
       width_class = @variant == :inline ? "shrink-0" : ""
@@ -100,7 +100,7 @@ module Forms
                    else "text-xs"
                    end
 
-      color_class = @disabled ? "text-neutral-400 dark:text-neutral-500" : "text-neutral-500 dark:text-neutral-400"
+      color_class = @disabled ? "text-taupe-dark" : "text-taupe"
 
       [size_class, color_class, "mt-1"].join(" ")
     end
@@ -112,13 +112,13 @@ module Forms
                    else "text-xs"
                    end
 
-      [size_class, "text-red-600 dark:text-red-400 mt-1"].join(" ")
+      [size_class, "text-red-400 mt-1"].join(" ")
     end
 
     def addon_classes(position)
-      base = "inline-flex items-center px-3 text-neutral-500 dark:text-neutral-400"
-      bg = "bg-neutral-100 dark:bg-neutral-700"
-      border = "border border-neutral-300 dark:border-neutral-600"
+      base = "inline-flex items-center px-3 text-taupe"
+      bg = "bg-ink-soft"
+      border = "border border-border-input"
 
       size_class = case @size
                    when :sm then "text-xs"

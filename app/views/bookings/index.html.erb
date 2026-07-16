@@ -3,9 +3,9 @@
   <h1 class="text-t2 text-cream font-display">Umów konsultację</h1>
   <span class="text-tan text-t5">Wybierz dogodny termin w kalendarzu, a potem uzupełnij krótki formularz zgłoszeniowy</span>
 </div>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full" data-controller="cally">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full" data-controller="cally" data-cally-available-dates-value="<%= @available_dates %>" data-cally-no-slots-label-value="<%= t("bookings.available_slots", count: 0) %>">
     <%= render Card::Component.new do %>
-      <calendar-date data-cally-target="calendarDate" class="w-full" format-weekday="short">
+      <calendar-date data-cally-target="calendarDate" data-action="change->cally#dateChanged" class="w-full" format-weekday="short">
         <svg
           aria-label="Previous"
           slot="previous"
@@ -39,8 +39,26 @@
       </calendar-date>
     <% end %>
 
-    <%= render Card::Component.new do %>
-      date time card
+    <%= render Card::Component.new(classes: "h-fit") do %>
+      <div class="flex justify-between">
+        <h2 class="font-display text-t4 pb-4">Dostępne godziny - <span data-cally-target="heading"></span></h2>
+        <span data-cally-target="availableCount"></span>
+      </div>
+      <% @availability[:dates].each do |date| %>
+        <% available_count = date[:hours].count { |hour| hour[:available] } %>
+        <div data-cally-target="hoursPanel" data-date="<%= date[:date] %>" data-available-label="<%= t("bookings.available_slots", count: available_count) %>" hidden class="grid grid-cols-3 gap-4">
+          <% date[:hours].each do |hour| %>
+            <%= render Buttons::Component.new(
+              text: hour[:hour],
+              disabled: !hour[:available],
+              variant: :secondary,
+              classes: "text-t5! hover:cursor-pointer",
+              data: { action: "click->cally#timeSelected", hour: hour[:hour] }
+            ) %>
+
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
   </div>
 <% end %>

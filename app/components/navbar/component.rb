@@ -54,11 +54,11 @@ module Navbar
 
       variant_class = case @variant
       when :bordered
-                        "rounded-lg border border-neutral-200 bg-white shadow dark:border-neutral-700 dark:bg-neutral-800"
+                        "rounded-lg border border-border bg-surface shadow"
       when :transparent
                         "bg-transparent"
       else
-                        "rounded-lg border border-neutral-200 bg-white shadow dark:border-neutral-700 dark:bg-neutral-800"
+                        "rounded-lg border border-border bg-surface shadow"
       end
 
       [ base, variant_class ].join(" ")
@@ -77,13 +77,13 @@ module Navbar
     end
 
     def background_classes
-      "relative z-0 rounded-lg border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-neutral-800"
+      "relative z-0 rounded-lg border border-border bg-surface shadow-xl"
     end
 
     def mobile_menu_button_classes
-      "group flex items-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-neutral-700 select-none " \
-        "hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700 " \
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-600 dark:focus-visible:outline-neutral-200"
+      "group flex items-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-cream select-none " \
+        "hover:bg-ink-soft " \
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     end
 
     def hamburger_icon

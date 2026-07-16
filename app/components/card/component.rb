@@ -5,7 +5,7 @@ module Card
     VARIANTS = %i[default elevated well].freeze
     PADDINGS = %i[none sm md lg].freeze
     SHADOWS = %i[none xs sm md lg xl].freeze
-    ROUNDED = %i[none sm md lg xl full].freeze
+    ROUNDED = %i[none sm md lg xl 2xl full].freeze
 
     renders_one :header
     renders_one :body
@@ -17,7 +17,7 @@ module Card
     # @param variant [Symbol] Style variant: :default, :elevated, :well
     # @param padding [Symbol] Content padding: :none, :sm, :md, :lg
     # @param shadow [Symbol] Shadow size: :none, :xs, :sm, :md, :lg, :xl
-    # @param rounded [Symbol] Border radius: :none, :sm, :md, :lg, :xl, :full
+    # @param rounded [Symbol] Border radius: :none, :sm, :md, :lg, :xl, :"2xl", :full
     # @param border [Boolean] Show border
     # @param hoverable [Boolean] Add hover effects
     # @param clickable [Boolean] Make entire card clickable (adds cursor and hover)
@@ -28,7 +28,7 @@ module Card
       variant: :default,
       padding: :md,
       shadow: :xs,
-      rounded: :xl,
+      rounded: :"2xl",
       border: true,
       hoverable: false,
       clickable: false,
@@ -40,7 +40,7 @@ module Card
       @variant = VARIANTS.include?(variant) ? variant : :default
       @padding = PADDINGS.include?(padding) ? padding : :md
       @shadow = SHADOWS.include?(shadow) ? shadow : :xs
-      @rounded = ROUNDED.include?(rounded) ? rounded : :xl
+      @rounded = ROUNDED.include?(rounded) ? rounded : :"2xl"
       @border = border
       @hoverable = hoverable
       @clickable = clickable
@@ -91,7 +91,7 @@ module Card
       when :well
         "bg-neutral-50 dark:bg-neutral-900/50"
       else # :default (elevated)
-        "bg-white dark:bg-neutral-800"
+        "bg-surface"
       end
     end
 
@@ -115,8 +115,9 @@ module Card
         when :sm then "sm:rounded-sm"
         when :md then "sm:rounded-md"
         when :lg then "sm:rounded-lg"
+        when :xl then "sm:rounded-xl"
         when :full then "sm:rounded-full"
-        else "sm:rounded-xl" # :xl
+        else "sm:rounded-2xl" # :2xl
         end
       else
         case @rounded
@@ -124,8 +125,9 @@ module Card
         when :sm then "rounded-sm"
         when :md then "rounded-md"
         when :lg then "rounded-lg"
+        when :xl then "rounded-xl"
         when :full then "rounded-full"
-        else "rounded-xl" # :xl
+        else "rounded-2xl" # :2xl
         end
       end
     end

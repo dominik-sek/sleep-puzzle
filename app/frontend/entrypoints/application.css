@@ -365,7 +365,7 @@ calendar-month{
     @apply p-0
   }
   &::part(button){
-    @apply rounded-md flex items-center justify-center text-center w-full h-full box-border p-6 text-t6 font-sans transition-all duration-100 ease-in-out
+    @apply rounded-md flex items-center justify-center text-center w-full h-full box-border p-6 text-t6 font-sans transition-all duration-100 ease-in-out bg-ink
   }
   &::part(week){
     @apply text-t2
@@ -374,12 +374,21 @@ calendar-month{
     @apply bg-transparent
   }
   &::part(selected){
-    @apply text-ink
+    @apply text-ink bg-accent
   }
 }
 /* written flat for the same reason as calendar-date::part(button):hover above */
 calendar-month::part(button):hover:not(:disabled) {
   background-color: color-mix(in oklab, var(--color-accent) 20%, transparent);
+}
+
+/* ::part(disallowed) is how cally marks isDateDisallowed days — no native
+   disabled attribute is set, so :not(:disabled) above never excludes them.
+   :hover:not(:disabled) here matches the generic rule's specificity so this,
+   coming after it in source order, wins the tie and keeps disallowed days
+   transparent on hover instead of picking up the accent tint. */
+calendar-month::part(disallowed):hover:not(:disabled) {
+  @apply bg-transparent;
 }
 
 /* the selected day (part="button ... selected") also matches the rule above;

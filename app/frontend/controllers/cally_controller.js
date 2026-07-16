@@ -1,10 +1,23 @@
 import { Controller } from "@hotwired/stimulus"
 import dayjs from "dayjs";
+import "dayjs/locale/pl";
+
+dayjs.locale("pl");
+
 export default class extends Controller {
-    static targets = ["calendarDate", "calendarMonth", "heading"]
+    static targets = ["calendarDate", "calendarMonth", "heading", "hoursPanel", "availableCount"]
+    static values = {
+        availableDates: Array,
+        noSlotsLabel: String
+    }
 
     connect() {
         this.setCalendarDefaults()
+        this.setDisallowedDates()
+        this.selectedDate = this.calendarDateTarget.value
+        this.selectedTime = null
+        this.showHoursFor(this.selectedDate)
+        this.updateHeading()
     }
     // All dates are expected in ISO-8601 format (YYYY-MM-DD).
     setCalendarDefaults(){
@@ -21,4 +34,41 @@ export default class extends Controller {
         // format-weekday="short" is set as a static HTML attribute on <calendar-date>
     }
 
+    dateChanged(event) {
+        this.selectedDate = event.target.value
+        this.selectedTime = null
+        this.showHoursFor(this.selectedDate)
+        this.updateHeading()
+    }
+
+    timeSelected(event) {
+        this.selectedTime = event.currentTarget.dataset.hour
+        this.showForm()
+    }
+
+    showHoursFor(date) {
+        let label = this.noSlotsLabelValue
+        this.hoursPanelTargets.forEach((panel) => {
+            const isSelected = panel.dataset.date === date
+            panel.hidden = !isSelected
+            if (isSelected) label = panel.dataset.availableLabel
+        })
+        this.availableCountTarget.textContent = label
+    }
+
+    updateHeading() {
+        const formattedDate = dayjs(this.selectedDate).format('D MMMM YYYY')
+        this.headingTarget.textContent = formattedDate
+    }
+
+    setDisallowedDates(){
+        // ran each time cally renders a date cell, 60 days isnt too hard to render so it should be fine performance wise
+        this.calendarDateTarget.isDateDisallowed = (date) => {
+            const iso = dayjs(date).format('YYYY-MM-DD')
+            return !this.availableDatesValue.includes(iso)
+        }
+    }
+    showForm(){
+        throw new Error("NOT IMPLEMENTED YET")
+    }
 }
