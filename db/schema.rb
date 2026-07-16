@@ -32,8 +32,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_083726) do
     t.text "for_whom"
     t.string "name"
     t.datetime "updated_at", null: false
-    t.index [ "core" ], name: "index_packages_on_core", using: :gin
-    t.index [ "extra" ], name: "index_packages_on_extra", using: :gin
+    t.index ["core"], name: "index_packages_on_core", using: :gin
+    t.index ["extra"], name: "index_packages_on_extra", using: :gin
   end
 
   create_table "products", force: :cascade do |t|
@@ -58,7 +58,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_083726) do
     t.string "reset_password_token"
     t.string "uid"
     t.datetime "updated_at", null: false
-    t.index [ "email" ], name: "index_users_on_email", unique: true
-    t.index [ "reset_password_token" ], name: "index_users_on_reset_password_token", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 end
