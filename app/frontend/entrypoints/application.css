@@ -330,3 +330,64 @@ input[list].replace-default-datalist-arrow {
   }
 }
 
+/* custom styles go under, above are railsblocks defaults and design system */
+calendar-date{
+
+  &::part(button) {
+    @apply text-cream bg-transparent border-none shadow-none appearance-none transition-all duration-100 ease-in-out w-10 h-10 rounded-lg
+  }
+  &::part(months) {
+      @apply text-t5
+  }
+
+}
+
+/* written flat (not nested under calendar-date{}) because Tailwind's hover:
+   variant wraps declarations in @media(hover:hover), and that combination
+   nested inside &::part() silently fails to apply in this browser/pipeline
+   even though the exact same rule works fine written flat */
+calendar-date::part(button):hover {
+  background-color: color-mix(in oklab, var(--color-cream) 10%, transparent);
+}
+
+calendar-month{
+
+  --color-accent: #e2933e;
+  --color-text-on-accent: var(--color-cream);
+
+  &::part(heading){
+    /*@apply sr-only*/
+  }
+  &::part(table){
+    @apply table-fixed w-full border-separate border-spacing-1
+  }
+  &::part(th){
+    @apply p-0
+  }
+  &::part(button){
+    @apply rounded-md flex items-center justify-center text-center w-full h-full box-border p-6 text-t6 font-sans transition-all duration-100 ease-in-out
+  }
+  &::part(week){
+    @apply text-t2
+  }
+  &::part(disallowed){
+    @apply bg-transparent
+  }
+  &::part(selected){
+    @apply text-ink
+  }
+}
+/* written flat for the same reason as calendar-date::part(button):hover above */
+calendar-month::part(button):hover:not(:disabled) {
+  background-color: color-mix(in oklab, var(--color-accent) 20%, transparent);
+}
+
+/* the selected day (part="button ... selected") also matches the rule above;
+   :not(:disabled) here matches its specificity so this rule, coming after it
+   in source order, wins the tie and keeps the selected day's solid accent
+   background instead of the lighter hover tint */
+calendar-month::part(selected):hover:not(:disabled) {
+  background-color: var(--color-accent);
+}
+
+

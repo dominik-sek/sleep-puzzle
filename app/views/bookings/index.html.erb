@@ -3,9 +3,40 @@
   <h1 class="text-t2 text-cream font-display">Umów konsultację</h1>
   <span class="text-tan text-t5">Wybierz dogodny termin w kalendarzu, a potem uzupełnij krótki formularz zgłoszeniowy</span>
 </div>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full" data-controller="cally">
     <%= render Card::Component.new do %>
-      calendar card
+      <calendar-date data-cally-target="calendarDate" class="w-full" format-weekday="short">
+        <svg
+          aria-label="Previous"
+          slot="previous"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        <svg
+          aria-label="Next"
+          slot="next"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m9 18 6-6-6-6"></path>
+        </svg>
+        <calendar-month data-cally-target="calendarMonth" class="w-full"></calendar-month>
+      </calendar-date>
     <% end %>
 
     <%= render Card::Component.new do %>
