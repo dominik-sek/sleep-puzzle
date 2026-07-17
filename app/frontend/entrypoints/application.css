@@ -371,7 +371,7 @@ calendar-month{
     @apply text-t2
   }
   &::part(disallowed){
-    @apply bg-transparent
+    @apply bg-transparent text-border-input
   }
   &::part(selected){
     @apply text-ink bg-accent
@@ -398,5 +398,4 @@ calendar-month::part(disallowed):hover:not(:disabled) {
 calendar-month::part(selected):hover:not(:disabled) {
   background-color: var(--color-accent);
 }
-
 

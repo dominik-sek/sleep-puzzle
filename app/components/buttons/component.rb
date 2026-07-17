@@ -140,17 +140,29 @@ module Buttons
     end
 
     def basic_variant_classes
+      [ basic_variant_base_classes, (basic_variant_hover_classes unless @disabled) ].compact.join(" ")
+    end
+
+    def basic_variant_base_classes
       case @variant
       when :primary
-        "border border-accent-terracotta/30 bg-accent text-ink shadow-sm hover:bg-accent-hover focus-visible:outline-accent"
+        "border border-accent-terracotta/30 bg-accent text-ink shadow-sm focus-visible:outline-accent"
       when :secondary
-        "border border-border-input bg-ink text-cream shadow-xs hover:bg-ink-soft focus-visible:outline-accent"
+        "border border-border-input bg-ink text-cream shadow-xs focus-visible:outline-accent"
       when :outline
-        "border border-border-input bg-transparent text-cream hover:bg-ink-soft focus-visible:outline-accent"
+        "border border-border-input bg-transparent text-cream focus-visible:outline-accent"
       when :ghost
-        "bg-transparent text-cream hover:bg-ink-soft focus-visible:outline-accent"
+        "bg-transparent text-cream focus-visible:outline-accent"
       when :destructive
-        "border border-red-300/30 bg-red-600 text-cream shadow-sm hover:bg-red-500 focus-visible:outline-accent"
+        "border border-red-300/30 bg-red-600 text-cream shadow-sm focus-visible:outline-accent"
+      end
+    end
+
+    def basic_variant_hover_classes
+      case @variant
+      when :primary then "hover:bg-accent-hover"
+      when :secondary, :outline, :ghost then "hover:bg-ink-soft"
+      when :destructive then "hover:bg-red-500"
       end
     end
 
