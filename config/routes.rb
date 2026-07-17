@@ -15,6 +15,6 @@ Rails.application.routes.draw do
   root "home#index"
   resources :packages, only: [ :index, :show ]
   resources :dashboard, only: [ :index ]
-  resources :bookings, only: [ :index, :show ]
+  resources :bookings, only: [ :index, :show, :create ]
   resources :products, only: [ :index, :show ]
 end

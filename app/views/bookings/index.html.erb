@@ -40,25 +40,34 @@
     <% end %>
 
     <%= render Card::Component.new(classes: "h-fit") do %>
-      <div class="flex justify-between">
-        <h2 class="font-display text-t4 pb-4">Dostępne godziny - <span data-cally-target="heading"></span></h2>
-        <span data-cally-target="availableCount"></span>
-      </div>
-      <% @availability[:dates].each do |date| %>
-        <% available_count = date[:hours].count { |hour| hour[:available] } %>
-        <div data-cally-target="hoursPanel" data-date="<%= date[:date] %>" data-available-label="<%= t("bookings.available_slots", count: available_count) %>" hidden class="grid grid-cols-3 gap-4">
-          <% date[:hours].each do |hour| %>
-            <%= render Buttons::Component.new(
-              text: hour[:hour],
-              disabled: !hour[:available],
-              variant: :secondary,
-              classes: "text-t5! hover:cursor-pointer disabled:text-border-input",
-              data: { action: "click->cally#timeSelected", hour: hour[:hour] }
-            ) %>
+      <div class="flex flex-col gap-5">
+        <div>
+          <div class="flex justify-between">
+            <h2 class="font-display text-t4 pb-4">Dostępne godziny - <span data-cally-target="heading"></span></h2>
+            <span data-cally-target="availableCount"></span>
+          </div>
+          <% @availability[:dates].each do |date| %>
+            <% available_count = date[:hours].count { |hour| hour[:available] } %>
+            <div data-cally-target="hoursPanel" data-date="<%= date[:date] %>" data-available-label="<%= t("bookings.available_slots", count: available_count) %>" hidden class="grid grid-cols-3 gap-4">
+              <% date[:hours].each do |hour| %>
+                <%= render Buttons::Component.new(
+                  text: hour[:hour],
+                  disabled: !hour[:available],
+                  variant: :secondary,
+                  classes: "text-t5! hover:cursor-pointer disabled:text-border-input",
+                  data: { action: "click->cally#timeSelected", hour: hour[:hour] }
+                ) %>
 
+              <% end %>
+            </div>
           <% end %>
         </div>
-      <% end %>
+
+        <div data-cally-target="slotForm" hidden>
+          <hr class="border-border my-4"/>
+          <%= render "form", booking: @booking %>
+        </div>
+      </div>
     <% end %>
   </div>
 <% end %>

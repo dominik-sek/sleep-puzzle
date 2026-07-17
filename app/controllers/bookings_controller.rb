@@ -51,6 +51,32 @@ class BookingsController < ApplicationController
       date[:date] if date[:hours].any? { |hour| hour[:available] }
     }.to_json
 
+    @booking = Booking.new
+  end
 
+  def new
+    @booking = Booking.new
+  end
+
+  def create
+    @booking = Booking.new(name: booking_params[:name], starts_at: combined_starts_at)
+
+    if @booking.save
+      redirect_to bookings_path, notice: "Dziękujemy! Termin został zarezerwowany."
+    else
+      redirect_to bookings_path, alert: @booking.errors.full_messages.to_sentence
+    end
+  end
+
+  private
+
+  def booking_params
+    params.require(:booking).permit(:name, :date, :hour)
+  end
+
+  def combined_starts_at
+    return nil if booking_params[:date].blank? || booking_params[:hour].blank?
+
+    Time.zone.parse("#{booking_params[:date]} #{booking_params[:hour]}")
   end
 end

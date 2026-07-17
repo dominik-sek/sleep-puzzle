@@ -5,10 +5,9 @@ require 'rails_helper'
 # Table name: bookings
 #
 #  id         :bigint           not null, primary key
-#  date       :date
 #  name       :string
+#  starts_at  :datetime
 #  status     :integer
-#  time_slot  :date
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  package_id :integer

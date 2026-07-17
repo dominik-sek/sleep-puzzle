@@ -1,0 +1,12 @@
+<%= form_with model: booking, url: bookings_path do |f| %>
+  <%= hidden_field_tag "booking[date]", "", data: { cally_target: "dateField" } %>
+  <%= hidden_field_tag "booking[hour]", "", data: { cally_target: "timeField" } %>
+
+  <%= render Forms::Component.new(label: "Imię i nazwisko", name: "booking[name]", required: true) do |c| %>
+    <% c.with_input do %>
+      <%= f.text_field :name, class: "form-control", placeholder: "Jan Kowalski" %>
+    <% end %>
+  <% end %>
+
+  <%= render Buttons::Component.new(text: "Umów termin", type: "submit", variant: :primary, classes: "hover:cursor-pointer mt-4") %>
+<% end %>

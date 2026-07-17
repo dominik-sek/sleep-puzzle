@@ -159,7 +159,7 @@ div.form-control {
 }
 
 .form-control {
-  @apply block w-full rounded-lg bg-white border-0 px-3 py-2 text-base/6 text-neutral-900 shadow-xs ring-1 ring-neutral-300 outline-hidden ring-inset placeholder:text-neutral-500 focus:ring-2 focus:ring-neutral-600 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-300 dark:ring-neutral-600 dark:focus:ring-neutral-500;
+  @apply block w-full rounded-lg bg-ink-soft border-0 px-3 py-2 text-base/6 text-cream shadow-xs ring-1 ring-border-input outline-hidden ring-inset placeholder:text-taupe focus:ring-2 focus:ring-accent;
 }
 
 @media (min-width: 640px) {
@@ -169,11 +169,11 @@ div.form-control {
 }
 
 .form-control[disabled] {
-  @apply cursor-not-allowed bg-neutral-100 dark:bg-neutral-600;
+  @apply cursor-not-allowed bg-surface-dark;
 }
 
 .form-control.error {
-  @apply border-red-400 ring-red-300 focus:ring-red-500 dark:border-red-600 dark:ring-red-500;
+  @apply border-red-400 ring-red-400;
 }
 
 select:not([multiple]) {
