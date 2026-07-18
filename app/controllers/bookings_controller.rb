@@ -46,8 +46,10 @@ class BookingsController < ApplicationController
       ]
     }
 
-    # get the dates that have at least one available slot
+    # get the dates that have at least one available slot and aren't in the past
     @available_dates = @availability[:dates].filter_map { |date|
+      next if Date.parse(date[:date]) < Date.current
+
       date[:date] if date[:hours].any? { |hour| hour[:available] }
     }.to_json
 
@@ -66,6 +68,7 @@ class BookingsController < ApplicationController
     )
 
     if @booking.save
+      # here we will pass the booking to calendar
       redirect_to bookings_path, notice: "Dziękujemy! Termin został zarezerwowany."
     else
       render partial: "form",

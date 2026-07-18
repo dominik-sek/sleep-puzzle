@@ -28,6 +28,7 @@ export default class extends Controller {
         let twoMonthsFromNow = now.add(2, 'month')
         let twoMonthsFromNowFormatted = twoMonthsFromNow.format('YYYY-MM-DD')
 
+        this.today = todayFormatted
         this.calendarDateTarget.value = todayFormatted // currently selected date
         this.calendarDateTarget.min = todayFormatted // earliest date to be selected
         this.calendarDateTarget.max = twoMonthsFromNowFormatted // latest ^
@@ -76,7 +77,9 @@ export default class extends Controller {
         // ran each time cally renders a date cell, 60 days isnt too hard to render so it should be fine performance wise
         this.calendarDateTarget.isDateDisallowed = (date) => {
             const iso = dayjs(date).format('YYYY-MM-DD')
-            return !this.availableDatesValue.includes(iso)
+            // a past date must never render as available, even if it's still in
+            // availableDatesValue (min already blocks selection, this keeps the styling in sync)
+            return iso < this.today || !this.availableDatesValue.includes(iso)
         }
     }
     showForm(){

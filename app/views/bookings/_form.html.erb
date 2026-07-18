@@ -30,6 +30,12 @@
     <p class="text-red-400 text-xs mt-1">Wybierz ponownie termin w kalendarzu.</p>
   <% end %>
 
-  <%= render Buttons::Component.new(text: "Umów termin", type: "submit", variant: :primary, classes: "hover:cursor-pointer mt-4") %>
+  <%= render Buttons::Component.new(
+    text: "Potwierdź rezerwację",
+    type: "submit",
+    variant: :primary,
+    full_width: true,
+    classes: "hover:cursor-pointer mt-4")
+  %>
 <% end %>
 <% end %>
