@@ -5,7 +5,7 @@ import "dayjs/locale/pl";
 dayjs.locale("pl");
 
 export default class extends Controller {
-    static targets = ["calendarDate", "calendarMonth", "heading", "hoursPanel", "availableCount", "slotForm", "dateField", "timeField"]
+    static targets = ["calendarDate", "calendarMonth", "heading", "hoursPanel", "availableCount", "slotForm", "dateField", "timeField", "bookingFrame"]
     static values = {
         availableDates: Array,
         noSlotsLabel: String
@@ -18,6 +18,7 @@ export default class extends Controller {
         this.selectedTime = null
         this.showHoursFor(this.selectedDate)
         this.updateHeading()
+        this.pristineFormHTML = this.bookingFrameTarget.innerHTML
     }
     // All dates are expected in ISO-8601 format (YYYY-MM-DD).
     setCalendarDefaults(){
@@ -37,13 +38,23 @@ export default class extends Controller {
     dateChanged(event) {
         this.selectedDate = event.target.value
         this.selectedTime = null
+        this.clearSelectedTimeButton()
         this.showHoursFor(this.selectedDate)
         this.updateHeading()
+        this.slotFormTarget.hidden = true
     }
 
     timeSelected(event) {
+        this.clearSelectedTimeButton()
+        event.currentTarget.setAttribute("aria-pressed", "true")
         this.selectedTime = event.currentTarget.dataset.hour
         this.showForm()
+    }
+
+    clearSelectedTimeButton() {
+        this.element.querySelectorAll('[aria-pressed="true"]').forEach((button) => {
+            button.removeAttribute("aria-pressed")
+        })
     }
 
     showHoursFor(date) {
@@ -69,8 +80,13 @@ export default class extends Controller {
         }
     }
     showForm(){
+        this.resetForm()
         this.dateFieldTarget.value = this.selectedDate
         this.timeFieldTarget.value = this.selectedTime
         this.slotFormTarget.hidden = false
+    }
+
+    resetForm() {
+        this.bookingFrameTarget.innerHTML = this.pristineFormHTML
     }
 }

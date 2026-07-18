@@ -331,6 +331,21 @@ input[list].replace-default-datalist-arrow {
 }
 
 /* custom styles go under, above are railsblocks defaults and design system */
+
+/* dark select to match .form-control (railsblocks' select:not([multiple]) above is light-themed) */
+select.form-control:not([multiple]) {
+  @apply bg-ink-soft text-cream ring-border-input focus:ring-accent;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239b948a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  padding-right: 2.5rem;
+}
+
+select.form-control:not([multiple]) option {
+  @apply bg-ink-soft text-cream;
+}
 calendar-date{
 
   &::part(button) {
@@ -397,5 +412,11 @@ calendar-month::part(disallowed):hover:not(:disabled) {
    background instead of the lighter hover tint */
 calendar-month::part(selected):hover:not(:disabled) {
   background-color: var(--color-accent);
+}
+
+/* hour-slot buttons (bookings/index) use aria-pressed as their "selected" state,
+   set by cally_controller#timeSelected — mirrors the calendar's selected-day styling */
+[data-cally-target="hoursPanel"] [aria-pressed="true"] {
+  @apply bg-accent text-ink;
 }
 

@@ -1,12 +1,35 @@
+<%= turbo_frame_tag "booking_form", data: { cally_target: "bookingFrame" } do %>
 <%= form_with model: booking, url: bookings_path do |f| %>
-  <%= hidden_field_tag "booking[date]", "", data: { cally_target: "dateField" } %>
-  <%= hidden_field_tag "booking[hour]", "", data: { cally_target: "timeField" } %>
 
-  <%= render Forms::Component.new(label: "Imię i nazwisko", name: "booking[name]", required: true) do |c| %>
+    <%= hidden_field_tag "booking[date]", local_assigns[:submitted_date], data: { cally_target: "dateField" } %>
+    <%= hidden_field_tag "booking[hour]", local_assigns[:submitted_hour], data: { cally_target: "timeField" } %>
+
+  <h2 class="font-display text-t4 mb-4">Twoje dane</h2>
+
+<div class="space-y-4">
+  <%= render Forms::Component.new(label: "Imię i nazwisko", name: "booking[name]", required: true, error: booking.errors[:name].first) do |c| %>
     <% c.with_input do %>
       <%= f.text_field :name, class: "form-control", placeholder: "Jan Kowalski" %>
     <% end %>
   <% end %>
 
+  <%= render Forms::Component.new(label: "Email", name: "booking[email]", required: true, error: booking.errors[:email].first) do |c| %>
+    <% c.with_input do %>
+      <%= f.text_field :email, class: "form-control", placeholder: "email@example.com" %>
+    <% end %>
+  <% end %>
+
+  <%= render Forms::Component.new(label: "Wybierz pakiet", name: "booking[package]", required: true, error: booking.errors[:package].first) do |c| %>
+    <% c.with_input do %>
+      <%= collection_select(:booking, :package_id, Package.all, :id, :name, { prompt: true }, { class: "form-control" }) %>
+    <% end %>
+  <% end %>
+</div>
+
+  <% if booking.errors[:starts_at].present? %>
+    <p class="text-red-400 text-xs mt-1">Wybierz ponownie termin w kalendarzu.</p>
+  <% end %>
+
   <%= render Buttons::Component.new(text: "Umów termin", type: "submit", variant: :primary, classes: "hover:cursor-pointer mt-4") %>
+<% end %>
 <% end %>

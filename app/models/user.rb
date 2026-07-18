@@ -33,6 +33,10 @@ class User < ApplicationRecord
     [ first_name, last_name ].map { |n| n&.first&.upcase }.compact.join
   end
 
+  def full_name
+    [ first_name, last_name ].compact.join(" ").presence
+  end
+
   def self.from_omniauth(access_token)
     data = access_token.info
     user = User.where(email: data["email"]).first

@@ -4,7 +4,7 @@
   <span class="text-tan text-t5">Wybierz dogodny termin w kalendarzu, a potem uzupełnij krótki formularz zgłoszeniowy</span>
 </div>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full" data-controller="cally" data-cally-available-dates-value="<%= @available_dates %>" data-cally-no-slots-label-value="<%= t("bookings.available_slots", count: 0) %>">
-    <%= render Card::Component.new do %>
+    <%= render Card::Component.new(classes: "self-start") do %>
       <calendar-date data-cally-target="calendarDate" data-action="change->cally#dateChanged" class="w-full" format-weekday="short">
         <svg
           aria-label="Previous"

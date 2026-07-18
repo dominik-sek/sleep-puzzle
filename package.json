@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
+    "@hotwired/turbo-rails": "^8.0.23",
     "cally": "^0.9.2",
     "dayjs": "^1.11.21",
     "lucide": "^1.23.0",
