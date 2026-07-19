@@ -65,10 +65,12 @@ class BookingsController < ApplicationController
       starts_at: combined_starts_at,
       email: booking_params[:email],
       package_id: booking_params[:package_id],
+      status: :pending,
     )
 
     if @booking.save
-      # here we will pass the booking to calendar
+      # redirect to payment
+      # on payment success (webhook/callback): @booking.confirmed! then show it on the calendar
       redirect_to bookings_path, notice: "Dziękujemy! Termin został zarezerwowany."
     else
       render partial: "form",

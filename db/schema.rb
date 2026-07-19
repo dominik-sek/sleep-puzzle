@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_17_165421) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_18_144111) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,6 +23,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_17_165421) do
     t.integer "status"
     t.datetime "updated_at", null: false
     t.index ["package_id"], name: "index_bookings_on_package_id"
+  end
+
+  create_table "integrations", force: :cascade do |t|
+    t.text "access_token"
+    t.datetime "created_at", null: false
+    t.datetime "expires_at"
+    t.text "refresh_token"
+    t.string "service_name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_name"], name: "index_integrations_on_service_name", unique: true
   end
 
   create_table "packages", force: :cascade do |t|

@@ -17,4 +17,11 @@ Rails.application.routes.draw do
   resources :dashboard, only: [ :index ]
   resources :bookings, only: [ :index, :show, :create ]
   resources :products, only: [ :index, :show ]
+
+  namespace :integrations do
+    resource :google_calendar, only: [ :show, :destroy ], controller: "google_calendar" do
+      get :connect, on: :collection
+      get :callback, on: :collection
+    end
+  end
 end

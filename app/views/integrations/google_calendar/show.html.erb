@@ -1,0 +1,20 @@
+<%= render Container::Component.new do %>
+  <div class="space-y-5">
+    <h2 class="text-t3">Kalendarz Google</h2>
+
+    <% if @integration.present? %>
+      <span class="text-t5 text-tan">Połączono</span>
+
+      <div>
+        <%= button_to "Odłącz kalendarz", integrations_google_calendar_path, method: :delete,
+              class: Buttons::Component.new(variant: :destructive, size: :sm).button_classes %>
+      </div>
+    <% else %>
+      <span class="text-t5 text-tan">Nie połączono</span>
+
+      <div>
+        <%= render Buttons::Component.new(text: "Połącz kalendarz Google", href: connect_integrations_google_calendar_path) %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

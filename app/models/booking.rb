@@ -22,6 +22,8 @@
 class Booking < ApplicationRecord
   belongs_to :package
 
+  enum :status, { pending: 0, confirmed: 1 }
+
   validates :name, presence: true
   validates :starts_at, presence: true
   validates :email, presence: true

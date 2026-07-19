@@ -46,6 +46,9 @@ gem "omniauth-rails_csrf_protection"
 
 
 group :development, :test do
+  # Loads .env into ENV for any boot path (console, runner, server), not just `bin/dev`/foreman
+  gem "dotenv-rails"
+
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
@@ -87,3 +90,7 @@ gem "devise", "~> 5.0"
 gem "view_component"
 
 gem "turbo-rails", "~> 2.0"
+
+gem "google-apis-calendar_v3", "~> 0.56.0"
+
+gem "googleauth", "~> 1.17"
