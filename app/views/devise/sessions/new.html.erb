@@ -1,50 +1,50 @@
-<div class="min-h-screen w-full flex items-center justify-center">
+<%= render Container::Component.new(classes:"flex justify-center items-center") do %>
 
-  <%= render Card::Component.new(classes: "w-128 border-border-strong!") do |card| %>
-<div class="w-full flex flex-col items-center">
-  <h2 class="text-t2 font-display"> Zaloguj się</h2>
+  <%= render Card::Component.new(classes: "w-full max-w-128 border-border-strong!") do |card| %>
+<div class="w-full flex flex-col items-center gap-2">
+  <h2 class="text-t2 font-display mb-4"> Zaloguj się</h2>
 
-  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "w-3/5"}) do |f| %>
 
-    <%= render Forms::Component.new(
-      label: "Email",
-      name: "user[email]",
-      helper_text: "We'll never share your email with anyone else."
+<div class="flex flex-col gap-4 w-full">
+  <%= render Forms::Component.new(
+    label: "Email",
+    name: "user[email]",
     ) do |c| %>
-      <% c.with_input do %>
-        <input type="email" name="user[email]" id="user_email" class="form-control" placeholder="you@example.com">
-      <% end %>
+    <% c.with_input do %>
+      <input type="email" name="user[email]" id="user_email" class="form-control" placeholder="you@example.com">
     <% end %>
+  <% end %>
 
 
-    <%= render Forms::Component.new(
-      label: "Password",
-      name: "user[password]",
-      required: true,
-      helper_text: "Must be at least 8 characters long."
+  <%= render Forms::Component.new(
+    label: "Hasło",
+    name: "user[password]",
+    required: true,
     ) do |c| %>
-      <% c.with_input do %>
-        <input type="password" name="user[password]" id="user_password" class="form-control" placeholder="Enter password...">
-      <% end %>
+    <% c.with_input do %>
+      <input type="password" name="user[password]" id="user_password" class="form-control" placeholder="Enter password...">
     <% end %>
+  <% end %>
 
 
-    <div class="actions">
-      <%= render Buttons::Component.new(
-        text: "Zaloguj się",
-        pill: true,
-        full_width: true,
-        variant: :primary,
-        type: :submit,
-        classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
-      ) %>
+  <div class="actions">
+    <%= render Buttons::Component.new(
+      text: "Zaloguj się",
+      pill: true,
+      full_width: true,
+      variant: :primary,
+      type: :submit,
+      classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+    ) %>
 
-    </div>
+  </div>
+</div>
   <% end %>
 
   <%= render "devise/shared/links" %>
 
 </div>
   <% end %>
+  <% end %>
 
-</div>
