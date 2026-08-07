@@ -1,0 +1,76 @@
+<div id="availability" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full" data-controller="cally" data-cally-available-dates-value="<%= available_dates %>" data-cally-no-slots-label-value="<%= t("bookings.available_slots", count: 0) %>">
+  <%= render Card::Component.new(classes: "self-start") do %>
+    <calendar-date data-cally-target="calendarDate" data-action="change->cally#dateChanged focusday->cally#monthChanged" class="w-full" format-weekday="short">
+      <%# cally renders the year between the arrows and the month above the grid; we collapse
+          both into a single "Miesiąc Rok" label filled in by cally_controller %>
+      <div slot="heading" data-cally-target="monthHeading"></div>
+      <svg
+        aria-label="Previous"
+        slot="previous"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m15 18-6-6 6-6"></path>
+      </svg>
+      <svg
+        aria-label="Next"
+        slot="next"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m9 18 6-6-6-6"></path>
+      </svg>
+      <calendar-month data-cally-target="calendarMonth" class="w-full"></calendar-month>
+    </calendar-date>
+  <% end %>
+
+  <%= render Card::Component.new(classes: "h-fit") do %>
+    <div class="flex flex-col gap-5">
+      <div>
+        <%# starts hidden — cally_controller reveals it once a day is picked %>
+        <div data-cally-target="hoursHeader" hidden class="flex justify-between">
+          <h2 class="font-display text-t4 pb-4">Dostępne godziny - <span data-cally-target="heading"></span></h2>
+          <span data-cally-target="availableCount"></span>
+        </div>
+
+        <p data-cally-target="emptyState" class="text-t5 text-taupe">
+          Wybierz dzień w kalendarzu, aby zobaczyć dostępne godziny.
+        </p>
+
+        <% availability[:dates].each do |date| %>
+          <% available_count = date[:hours].count { |hour| hour[:available] } %>
+          <div data-cally-target="hoursPanel" data-date="<%= date[:date] %>" data-available-label="<%= t("bookings.available_slots", count: available_count) %>" hidden class="grid grid-cols-3 gap-4">
+            <% date[:hours].each do |hour| %>
+              <%= render Buttons::Component.new(
+                text: hour[:hour],
+                disabled: !hour[:available],
+                variant: :secondary,
+                classes: "text-t5! hover:cursor-pointer disabled:text-border-input",
+                data: { action: "click->cally#timeSelected", hour: hour[:hour] }
+              ) %>
+
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <div data-cally-target="slotForm" hidden>
+        <hr class="border-border my-4"/>
+        <%= render "form", booking: booking %>
+      </div>
+    </div>
+  <% end %>
+</div>

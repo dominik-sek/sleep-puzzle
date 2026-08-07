@@ -1,0 +1,17 @@
+<%
+  toast_types = {
+    "notice" => "success",
+    "success" => "success",
+    "alert" => "error",
+    "error" => "error",
+    "warning" => "warning"
+  }
+
+  toasts = flash.filter_map do |type, message|
+    next if message.blank?
+
+    { type: toast_types.fetch(type.to_s, "info"), title: message.to_s }
+  end
+%>
+
+<div id="flash" class="hidden" data-controller="flash" data-flash-messages-value="<%= toasts.to_json %>"></div>

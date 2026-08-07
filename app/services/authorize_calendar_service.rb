@@ -1,7 +1,12 @@
 class AuthorizeCalendarService < ApplicationService
-  SCOPE = Google::Apis::CalendarV3::AUTH_CALENDAR_EVENTS
+  SCOPE = [
+    Google::Apis::CalendarV3::AUTH_CALENDAR_EVENTS,
+    Google::Apis::CalendarV3::AUTH_CALENDAR_FREEBUSY,
+    Google::Apis::CalendarV3::AUTH_CALENDAR_CALENDARLIST,
+    Google::Apis::CalendarV3::AUTH_CALENDAR
+  ].freeze
 
-  def initialize(callback_uri:)
+  def initialize(callback_uri: nil)
     @callback_uri = callback_uri
   end
 

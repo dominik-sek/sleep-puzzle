@@ -354,6 +354,10 @@ calendar-date{
   &::part(months) {
       @apply text-t5
   }
+  /* filled in by cally_controller with "MonthName Year" */
+  &::part(heading) {
+      @apply text-t5 font-display text-cream
+  }
 
 }
 
@@ -370,8 +374,9 @@ calendar-month{
   --color-accent: #e2933e;
   --color-text-on-accent: var(--color-cream);
 
+  /* the month name lives in calendar-date's heading slot (next to the arrows) instead */
   &::part(heading){
-    /*@apply sr-only*/
+    @apply hidden
   }
   &::part(table){
     @apply table-fixed w-full border-separate border-spacing-1
@@ -392,6 +397,15 @@ calendar-month{
     @apply text-ink bg-accent
   }
 }
+/* paging to another month re-renders every cell in place, so the button
+   transition above replays across the whole grid — the incoming days hold the
+   previous month's available background and visibly fade into disallowed.
+   cally_controller sets data-paging for the frame that re-render lands in;
+   the attribute also outranks the plain ::part(button) rule. */
+calendar-month[data-paging]::part(button) {
+  transition: none;
+}
+
 /* written flat for the same reason as calendar-date::part(button):hover above */
 calendar-month::part(button):hover:not(:disabled) {
   background-color: color-mix(in oklab, var(--color-accent) 20%, transparent);

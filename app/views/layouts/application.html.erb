@@ -31,6 +31,17 @@
   <body class="relative min-h-screen flex flex-col">
   <%= render "shared/navbar" %>
 
+  <%= render Toast::Component.new(
+    position: "top-right",
+    layout: "default",
+    auto_dismiss_duration: 5000,
+    limit: 4,
+    gap: 16,
+  ) %>
+
+  <%= render "shared/flash" %>
+
+
     <main class="flex-1 flex flex-col">
       <%= yield %>
     </main>

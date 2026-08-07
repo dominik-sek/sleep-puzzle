@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "flash" do %>
+  <%= render "shared/flash" %>
+<% end %>
+
+<%= turbo_stream.replace "availability" do %>
+  <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking %>
+<% end %>
