@@ -96,3 +96,9 @@ gem "google-apis-calendar_v3", "~> 0.56.0"
 gem "googleauth", "~> 1.17"
 
 gem "rails_semantic_logger"
+
+gem "pay", "~> 11.5"
+
+gem "paddle", "~> 2.9"
+
+
