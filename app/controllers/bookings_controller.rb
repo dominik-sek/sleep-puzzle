@@ -1,6 +1,7 @@
 class BookingsController < ApplicationController
   require 'google/apis/calendar_v3'
 
+  before_action :load_package_options, only: [ :index, :create ]
 
   def index
     load_availability
@@ -34,12 +35,18 @@ class BookingsController < ApplicationController
       end
     else
       render partial: "form",
-             locals: { booking: @booking, submitted_date: booking_params[:date], submitted_hour: booking_params[:hour] },
+             locals: { booking: @booking, package_options: @package_options, submitted_date: booking_params[:date], submitted_hour: booking_params[:hour] },
              status: :unprocessable_entity
     end
   end
 
   private
+
+  def load_package_options
+    @package_options = Package.order(:name).map do |package|
+      [ package.name, package.id, { data: { price_id: package.paddle_price_id } } ]
+    end
+  end
 
   def load_availability
     busy_periods = GoogleCalendarService.call.busy

@@ -4,13 +4,14 @@ require 'rails_helper'
 #
 # Table name: products
 #
-#  id          :bigint           not null, primary key
-#  category    :integer
-#  description :text
-#  kind        :integer
-#  name        :string
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id              :bigint           not null, primary key
+#  category        :integer
+#  description     :text
+#  kind            :integer
+#  name            :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  paddle_price_id :string
 #
 RSpec.describe Product, type: :model do
   pending "add some examples to (or delete) #{__FILE__}"

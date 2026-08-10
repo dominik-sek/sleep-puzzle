@@ -3,5 +3,5 @@
 <% end %>
 
 <%= turbo_stream.replace "availability" do %>
-  <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking %>
+  <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking, package_options: @package_options %>
 <% end %>

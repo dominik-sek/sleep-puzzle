@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "booking_form", data: { cally_target: "bookingFrame" } do %>
-<%= form_with model: booking, url: bookings_path do |f| %>
+<%= form_with model: booking, url: bookings_path, data: { controller: "paddle" } do |f| %>
 
     <%= hidden_field_tag "booking[date]", local_assigns[:submitted_date], data: { cally_target: "dateField" } %>
     <%= hidden_field_tag "booking[hour]", local_assigns[:submitted_hour], data: { cally_target: "timeField" } %>
@@ -15,13 +15,13 @@
 
   <%= render Forms::Component.new(label: "Email", name: "booking[email]", required: true, error: booking.errors[:email].first) do |c| %>
     <% c.with_input do %>
-      <%= f.text_field :email, class: "form-control", placeholder: "email@example.com" %>
+      <%= f.text_field :email, class: "form-control", placeholder: "email@example.com", data: { paddle_target: "email" } %>
     <% end %>
   <% end %>
 
   <%= render Forms::Component.new(label: "Wybierz pakiet", name: "booking[package]", required: true, error: booking.errors[:package].first) do |c| %>
     <% c.with_input do %>
-      <%= collection_select(:booking, :package_id, Package.all, :id, :name, { prompt: true }, { class: "form-control" }) %>
+      <%= f.select :package_id, package_options, { prompt: true }, { class: "form-control", data: { paddle_target: "package" } } %>
     <% end %>
   <% end %>
 </div>
@@ -30,12 +30,15 @@
     <p class="text-red-400 text-xs mt-1">Wybierz ponownie termin w kalendarzu.</p>
   <% end %>
 
-  <%= render Buttons::Component.new(
-    text: "Potwierdź rezerwację",
-    type: "submit",
-    variant: :primary,
-    full_width: true,
-    classes: "hover:cursor-pointer mt-4")
-  %>
+
+    <%= render Buttons::Component.new(
+      text: "Zapłać i potwierdź rezerwację",
+      type: "button",
+      data: { action: "click->paddle#open" },
+      variant: :primary,
+      full_width: true,
+      classes: "hover:cursor-pointer mt-4")
+    %>
+
 <% end %>
 <% end %>

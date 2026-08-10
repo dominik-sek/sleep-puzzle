@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <script type="text/javascript">
+        Paddle.Environment.set("sandbox");
+        Paddle.Initialize({
+            token: "<%= Pay::PaddleBilling.client_token %>"
+        });
+    </script>
+
     <title><%= content_for(:title) || "Sleep Puzzle" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
