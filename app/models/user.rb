@@ -42,6 +42,13 @@ class User < ApplicationRecord
     [ first_name, last_name ].compact.join(" ").presence
   end
 
+  # Pay reads this when building the Paddle customer. Only Google sign-ups carry a
+  # first/last name, so without the fallback a Devise registration sends name: ""
+  # and Paddle rejects the customer.
+  def pay_customer_name
+    full_name || email
+  end
+
   def self.from_omniauth(access_token)
     data = access_token.info
     user = User.where(email: data["email"]).first

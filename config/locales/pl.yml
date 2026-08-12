@@ -11,6 +11,28 @@ pl:
               invalid: "Podaj prawidłowy adres email"
             package:
               required: "Wybierz pakiet"
+  booking_mailer:
+    details:
+      package: "Pakiet"
+      starts_at: "Termin"
+      status: "Status płatności"
+      name: "Imię i nazwisko"
+      email: "Email"
+    confirmed:
+      subject: "Rezerwacja potwierdzona"
+      heading: "Rezerwacja potwierdzona"
+      intro: "Dziękujemy! Płatność została zaksięgowana, a Twój termin jest zarezerwowany."
+      cta: "Zobacz szczegóły rezerwacji"
+      outro: "Gdyby coś się zmieniło, po prostu odpisz na tę wiadomość."
+    new_booking:
+      subject: "Nowa opłacona rezerwacja: %{name}"
+      heading: "Nowa opłacona rezerwacja"
+      intro: "Konsultacja została opłacona i dodana do kalendarza."
+    payment_failed:
+      subject: "Płatność nie powiodła się"
+      heading: "Płatność nie powiodła się"
+      intro: "Nie udało się zaksięgować płatności, więc zwolniliśmy zarezerwowany termin. Możesz spróbować ponownie."
+      cta: "Wybierz nowy termin"
   bookings:
     available_slots:
       one: "%{count} termin dostępny"

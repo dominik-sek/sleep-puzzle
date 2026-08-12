@@ -17,6 +17,7 @@ class BookingPaymentFailureService < PaddleTransactionService
 
     booking.fail_payment!(@status)
     BookingCalendarService.call(booking: booking).release
+    BookingMailer.with(booking: booking).payment_failed.deliver_later
     Rails.logger.info("Released booking #{booking.id} as #{@status} from Paddle transaction #{transaction_id}")
 
     booking

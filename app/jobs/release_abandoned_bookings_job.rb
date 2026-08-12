@@ -14,6 +14,9 @@ class ReleaseAbandonedBookingsJob < ApplicationJob
       booking.fail_payment!(:canceled)
       BookingCalendarService.call(booking: booking).release
       Rails.logger.info("Released abandoned booking #{booking.id}")
+    rescue => e
+      # one unreleasable booking must not strand every later one in the batch
+      Rails.logger.error("Failed to release abandoned booking #{booking.id}: #{e.message}")
     end
   end
 end

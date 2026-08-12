@@ -38,7 +38,15 @@ class BookingCalendarService < ApplicationService
   def release
     return if @booking.calendar_event_id.blank?
 
-    calendar.delete_event(event_id: @booking.calendar_event_id)
+    begin
+      calendar.delete_event(event_id: @booking.calendar_event_id)
+    rescue Google::Apis::ClientError => e
+      # An event that is already gone is the state we wanted, not a failure. Without
+      # this the retry raises, the id is never cleared, and the booking is stuck
+      # holding a dead event id forever.
+      raise unless e.message.match?(/notFound|deleted/i)
+    end
+
     @booking.update!(calendar_event_id: nil)
   rescue Google::Apis::Error => e
     log(e, "delete")

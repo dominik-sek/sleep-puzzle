@@ -13,9 +13,11 @@
     <% end %>
   <% end %>
 
-  <%= render Forms::Component.new(label: "Email", name: "booking[email]", required: true, error: booking.errors[:email].first) do |c| %>
+  <%# locked to the account email: bookings require sign-in, and the server ignores
+      whatever is posted here in favour of current_user.email %>
+  <%= render Forms::Component.new(label: "Email", name: "booking[email]", required: true, helper_text: "Adres e-mail z Twojego konta", error: booking.errors[:email].first) do |c| %>
     <% c.with_input do %>
-      <%= f.text_field :email, class: "form-control", placeholder: "email@example.com" %>
+      <%= f.email_field :email, class: "form-control", readonly: true %>
     <% end %>
   <% end %>
 

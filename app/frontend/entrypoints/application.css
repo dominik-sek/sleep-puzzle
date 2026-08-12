@@ -172,6 +172,11 @@ div.form-control {
   @apply cursor-not-allowed bg-surface-dark;
 }
 
+/* value comes from the account and can't be edited, but stays selectable */
+.form-control[readonly] {
+  @apply cursor-default bg-surface-dark text-tan focus:ring-1 focus:ring-border-input;
+}
+
 .form-control.error {
   @apply border-red-400 ring-red-400;
 }

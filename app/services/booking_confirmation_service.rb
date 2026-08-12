@@ -8,6 +8,10 @@ class BookingConfirmationService < PaddleTransactionService
 
     if booking.confirm_payment!(transaction_id)
       BookingCalendarService.call(booking: booking).sync_status
+      # deliver_later so a mail outage can retry on its own without failing the
+      # webhook job and re-running everything above it
+      BookingMailer.with(booking: booking).confirmed.deliver_later
+      BookingMailer.with(booking: booking).new_booking.deliver_later
       Rails.logger.info("Confirmed booking #{booking.id} from Paddle transaction #{transaction_id}")
     end
 

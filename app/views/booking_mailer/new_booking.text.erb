@@ -1,0 +1,10 @@
+<%= t("booking_mailer.new_booking.heading") %>
+
+<%= t("booking_mailer.new_booking.intro") %>
+
+<%= render "details", rows: {
+      t("booking_mailer.details.name") => @booking.name,
+      t("booking_mailer.details.email") => @booking.email,
+      t("booking_mailer.details.package") => @booking.package.name,
+      t("booking_mailer.details.starts_at") => l(@booking.starts_at, format: :long)
+    } -%>

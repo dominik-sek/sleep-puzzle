@@ -1,0 +1,28 @@
+<h1 style="margin:0 0 12px; font-size:22px; line-height:30px; color:#211e1c;">
+  <%= t("booking_mailer.confirmed.heading") %>
+</h1>
+
+<p style="margin:0; font-size:15px; line-height:24px; color:#57514a;">
+  <%= t("booking_mailer.confirmed.intro") %>
+</p>
+
+<%= render "details", rows: {
+      t("booking_mailer.details.package") => @booking.package.name,
+      t("booking_mailer.details.starts_at") => l(@booking.starts_at, format: :long),
+      t("booking_mailer.details.status") => Booking::PAYMENT_STATUS_LABELS.fetch(@booking.status)
+    } %>
+
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 20px;">
+  <tr>
+    <td style="background-color:#e2933e; border-radius:8px;">
+      <a href="<%= booking_url(@booking) %>"
+         style="display:inline-block; padding:12px 22px; font-size:15px; color:#211e1c; text-decoration:none;">
+        <%= t("booking_mailer.confirmed.cta") %>
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0; font-size:14px; line-height:22px; color:#8a8279;">
+  <%= t("booking_mailer.confirmed.outro") %>
+</p>

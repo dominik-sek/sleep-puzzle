@@ -74,6 +74,9 @@ group :development do
 
   # Auto-annotate models with schema info [https://github.com/drwl/annotaterb]
   gem "annotaterb"
+
+  # Opens outgoing mail in the browser instead of trying to deliver it
+  gem "letter_opener"
 end
 
 group :test do

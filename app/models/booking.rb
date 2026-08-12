@@ -48,7 +48,10 @@ class Booking < ApplicationRecord
   validates :name, presence: true
   validates :starts_at, presence: true
   validates :email, presence: true
-  validates :email, format: { with: Devise.email_regexp }
+  # only when it's actually being set. A booking whose stored address predates a
+  # stricter regexp must still be able to change status — otherwise confirming a
+  # real payment, or releasing the slot, raises on an unrelated legacy value.
+  validates :email, format: { with: Devise.email_regexp }, if: :email_changed?
 
   def to_param
     token

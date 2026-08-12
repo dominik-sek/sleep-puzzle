@@ -24,7 +24,9 @@ class BookingsController < ApplicationController
       user: current_user,
       name: booking_params[:name],
       starts_at: combined_starts_at,
-      email: booking_params[:email],
+      # taken from the account, never from the form: the field is only readonly
+      # client-side and a posted value can't be trusted
+      email: current_user.email,
       package_id: booking_params[:package_id],
       status: :pending,
     )
@@ -101,7 +103,7 @@ class BookingsController < ApplicationController
   end
 
   def booking_params
-    params.require(:booking).permit(:name, :date, :hour, :email, :package_id)
+    params.require(:booking).permit(:name, :date, :hour, :package_id)
   end
 
   # rebuild the full per-date slot list (available + unavailable) from the weekly
