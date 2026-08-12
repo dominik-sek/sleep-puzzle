@@ -1,0 +1,43 @@
+<div id="booking_status" class="w-full max-w-xl flex flex-col gap-6 text-center">
+  <% if booking.confirmed? %>
+    <h1 class="text-t2 text-cream font-display">Rezerwacja potwierdzona</h1>
+    <span class="text-tan text-t5">
+      Dziękujemy! Płatność została zaksięgowana, a Twój termin jest zarezerwowany.
+    </span>
+  <% elsif booking.payment_failed? || booking.canceled? %>
+    <h1 class="text-t2 text-cream font-display">Płatność nie powiodła się</h1>
+    <span class="text-tan text-t5">
+      Termin został zwolniony. Możesz spróbować zarezerwować go ponownie.
+    </span>
+  <% else %>
+    <h1 class="text-t2 text-cream font-display">Przetwarzamy płatność</h1>
+    <span class="text-tan text-t5">
+      To potrwa tylko chwilę — ta strona zaktualizuje się automatycznie.
+    </span>
+  <% end %>
+
+  <%= render Card::Component.new(variant: :well, padding: :lg) do |card| %>
+    <% card.with_body do %>
+      <dl class="flex flex-col gap-3 text-left">
+        <div class="flex justify-between gap-4">
+          <dt class="text-tan text-t5">Pakiet</dt>
+          <dd class="text-cream text-t5"><%= booking.package.name %></dd>
+        </div>
+        <div class="flex justify-between gap-4">
+          <dt class="text-tan text-t5">Termin</dt>
+          <dd class="text-cream text-t5"><%= l booking.starts_at, format: :long, default: booking.starts_at.to_fs(:short) %></dd>
+        </div>
+        <div class="flex justify-between gap-4">
+          <dt class="text-tan text-t5">Status płatności</dt>
+          <dd class="text-cream text-t5"><%= Booking::PAYMENT_STATUS_LABELS.fetch(booking.status) %></dd>
+        </div>
+      </dl>
+    <% end %>
+  <% end %>
+
+  <%= render Buttons::Component.new(
+    text: booking.confirmed? ? "Wróć do panelu" : "Wybierz inny termin",
+    href: booking.confirmed? ? dashboard_index_path : bookings_path,
+    variant: booking.confirmed? ? :primary : :secondary
+  ) %>
+</div>
