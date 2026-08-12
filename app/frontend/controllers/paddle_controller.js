@@ -13,7 +13,16 @@ export default class extends Controller {
         quantity: { type: Number, default: 1 }
     };
 
+    // the layout re-emits Paddle.js' single global callback as `paddle:event`
+    #onPaddleEvent = (event) => {
+        // payment is through and Paddle is about to send the buyer to successUrl —
+        // tell the calendar to shut itself down until that navigation lands
+        if (event.detail?.name === "checkout.completed") this.dispatch("completed", { target: window });
+    };
+
     connect() {
+        window.addEventListener("paddle:event", this.#onPaddleEvent);
+
         // ad blockers and privacy extensions routinely block cdn.paddle.com, which
         // used to fail silently: the booking saved, the toast said "reserved", and
         // no checkout ever appeared
@@ -36,6 +45,10 @@ export default class extends Controller {
             console.error("[paddle] Checkout.open failed", error);
             this.#reportFailure("Spróbuj ponownie za chwilę lub wybierz inny termin.");
         }
+    }
+
+    disconnect() {
+        window.removeEventListener("paddle:event", this.#onPaddleEvent);
     }
 
     #reportFailure(description) {

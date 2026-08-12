@@ -5,7 +5,7 @@ import "dayjs/locale/pl";
 dayjs.locale("pl");
 
 export default class extends Controller {
-    static targets = ["calendarDate", "calendarMonth", "heading", "monthHeading", "hoursHeader", "emptyState", "hoursPanel", "availableCount", "slotForm", "dateField", "timeField", "bookingFrame"]
+    static targets = ["calendarDate", "calendarMonth", "heading", "monthHeading", "hoursHeader", "emptyState", "hoursPanel", "availableCount", "slotForm", "dateField", "timeField", "bookingFrame", "overlay"]
     static values = {
         availableDates: Array,
         noSlotsLabel: String
@@ -127,5 +127,19 @@ export default class extends Controller {
 
     resetForm() {
         this.bookingFrameTarget.innerHTML = this.pristineFormHTML
+    }
+
+    // paddle_controller fires paddle:completed once the charge goes through; the browser
+    // is then on its way to the confirmation page, and anything clicked in between would
+    // start a second booking the buyer never asked for
+    lock() {
+        this.overlayTarget.hidden = false
+        this.element.setAttribute("aria-busy", "true")
+    }
+
+    // bfcache can restore this page with the overlay still up when the buyer hits back
+    unlock() {
+        this.overlayTarget.hidden = true
+        this.element.removeAttribute("aria-busy")
     }
 }

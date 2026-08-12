@@ -5,7 +5,12 @@
     <script type="text/javascript">
         Paddle.Environment.set("sandbox");
         Paddle.Initialize({
-            token: "<%= Pay::PaddleBilling.client_token %>"
+            token: "<%= Pay::PaddleBilling.client_token %>",
+            // Paddle.js only takes one global callback, so it is re-emitted as a DOM
+            // event and paddle_controller decides what to do with it
+            eventCallback: function (event) {
+                window.dispatchEvent(new CustomEvent("paddle:event", { detail: event }));
+            }
         });
     </script>
 

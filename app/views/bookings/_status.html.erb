@@ -18,26 +18,42 @@
 
   <%= render Card::Component.new(variant: :well, padding: :lg) do |card| %>
     <% card.with_body do %>
-      <dl class="flex flex-col gap-3 text-left">
-        <div class="flex justify-between gap-4">
-          <dt class="text-tan text-t5">Pakiet</dt>
-          <dd class="text-cream text-t5"><%= booking.package.name %></dd>
+      <% if booking.pending? %>
+        <%# the webhook decides what actually goes in this card, so until it lands the
+            card holds the spinner rather than a half-true summary %>
+        <div class="flex items-center justify-center py-6" role="status" aria-live="polite">
+          <%= render LoadingIndicator::Component.new(
+            type: :spinner,
+            size: :xl,
+            color: :accent,
+            text: "Czekamy na potwierdzenie od operatora płatności…",
+            classes: "flex-col text-center"
+          ) %>
         </div>
-        <div class="flex justify-between gap-4">
-          <dt class="text-tan text-t5">Termin</dt>
-          <dd class="text-cream text-t5"><%= l booking.starts_at, format: :long, default: booking.starts_at.to_fs(:short) %></dd>
-        </div>
-        <div class="flex justify-between gap-4">
-          <dt class="text-tan text-t5">Status płatności</dt>
-          <dd class="text-cream text-t5"><%= Booking::PAYMENT_STATUS_LABELS.fetch(booking.status) %></dd>
-        </div>
-      </dl>
+      <% else %>
+        <dl class="flex flex-col gap-3 text-left">
+          <div class="flex justify-between gap-4">
+            <dt class="text-tan text-t5">Pakiet</dt>
+            <dd class="text-cream text-t5"><%= booking.package.name %></dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-tan text-t5">Termin</dt>
+            <dd class="text-cream text-t5"><%= l booking.starts_at, format: :long, default: booking.starts_at.to_fs(:short) %></dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-tan text-t5">Status płatności</dt>
+            <dd class="text-cream text-t5"><%= Booking::PAYMENT_STATUS_LABELS.fetch(booking.status) %></dd>
+          </div>
+        </dl>
+      <% end %>
     <% end %>
   <% end %>
 
-  <%= render Buttons::Component.new(
-    text: booking.confirmed? ? "Wróć do panelu" : "Wybierz inny termin",
-    href: booking.confirmed? ? dashboard_index_path : bookings_path,
-    variant: booking.confirmed? ? :primary : :secondary
-  ) %>
+  <% if booking.confirmed? %>
+    <%= render Buttons::Component.new(
+      text: "Wróć do panelu",
+      href: dashboard_index_path,
+      variant: :primary
+    ) %>
+  <% end %>
 </div>
