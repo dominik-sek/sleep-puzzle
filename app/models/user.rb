@@ -25,6 +25,8 @@ class User < ApplicationRecord
 
   pay_customer default_payment_processor: :paddle_billing
 
+  has_many :bookings, dependent: :restrict_with_error
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,

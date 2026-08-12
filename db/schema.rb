@@ -10,19 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_10_093526) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_12_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "bookings", force: :cascade do |t|
+    t.string "calendar_event_id"
+    t.datetime "confirmed_at"
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "name"
     t.integer "package_id", null: false
+    t.string "paddle_transaction_id"
     t.datetime "starts_at"
-    t.integer "status"
+    t.integer "status", default: 0, null: false
+    t.string "token", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["package_id"], name: "index_bookings_on_package_id"
+    t.index ["paddle_transaction_id"], name: "index_bookings_on_paddle_transaction_id", unique: true
+    t.index ["starts_at", "status"], name: "index_bookings_on_starts_at_and_status"
+    t.index ["token"], name: "index_bookings_on_token", unique: true
+    t.index ["user_id"], name: "index_bookings_on_user_id"
   end
 
   create_table "integrations", force: :cascade do |t|
@@ -175,6 +184,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_10_093526) do
   end
 
   add_foreign_key "bookings", "packages"
+  add_foreign_key "bookings", "users"
   add_foreign_key "pay_charges", "pay_customers", column: "customer_id"
   add_foreign_key "pay_charges", "pay_subscriptions", column: "subscription_id"
   add_foreign_key "pay_payment_methods", "pay_customers", column: "customer_id"

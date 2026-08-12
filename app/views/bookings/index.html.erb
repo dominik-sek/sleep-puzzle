@@ -4,4 +4,5 @@
   <span class="text-tan text-t5">Wybierz dogodny termin w kalendarzu, a potem uzupełnij krótki formularz zgłoszeniowy</span>
 </div>
   <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking, package_options: @package_options %>
+  <%= render "checkout", checkout: nil %>
 <% end %>

@@ -15,7 +15,9 @@ Rails.application.routes.draw do
   root "home#index"
   resources :packages, only: [ :index, :show ]
   resources :dashboard, only: [ :index ]
-  resources :bookings, only: [ :index, :show, :create ]
+  # looked up by token rather than id: the URL is handed to Paddle as the checkout
+  # success redirect, so it shouldn't expose sequential ids
+  resources :bookings, only: [ :index, :show, :create ], param: :token
   resources :products, only: [ :index, :show ]
 
   namespace :integrations do

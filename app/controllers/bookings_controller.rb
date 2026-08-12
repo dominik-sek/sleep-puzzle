@@ -1,19 +1,27 @@
 class BookingsController < ApplicationController
   require 'google/apis/calendar_v3'
 
+  before_action :authenticate_user!
   before_action :load_package_options, only: [ :index, :create ]
 
   def index
     load_availability
 
     @booking = Booking.new(
-      name: current_user&.full_name,
-      email: current_user&.email,
+      name: current_user.full_name,
+      email: current_user.email,
     )
+  end
+
+  # where Paddle sends the buyer once payment goes through; still pending at that
+  # point, and flips to confirmed over a turbo stream when the webhook lands
+  def show
+    @booking = current_user.bookings.find_by!(token: params[:token])
   end
 
   def create
     @booking = Booking.new(
+      user: current_user,
       name: booking_params[:name],
       starts_at: combined_starts_at,
       email: booking_params[:email],
@@ -22,16 +30,22 @@ class BookingsController < ApplicationController
     )
 
     if @booking.save
-      create_calendar_event(@booking)
+      BookingCalendarService.call(booking: @booking).create
+      # held as pending until paddle_billing.transaction.completed arrives; see config/initializers/pay.rb
+      @checkout = checkout_for(@booking)
       load_availability
       # reset to a blank form so the refreshed calendar is ready for another booking
-      @booking = Booking.new(name: current_user&.full_name, email: current_user&.email)
+      @booking = Booking.new(name: current_user.full_name, email: current_user.email)
 
-      flash.now[:notice] = "Dziękujemy! Termin został zarezerwowany."
+      if @checkout
+        flash.now[:notice] = "Termin wstępnie zarezerwowany. Dokończ płatność, aby go potwierdzić."
+      else
+        flash.now[:alert] = "Nie udało się otworzyć płatności. Spróbuj ponownie za chwilę."
+      end
+
       respond_to do |format|
         format.turbo_stream
-        # on payment success (webhook/callback): @booking.confirmed! then show it on the calendar
-        format.html { redirect_to bookings_path, notice: "Dziękujemy! Termin został zarezerwowany." }
+        format.html { redirect_to bookings_path, notice: flash.now[:notice] || flash.now[:alert] }
       end
     else
       render partial: "form",
@@ -41,6 +55,26 @@ class BookingsController < ApplicationController
   end
 
   private
+
+  # Paddle has to be handed a customer we already know about: Pay matches the
+  # incoming webhook to a Pay::Customer by processor_id, and if checkout mints its
+  # own anonymous customer instead there is nothing to match and the charge is
+  # dropped. Calling api_record creates the Paddle customer and stores its id.
+  def checkout_for(booking)
+    {
+      price_id: booking.package.paddle_price_id,
+      customer_id: current_user.payment_processor.api_record.id,
+      booking_id: booking.id,
+      # Paddle closes the overlay and sends the buyer here once payment succeeds.
+      # Must be absolute, and _url picks up the tunnel host in development.
+      success_url: booking_url(booking)
+    }
+  # Paddle::Errors::* descend from Paddle::ErrorGenerator, not Paddle::Error, so Pay's
+  # own rescue in Customer#api_record misses them and they arrive unwrapped
+  rescue Pay::PaddleBilling::Error, Paddle::ErrorGenerator => e
+    Rails.logger.error("Failed to prepare Paddle checkout for booking #{booking.id}: #{e.message}")
+    nil
+  end
 
   def load_package_options
     @package_options = Package.order(:name).map do |package|
@@ -68,17 +102,6 @@ class BookingsController < ApplicationController
 
   def booking_params
     params.require(:booking).permit(:name, :date, :hour, :email, :package_id)
-  end
-
-  def create_calendar_event(booking)
-    GoogleCalendarService.call.create_event(
-      summary: "Konsultacja – #{booking.name}",
-      description: "Email: #{booking.email}\nPakiet: #{booking.package.name}",
-      starts_at: booking.starts_at,
-      ends_at: booking.starts_at + SlotComparatorService::SLOT_DURATION
-    )
-  rescue Google::Apis::Error => e
-    Rails.logger.error("Failed to create Google Calendar event for booking #{booking.id}: #{e.message}")
   end
 
   # rebuild the full per-date slot list (available + unavailable) from the weekly

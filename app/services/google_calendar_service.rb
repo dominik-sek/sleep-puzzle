@@ -30,6 +30,15 @@ class GoogleCalendarService < ApplicationService
     @service.insert_event(ENV["GOOGLE_CALENDAR_ID"], event)
   end
 
+  # partial update, so it can't clobber fields it isn't given
+  def patch_event(event_id:, **attributes)
+    @service.patch_event(ENV["GOOGLE_CALENDAR_ID"], event_id, Google::Apis::CalendarV3::Event.new(**attributes))
+  end
+
+  def delete_event(event_id:)
+    @service.delete_event(ENV["GOOGLE_CALENDAR_ID"], event_id)
+  end
+
   private
   def google_calendar_authorizer
     AuthorizeCalendarService.call
