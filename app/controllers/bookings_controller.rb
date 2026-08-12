@@ -2,7 +2,7 @@ class BookingsController < ApplicationController
   require 'google/apis/calendar_v3'
 
   before_action :authenticate_user!
-  before_action :load_package_options, only: [ :index, :create ]
+  before_action :load_package_options, only: [ :index, :create, :abandon ]
 
   def index
     load_availability
@@ -56,7 +56,66 @@ class BookingsController < ApplicationController
     end
   end
 
+  # Closing the Paddle overlay fires no webhook — Paddle only reports transactions the
+  # buyer actually attempted — so the browser reports it instead.
+  #
+  # The row is deleted rather than kept as canceled: nothing was paid and nothing was
+  # committed to, so there is no history worth keeping, and a discarded checkout
+  # shouldn't leave a booking behind in the buyer's dashboard or hold the slot until
+  # ReleaseAbandonedBookingsJob sweeps it an hour later.
+  def abandon
+    booking = current_user.bookings.find_by!(token: params[:token])
+    payment = BookingPaymentCheckService.call(booking: booking)
+    cleared = clearable?(booking, payment)
+
+    if cleared
+      # drop the hold first: release nils calendar_event_id on the row, so doing it the
+      # other way round would leave an orphaned event nothing knows how to find
+      BookingCalendarService.call(booking: booking).release
+      booking.destroy!
+      Rails.logger.info("Cleared abandoned booking #{booking.id} — checkout closed without payment")
+    end
+
+    # always says something: the slot disappeared from the calendar when the booking was
+    # created, so closing the overlay in silence leaves the buyer with no idea whether
+    # they are booked, charged, or neither
+    type, message = abandon_notice(cleared: cleared, payment: payment)
+    flash.now[type] = message
+
+    load_availability
+    @booking = Booking.new(name: current_user.full_name, email: current_user.email)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to bookings_path }
+    end
+  end
+
   private
+
+  # Deleting the row is irreversible, so the browser's word alone isn't enough: it says
+  # the overlay closed, not that nothing was paid, and checkout.closed also fires when
+  # Paddle tears the overlay down after a payment. Our own columns can't settle it
+  # either — paddle_transaction_id is only written when the webhook lands — so the last
+  # word goes to Paddle itself.
+  def clearable?(booking, payment)
+    booking.pending? && booking.paddle_transaction_id.blank? && payment.unpaid?
+  end
+
+  # Ordered by what the buyer most needs to know, and careful never to claim the slot is
+  # free unless it is: a declined card leaves the transaction open, so "failed" and
+  # "released" are not the same thing.
+  def abandon_notice(cleared:, payment:)
+    if payment.paid?
+      [ :notice, "Płatność została zaksięgowana. Za chwilę pokażemy potwierdzenie rezerwacji." ]
+    elsif payment.declined?
+      [ :alert, "Płatność nie powiodła się. Termin nie został zarezerwowany - możesz spróbować ponownie." ]
+    elsif cleared
+      [ :warning, "Rezerwacja została anulowana. Termin jest znów dostępny." ]
+    else
+      [ :warning, "Rezerwacja nie została anulowana. Termin zwolni się automatycznie, jeśli płatność nie zostanie pomyślnie przetworzona." ]
+    end
+  end
 
   # Paddle has to be handed a customer we already know about: Pay matches the
   # incoming webhook to a Pay::Customer by processor_id, and if checkout mints its
@@ -69,7 +128,8 @@ class BookingsController < ApplicationController
       booking_id: booking.id,
       # Paddle closes the overlay and sends the buyer here once payment succeeds.
       # Must be absolute, and _url picks up the tunnel host in development.
-      success_url: booking_url(booking)
+      success_url: booking_url(booking),
+      abandon_url: abandon_booking_url(booking)
     }
   # Paddle::Errors::* descend from Paddle::ErrorGenerator, not Paddle::Error, so Pay's
   # own rescue in Customer#api_record misses them and they arrive unwrapped

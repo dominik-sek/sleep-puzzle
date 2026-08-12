@@ -4,7 +4,13 @@ class BookingConfirmationService < PaddleTransactionService
     # Paddle redelivers on any non-2xx, and Pay retries the job, so the same
     # transaction can arrive more than once
     return if Booking.exists?(paddle_transaction_id: transaction_id)
-    return if booking.nil?
+
+    # money has changed hands and there is nothing to credit it to — a discarded
+    # checkout deletes its booking, so a completion arriving after that needs a human
+    if booking.nil?
+      Rails.logger.error("[paddle] transaction #{transaction_id} completed but no booking could be matched")
+      return
+    end
 
     if booking.confirm_payment!(transaction_id)
       BookingCalendarService.call(booking: booking).sync_status

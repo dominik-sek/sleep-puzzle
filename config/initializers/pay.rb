@@ -12,6 +12,9 @@ Pay::Webhooks.delegator.subscribe "paddle_billing.transaction.completed" do |eve
   BookingConfirmationService.call(event: event)
 end
 
+# Neither of these releases the slot on the spot — BookingPaymentFailureService::GRACE
+# decides how long each one waits first, and ReleaseFailedBookingJob re-checks that
+# nothing has paid for the booking by then.
 Pay::Webhooks.delegator.subscribe "paddle_billing.transaction.payment_failed" do |event|
   BookingPaymentFailureService.call(event: event, status: :payment_failed)
 end

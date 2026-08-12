@@ -17,7 +17,10 @@ Rails.application.routes.draw do
   resources :dashboard, only: [ :index ]
   # looked up by token rather than id: the URL is handed to Paddle as the checkout
   # success redirect, so it shouldn't expose sequential ids
-  resources :bookings, only: [ :index, :show, :create ], param: :token
+  resources :bookings, only: [ :index, :show, :create ], param: :token do
+    # the browser reporting that the Paddle overlay was closed without paying
+    delete :abandon, on: :member
+  end
   resources :products, only: [ :index, :show ]
 
   namespace :integrations do

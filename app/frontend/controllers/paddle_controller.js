@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { Turbo } from "@hotwired/turbo-rails";
 import { showToast } from "./toast_controller";
 
 // Opens Paddle checkout for a booking that bookings#create has just saved as
@@ -10,14 +11,27 @@ export default class extends Controller {
         customerId: String,
         bookingId: Number,
         successUrl: String,
+        abandonUrl: String,
         quantity: { type: Number, default: 1 }
     };
 
+    // Paddle closes the overlay itself after a completed payment, so `checkout.closed`
+    // alone can't tell "the buyer gave up" from "the payment went through"
+    #completed = false;
+
     // the layout re-emits Paddle.js' single global callback as `paddle:event`
     #onPaddleEvent = (event) => {
-        // payment is through and Paddle is about to send the buyer to successUrl —
-        // tell the calendar to shut itself down until that navigation lands
-        if (event.detail?.name === "checkout.completed") this.dispatch("completed", { target: window });
+        switch (event.detail?.name) {
+            case "checkout.completed":
+                // payment is through and Paddle is about to send the buyer to successUrl —
+                // tell the calendar to shut itself down until that navigation lands
+                this.#completed = true;
+                this.dispatch("completed", { target: window });
+                break;
+            case "checkout.closed":
+                if (!this.#completed) this.#clearBooking();
+                break;
+        }
     };
 
     connect() {
@@ -49,6 +63,31 @@ export default class extends Controller {
 
     disconnect() {
         window.removeEventListener("paddle:event", this.#onPaddleEvent);
+    }
+
+    // The booking is already saved and holding the slot by the time the overlay opens,
+    // and walking away from it produces no webhook at all — so nothing else would tell
+    // the server that this slot never sold.
+    async #clearBooking() {
+        if (!this.hasAbandonUrlValue) return;
+
+        try {
+            const response = await fetch(this.abandonUrlValue, {
+                method: "DELETE",
+                headers: {
+                    Accept: "text/vnd.turbo-stream.html",
+                    "X-CSRF-Token": document.querySelector("meta[name='csrf-token']")?.content
+                }
+            });
+            if (!response.ok) throw new Error(`responded ${response.status}`);
+
+            // puts the freed slot back on the calendar without a reload
+            Turbo.renderStreamMessage(await response.text());
+        } catch (error) {
+            // not worth bothering the buyer about: ReleaseAbandonedBookingsJob still
+            // frees the slot, they just won't see it come back on this page
+            console.error("[paddle] clearing the abandoned booking failed", error);
+        }
     }
 
     #reportFailure(description) {
