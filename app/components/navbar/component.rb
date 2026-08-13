@@ -87,26 +87,7 @@ module Navbar
     end
 
     def hamburger_icon
-      tag.svg(
-        xmlns: "http://www.w3.org/2000/svg",
-        width: "18",
-        height: "18",
-        viewBox: "0 0 18 18"
-      ) do
-        tag.g(
-          fill: "none",
-          'stroke-linecap': "round",
-          'stroke-linejoin': "round",
-          'stroke-width': "1.5",
-          stroke: "currentColor"
-        ) do
-          safe_join([
-                      tag.line(x1: "2.25", y1: "9", x2: "15.75", y2: "9"),
-                      tag.line(x1: "2.25", y1: "3.75", x2: "15.75", y2: "3.75"),
-                      tag.line(x1: "2.25", y1: "14.25", x2: "15.75", y2: "14.25")
-                    ])
-        end
-      end
+      helpers.lucide_icon("menu", size: 18)
     end
 
     def show_mobile_menu?

@@ -105,3 +105,5 @@ gem "pay", "~> 11.5"
 gem "paddle", "~> 2.9"
 
 
+
+gem "lucide-rails", "~> 0.7.4"
