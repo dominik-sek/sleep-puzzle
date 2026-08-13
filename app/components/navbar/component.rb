@@ -87,7 +87,7 @@ module Navbar
     end
 
     def hamburger_icon
-      helpers.lucide_icon("menu", size: 18)
+      helpers.icon("menu", size: 18)
     end
 
     def show_mobile_menu?

@@ -99,7 +99,7 @@ module Buttons
     end
 
     def loading_spinner
-      helpers.lucide_icon("loader-circle", class: "animate-spin #{icon_classes}")
+      helpers.icon("loader-circle", class: "animate-spin #{icon_classes}")
     end
 
     private

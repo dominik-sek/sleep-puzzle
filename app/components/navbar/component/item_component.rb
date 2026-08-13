@@ -55,7 +55,7 @@ module Navbar
       end
 
       def chevron_icon
-        helpers.lucide_icon(
+        helpers.icon(
           "chevron-down",
           class: "h-3 w-3 transition-transform duration-200 group-data-[state=open]:rotate-180"
         )
