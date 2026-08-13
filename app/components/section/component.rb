@@ -34,7 +34,19 @@ module Section
       ].compact.reject(&:empty?).join(" ")
     end
 
+    def padding_classes
+      case @padding
+      when :compact then "section-padding-compact"
+      when :none then "section-padding-none"
+      else "section-padding"
+      end
+    end
+
     def border_classes
+      case @background
+      when :ink_soft then "border border-x-0 border-border-strong"
+      else "border-0"
+      end
     end
 
     def background_classes

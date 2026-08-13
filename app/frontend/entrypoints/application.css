@@ -7,6 +7,14 @@
   padding: clamp(50px, 8vw, 90px) clamp(20px, 4vw, 28px);
 }
 
+@utility section-padding-compact {
+  padding: clamp(12px, 2vw, 28px) clamp(20px, 4vw, 28px);
+}
+
+@utility section-padding-none {
+  padding: 0 clamp(20px, 4vw, 28px);
+}
+
 @theme {
   /* Fonts — Quicksand for body copy, Baloo 2 for display/headings */
   --font-sans: "Quicksand", sans-serif;
