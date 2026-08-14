@@ -77,7 +77,7 @@ module Navbar
     end
 
     def background_classes
-      "relative z-0 rounded-lg border border-border bg-surface shadow-xl"
+      "relative z-0 rounded-lg border border-border bg-surface-dark shadow-xl"
     end
 
     def mobile_menu_button_classes
