@@ -7,3 +7,8 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# Content blocks are declared in ContentBlock::BLOCKS; this creates any that are
+# missing without touching copy that already exists. Also available on its own as
+# `bin/rails content_blocks:sync`, for running after a deploy that adds a block.
+ContentBlock.sync!

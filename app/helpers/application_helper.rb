@@ -22,7 +22,40 @@ module ApplicationHelper
     content_tag(:svg, icon_markup(name), ICON_ATTRS.merge(options))
   end
 
+  # Renders an editable block from the CMS by its key. Blocks are loaded once per
+  # request and memoised, so a page using several of them still costs one query
+  # rather than one each.
+  #
+  # An unknown key raises in development and test — a typo should surface at once
+  # rather than quietly render nothing — and is ignored in production, where a
+  # missing block must never take a page down.
+  def content_block(key, locale: I18n.locale)
+    unless ContentBlock::Registry.key?(key)
+      raise ArgumentError, "Unknown content block #{key.inspect}" if Rails.env.local?
+
+      return
+    end
+
+    value = content_blocks_by_key[key]&.value_for(locale)
+    return value if value
+
+    missing_content_block(key)
+  end
+
   private
+
+  def content_blocks_by_key
+    @content_blocks_by_key ||= ContentBlock.declared.with_bodies.index_by(&:key)
+  end
+
+  # Loud in development so an unfilled block is obvious while building pages;
+  # silent in production, where a gap beats shouting at visitors.
+  def missing_content_block(key)
+    return unless Rails.env.local?
+
+    tag.span("[brak treści: #{key}]",
+             class: "rounded bg-red-500/15 px-2 py-1 text-t6 text-red-300")
+  end
 
   def icon_markup(name)
     markup =

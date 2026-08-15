@@ -1,0 +1,57 @@
+# The editable content of the public site, as pages > sections > fields.
+#
+# This file is the source of truth: `bin/rails content_blocks:sync` creates a row
+# for every field declared here. Nothing in the admin panel can invent a key,
+# because a typo in a key silently blanks a section of the site.
+#
+# field type:
+#   plain - a short string, rendered as-is into the template (titles, labels)
+#   rich  - Action Text, with a Trix editor and formatting (paragraphs, links)
+home:
+  label: Strona główna
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+        subtitle:
+          label: Podtytuł
+          type: rich
+    about:
+      label: O mnie
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+        lead:
+          label: Wstęp
+          type: rich
+        body:
+          label: Treść
+          type: rich
+    process:
+      label: Jak wygląda współpraca
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+    packages:
+      label: Pakiety współpracy
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+        subtitle:
+          label: Podtytuł
+          type: rich
+    audio:
+      label: Audioprocesy i bajki
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+        body:
+          label: Treść
+          type: rich

@@ -1,0 +1,19 @@
+<%
+  # names stay short because each section posts its own form with a hidden
+  # `section`; ids carry the section so nothing collides across sections that
+  # share a field name (every section has a "title")
+  name = "fields[#{field.key}][#{locale}]"
+  dom_id = "field-#{section.key}-#{field.key}-#{locale}"
+  label = locale == :pl ? "Polski" : "English"
+  value = block&.public_send(field.rich? ? :"body_#{locale}" : :"value_#{locale}")
+%>
+
+<div class="flex flex-col gap-1.5">
+  <span class="text-t6 text-taupe"><%= label %></span>
+
+  <% if field.rich? %>
+    <%= rich_text_area_tag name, value&.to_trix_html %>
+  <% else %>
+    <%= text_field_tag name, value, id: dom_id, class: "form-control" %>
+  <% end %>
+</div>

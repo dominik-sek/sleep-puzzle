@@ -477,3 +477,108 @@ calendar-month::part(selected):hover:not(:disabled) {
 .pagy a[aria-current="page"] {
   @apply bg-accent text-ink border-accent-terracotta/30 cursor-default;
 }
+
+/* Action Text / Trix — trix.css (imported in application.js) ships a light
+   editor, so the chrome is restyled for the dark panel here. The toolbar icons
+   are dark SVG data URIs baked into that stylesheet, so they get inverted
+   rather than replaced. .trix-content styles both the editor body and the
+   rendered output on the public site, so what you type matches what ships. */
+trix-toolbar .trix-button-group {
+  @apply mb-2 rounded-lg border border-border-input bg-ink-soft overflow-hidden;
+}
+
+trix-toolbar .trix-button {
+  @apply border-0 border-r border-border-input bg-transparent text-cream text-xs;
+}
+
+trix-toolbar .trix-button:last-child {
+  @apply border-r-0;
+}
+
+trix-toolbar .trix-button:not(:disabled):hover {
+  @apply bg-surface;
+}
+
+trix-toolbar .trix-button.trix-active {
+  @apply bg-accent text-ink;
+}
+
+trix-toolbar .trix-button--icon::before {
+  filter: invert(1);
+  opacity: 0.7;
+}
+
+trix-toolbar .trix-button--icon.trix-active::before {
+  filter: invert(0);
+  opacity: 1;
+}
+
+trix-toolbar .trix-dialog {
+  @apply rounded-lg border border-border-input bg-surface p-3 text-cream;
+}
+
+trix-toolbar .trix-dialog input[type="url"] {
+  @apply rounded-lg border border-border-input bg-ink-soft px-2 py-1 text-cream;
+}
+
+trix-editor {
+  @apply min-h-56 rounded-lg border border-border-input bg-ink-soft px-3 py-2;
+}
+
+trix-editor:focus {
+  @apply outline-hidden ring-2 ring-accent;
+}
+
+trix-editor:empty:not(:focus)::before {
+  @apply text-taupe;
+}
+
+/* Preflight strips heading sizes and list markers, so the rendered rich text
+   needs them back explicitly. Trix's heading button emits <h1>. */
+.trix-content {
+  @apply text-t5 text-tan;
+}
+
+.trix-content h1 {
+  @apply mb-4 font-display text-t2 text-cream;
+}
+
+.trix-content p {
+  @apply mb-4;
+}
+
+.trix-content p:last-child {
+  @apply mb-0;
+}
+
+.trix-content strong {
+  @apply font-bold text-cream;
+}
+
+.trix-content a {
+  @apply text-accent underline;
+}
+
+.trix-content ul {
+  @apply mb-4 list-disc pl-6;
+}
+
+.trix-content ol {
+  @apply mb-4 list-decimal pl-6;
+}
+
+.trix-content blockquote {
+  @apply mb-4 border-l-2 border-accent pl-4 italic;
+}
+
+.trix-content figure.attachment {
+  @apply my-4;
+}
+
+.trix-content figure.attachment img {
+  @apply max-w-full h-auto rounded-lg;
+}
+
+.trix-content .attachment__caption {
+  @apply mt-2 text-t6 text-taupe;
+}

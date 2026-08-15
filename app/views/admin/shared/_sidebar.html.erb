@@ -10,6 +10,8 @@
       <%= admin_nav_link "Pulpit", admin_root_path, "layout-dashboard" %>
       <%= admin_nav_link "Rezerwacje", admin_bookings_path, "calendar-days",
             active: controller_name == "bookings" %>
+      <%= admin_nav_link "Treści", admin_content_blocks_path, "file-text",
+            active: controller_name == "content_blocks" %>
     </nav>
 
     <div class="md:mt-auto flex md:flex-col gap-1 border-t border-border pt-3">

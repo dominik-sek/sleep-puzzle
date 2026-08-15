@@ -28,6 +28,9 @@ Rails.application.routes.draw do
   namespace :admin do
     root "dashboard#index"
     resources :bookings, only: [ :index, :show ], param: :token
+    resources :content_blocks, only: [ :index ] do
+      patch :update, on: :collection
+    end
   end
 
   namespace :integrations do
