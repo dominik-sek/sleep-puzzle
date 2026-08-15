@@ -24,7 +24,10 @@
   </head>
 
   <%# no Paddle script, public navbar or footer here: nothing in the panel checks out %>
-  <body class="min-h-screen bg-ink text-cream">
+  <%# h-screen + overflow-hidden: the sidebar shell is built from h-full and
+      inner overflow-y-auto regions, which only work against a bounded height.
+      Without it the whole document scrolls and the sidebar scrolls away. %>
+  <body class="h-screen overflow-hidden bg-ink text-cream">
     <%= render Toast::Component.new(
       position: "top-right",
       layout: "default",
@@ -35,12 +38,59 @@
 
     <%= render "shared/flash" %>
 
-    <div class="flex flex-col md:flex-row min-h-screen">
-      <%= render "admin/shared/sidebar" %>
+    <%# captured before the component block: Sidebar::Component renders the <main>
+        itself and takes the page as its content %>
+    <% page_body = yield %>
 
-      <main class="flex-1 min-w-0">
-        <%= yield %>
-      </main>
-    </div>
+    <%= render Sidebar::Component.new(storage_key: "adminSidebarOpen", min_height_class: "h-full") do |sidebar| %>
+      <% sidebar.with_logo do %>
+        <a href="<%= admin_root_path %>" class="flex items-center gap-2 px-2 no-underline">
+          <span class="font-display text-t3 text-cream">sleep.puzzle</span>
+          <span class="text-t6 uppercase text-accent tracking-wide">panel</span>
+        </a>
+      <% end %>
+
+      <% admin_sidebar_items.each do |item| %>
+        <% sidebar.with_item(
+             label: item[:label],
+             href: item[:href],
+             icon: icon(item[:icon], class: "size-4 shrink-0"),
+             active: item[:active]
+           ) %>
+      <% end %>
+
+      <% sidebar.with_footer do %>
+        <div class="flex flex-col gap-1 border-t border-border pt-2">
+          <a href="<%= root_path %>" class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-taupe no-underline hover:bg-ink-soft hover:text-cream">
+            <%= icon "external-link", class: "size-4 shrink-0" %>
+            <span>Wróć na stronę</span>
+          </a>
+
+          <%= button_to destroy_user_session_path, method: :delete,
+                class: "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-taupe bg-transparent border-0 text-left cursor-pointer hover:bg-ink-soft hover:text-cream" do %>
+            <%= icon "log-out", class: "size-4 shrink-0" %>
+            <span>Wyloguj się</span>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# icon-only versions for the collapsed rail %>
+      <% sidebar.with_collapsed_footer do %>
+        <div class="flex flex-col items-center gap-1">
+          <a href="<%= root_path %>" aria-label="Wróć na stronę"
+             class="flex size-8 items-center justify-center rounded-lg text-taupe hover:bg-ink-soft hover:text-cream">
+            <%= icon "external-link", class: "size-4 shrink-0" %>
+          </a>
+
+          <%= button_to destroy_user_session_path, method: :delete,
+                "aria-label": "Wyloguj się",
+                class: "flex size-8 items-center justify-center rounded-lg text-taupe bg-transparent border-0 cursor-pointer hover:bg-ink-soft hover:text-cream" do %>
+            <%= icon "log-out", class: "size-4 shrink-0" %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%= page_body %>
+    <% end %>
   </body>
 </html>

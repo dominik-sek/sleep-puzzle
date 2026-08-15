@@ -1,25 +1,15 @@
 module AdminHelper
-  # Sidebar entry. `active` is passed explicitly for sections whose sub-pages
-  # (edit, new, ...) should keep the parent item highlighted; it falls back to an
-  # exact page match, which is what the single-page sections want.
-  def admin_nav_link(label, path, icon_name, active: nil)
-    active = current_page?(path) if active.nil?
-
-    state_classes =
-      if active
-        "bg-ink text-cream"
-      else
-        "text-taupe hover:bg-ink-soft hover:text-cream"
-      end
-
-    link_to path,
-            class: "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium no-underline #{state_classes}",
-            aria: { current: ("page" if active) } do
-      safe_join([
-        icon(icon_name, class: "size-4 shrink-0"),
-        tag.span(label, class: "whitespace-nowrap")
-      ])
-    end
+  # The panel's navigation, in order. Kept here rather than in the layout so the
+  # active rules live next to each other and can be asserted in one place.
+  def admin_sidebar_items
+    [
+      { label: "Pulpit", href: admin_root_path, icon: "layout-dashboard",
+        active: controller_name == "dashboard" },
+      { label: "Rezerwacje", href: admin_bookings_path, icon: "calendar-days",
+        active: controller_name == "bookings" },
+      { label: "Treści", href: admin_content_blocks_path, icon: "file-text",
+        active: controller_name.in?(%w[content_blocks content_items]) }
+    ]
   end
 
   # Filter pill on the bookings index. `status` nil means "all".
