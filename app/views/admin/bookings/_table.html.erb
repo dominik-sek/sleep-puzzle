@@ -1,0 +1,34 @@
+<%= render Table::Component.new(hoverable: true) do |table| %>
+  <% table.with_column(label: "Termin") %>
+  <% table.with_column(label: "Klient") %>
+  <% table.with_column(label: "Pakiet") %>
+  <% table.with_column(label: "Status") %>
+  <% table.with_column(label: "Utworzono") %>
+
+  <% bookings.each do |booking| %>
+    <% table.with_row do |row| %>
+      <% row.with_cell(primary: true, classes: "tabular-nums whitespace-nowrap") do %>
+        <%= booking.starts_at ? l(booking.starts_at, format: :short) : "—" %>
+      <% end %>
+
+      <% row.with_cell(primary: true) do %>
+        <div><%= link_to booking.name, admin_booking_path(booking) %></div>
+        <div class="text-taupe"><%= booking.email %></div>
+      <% end %>
+
+      <% row.with_cell do %>
+        <%= booking.package.name %>
+      <% end %>
+
+      <% row.with_cell do %>
+        <span class="inline-block rounded-full border px-2.5 py-1 whitespace-nowrap <%= admin_booking_status_classes(booking) %>">
+          <%= Booking::PAYMENT_STATUS_LABELS.fetch(booking.status, booking.status) %>
+        </span>
+      <% end %>
+
+      <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>
+        <%= l booking.created_at, format: :short %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

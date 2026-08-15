@@ -38,6 +38,9 @@ gem "image_processing", "~> 1.2"
 
 gem "rails-i18n"
 
+# Pagination [https://ddnexus.github.io/pagy/]
+gem "pagy"
+
 gem "omniauth"
 
 gem "omniauth-google-oauth2"

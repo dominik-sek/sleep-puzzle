@@ -29,3 +29,10 @@
 
 en:
   hello: "Hello world"
+  pagination:
+    showing: "Showing"
+    of: "of"
+    page: "Page"
+    jump_to_page: "Jump to page"
+    go: "Go"
+    rows: "Rows"

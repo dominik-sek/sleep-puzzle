@@ -23,6 +23,13 @@ Rails.application.routes.draw do
   end
   resources :products, only: [ :index, :show ]
 
+  # staff-only; access is the `admin` boolean on users, granted with
+  # `bin/rails 'admin:promote[email]'`
+  namespace :admin do
+    root "dashboard#index"
+    resources :bookings, only: [ :index, :show ], param: :token
+  end
+
   namespace :integrations do
     resource :google_calendar, only: [ :show, :destroy ], controller: "google_calendar" do
       get :connect, on: :collection

@@ -2,6 +2,7 @@
 
 @source "../../views";
 @source "../../components";
+@source "../../helpers";
 
 @utility section-padding {
   padding: clamp(50px, 8vw, 90px) clamp(20px, 4vw, 28px);
@@ -447,3 +448,32 @@ calendar-month::part(selected):hover:not(:disabled) {
   @apply bg-accent text-ink;
 }
 
+
+/* Pagination — pagy generates the anchor markup inside Pagination::Component,
+   so it's styled by selector here rather than in the component. Scoped to .pagy
+   (not .pagy.series-nav) because the compact/minimal variants render bare
+   prev/next anchors outside the series nav. Rule order matters: the current
+   page also carries aria-disabled, so its rule has to come after that one. */
+.pagy.series-nav {
+  @apply flex items-center gap-1;
+}
+
+.pagy a {
+  @apply inline-flex items-center justify-center min-w-9 h-9 px-2 rounded-lg border border-border-input bg-surface text-sm font-medium text-tan no-underline tabular-nums transition-colors duration-100;
+}
+
+.pagy a:hover {
+  @apply bg-ink-soft text-cream;
+}
+
+.pagy a[aria-disabled="true"] {
+  @apply bg-transparent text-taupe-dark cursor-default;
+}
+
+.pagy a[role="separator"] {
+  @apply border-transparent bg-transparent;
+}
+
+.pagy a[aria-current="page"] {
+  @apply bg-accent text-ink border-accent-terracotta/30 cursor-default;
+}

@@ -39,3 +39,10 @@ pl:
       few: "%{count} terminy dostępne"
       many: "%{count} terminów dostępnych"
       other: "%{count} terminu dostępnego"
+  pagination:
+    showing: "Wyświetlono"
+    of: "z"
+    page: "Strona"
+    jump_to_page: "Przejdź do strony"
+    go: "Idź"
+    rows: "Wierszy"

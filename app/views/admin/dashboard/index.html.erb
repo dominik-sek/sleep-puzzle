@@ -1,0 +1,53 @@
+<% content_for :title, "Pulpit — Panel" %>
+
+<div class="p-6 sm:p-8 flex flex-col gap-8 max-w-[1100px]">
+  <div class="flex flex-col gap-1">
+    <h1 class="text-t2 font-display text-cream">Pulpit</h1>
+    <p class="text-t5 text-taupe">Cześć, <%= current_user.full_name || current_user.email %>.</p>
+  </div>
+
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <%= render "admin/shared/stat", label: "Nadchodzące", value: @upcoming_count,
+               hint: "opłacone konsultacje", icon_name: "calendar-days" %>
+    <%= render "admin/shared/stat", label: "Oczekujące", value: @pending_count,
+               hint: "nieopłacone rezerwacje", icon_name: "clock" %>
+    <%= render "admin/shared/stat", label: "Opłacone", value: @confirmed_count,
+               hint: "łącznie", icon_name: "credit-card" %>
+    <%= render "admin/shared/stat", label: "Użytkownicy", value: @users_count,
+               hint: "kont łącznie", icon_name: "users" %>
+  </div>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="text-t3 font-display text-cream">Nadchodzące konsultacje</h2>
+
+    <% if @upcoming_bookings.any? %>
+      <ul class="flex flex-col gap-2 list-none p-0 m-0">
+        <% @upcoming_bookings.each do |booking| %>
+          <li class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-border-strong bg-surface px-4 py-3">
+            <span class="text-t5 text-cream font-semibold tabular-nums">
+              <%= l booking.starts_at, format: :short %>
+            </span>
+            <span class="text-t5 text-cream"><%= booking.name %></span>
+            <span class="text-t6 text-taupe"><%= booking.package.name %></span>
+            <a href="<%= admin_booking_path(booking) %>" class="text-t6 ml-auto">Szczegóły</a>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-t5 text-taupe">Brak zaplanowanych konsultacji.</p>
+    <% end %>
+  </section>
+
+  <section class="flex flex-col gap-3">
+    <div class="flex items-center justify-between gap-4">
+      <h2 class="text-t3 font-display text-cream">Ostatnie rezerwacje</h2>
+      <a href="<%= admin_bookings_path %>" class="text-t6">Zobacz wszystkie</a>
+    </div>
+
+    <% if @recent_bookings.any? %>
+      <%= render "admin/bookings/table", bookings: @recent_bookings %>
+    <% else %>
+      <p class="text-t5 text-taupe">Nie ma jeszcze żadnych rezerwacji.</p>
+    <% end %>
+  </section>
+</div>

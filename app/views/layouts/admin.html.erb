@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Panel — Sleep Puzzle" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%# the panel is staff-only and not linked from anywhere public %>
+    <meta name="robots" content="noindex, nofollow">
+
+    <%= yield :head %>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+
+    <%= vite_client_tag %>
+    <%= vite_stylesheet_tag 'application', data: { "turbo-track": "reload" } %>
+    <%= vite_javascript_tag 'application' %>
+  </head>
+
+  <%# no Paddle script, public navbar or footer here: nothing in the panel checks out %>
+  <body class="min-h-screen bg-ink text-cream">
+    <%= render Toast::Component.new(
+      position: "top-right",
+      layout: "default",
+      auto_dismiss_duration: 5000,
+      limit: 4,
+      gap: 16,
+    ) %>
+
+    <%= render "shared/flash" %>
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+      <%= render "admin/shared/sidebar" %>
+
+      <main class="flex-1 min-w-0">
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>
