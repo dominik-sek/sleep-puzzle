@@ -5,8 +5,22 @@
 # because a typo in a key silently blanks a section of the site.
 #
 # field type:
-#   plain - a short string, rendered as-is into the template (titles, labels)
+#   plain - a short string, rendered as-is into the template (titles, subtitles)
 #   rich  - Action Text, with a Trix editor and formatting (paragraphs, links)
+#
+# default:
+#   The copy the page ships with. Used whenever the database has nothing for a
+#   field — including a fresh deploy, before anything has been seeded or edited —
+#   so the site never renders a blank section. Editing a block in the admin panel
+#   overrides it. `en` may be omitted: it falls back to `pl`.
+#
+#   For rich fields the default is HTML, and it is trusted: it comes from this
+#   file, not from user input.
+#
+# collection:
+#   A section may also hold a repeating list the owner can add to and remove from
+#   (process steps, stats). Items carry only plain short strings, and their
+#   `defaults` seed the list when the database has none.
 home:
   label: Strona główna
   sections:
@@ -16,42 +30,95 @@ home:
         title:
           label: Nagłówek
           type: plain
+          default:
+            pl: "Układamy sen Twojej rodziny jak puzzle."
         subtitle:
           label: Podtytuł
-          type: rich
+          type: plain
+          default:
+            pl: "Kawałek po kawałku pomagam odzyskać spokojne noce, równowagę i czas dla siebie, partnera i dziecka - z empatią, wiedzą i bez presji."
     about:
       label: O mnie
       fields:
         title:
           label: Nagłówek
           type: plain
+          default:
+            pl: "Cześć, jestem Karola"
         lead:
           label: Wstęp
           type: rich
+          default:
+            pl: "<div>Nazywam się Karola — ta, co układa sen rodzin jak puzzle. Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego.</div>"
         body:
           label: Treść
           type: rich
+          default:
+            pl: "<div>„Piasek jest fajny — na plaży. Nie pod powiekami” :) Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą.</div>"
+    stats:
+      label: Liczby
+      collection:
+        item_label: Liczba
+        fields:
+          text:
+            label: Treść
+            type: plain
+        defaults:
+          - text:
+              pl: "20+ lat"
     process:
       label: Jak wygląda współpraca
       fields:
         title:
           label: Nagłówek
           type: plain
+          default:
+            pl: "Jak wygląda współpraca"
+      collection:
+        item_label: Krok
+        fields:
+          title:
+            label: Nagłówek
+            type: plain
+          body:
+            label: Opis
+            type: plain
+        defaults:
+          - title:
+              pl: "Krok pierwszy"
+            body:
+              pl: "Opis kroku"
+          - title:
+              pl: "Krok drugi"
+            body:
+              pl: "Opis kroku"
+          - title:
+              pl: "Krok trzeci"
+            body:
+              pl: "Opis kroku"
     packages:
       label: Pakiety współpracy
       fields:
         title:
           label: Nagłówek
           type: plain
+          default:
+            pl: "Pakiety współpracy"
         subtitle:
           label: Podtytuł
-          type: rich
+          type: plain
+          default:
+            pl: "Od szybkiej ulgi po pełne poukładanie rodzinnego systemu — Ty wybierasz tempo."
     audio:
       label: Audioprocesy i bajki
       fields:
         title:
           label: Nagłówek
           type: plain
+          default:
+            pl: "Audioprocesy i bajki na dobranoc"
         body:
           label: Treść
           type: rich
+          default:
+            pl: "<div>Nagrania do samodzielnej pracy nad rutyną oraz kojące bajki audio dla dzieci — dostępne po zalogowaniu na Twoim koncie.</div>"

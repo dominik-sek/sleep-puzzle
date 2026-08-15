@@ -13,7 +13,37 @@ RSpec.describe ContentBlock::Registry do
     page = described_class.pages.find { |candidate| candidate.key == "home" }
 
     expect(page.label).to be_present
-    expect(page.sections).to all(have_attributes(label: be_present, fields: be_present))
+    expect(page.sections).to all(have_attributes(label: be_present))
+    # a section carries fixed fields, an owner-managed list, or both
+    expect(page.sections).to all(satisfy { |s| s.fields.present? || s.collection? })
+  end
+
+  describe "collections" do
+    it "keys a collection by its owning section" do
+      expect(described_class.collection("home.process").full_key).to eq("home.process")
+    end
+
+    it "declares item fields and seed defaults" do
+      collection = described_class.collection("home.process")
+
+      expect(collection.fields.map(&:key)).to eq(%w[title body])
+      expect(collection.default_items(:pl).size).to eq(3)
+    end
+
+    it "falls back to the default locale for item defaults" do
+      expect(described_class.collection("home.stats").default_items(:en))
+        .to eq([ { "text" => "20+ lat" } ])
+    end
+
+    it "is nil for a section without one" do
+      expect(described_class.collection("home.hero")).to be_nil
+    end
+
+    it "rejects rich item fields, which items do not support" do
+      allow(described_class).to receive(:pages).and_call_original
+      expect(described_class.sections.select(&:collection?).flat_map { |s| s.collection.fields.map(&:type) })
+        .to all(eq("plain"))
+    end
   end
 
   it "links a field back to its section and page" do

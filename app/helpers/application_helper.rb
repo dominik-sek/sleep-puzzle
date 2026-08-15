@@ -30,22 +30,63 @@ module ApplicationHelper
   # rather than quietly render nothing — and is ignored in production, where a
   # missing block must never take a page down.
   def content_block(key, locale: I18n.locale)
-    unless ContentBlock::Registry.key?(key)
+    field = ContentBlock::Registry.field(key)
+
+    unless field
       raise ArgumentError, "Unknown content block #{key.inspect}" if Rails.env.local?
 
       return
     end
 
-    value = content_blocks_by_key[key]&.value_for(locale)
-    return value if value
+    stored = content_blocks_by_key[key]&.value_for(locale)
+    return render_content_block(field, stored) if stored
+
+    # Nothing in the database — a fresh deploy, or a block nobody has filled in.
+    # The declared default keeps the page looking finished.
+    fallback = field.default_for(locale)
+    return render_content_block(field, fallback) if fallback.present?
 
     missing_content_block(key)
   end
 
+  # The owner-managed list for a section, e.g. content_items("home.process").
+  # Returns an array of { field_key => value } hashes in display order, falling
+  # back to the collection's declared defaults when the database has none — so a
+  # fresh deploy renders a populated list like the rest of the page.
+  def content_items(section_key, locale: I18n.locale)
+    collection = ContentBlock::Registry.collection(section_key)
+
+    unless collection
+      raise ArgumentError, "No collection declared for #{section_key.inspect}" if Rails.env.local?
+
+      return []
+    end
+
+    stored = content_items_by_collection[section_key]
+    return stored.map { |item| item.to_values(locale) } if stored.present?
+
+    collection.default_items(locale)
+  end
+
   private
+
+  def content_items_by_collection
+    @content_items_by_collection ||= ContentItem.declared.order(:position, :id).group_by(&:collection_key)
+  end
 
   def content_blocks_by_key
     @content_blocks_by_key ||= ContentBlock.declared.with_bodies.index_by(&:key)
+  end
+
+  # Stored rich text renders its own <div class="trix-content"> wrapper; a
+  # default out of the yaml is a bare String, so it gets the same wrapper here.
+  # Otherwise the page would be styled differently before and after the first
+  # edit. The yaml is developer-authored, not user input, so it is trusted.
+  def render_content_block(field, value)
+    return value unless field.rich?
+    return value if value.is_a?(ActionText::RichText)
+
+    tag.div(value.to_s.html_safe, class: "trix-content")
   end
 
   # Loud in development so an unfilled block is obvious while building pages;

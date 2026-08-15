@@ -12,3 +12,4 @@
 # missing without touching copy that already exists. Also available on its own as
 # `bin/rails content_blocks:sync`, for running after a deploy that adds a block.
 ContentBlock.sync!
+ContentItem.sync!

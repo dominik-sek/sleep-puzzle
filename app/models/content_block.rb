@@ -9,6 +9,21 @@
 # Plain fields (titles) live in value_pl/value_en; rich fields use Action Text,
 # so a heading does not have to be typed into a formatting editor and does not
 # come back wrapped in <div class="trix-content">.
+# == Schema Information
+#
+# Table name: content_blocks
+#
+#  id         :bigint           not null, primary key
+#  key        :string           not null
+#  value_en   :text
+#  value_pl   :text
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_content_blocks_on_key  (key) UNIQUE
+#
 class ContentBlock < ApplicationRecord
   LOCALES = %i[pl en].freeze
 

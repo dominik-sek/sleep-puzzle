@@ -7,6 +7,11 @@ namespace :content_blocks do
 
     puts created.zero? ? "All #{ContentBlock::Registry.keys.size} content blocks already present." : "Created #{created} content block(s)."
 
+    items_before = ContentItem.count
+    ContentItem.sync!
+    items_created = ContentItem.count - items_before
+    puts items_created.zero? ? "Collections already populated." : "Created #{items_created} collection item(s) from defaults."
+
     stale = ContentBlock.undeclared.pluck(:key)
     puts "#{stale.size} row(s) no longer declared: #{stale.join(', ')} (remove with content_blocks:prune)" if stale.any?
   end

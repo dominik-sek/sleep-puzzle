@@ -1,1 +1,155 @@
-<div class="min-h-screen flex flex-col items-center justify-center">  <%= render Section::Component.new(    title: "Układamy sen Twojej rodziny jak puzzle.",    subtitle: "Kawałek po kawałku pomagam odzyskać spokojne noce, równowagę i czas dla siebie, partnera i dziecka - z empatią, wiedzą i bez presji.",    align: :left,    background: :ink,    bordered: false,    classes: "flex justify-center! items-center!"  ) do |section| %>    <div class="w-80 max-w-[70%] relative flex items-center justify-center">      <%= image_tag "mascot-grey.png", class: "z-10"%>      <div class="absolute block w-96 h-96 rounded-full bg-radial from-gradient-hero to-transparent to-70%"></div>    </div>    <% section.with_actions do %>        <div class="flex gap-4">          <%= render Buttons::Component.new(            text: "Umów konsultację",            pill: true,            variant: :primary,            href: bookings_path,            classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"          ) %>          <%= render Buttons::Component.new(            text: "Zobacz pakiety",            pill: true,            variant: :secondary,            classes: "hover:cursor-pointer text-t6! py-3 px-6 font-semibold! bg-ink-soft! border-accent-coral!"          ) %>        </div>    <% end %>  <% end %>  <%= render Section::Component.new(    background: :ink_soft,    align: :center,    padding: :compact,    ) do |section| %>    <ul>      <li>20+ lat</li>    </ul>  <% end %>  <%= render Section::Component.new(    background: :ink,    align: :left,    bordered: false,    ) do |section| %>  <div class="flex w-full gap-6 items-center">    <div class="w-1/4">      <img src="" alt="zdjecie" class="border border-border-strong rounded-lg border-px h-full aspect-square" />    </div>    <div class="flex flex-col gap-6 w-3/4">      <h2 class="text-accent font-display text-t2">Cześć, jestem Karola</h2>      <span class="text-cream max-w-3/4">        Nazywam się Karola — ta, co układa sen rodzin jak puzzle. Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego.      </span>      <span class="text-tan max-w-3/4">        „Piasek jest fajny — na plaży. Nie pod powiekami” :) Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą.      </span>      <a href="#">        <span class="font-bold text-t6! text-accent">          Poznaj mnie lepiej ->        </span>      </a>    </div>  </div>  <% end %>  <%= render Section::Component.new(    align: :center,    background: :ink_soft,    bordered: false,    ) do |section| %>    <h2 class="text-cream font-display font-bold text-t2">Jak wygląda współpraca</h2>      <div class="flex w-1/2 justify-between ">        <div class="flex flex-col items-center justify-center gap-4">          <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">            1          </div>          <span class="text-t4 font-display">subtitle here</span>          <span class="text-taupe">hello</span>        </div>        <div class="flex flex-col items-center justify-center gap-4">          <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">            2          </div>          <span class="text-t4 font-display">subtitle here</span>          <span class="text-taupe">hello</span>        </div>        <div class="flex flex-col items-center justify-center gap-4">          <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">            3          </div>          <span class="text-t4 font-display">subtitle here</span>          <span class="text-taupe">hello</span>        </div>      </div>  <% end %>  <%= render Section::Component.new(    align: :center,    background: :ink,    bordered: false,    ) do |section| %>  <h2 class="text-cream font-display font-bold text-t2">Pakiety współpracy</h2>  <span class="text-tan max-w-3/4">    Od szybkiej ulgi po pełne poukładanie rodzinnego systemu — Ty wybierasz tempo.  </span>  <div class="grid grid-cols-3 gap-6">    <%= render Card::Component.new(classes: "w-auto h-64 border-border-strong!") do |card| %>      <% card.with_body do %>      <div class="flex flex-col justify-start items-start gap-6">        <h3 class="text-accent! font-display text-t3! dark:text-cream">Szybka ulga</h3>        <span class="text-t5 font-display text-taupe">Czas trwania wsparcia: X tygodni</span>        <p class="text-t5 text-tan text-start">          Dla rodziców, którzy chcą szybko odzyskać wieczory i poprawić sen dziecka.        </p>        <a href="#" >                <span class="text-t6 text-cream hover:text-accent">                  Zobacz szczegóły ->                </span>        </a>      </div>      <% end %>    <% end %>    <%= render Card::Component.new(classes: "w-auto h-64 border-border-strong!") do |card| %>      <% card.with_body do %>        <div class="flex flex-col justify-start items-start gap-6">          <h3 class="text-accent! font-display text-t3! dark:text-cream">Szybka ulga</h3>          <span class="text-t5 font-display text-taupe">Czas trwania wsparcia: X tygodni</span>          <p class="text-t5 text-tan text-start">            Dla rodziców, którzy chcą szybko odzyskać wieczory i poprawić sen dziecka.          </p>          <a href="#" >                <span class="text-t6 text-cream hover:text-accent">                  Zobacz szczegóły ->                </span>          </a>        </div>      <% end %>    <% end %>    <%= render Card::Component.new(classes: "w-auto h-64 border-border-strong!") do |card| %>      <% card.with_body do %>        <div class="flex flex-col justify-start items-start gap-6">          <h3 class="text-accent! font-display text-t3! dark:text-cream">Szybka ulga</h3>          <span class="text-t5 font-display text-taupe">Czas trwania wsparcia: X tygodni</span>          <p class="text-t5 text-tan text-start">            Dla rodziców, którzy chcą szybko odzyskać wieczory i poprawić sen dziecka.          </p>          <a href="#">                <span class="text-t6 text-cream hover:text-accent">                  Zobacz szczegóły ->                </span>          </a>        </div>      <% end %>    <% end %>  </div>  <% end %>  <%= render Section::Component.new(    align: :center,    background: :ink_soft,    bordered: false,    align: :left    ) do |section| %><div class="flex gap-6">  <div class="flex flex-col gap-6 w-1/2">    <h2 class="text-cream font-display font-bold text-t2">Audioprocesy i bajki na dobranoc</h2>    <span class="text-tan max-w-3/4">Nagrania do samodzielnej pracy nad rutyną oraz kojące bajki audio dla dzieci — dostępne po zalogowaniu na Twoim koncie.</span>    <div>      <%= render Buttons::Component.new(        text: "Przejdź do sklepu",        pill: true,        variant: :primary,        classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"      ) %>    </div>  </div>  <div class="flex w-1/2">    bajki karty tutaj - todo after model  </div></div>  <% end %></div>
+<%# Copy comes from the CMS (config/content_blocks.yml + /admin/content_blocks).
+    Each block falls back to its declared default, so this page renders complete
+    even against an empty database. %>
+<div class="min-h-screen flex flex-col items-center justify-center">
+  <%= render Section::Component.new(
+    title: content_block("home.hero.title"),
+    subtitle: content_block("home.hero.subtitle"),
+    align: :left,
+    background: :ink,
+    bordered: false,
+    classes: "flex justify-center! items-center!"
+  ) do |section| %>
+    <div class="w-80 max-w-[70%] relative flex items-center justify-center">
+      <%= image_tag "mascot-grey.png", class: "z-10" %>
+      <div class="absolute block w-96 h-96 rounded-full bg-radial from-gradient-hero to-transparent to-70%"></div>
+    </div>
+
+    <% section.with_actions do %>
+      <div class="flex gap-4">
+        <%= render Buttons::Component.new(
+          text: "Umów konsultację",
+          pill: true,
+          variant: :primary,
+          href: bookings_path,
+          classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+        ) %>
+        <%= render Buttons::Component.new(
+          text: "Zobacz pakiety",
+          pill: true,
+          variant: :secondary,
+          classes: "hover:cursor-pointer text-t6! py-3 px-6 font-semibold! bg-ink-soft! border-accent-coral!"
+        ) %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= render Section::Component.new(
+    background: :ink_soft,
+    align: :center,
+    padding: :compact
+  ) do |section| %>
+    <ul class="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 list-none p-0 m-0">
+      <% content_items("home.stats").each do |stat| %>
+        <li class="flex items-center gap-2 text-t5 text-cream">
+          <%= icon "astroid", class: "size-4 shrink-0 text-accent" %>
+          <%= stat["text"] %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= render Section::Component.new(
+    background: :ink,
+    align: :left,
+    bordered: false
+  ) do |section| %>
+    <div class="flex w-full gap-6 items-center">
+      <div class="w-1/4">
+        <img src="" alt="zdjecie" class="border border-border-strong rounded-lg border-px h-full aspect-square" />
+      </div>
+      <div class="flex flex-col gap-6 w-3/4">
+        <h2 class="text-accent font-display text-t2"><%= content_block("home.about.title") %></h2>
+
+        <%# divs, not spans: rich text renders a block-level trix-content wrapper %>
+        <div class="text-cream max-w-3/4">
+          <%= content_block("home.about.lead") %>
+        </div>
+        <div class="text-tan max-w-3/4">
+          <%= content_block("home.about.body") %>
+        </div>
+
+        <a href="#">
+          <span class="font-bold text-t6! text-accent">
+            Poznaj mnie lepiej ->
+          </span>
+        </a>
+      </div>
+    </div>
+  <% end %>
+
+  <%= render Section::Component.new(
+    align: :center,
+    background: :ink_soft,
+    bordered: false
+  ) do |section| %>
+    <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.process.title") %></h2>
+
+    <%# owner-managed list: numbering follows display order rather than being stored %>
+    <div class="flex w-1/2 justify-between">
+      <% content_items("home.process").each_with_index do |step, index| %>
+        <div class="flex flex-col items-center justify-center gap-4">
+          <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">
+            <%= index + 1 %>
+          </div>
+          <span class="text-t4 font-display"><%= step["title"] %></span>
+          <span class="text-taupe"><%= step["body"] %></span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= render Section::Component.new(
+    align: :center,
+    background: :ink,
+    bordered: false
+  ) do |section| %>
+    <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.packages.title") %></h2>
+    <span class="text-tan max-w-3/4"><%= content_block("home.packages.subtitle") %></span>
+
+    <div class="grid grid-cols-3 gap-6">
+      <% 3.times do %>
+        <%= render Card::Component.new(classes: "w-auto h-64 border-border-strong!") do |card| %>
+          <% card.with_body do %>
+            <div class="flex flex-col justify-start items-start gap-6">
+              <h3 class="text-accent! font-display text-t3! dark:text-cream">Szybka ulga</h3>
+              <span class="text-t5 font-display text-taupe">Czas trwania wsparcia: X tygodni</span>
+              <p class="text-t5 text-tan text-start">
+                Dla rodziców, którzy chcą szybko odzyskać wieczory i poprawić sen dziecka.
+              </p>
+              <a href="#">
+                <span class="text-t6 text-cream hover:text-accent">
+                  Zobacz szczegóły -&gt;
+                </span>
+              </a>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= render Section::Component.new(
+    align: :left,
+    background: :ink_soft,
+    bordered: false
+  ) do |section| %>
+    <div class="flex gap-6">
+      <div class="flex flex-col gap-6 w-1/2">
+        <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.audio.title") %></h2>
+        <div class="text-tan max-w-3/4"><%= content_block("home.audio.body") %></div>
+        <div>
+          <%= render Buttons::Component.new(
+            text: "Przejdź do sklepu",
+            pill: true,
+            variant: :primary,
+            classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+          ) %>
+        </div>
+      </div>
+      <div class="flex w-1/2">
+        bajki karty tutaj - todo after model
+      </div>
+    </div>
+  <% end %>
+</div>

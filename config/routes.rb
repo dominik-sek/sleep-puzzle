@@ -31,6 +31,7 @@ Rails.application.routes.draw do
     resources :content_blocks, only: [ :index ] do
       patch :update, on: :collection
     end
+    resources :content_items, only: [ :create, :destroy ]
   end
 
   namespace :integrations do

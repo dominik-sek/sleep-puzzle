@@ -19,9 +19,26 @@
       </div>
     <% end %>
 
+    <% if section.collection? %>
+      <%= render "admin/content_blocks/collection_fields",
+                 collection: section.collection, items: items %>
+    <% end %>
+
     <div class="flex items-center gap-3">
       <%= submit_tag "Zapisz sekcję",
                      class: "inline-flex items-center justify-center rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink shadow-sm cursor-pointer hover:bg-accent-hover" %>
+    </div>
+  <% end %>
+
+  <% if section.collection? %>
+    <%# outside the form above on purpose — button_to would nest a <form> %>
+    <div class="mt-4">
+      <%= link_to admin_content_items_path(collection_key: section.full_key),
+                  data: { turbo_method: :post },
+                  class: "inline-flex items-center gap-1.5 rounded-lg border border-border-input bg-surface px-3 py-2 text-t6 font-medium text-cream no-underline hover:bg-ink-soft" do %>
+        <%= icon "file-text", class: "size-3.5 shrink-0" %>
+        Dodaj: <%= section.collection.item_label.downcase %>
+      <% end %>
     </div>
   <% end %>
 </div>

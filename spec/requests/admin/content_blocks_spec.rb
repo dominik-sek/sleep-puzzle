@@ -46,6 +46,39 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
       expect(response.body).to include(%(name="fields[title][pl]"))
     end
 
+    # A css matcher rather than a regex: the trigger carries
+    # data-action="click->accordion#toggle", and the > in that arrow breaks any
+    # [^>]* attempt to scan within a single tag. Scoped to accordion items
+    # because the tree's page folder is aria-expanded too, and open by design.
+    OPEN_SECTION = '[data-accordion-target="item"][data-state="open"]'
+
+    # Capybara.string because have_css(count:) needs a node, not a raw String
+    def open_sections(body)
+      Capybara.string(body)
+    end
+
+    it "renders every section collapsed by default" do
+      get admin_content_blocks_path
+
+      expect(open_sections(response.body)).to have_css(OPEN_SECTION, count: 0)
+    end
+
+    it "renders the requested section expanded" do
+      get admin_content_blocks_path(open: "home.process")
+
+      # opened server-side rather than by javascript: a redirect's anchor does
+      # not survive Turbo following it with fetch
+      expect(open_sections(response.body)).to have_css(OPEN_SECTION, count: 1)
+      expect(response.body).to include(%(data-content-blocks-open-value="section-home-process"))
+    end
+
+    it "ignores an unknown section in ?open=" do
+      get admin_content_blocks_path(open: "nope.nope")
+
+      expect(response).to have_http_status(:ok)
+      expect(open_sections(response.body)).to have_css(OPEN_SECTION, count: 0)
+    end
+
     it "emits no duplicate DOM ids" do
       get admin_content_blocks_path
 
@@ -57,19 +90,32 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
   describe "PATCH /admin/content_blocks" do
     before { sign_in admin }
 
-    it "saves the submitted section in both languages" do
+    it "saves plain fields in both languages" do
       patch admin_content_blocks_path, params: {
         section: "home.hero",
         fields: {
           title: { pl: "Tytuł", en: "Title" },
-          subtitle: { pl: "<div>Podtytuł</div>", en: "<div>Subtitle</div>" }
+          subtitle: { pl: "Podtytuł", en: "Subtitle" }
         }
       }
 
-      expect(response).to redirect_to(admin_content_blocks_path(anchor: "section-home-hero"))
+      # ?open= not an anchor: Turbo strips the fragment when following a redirect
+      expect(response).to redirect_to(admin_content_blocks_path(open: "home.hero"))
       expect(ContentBlock.find_by(key: "home.hero.title").value_pl).to eq("Tytuł")
       expect(ContentBlock.find_by(key: "home.hero.title").value_en).to eq("Title")
-      expect(ContentBlock.find_by(key: "home.hero.subtitle").body_pl.body.to_html).to include("Podtytuł")
+      expect(ContentBlock.find_by(key: "home.hero.subtitle").value_pl).to eq("Podtytuł")
+    end
+
+    it "saves rich fields as Action Text" do
+      patch admin_content_blocks_path, params: {
+        section: "home.about",
+        fields: { lead: { pl: "<div>Wstęp</div>", en: "<div>Lead</div>" } }
+      }
+
+      block = ContentBlock.find_by(key: "home.about.lead")
+      expect(block.body_pl.body.to_html).to include("Wstęp")
+      expect(block.body_en.body.to_html).to include("Lead")
+      expect(block.value_pl).to be_nil
     end
 
     it "leaves other sections untouched" do

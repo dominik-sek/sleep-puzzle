@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_15_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_15_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -79,6 +79,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_15_150000) do
     t.text "value_en"
     t.text "value_pl"
     t.index ["key"], name: "index_content_blocks_on_key", unique: true
+  end
+
+  create_table "content_items", force: :cascade do |t|
+    t.string "collection_key", null: false
+    t.datetime "created_at", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "values", default: {}, null: false
+    t.index ["collection_key", "position"], name: "index_content_items_on_collection_key_and_position"
   end
 
   create_table "integrations", force: :cascade do |t|

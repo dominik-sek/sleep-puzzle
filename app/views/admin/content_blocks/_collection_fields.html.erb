@@ -1,0 +1,48 @@
+<div class="flex flex-col gap-3">
+  <span class="text-t6 uppercase text-taupe">Lista</span>
+
+  <% if items.empty? %>
+    <p class="text-t6 text-taupe">
+      Brak elementów. Strona pokazuje wartości domyślne, dopóki nie dodasz własnych.
+    </p>
+  <% end %>
+
+  <% items.each_with_index do |item, index| %>
+    <div class="flex flex-col gap-3 rounded-lg border border-border-input bg-ink-soft p-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <span class="text-t6 uppercase text-taupe">
+          <%= collection.item_label %> <%= index + 1 %>
+        </span>
+
+        <div class="flex items-center gap-4">
+          <span class="flex items-center gap-2">
+            <span class="text-t6 text-taupe">Pozycja</span>
+            <%= number_field_tag "items[#{item.id}][position]", item.position,
+                                 id: "item-#{item.id}-position", min: 0,
+                                 class: "form-control w-20 py-1" %>
+          </span>
+
+          <%= link_to "Usuń", admin_content_item_path(item),
+                      data: { turbo_method: :delete, turbo_confirm: "Usunąć ten element?" },
+                      class: "text-t6 text-red-400 no-underline hover:text-red-300" %>
+        </div>
+      </div>
+
+      <% collection.fields.each do |field| %>
+        <div class="flex flex-col gap-1.5">
+          <span class="text-t6 text-taupe"><%= field.label %></span>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <% ContentItem::LOCALES.each do |locale| %>
+              <%= text_field_tag "items[#{item.id}][values][#{field.key}][#{locale}]",
+                                 item.values.dig(field.key, locale.to_s),
+                                 id: "item-#{item.id}-#{field.key}-#{locale}",
+                                 placeholder: locale == :pl ? "Polski" : "English",
+                                 class: "form-control" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

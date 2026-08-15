@@ -1,8 +1,23 @@
 require 'rails_helper'
 
+# == Schema Information
+#
+# Table name: content_blocks
+#
+#  id         :bigint           not null, primary key
+#  key        :string           not null
+#  value_en   :text
+#  value_pl   :text
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_content_blocks_on_key  (key) UNIQUE
+#
 RSpec.describe ContentBlock, type: :model do
   let(:plain_key) { "home.hero.title" }
-  let(:rich_key) { "home.hero.subtitle" }
+  let(:rich_key) { "home.about.lead" }
 
   describe "keys" do
     it "rejects a key that is not declared in the registry" do
