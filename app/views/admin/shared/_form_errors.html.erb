@@ -1,0 +1,11 @@
+<%# locals: record %>
+<% if record.errors.any? %>
+  <div class="rounded-lg border border-red-500/30 bg-red-500/10 p-3 flex flex-col gap-1">
+    <span class="text-t6 uppercase text-red-300">Nie udało się zapisać</span>
+    <ul class="list-disc pl-5 text-t6 text-red-300">
+      <% record.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

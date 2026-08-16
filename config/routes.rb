@@ -32,6 +32,11 @@ Rails.application.routes.draw do
       patch :update, on: :collection
     end
     resources :content_items, only: [ :create, :destroy ]
+    # the price list is shared by both catalogue screens, so refreshing it is one
+    # endpoint that returns you to whichever page you asked from
+    resource :paddle_prices, only: [ :update ]
+    resources :packages, except: [ :show ]
+    resources :products, except: [ :show ]
   end
 
   namespace :integrations do

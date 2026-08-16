@@ -24,7 +24,13 @@ class BookingMailerPreview < ActionMailer::Preview
       email: "jan@example.com",
       starts_at: 3.days.from_now.change(hour: 8, min: 15),
       status: status,
-      package: Package.first || Package.new(name: "Szybka ulga")
+      package: Package.first || preview_package
     )
+  end
+
+  # Package copy lives in a jsonb store, so an unsaved stand-in has to be given
+  # its name the same way the admin panel would.
+  def preview_package
+    Package.new.tap { |package| package.assign_translation(:name, :pl, "Szybka ulga") }
   end
 end

@@ -1,9 +1,9 @@
 class PackagesController < ApplicationController
   def index
-    @packages = Package.all
+    @packages = Package.published.ordered
   end
 
   def show
-    @package = Package.find(params[:id])
+    @package = Package.published.find(params[:id])
   end
 end

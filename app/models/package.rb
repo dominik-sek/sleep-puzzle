@@ -3,22 +3,24 @@
 # Table name: packages
 #
 #  id              :bigint           not null, primary key
-#  core            :jsonb
 #  duration        :integer
-#  extra           :jsonb
-#  for_whom        :text
-#  name            :string
+#  position        :integer          default(0), not null
+#  published       :boolean          default(FALSE), not null
+#  translations    :jsonb            not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  paddle_price_id :string
 #
-# Indexes
-#
-#  index_packages_on_core   (core) USING gin
-#  index_packages_on_extra  (extra) USING gin
-#
 class Package < ApplicationRecord
   include Purchasable
 
+  # `core` and `extra` are bullet lists — what the package includes, and what can
+  # be added on. They were empty jsonb columns before the copy became bilingual;
+  # keeping them in the same store means there is one place a package's words
+  # live, rather than one translatable place and one that is not.
+  translates :name, :for_whom, lists: %i[core extra]
+
   has_many :bookings, dependent: :restrict_with_error
+
+  validates :duration, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
 end

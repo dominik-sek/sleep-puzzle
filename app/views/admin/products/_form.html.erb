@@ -1,0 +1,31 @@
+<%= form_with model: [ :admin, product ], scope: :record, class: "flex flex-col gap-6" do %>
+  <%= render "admin/shared/form_errors", record: product %>
+
+  <%= render "admin/shared/translated_input", record: product, field: "name",
+             label: "Nazwa", type: :text %>
+
+  <%= render "admin/shared/translated_input", record: product, field: "description",
+             label: "Opis", type: :textarea %>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1.5">
+      <span class="text-t6 uppercase text-taupe">Rodzaj</span>
+      <%= select_tag "record[kind]",
+                     options_for_select(Product::KIND_LABELS.map(&:reverse), product.kind),
+                     include_blank: "— wybierz rodzaj —",
+                     id: "record-kind", class: "form-control" %>
+    </div>
+
+    <%= render "admin/shared/price_field", record: product, prices: prices %>
+  </div>
+
+  <%= render "admin/shared/publication_fields", record: product %>
+
+  <div class="flex items-center gap-3">
+    <%= submit_tag product.persisted? ? "Zapisz produkt" : "Dodaj produkt",
+                   class: "inline-flex items-center justify-center rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink shadow-sm cursor-pointer hover:bg-accent-hover" %>
+
+    <%= link_to "Anuluj", admin_products_path,
+                class: "text-t6 text-taupe no-underline hover:text-cream" %>
+  </div>
+<% end %>

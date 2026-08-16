@@ -1,7 +1,23 @@
 pl:
   activerecord:
+    # Package and Product name is a translated value, not a column, so the label
+    # says which language is missing — rails-i18n supplies the "nie może być
+    # puste" half.
+    attributes:
+      package:
+        name: "Nazwa (polski)"
+      product:
+        name: "Nazwa (polski)"
     errors:
       models:
+        package:
+          attributes:
+            name:
+              blank: "nie może być pusta"
+        product:
+          attributes:
+            name:
+              blank: "nie może być pusta"
         booking:
           attributes:
             name:
@@ -39,6 +55,12 @@ pl:
       few: "%{count} terminy dostępne"
       many: "%{count} terminów dostępnych"
       other: "%{count} terminu dostępnego"
+  packages:
+    duration:
+      one: "Czas trwania wsparcia: %{count} tydzień"
+      few: "Czas trwania wsparcia: %{count} tygodnie"
+      many: "Czas trwania wsparcia: %{count} tygodni"
+      other: "Czas trwania wsparcia: %{count} tygodnia"
   pagination:
     showing: "Wyświetlono"
     of: "z"

@@ -29,6 +29,10 @@
 
 en:
   hello: "Hello world"
+  packages:
+    duration:
+      one: "Support lasts %{count} week"
+      other: "Support lasts %{count} weeks"
   pagination:
     showing: "Showing"
     of: "of"

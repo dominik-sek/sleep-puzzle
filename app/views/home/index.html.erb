@@ -107,26 +107,35 @@
     <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.packages.title") %></h2>
     <span class="text-tan max-w-3/4"><%= content_block("home.packages.subtitle") %></span>
 
-    <div class="grid grid-cols-3 gap-6">
-      <% 3.times do %>
-        <%= render Card::Component.new(classes: "w-auto h-64 border-border-strong!") do |card| %>
-          <% card.with_body do %>
-            <div class="flex flex-col justify-start items-start gap-6">
-              <h3 class="text-accent! font-display text-t3! dark:text-cream">Szybka ulga</h3>
-              <span class="text-t5 font-display text-taupe">Czas trwania wsparcia: X tygodni</span>
-              <p class="text-t5 text-tan text-start">
-                Dla rodziców, którzy chcą szybko odzyskać wieczory i poprawić sen dziecka.
-              </p>
-              <a href="#">
-                <span class="text-t6 text-cream hover:text-accent">
-                  Zobacz szczegóły -&gt;
-                </span>
-              </a>
-            </div>
+    <%# real packages, in the order set in the admin panel; copy comes off the
+        record in the current locale, falling back to Polish %>
+    <% if @packages.any? %>
+      <div class="grid grid-cols-3 gap-6">
+        <% @packages.each do |package| %>
+          <%= render Card::Component.new(classes: "w-auto h-64 border-border-strong!") do |card| %>
+            <% card.with_body do %>
+              <div class="flex flex-col justify-start items-start gap-6">
+                <h3 class="text-accent! font-display text-t3! dark:text-cream"><%= package.name %></h3>
+
+                <% if package.duration %>
+                  <span class="text-t5 font-display text-taupe">
+                    <%= t("packages.duration", count: package.duration) %>
+                  </span>
+                <% end %>
+
+                <p class="text-t5 text-tan text-start"><%= package.for_whom %></p>
+
+                <%= link_to package_path(package) do %>
+                  <span class="text-t6 text-cream hover:text-accent">
+                    Zobacz szczegóły -&gt;
+                  </span>
+                <% end %>
+              </div>
+            <% end %>
           <% end %>
         <% end %>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
   <% end %>
 
   <%= render Section::Component.new(
@@ -147,8 +156,18 @@
           ) %>
         </div>
       </div>
-      <div class="flex w-1/2">
-        bajki karty tutaj - todo after model
+      <div class="flex w-1/2 flex-col gap-4">
+        <% @products.each do |product| %>
+          <%= render Card::Component.new(classes: "border-border-strong!") do |card| %>
+            <% card.with_body do %>
+              <div class="flex flex-col items-start gap-2">
+                <span class="text-t6 uppercase text-taupe"><%= product.kind_label %></span>
+                <h3 class="text-accent! font-display text-t4! dark:text-cream"><%= product.name %></h3>
+                <p class="text-t5 text-tan text-start"><%= product.description %></p>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
       </div>
     </div>
   <% end %>

@@ -1,0 +1,36 @@
+<%= form_with model: [ :admin, package ], scope: :record, class: "flex flex-col gap-6" do %>
+  <%= render "admin/shared/form_errors", record: package %>
+
+  <%= render "admin/shared/translated_input", record: package, field: "name",
+             label: "Nazwa", type: :text %>
+
+  <%= render "admin/shared/translated_input", record: package, field: "for_whom",
+             label: "Dla kogo", type: :textarea %>
+
+  <%= render "admin/shared/translated_input", record: package, field: "core",
+             label: "Co obejmuje", type: :list, hint: "jedna pozycja w linii" %>
+
+  <%= render "admin/shared/translated_input", record: package, field: "extra",
+             label: "Dodatki", type: :list, hint: "jedna pozycja w linii" %>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1.5">
+      <span class="text-t6 uppercase text-taupe">Czas trwania (tygodnie)</span>
+      <%# not translated: a number reads the same in both languages %>
+      <%= number_field_tag "record[duration]", package.duration, id: "record-duration", min: 1,
+                           class: "form-control" %>
+    </div>
+
+    <%= render "admin/shared/price_field", record: package, prices: prices %>
+  </div>
+
+  <%= render "admin/shared/publication_fields", record: package %>
+
+  <div class="flex items-center gap-3">
+    <%= submit_tag package.persisted? ? "Zapisz pakiet" : "Dodaj pakiet",
+                   class: "inline-flex items-center justify-center rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink shadow-sm cursor-pointer hover:bg-accent-hover" %>
+
+    <%= link_to "Anuluj", admin_packages_path,
+                class: "text-t6 text-taupe no-underline hover:text-cream" %>
+  </div>
+<% end %>

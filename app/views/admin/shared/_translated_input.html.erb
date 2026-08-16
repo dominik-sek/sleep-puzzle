@@ -1,0 +1,45 @@
+<%#
+  A translated field as a Polish/English pair, laid out the way the CMS lays out
+  a content block: side by side, so the translation is written against its source.
+
+  Reads raw_translation rather than the record's generated reader — the reader
+  falls back to Polish, and prefilling the English box with Polish would make an
+  untranslated field look translated as soon as the form was saved.
+
+  locals: record, field, label, type (:text, :textarea, :list), hint
+%>
+<% type ||= :text %>
+
+<div class="flex flex-col gap-2">
+  <div class="flex flex-wrap items-baseline gap-2">
+    <span class="text-t6 uppercase text-taupe"><%= label %></span>
+    <% if local_assigns[:hint].present? %>
+      <span class="text-t6 text-taupe-dark"><%= hint %></span>
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <% Translatable::LOCALES.each do |locale| %>
+      <%
+        name = "record[translations][#{field}][#{locale}]"
+        dom_id = "record-#{field}-#{locale}"
+        raw = record.raw_translation(field, locale)
+        value = type == :list ? Array(raw).join("\n") : raw
+      %>
+
+      <div class="flex flex-col gap-1.5">
+        <span class="text-t6 text-taupe"><%= locale == :pl ? "Polski" : "English" %></span>
+
+        <% case type %>
+        <% when :textarea %>
+          <%= text_area_tag name, value, id: dom_id, rows: 4, class: "form-control" %>
+        <% when :list %>
+          <%= text_area_tag name, value, id: dom_id, rows: 4, class: "form-control",
+                            placeholder: "Jedna pozycja w linii" %>
+        <% else %>
+          <%= text_field_tag name, value, id: dom_id, class: "form-control" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

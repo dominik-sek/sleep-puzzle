@@ -1,0 +1,51 @@
+<%#
+  The join to Paddle. Picked from the account's live prices rather than typed:
+  one price id looks exactly like another, and a wrong one is only discovered by
+  a buyer hitting a checkout that will not open.
+
+  Falls back to a text field when Paddle cannot be reached, so a temporary API
+  outage does not make the form unusable.
+
+  locals: record, prices
+%>
+<%
+  known = prices.any? { |price| price.id == record.paddle_price_id }
+  options = prices.map { |price| [ price.label, price.id ] }
+
+  # An id Paddle no longer lists — archived, or typed in before this was a select.
+  # Kept as an option so opening the form and saving it does not silently drop it.
+  options << [ "#{record.paddle_price_id} (nieznana w Paddle)", record.paddle_price_id ] if record.paddle_price_id.present? && !known
+%>
+
+<div class="flex flex-col gap-1.5">
+  <div class="flex flex-wrap items-baseline gap-2">
+    <span class="text-t6 uppercase text-taupe">Cena w Paddle</span>
+    <span class="text-t6 text-taupe-dark">kwotę ustawiasz w Paddle, nie tutaj</span>
+
+    <%# link_to rather than button_to: this partial renders inside the record's
+        form, and button_to would nest a <form> in it. Reloads the page, so it is
+        for before you start filling the form in, not halfway through. %>
+    <%= link_to "Odśwież listę", admin_paddle_prices_path,
+                data: { turbo_method: :patch },
+                class: "text-t6 text-accent no-underline hover:text-cream" %>
+  </div>
+
+  <% if prices.any? %>
+    <%= select_tag "record[paddle_price_id]",
+                   options_for_select(options, record.paddle_price_id),
+                   include_blank: "— wybierz cenę —",
+                   id: "record-paddle-price-id",
+                   class: "form-control" %>
+  <% else %>
+    <%= text_field_tag "record[paddle_price_id]", record.paddle_price_id,
+                       id: "record-paddle-price-id", class: "form-control",
+                       placeholder: "pri_..." %>
+    <span class="text-t6 text-orange-400">
+      Nie udało się pobrać cen z Paddle. Wklej identyfikator ceny ręcznie.
+    </span>
+  <% end %>
+
+  <% if record.errors[:paddle_price_id].any? %>
+    <span class="text-t6 text-red-400"><%= record.errors[:paddle_price_id].to_sentence %></span>
+  <% end %>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_15_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_16_120100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -101,16 +101,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_15_160000) do
   end
 
   create_table "packages", force: :cascade do |t|
-    t.jsonb "core", default: {}
     t.datetime "created_at", null: false
     t.integer "duration"
-    t.jsonb "extra", default: {}
-    t.text "for_whom"
-    t.string "name"
     t.string "paddle_price_id"
+    t.integer "position", default: 0, null: false
+    t.boolean "published", default: false, null: false
+    t.jsonb "translations", default: {}, null: false
     t.datetime "updated_at", null: false
-    t.index ["core"], name: "index_packages_on_core", using: :gin
-    t.index ["extra"], name: "index_packages_on_extra", using: :gin
   end
 
   create_table "pay_charges", force: :cascade do |t|
@@ -215,10 +212,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_15_160000) do
   create_table "products", force: :cascade do |t|
     t.integer "category"
     t.datetime "created_at", null: false
-    t.text "description"
     t.integer "kind"
-    t.string "name"
     t.string "paddle_price_id"
+    t.integer "position", default: 0, null: false
+    t.boolean "published", default: false, null: false
+    t.jsonb "translations", default: {}, null: false
     t.datetime "updated_at", null: false
   end
 

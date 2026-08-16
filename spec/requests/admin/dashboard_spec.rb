@@ -34,7 +34,7 @@ RSpec.describe "Admin::Dashboard", type: :request do
 
     it "renders the booking lists when there is data" do
       customer = create_user(email: "customer@example.com")
-      package = Package.create!(name: "Konsultacja", paddle_price_id: "pri_123")
+      package = create_package(name: "Konsultacja")
       Booking.create!(
         name: "Anna Kowalska",
         email: "anna@example.com",

@@ -111,4 +111,60 @@ RSpec.describe "Home", type: :request do
       expect(response.body).to include("trix-content")
     end
   end
+
+  describe "the packages section" do
+    it "renders the published packages in position order" do
+      create_package(name: "Drugi pakiet", position: 2, duration: 6)
+      create_package(name: "Pierwszy pakiet", position: 1, duration: 4)
+
+      get root_path
+
+      expect(response.body).to include("Pierwszy pakiet", "Drugi pakiet")
+      expect(response.body.index("Pierwszy pakiet")).to be < response.body.index("Drugi pakiet")
+      expect(response.body).to include("Czas trwania wsparcia: 4 tygodnie")
+    end
+
+    it "leaves out an unpublished package" do
+      create_package(name: "Szkic", published: false)
+
+      get root_path
+
+      expect(response.body).not_to include("Szkic")
+    end
+
+    it "renders in English once a package has been translated" do
+      create_package(name: "Szybka ulga", name_en: "Quick relief")
+
+      I18n.with_locale(:en) { get root_path }
+
+      expect(response.body).to include("Quick relief")
+    end
+
+    # falling back is the point of storing both languages in one place
+    it "falls back to Polish for a package with no English version" do
+      create_package(name: "Szybka ulga")
+
+      I18n.with_locale(:en) { get root_path }
+
+      expect(response.body).to include("Szybka ulga")
+    end
+  end
+
+  describe "the audio section" do
+    it "renders published products with their kind" do
+      create_product(name: "Bajka o sowie", kind: :bedtime_story)
+
+      get root_path
+
+      expect(response.body).to include("Bajka o sowie", "Bajka na dobranoc")
+    end
+
+    it "leaves out an unpublished product" do
+      create_product(name: "Szkic", published: false)
+
+      get root_path
+
+      expect(response.body).not_to include("Szkic")
+    end
+  end
 end

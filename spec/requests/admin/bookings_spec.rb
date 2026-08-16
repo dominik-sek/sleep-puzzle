@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Admin::Bookings", type: :request do
-  let(:package) { Package.create!(name: "Konsultacja", paddle_price_id: "pri_123") }
+  let(:package) { create_package(name: "Konsultacja") }
   let(:customer) { User.create!(email: "customer@example.com", password: "password123") }
   let(:admin) { User.create!(email: "owner@example.com", password: "password123", admin: true) }
 

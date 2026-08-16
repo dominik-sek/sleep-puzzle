@@ -1,5 +1,20 @@
 require 'rails_helper'
 
+# == Schema Information
+#
+# Table name: content_items
+#
+#  id             :bigint           not null, primary key
+#  collection_key :string           not null
+#  position       :integer          default(0), not null
+#  values         :jsonb            not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
+# Indexes
+#
+#  index_content_items_on_collection_key_and_position  (collection_key,position)
+#
 RSpec.describe ContentItem, type: :model do
   let(:collection_key) { "home.process" }
 

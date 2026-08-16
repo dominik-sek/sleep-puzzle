@@ -25,7 +25,7 @@
 #  index_content_blocks_on_key  (key) UNIQUE
 #
 class ContentBlock < ApplicationRecord
-  LOCALES = %i[pl en].freeze
+  LOCALES = Translatable::LOCALES
 
   has_rich_text :body_pl
   has_rich_text :body_en

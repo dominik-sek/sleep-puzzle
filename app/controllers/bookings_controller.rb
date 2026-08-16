@@ -139,7 +139,7 @@ class BookingsController < ApplicationController
   end
 
   def load_package_options
-    @package_options = Package.order(:name).map do |package|
+    @package_options = Package.published.ordered.map do |package|
       [ package.name, package.id, { data: { price_id: package.paddle_price_id } } ]
     end
   end
