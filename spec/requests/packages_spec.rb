@@ -63,6 +63,14 @@ RSpec.describe "Packages", type: :request do
       expect(response.body).to include("#{bookings_path}?package_id=#{package.id}")
     end
 
+    it "anchors each card so the home page can link straight to it" do
+      package = create_package(name: "Szybka ulga")
+
+      get packages_path
+
+      expect(response.body).to include(%(id="package_#{package.id}"))
+    end
+
     it "shows the CMS empty state when there is nothing to sell yet" do
       get packages_path
 
@@ -80,20 +88,10 @@ RSpec.describe "Packages", type: :request do
     end
   end
 
+  # /packages/:id is gone: the catalogue carries everything a package has to say
   describe "GET /packages/:id" do
-    it "renders a published package" do
-      package = create_package(name: "Szybka ulga")
-
-      get package_path(package)
-
-      expect(response).to have_http_status(:ok)
-    end
-
-    # unpublished means "not on the site yet", so a guessed id must not reach it
-    it "404s for an unpublished package" do
-      package = create_package(name: "Szkic", published: false)
-
-      get package_path(package)
+    it "has no route" do
+      get "/packages/1"
 
       expect(response).to have_http_status(:not_found)
     end

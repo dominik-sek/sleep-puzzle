@@ -127,6 +127,14 @@ RSpec.describe "Home", type: :request do
       expect(response.body).to include("Czas trwania wsparcia: 4 tygodnie")
     end
 
+    it "sends the details link to the catalogue, anchored on that package" do
+      package = create_package(name: "Szybka ulga")
+
+      get root_path
+
+      expect(response.body).to include("#{packages_path}#package_#{package.id}")
+    end
+
     it "leaves out an unpublished package" do
       create_package(name: "Szkic", published: false)
 

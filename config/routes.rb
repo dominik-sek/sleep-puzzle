@@ -13,7 +13,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "home#index"
-  resources :packages, only: [ :index, :show ]
+  # one page: each card carries everything a package has to say, so there is
+  # no per-package page to link to
+  resources :packages, only: [ :index ]
   resources :dashboard, only: [ :index ]
   # looked up by token rather than id: the URL is handed to Paddle as the checkout
   # success redirect, so it shouldn't expose sequential ids

@@ -125,7 +125,8 @@
 
                 <p class="text-t5 text-tan text-start"><%= package.for_whom %></p>
 
-                <%= link_to package_path(package) do %>
+                <%# no per-package page: land on the catalogue at this card %>
+                <%= link_to packages_path(anchor: dom_id(package)) do %>
                   <span class="text-t6 text-cream hover:text-accent">
                     Zobacz szczegóły -&gt;
                   </span>
