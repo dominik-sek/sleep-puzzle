@@ -24,6 +24,8 @@ Rails.application.routes.draw do
     delete :abandon, on: :member
   end
   resources :products, only: [ :index, :show ]
+  # one page that both shows the form and takes it, so there is no id to carry
+  resource :contact, only: [ :show, :create ]
 
   # staff-only; access is the `admin` boolean on users, granted with
   # `bin/rails 'admin:promote[email]'`

@@ -70,7 +70,11 @@ RSpec.describe ContentItem, type: :model do
 
   describe ".sync!" do
     it "materialises the declared defaults as editable rows" do
-      expect { ContentItem.sync! }.to change(ContentItem, :count).by(4) # 3 steps + 1 stat
+      # counted off the registry rather than written out: declaring a collection
+      # on a new page should not fail this
+      declared = ContentBlock::Registry.sections.filter_map { |section| section.collection&.defaults&.size }.sum
+
+      expect { ContentItem.sync! }.to change(ContentItem, :count).by(declared)
 
       steps = ContentItem.for_collection("home.process")
       expect(steps.map { |i| i.value_for("title", :pl) }).to eq([ "Krok pierwszy", "Krok drugi", "Krok trzeci" ])

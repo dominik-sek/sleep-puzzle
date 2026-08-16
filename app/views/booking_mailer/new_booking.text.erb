@@ -2,7 +2,7 @@
 
 <%= t("booking_mailer.new_booking.intro") %>
 
-<%= render "details", rows: {
+<%= render "shared/mail_details", rows: {
       t("booking_mailer.details.name") => @booking.name,
       t("booking_mailer.details.email") => @booking.email,
       t("booking_mailer.details.package") => @booking.package.name,

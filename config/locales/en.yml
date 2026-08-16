@@ -29,6 +29,33 @@
 
 en:
   hello: "Hello world"
+  activemodel:
+    attributes:
+      contact_message:
+        name: "Full name"
+        email: "Email address"
+        body: "Message"
+    errors:
+      models:
+        contact_message:
+          attributes:
+            name:
+              blank: "Please give your name"
+            email:
+              blank: "Please give an email address"
+              invalid: "Please give a valid email address"
+            body:
+              blank: "Please write a message"
+  contact_mailer:
+    details:
+      name: "Full name"
+      email: "Email"
+    new_message:
+      subject: "Message from the contact form: %{name}"
+      heading: "New message from the contact form"
+  contacts:
+    rate_limited: "Too many messages sent. Please try again in a moment."
+    turnstile_failed: "We could not confirm you are not a robot. Please try again."
   packages:
     duration:
       one: "Support lasts %{count} week"

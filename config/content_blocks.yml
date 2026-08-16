@@ -192,3 +192,108 @@ packages:
           default:
             pl: "Pakiety pojawią się tutaj wkrótce. Napisz do mnie, a ustalimy wsparcie skrojone na Waszą sytuację."
             en: "Packages are coming soon. Write to me and we will work out support that fits your situation."
+contact:
+  label: Kontakt
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Kontakt"
+            en: "Contact"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Masz pytanie zanim się umówisz? Napisz — odpowiadam osobiście."
+            en: "Got a question before booking? Write to me — I reply personally."
+    form:
+      label: Formularz
+      fields:
+        # each label doubles as the field's placeholder: the design shows no
+        # visible labels, so the same words carry the accessible name
+        name_label:
+          label: Pole „imię i nazwisko”
+          type: plain
+          default:
+            pl: "Imię i nazwisko"
+            en: "Full name"
+        email_label:
+          label: Pole „adres e-mail”
+          type: plain
+          default:
+            pl: "Adres e-mail"
+            en: "Email address"
+        body_label:
+          label: Pole „wiadomość”
+          type: plain
+          default:
+            pl: "Twoja wiadomość"
+            en: "Your message"
+        submit:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Wyślij wiadomość"
+            en: "Send message"
+        thanks:
+          label: Podziękowanie po wysłaniu
+          type: plain
+          default:
+            pl: "Dziękuję za wiadomość! Odezwę się najszybciej, jak mogę."
+            en: "Thanks for your message! I'll get back to you as soon as I can."
+    links:
+      label: Odnośniki obok formularza
+      collection:
+        item_label: Odnośnik
+        fields:
+          # an emoji rather than a name from the icon set: this is typed into the
+          # panel, and a mistyped set name would raise where a stray character
+          # only looks odd
+          icon:
+            label: Ikona (emoji)
+            type: plain
+          label:
+            label: Nazwa
+            type: plain
+          url:
+            label: Adres (np. https://... lub /pakiety)
+            type: plain
+        defaults:
+          - icon:
+              pl: "📷"
+            label:
+              pl: "Instagram @sleep.puzzle"
+            url:
+              pl: "https://www.instagram.com/sleep.puzzle"
+          - icon:
+              pl: "🎙️"
+            label:
+              pl: "Podcast o rodzicielstwie"
+              en: "Parenting podcast"
+            url:
+              pl: "#"
+          - icon:
+              pl: "🎙️"
+            label:
+              pl: "Podcast o zdrowiu dziecka"
+              en: "Child health podcast"
+            url:
+              pl: "#"
+          - icon:
+              pl: "🎙️"
+            label:
+              pl: "Rozmowy o śnie"
+              en: "Sleep talks"
+            url:
+              pl: "#"
+          - icon:
+              pl: "📄"
+            label:
+              pl: "Regulamin współpracy"
+              en: "Terms of cooperation"
+            url:
+              pl: "#"

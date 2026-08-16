@@ -1,0 +1,10 @@
+<h1 style="margin:0 0 12px; font-size:22px; line-height:30px; color:#211e1c;">
+  <%= t("contact_mailer.new_message.heading") %>
+</h1>
+
+<%= render "shared/mail_details", rows: {
+      t("contact_mailer.details.name") => @message.name,
+      t("contact_mailer.details.email") => @message.email
+    } %>
+
+<p style="margin:24px 0 0; font-size:15px; line-height:24px; color:#211e1c; white-space:pre-line;"><%= @message.body %></p>

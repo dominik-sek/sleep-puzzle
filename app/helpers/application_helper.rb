@@ -85,7 +85,13 @@ module ApplicationHelper
   # admin-only, so this is less about attack than about a mistyped value ending up
   # in an href and doing something surprising.
   def content_link_url(key, fallback: "#")
-    value = content_block(key).to_s.strip
+    safe_link_url(content_block(key), fallback: fallback)
+  end
+
+  # The same check for a URL that did not come from a block of its own — a field
+  # on a collection item, say, which content_link_url has no key to look up.
+  def safe_link_url(value, fallback: "#")
+    value = value.to_s.strip
     return fallback if value.blank?
     return value if value.start_with?("/", "#")
     return value if value.match?(%r{\A(https?://|mailto:)}i)

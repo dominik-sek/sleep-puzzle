@@ -1,0 +1,7 @@
+<%# Replaces the form in place once the message is away, so the confirmation
+    lands where the sender was looking rather than as a toast above the fold. %>
+<%= turbo_frame_tag "contact_form" do %>
+  <div class="rounded-2xl border border-border-strong bg-surface p-8 text-center text-accent font-bold">
+    <%= content_block("contact.form.thanks") %>
+  </div>
+<% end %>

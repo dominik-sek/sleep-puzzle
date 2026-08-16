@@ -2,7 +2,7 @@
 
 <%= t("booking_mailer.confirmed.intro") %>
 
-<%= render "details", rows: {
+<%= render "shared/mail_details", rows: {
       t("booking_mailer.details.package") => @booking.package.name,
       t("booking_mailer.details.starts_at") => l(@booking.starts_at, format: :long),
       t("booking_mailer.details.status") => Booking::PAYMENT_STATUS_LABELS.fetch(@booking.status)
