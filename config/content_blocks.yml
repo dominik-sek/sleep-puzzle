@@ -7,6 +7,9 @@
 # field type:
 #   plain - a short string, rendered as-is into the template (titles, subtitles)
 #   rich  - Action Text, with a Trix editor and formatting (paragraphs, links)
+#   image - an uploaded picture, one file per key rather than one per language.
+#           Has no `default`: until something is uploaded the template decides
+#           what an empty slot looks like.
 #
 # default:
 #   The copy the page ships with. Used whenever the database has nothing for a
@@ -40,6 +43,9 @@ home:
     about:
       label: O mnie
       fields:
+        photo:
+          label: Zdjęcie
+          type: image
         title:
           label: Nagłówek
           type: plain
@@ -55,6 +61,17 @@ home:
           type: rich
           default:
             pl: "<div>„Piasek jest fajny — na plaży. Nie pod powiekami” :) Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą.</div>"
+        cta_label:
+          label: Przycisk — tekst
+          type: plain
+          default:
+            pl: "Poznaj mnie lepiej"
+            en: "More about me"
+        cta_url:
+          label: "Przycisk — adres (np. https://instagram.com/... lub /kontakt)"
+          type: plain
+          default:
+            pl: "#"
     stats:
       label: Liczby
       collection:

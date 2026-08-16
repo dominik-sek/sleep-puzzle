@@ -1,22 +1,30 @@
 <div id="section-<%= page.key %>-<%= section.key %>" class="scroll-mt-6">
-  <%= form_with url: admin_content_blocks_path, method: :patch, class: "flex flex-col gap-6" do %>
+  <%# multipart: a section may carry an image field, and a file input in a form
+      posted as urlencoded uploads nothing but the filename %>
+  <%= form_with url: admin_content_blocks_path, method: :patch, multipart: true,
+                class: "flex flex-col gap-6" do %>
     <%# id: nil — five section forms on one page would otherwise all be id="section" %>
     <%= hidden_field_tag :section, section.full_key, id: nil %>
 
     <% section.fields.each do |field| %>
-      <div class="flex flex-col gap-2">
-        <div class="flex flex-wrap items-baseline gap-2">
-          <span class="text-t6 uppercase text-taupe"><%= field.label %></span>
-          <span class="text-t6 font-mono text-taupe-dark"><%= field.full_key %></span>
-        </div>
+      <% if field.image? %>
+        <%= render "admin/content_blocks/image_input",
+                   section: section, field: field, block: blocks[field.full_key] %>
+      <% else %>
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-wrap items-baseline gap-2">
+            <span class="text-t6 uppercase text-taupe"><%= field.label %></span>
+            <span class="text-t6 font-mono text-taupe-dark"><%= field.full_key %></span>
+          </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <% ContentBlock::LOCALES.each do |locale| %>
-            <%= render "admin/content_blocks/field_input",
-                       section: section, field: field, block: blocks[field.full_key], locale: locale %>
-          <% end %>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <% ContentBlock::LOCALES.each do |locale| %>
+              <%= render "admin/content_blocks/field_input",
+                         section: section, field: field, block: blocks[field.full_key], locale: locale %>
+            <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
 
     <% if section.collection? %>

@@ -25,8 +25,12 @@ RSpec.describe ApplicationHelper, type: :helper do
         queries = 0
         counter = ->(*, payload) { queries += 1 unless payload[:name].to_s =~ /SCHEMA|TRANSACTION/ }
 
+        # text blocks only: an image block holds a file, and content_image is
+        # the way to reach it
+        text_keys = ContentBlock::Registry.fields.select(&:translatable?).map(&:full_key)
+
         ActiveSupport::Notifications.subscribed(counter, "sql.active_record") do
-          ContentBlock::Registry.keys.each { |key| helper.content_block(key) }
+          text_keys.each { |key| helper.content_block(key) }
         end
 
         expect(queries).to be <= 3
@@ -71,6 +75,76 @@ RSpec.describe ApplicationHelper, type: :helper do
       allow(ContentBlock::Registry).to receive(:field).with("home.hero.title").and_return(field)
 
       expect(helper.content_block("home.hero.title")).to include("brak treści")
+    end
+  end
+
+  describe "#content_image" do
+    let(:block) { ContentBlock.find_by!(key: "home.about.photo") }
+
+    before { ContentBlock.sync! }
+
+    # unlike a text block there is no default to fall back to, so the template
+    # decides what an empty slot looks like
+    it "is nil when nothing has been uploaded" do
+      expect(helper.content_image("home.about.photo")).to be_nil
+    end
+
+    it "renders the uploaded picture" do
+      block.image.attach(io: file_fixture("photo.png").open, filename: "photo.png", content_type: "image/png")
+
+      expect(helper.content_image("home.about.photo")).to include("<img")
+    end
+
+    it "passes attributes through to the tag" do
+      block.image.attach(io: file_fixture("photo.png").open, filename: "photo.png", content_type: "image/png")
+
+      expect(helper.content_image("home.about.photo", alt: "Karola", class: "rounded")).to include('alt="Karola"', 'class="rounded"')
+    end
+
+    it "rejects a key that is not an image block" do
+      expect { helper.content_image("home.about.title") }.to raise_error(ArgumentError, /not an image/)
+    end
+
+    it "rejects a text block asked for through content_block" do
+      expect { helper.content_block("home.about.photo") }.to raise_error(ArgumentError, /image block/)
+    end
+  end
+
+  describe "#content_link_url" do
+    before { ContentBlock.sync! }
+
+    def set_url(value)
+      ContentBlock.find_by!(key: "home.about.cta_url").update!(value_pl: value)
+    end
+
+    it "passes an absolute web address through" do
+      set_url("https://instagram.com/karola")
+
+      expect(helper.content_link_url("home.about.cta_url")).to eq("https://instagram.com/karola")
+    end
+
+    it "passes a path or anchor through" do
+      set_url("/kontakt")
+      expect(helper.content_link_url("home.about.cta_url")).to eq("/kontakt")
+    end
+
+    it "passes a mailto through" do
+      set_url("mailto:karola@example.com")
+
+      expect(helper.content_link_url("home.about.cta_url")).to eq("mailto:karola@example.com")
+    end
+
+    # admin-only, so this is about a mistyped value rather than an attack
+    it "falls back for anything that is not an ordinary link target" do
+      set_url("javascript:alert(1)")
+
+      expect(helper.content_link_url("home.about.cta_url")).to eq("#")
+    end
+
+    it "falls back for a scheme-less host, which would otherwise read as a path" do
+      set_url("instagram.com/karola")
+
+      expect(helper.content_link_url("home.about.cta_url")).to eq("#")
     end
   end
 end

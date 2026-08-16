@@ -8,12 +8,20 @@
 class ContentBlock
   module Registry
     PATH = Rails.root.join("config/content_blocks.yml")
-    TYPES = %w[plain rich].freeze
+    TYPES = %w[plain rich image].freeze
 
     Field = Struct.new(:key, :label, :type, :defaults, :section, keyword_init: true) do
       def full_key = "#{section.full_key}.#{key}"
       def rich? = type == "rich"
       def plain? = type == "plain"
+
+      # An uploaded picture rather than copy: one file per key, not one per
+      # language, because a photo of the owner is the same in both.
+      def image? = type == "image"
+
+      # Copy the owner types, as opposed to a file they upload. Only these have
+      # a Polish/English pair in the panel.
+      def translatable? = !image?
 
       # The copy the page ships with, used when the database has nothing. Falls
       # back to the default locale so only `pl` has to be written out.

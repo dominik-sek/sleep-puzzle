@@ -56,7 +56,13 @@
   ) do |section| %>
     <div class="flex w-full gap-6 items-center">
       <div class="w-1/4">
-        <img src="" alt="zdjecie" class="border border-border-strong rounded-lg border-px h-full aspect-square" />
+        <%# uploaded in the panel; until there is one, an empty frame rather than
+            a broken <img> %>
+        <% photo = content_image("home.about.photo",
+                                 alt: content_block("home.about.title"),
+                                 class: "border border-border-strong rounded-lg border-px w-full aspect-square object-cover") %>
+
+        <%= photo || tag.div(class: "border border-dashed border-border-strong rounded-lg w-full aspect-square") %>
       </div>
       <div class="flex flex-col gap-6 w-3/4">
         <h2 class="text-accent font-display text-t2"><%= content_block("home.about.title") %></h2>
@@ -69,11 +75,13 @@
           <%= content_block("home.about.body") %>
         </div>
 
-        <a href="#">
+        <%# label and target both editable; the arrow is chrome, so it is not
+            part of the copy the owner types %>
+        <%= link_to content_link_url("home.about.cta_url") do %>
           <span class="font-bold text-t6! text-accent">
-            Poznaj mnie lepiej ->
+            <%= content_block("home.about.cta_label") %>
           </span>
-        </a>
+        <% end %>
       </div>
     </div>
   <% end %>
@@ -85,11 +93,13 @@
   ) do |section| %>
     <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.process.title") %></h2>
 
-    <%# owner-managed list: numbering follows display order rather than being stored %>
-    <div class="flex w-1/2 justify-between">
+    <%# owner-managed list: numbering follows display order rather than being stored.
+        flex-1 rather than a fixed column count — the owner can add a fourth step
+        in the panel, and the row should divide itself rather than break. %>
+    <div class="flex flex-col md:flex-row w-full gap-10 md:gap-12">
       <% content_items("home.process").each_with_index do |step, index| %>
-        <div class="flex flex-col items-center justify-center gap-4">
-          <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">
+        <div class="flex-1 flex flex-col items-center text-center gap-4">
+          <div class="w-16 h-16 shrink-0 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">
             <%= index + 1 %>
           </div>
           <span class="text-t4 font-display"><%= step["title"] %></span>
@@ -157,14 +167,19 @@
           ) %>
         </div>
       </div>
-      <div class="flex w-1/2 flex-col gap-4">
+      <%# tiles rather than stacked cards: this is a teaser for the shop, so it
+          shows several at a glance instead of one wide row each. content-start
+          keeps them their natural height instead of stretching to fill the half. %>
+      <div class="grid grid-cols-2 gap-4 w-1/2 content-start">
         <% @products.each do |product| %>
-          <%= render Card::Component.new(classes: "border-border-strong!") do |card| %>
+          <%= render Card::Component.new(padding: :sm, classes: "h-full border-border-strong!") do |card| %>
             <% card.with_body do %>
-              <div class="flex flex-col items-start gap-2">
+              <div class="flex flex-col items-start gap-1.5">
                 <span class="text-t6 uppercase text-taupe"><%= product.kind_label %></span>
-                <h3 class="text-accent! font-display text-t4! dark:text-cream"><%= product.name %></h3>
-                <p class="text-t5 text-tan text-start"><%= product.description %></p>
+                <h3 class="text-accent! font-display text-t5! dark:text-cream"><%= product.name %></h3>
+                <%# clamped, not truncated server-side: the full description still
+                    belongs on the product itself %>
+                <p class="text-t6 text-tan text-start line-clamp-2"><%= product.description %></p>
               </div>
             <% end %>
           <% end %>

@@ -154,4 +154,100 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
       expect(block.translated?(:en)).to be false
     end
   end
+
+  describe "image blocks" do
+    before { sign_in admin }
+
+    let(:photo) { fixture_file_upload("photo.png", "image/png") }
+    let(:block) { ContentBlock.find_by!(key: "home.about.photo") }
+
+    def upload(file, extra = {})
+      patch admin_content_blocks_path,
+            params: { section: "home.about", images: { "photo" => { "file" => file }.merge(extra) } }
+    end
+
+    it "renders a file input rather than a Polish/English pair" do
+      get admin_content_blocks_path
+
+      expect(response.body).to include(%(name="images[photo][file]"))
+      expect(response.body).not_to include(%(name="fields[photo][pl]"))
+    end
+
+    it "posts the section form as multipart, or the upload never arrives" do
+      get admin_content_blocks_path
+
+      expect(response.body).to include('enctype="multipart/form-data"')
+    end
+
+    it "attaches an uploaded picture" do
+      ContentBlock.sync!
+
+      expect { upload(photo) }.to change { block.reload.image.attached? }.from(false).to(true)
+      expect(flash[:notice]).to be_present
+    end
+
+    it "replaces the picture already there" do
+      ContentBlock.sync!
+      upload(photo)
+      first_blob = block.reload.image.blob.id
+
+      upload(fixture_file_upload("photo.png", "image/png"))
+
+      expect(block.reload.image.blob.id).not_to eq(first_blob)
+    end
+
+    it "removes the picture when asked" do
+      ContentBlock.sync!
+      upload(photo)
+
+      patch admin_content_blocks_path,
+            params: { section: "home.about", images: { "photo" => { "remove" => "1" } } }
+
+      expect(block.reload.image.attached?).to be(false)
+    end
+
+    # checked before attaching, so a refused file leaves nothing behind
+    it "refuses a file that is not an image, and says why" do
+      ContentBlock.sync!
+
+      upload(fixture_file_upload("not-an-image.txt", "text/plain"))
+
+      expect(block.reload.image.attached?).to be(false)
+      expect(flash[:alert]).to include("nie jest obsługiwanym obrazem")
+    end
+
+    it "refuses a file over the size limit" do
+      ContentBlock.sync!
+      stub_const("ContentBlock::IMAGE_MAX_BYTES", 1)
+
+      upload(photo)
+
+      expect(block.reload.image.attached?).to be(false)
+      expect(flash[:alert]).to include("jest za duży")
+    end
+
+    # the copy in the same section saved fine; only the file was wrong
+    it "keeps the text it saved alongside a refused upload" do
+      ContentBlock.sync!
+
+      patch admin_content_blocks_path,
+            params: {
+              section: "home.about",
+              fields: { "title" => { "pl" => "Nowy tytuł", "en" => "" } },
+              images: { "photo" => { "file" => fixture_file_upload("not-an-image.txt", "text/plain") } }
+            }
+
+      expect(ContentBlock.find_by(key: "home.about.title").value_pl).to eq("Nowy tytuł")
+      expect(flash[:alert]).to be_present
+    end
+
+    it "ignores an image posted for a section that does not declare it" do
+      ContentBlock.sync!
+
+      patch admin_content_blocks_path,
+            params: { section: "home.hero", images: { "photo" => { "file" => photo } } }
+
+      expect(block.reload.image.attached?).to be(false)
+    end
+  end
 end

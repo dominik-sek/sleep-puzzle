@@ -27,14 +27,23 @@
 class ContentBlock < ApplicationRecord
   LOCALES = Translatable::LOCALES
 
+  # What a browser can actually display, and a ceiling that keeps a photo
+  # straight off a phone from becoming the page's slowest asset.
+  IMAGE_CONTENT_TYPES = %w[image/png image/jpeg image/webp image/avif].freeze
+  IMAGE_MAX_BYTES = 5.megabytes
+
   has_rich_text :body_pl
   has_rich_text :body_en
+
+  # Image blocks hold a file instead of text. Not per-locale: a picture does not
+  # get translated, so both languages share the one upload.
+  has_one_attached :image
 
   validates :key, presence: true, uniqueness: true
   validate :key_must_be_declared
 
   scope :declared, -> { where(key: Registry.keys) }
-  scope :with_bodies, -> { with_rich_text_body_pl.with_rich_text_body_en }
+  scope :with_bodies, -> { with_rich_text_body_pl.with_rich_text_body_en.with_attached_image }
 
   class << self
     # idempotent: safe to re-run on every deploy
@@ -59,6 +68,10 @@ class ContentBlock < ApplicationRecord
 
   def rich?
     field&.rich? || false
+  end
+
+  def image?
+    field&.image? || false
   end
 
   # The value for a locale, falling back to the default locale when the

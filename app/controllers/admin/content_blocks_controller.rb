@@ -22,13 +22,23 @@ module Admin
       section = ContentBlock::Registry.sections.find { |candidate| candidate.full_key == params[:section] }
       return head :not_found if section.nil?
 
+      problems = nil
+
       ContentBlock.transaction do
         save_section(section)
         save_items(section)
+        problems = save_images(section)
       end
 
-      redirect_to admin_content_blocks_path(open: section.full_key),
-                  notice: "Zapisano „#{section.label}”."
+      # A rejected upload does not undo the copy that saved alongside it — the
+      # text is fine, only the file was wrong — so this reports rather than rolls
+      # back, and says which file and why.
+      if problems.any?
+        redirect_to admin_content_blocks_path(open: section.full_key), alert: problems.to_sentence
+      else
+        redirect_to admin_content_blocks_path(open: section.full_key),
+                    notice: "Zapisano „#{section.label}”."
+      end
     end
 
     private
@@ -36,7 +46,7 @@ module Admin
     def save_section(section)
       values = field_params(section)
 
-      section.fields.each do |field|
+      section.fields.reject(&:image?).each do |field|
         submitted = values[field.key]
         next if submitted.nil?
 
@@ -75,10 +85,53 @@ module Admin
       end
     end
 
+    # Uploads, read key by key from the registry the same way item values are, so
+    # a forged form cannot attach a file to a block on another page.
+    #
+    # Returns the messages for any file that was refused.
+    def save_images(section)
+      submitted = params[:images]
+      return [] if submitted.blank?
+
+      section.fields.select(&:image?).filter_map do |field|
+        attributes = submitted[field.key]
+        next if attributes.blank?
+
+        block = ContentBlock.find_by!(key: field.full_key)
+
+        if attributes[:remove] == "1"
+          block.image.purge_later
+          next
+        end
+
+        file = attributes[:file]
+        next if file.blank?
+
+        rejection_for(file) || attach_image(block, file)
+      end
+    end
+
+    # Checked before attaching rather than validated after: a rejected upload
+    # should leave no half-written attachment behind to clean up.
+    def rejection_for(file)
+      unless file.content_type.in?(ContentBlock::IMAGE_CONTENT_TYPES)
+        return "„#{file.original_filename}” nie jest obsługiwanym obrazem (PNG, JPG, WEBP, AVIF)"
+      end
+
+      return unless file.size > ContentBlock::IMAGE_MAX_BYTES
+
+      "„#{file.original_filename}” jest za duży (limit #{helpers.number_to_human_size(ContentBlock::IMAGE_MAX_BYTES)})"
+    end
+
+    def attach_image(block, file)
+      block.image.attach(file)
+      nil
+    end
+
     # Only the fields the registry says belong to this section are permitted, so
     # a forged form cannot reach a block on another page.
     def field_params(section)
-      allowed = section.fields.to_h { |field| [ field.key, [ :pl, :en ] ] }
+      allowed = section.fields.reject(&:image?).to_h { |field| [ field.key, [ :pl, :en ] ] }
 
       params.fetch(:fields, ActionController::Parameters.new).permit(allowed)
     end

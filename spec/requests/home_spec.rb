@@ -115,6 +115,44 @@ RSpec.describe "Home", type: :request do
     end
   end
 
+  describe "the about section" do
+    it "renders the button from its declared defaults" do
+      get root_path
+
+      expect(response.body).to include("Poznaj mnie lepiej")
+    end
+
+    it "uses the label and target the owner set" do
+      ContentBlock.sync!
+      ContentBlock.find_by!(key: "home.about.cta_label").update!(value_pl: "Moja historia")
+      ContentBlock.find_by!(key: "home.about.cta_url").update!(value_pl: "https://instagram.com/karola")
+
+      get root_path
+
+      expect(response.body).to include("Moja historia")
+      expect(response.body).to include(%(href="https://instagram.com/karola"))
+    end
+
+    # an empty frame rather than a broken <img>
+    it "renders no image tag until a photo is uploaded" do
+      get root_path
+
+      expect(response.body).not_to include("zdjecie")
+      expect(response.body).to include("border-dashed")
+    end
+
+    it "renders the uploaded photo once there is one" do
+      ContentBlock.sync!
+      ContentBlock.find_by!(key: "home.about.photo")
+                  .image.attach(io: file_fixture("photo.png").open, filename: "photo.png", content_type: "image/png")
+
+      get root_path
+
+      expect(response.body).to include("<img")
+      expect(response.body).not_to include("border-dashed")
+    end
+  end
+
   describe "the packages section" do
     it "renders the published packages in position order" do
       create_package(name: "Drugi pakiet", position: 2, duration: 6)

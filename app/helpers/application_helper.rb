@@ -38,6 +38,13 @@ module ApplicationHelper
       return
     end
 
+    # an image block has no text to render; content_image is the way in
+    if field.image?
+      raise ArgumentError, "#{key.inspect} is an image block; use content_image" if Rails.env.local?
+
+      return
+    end
+
     stored = content_blocks_by_key[key]&.value_for(locale)
     return render_content_block(field, stored) if stored
 
@@ -47,6 +54,43 @@ module ApplicationHelper
     return render_content_block(field, fallback) if fallback.present?
 
     missing_content_block(key)
+  end
+
+  # An uploaded picture from the CMS, e.g. content_image("home.about.photo").
+  #
+  # Returns nil when nothing has been uploaded yet — unlike a text block there is
+  # no default to fall back to, so the template decides what an empty slot looks
+  # like rather than this rendering a broken <img>.
+  #
+  # Served as a resized variant: the owner uploads whatever came off their phone,
+  # and the page should not carry a 4000px original.
+  def content_image(key, resize_to: [ 1200, 1200 ], **options)
+    field = ContentBlock::Registry.field(key)
+
+    unless field&.image?
+      raise ArgumentError, "#{key.inspect} is not an image content block" if Rails.env.local?
+
+      return
+    end
+
+    block = content_blocks_by_key[key]
+    return unless block&.image&.attached?
+
+    image_tag block.image.variant(resize_to_limit: resize_to), **options
+  end
+
+  # A URL typed into the CMS, for a block whose value is a link target.
+  #
+  # Anything that is not an ordinary web address falls back to "#": the panel is
+  # admin-only, so this is less about attack than about a mistyped value ending up
+  # in an href and doing something surprising.
+  def content_link_url(key, fallback: "#")
+    value = content_block(key).to_s.strip
+    return fallback if value.blank?
+    return value if value.start_with?("/", "#")
+    return value if value.match?(%r{\A(https?://|mailto:)}i)
+
+    fallback
   end
 
   # The owner-managed list for a section, e.g. content_items("home.process").
