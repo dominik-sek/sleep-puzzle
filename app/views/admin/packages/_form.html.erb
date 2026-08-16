@@ -7,11 +7,13 @@
   <%= render "admin/shared/translated_input", record: package, field: "for_whom",
              label: "Dla kogo", type: :textarea %>
 
+  <%# labels match the headings on the public page, so it is obvious which list
+      ends up where %>
   <%= render "admin/shared/translated_input", record: package, field: "core",
-             label: "Co obejmuje", type: :list, hint: "jedna pozycja w linii" %>
+             label: "Co otrzymujecie", type: :list, hint: "jedna korzyść w linii" %>
 
   <%= render "admin/shared/translated_input", record: package, field: "extra",
-             label: "Dodatki", type: :list, hint: "jedna pozycja w linii" %>
+             label: "Dodatkowo", type: :list, hint: "jedna pozycja w linii" %>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="flex flex-col gap-1.5">

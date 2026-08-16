@@ -10,7 +10,10 @@ RSpec.describe "Home", type: :request do
       get root_path
 
       expect(response).to have_http_status(:ok)
-      ContentBlock::Registry.fields.each do |field|
+      # this page's own fields: the registry also declares the other pages'
+      home_fields = ContentBlock::Registry.fields.select { |field| field.section.page.key == "home" }
+
+      home_fields.each do |field|
         default = field.default_for(:pl)
         next if default.blank?
 

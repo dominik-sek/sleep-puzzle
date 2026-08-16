@@ -14,10 +14,11 @@
 class Package < ApplicationRecord
   include Purchasable
 
-  # `core` and `extra` are bullet lists — what the package includes, and what can
-  # be added on. They were empty jsonb columns before the copy became bilingual;
-  # keeping them in the same store means there is one place a package's words
-  # live, rather than one translatable place and one that is not.
+  # `core` and `extra` are bullet lists — the "Co otrzymujecie" benefits and the
+  # add-ons beneath them on the packages page. They were empty jsonb columns
+  # before the copy became bilingual; keeping them in the same store means there
+  # is one place a package's words live, rather than one translatable place and
+  # one that is not.
   translates :name, :for_whom, lists: %i[core extra]
 
   has_many :bookings, dependent: :restrict_with_error

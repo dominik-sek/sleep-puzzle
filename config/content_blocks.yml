@@ -122,3 +122,56 @@ home:
           type: rich
           default:
             pl: "<div>Nagrania do samodzielnej pracy nad rutyną oraz kojące bajki audio dla dzieci — dostępne po zalogowaniu na Twoim koncie.</div>"
+packages:
+  label: Pakiety
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Pakiety współpracy"
+            en: "Working together"
+        subtitle:
+          label: Podtytuł
+          type: rich
+          default:
+            pl: "<div>Od szybkiej ulgi po pełne poukładanie rodzinnego systemu — Ty wybierasz tempo. Każdy pakiet zaczyna się od rozmowy o Waszej sytuacji.</div>"
+    card:
+      label: Etykiety na kartach
+      fields:
+        for_whom:
+          label: Nagłówek „dla kogo”
+          type: plain
+          default:
+            pl: "Dla kogo"
+            en: "Who it is for"
+        core:
+          label: Nagłówek listy korzyści
+          type: plain
+          default:
+            pl: "Co otrzymujecie"
+            en: "What you get"
+        extra:
+          label: Nagłówek listy dodatków
+          type: plain
+          default:
+            pl: "Dodatkowo"
+            en: "Also included"
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Umów konsultację"
+            en: "Book a consultation"
+    empty:
+      label: Gdy nie ma pakietów
+      fields:
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Pakiety pojawią się tutaj wkrótce. Napisz do mnie, a ustalimy wsparcie skrojone na Waszą sytuację."
+            en: "Packages are coming soon. Write to me and we will work out support that fits your situation."

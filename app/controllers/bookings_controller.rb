@@ -10,6 +10,9 @@ class BookingsController < ApplicationController
     @booking = Booking.new(
       name: current_user.full_name,
       email: current_user.email,
+      # carried over from a package card's "Umów konsultację", so the choice made
+      # on the packages page is not asked for a second time
+      package_id: preselected_package_id
     )
   end
 
@@ -136,6 +139,12 @@ class BookingsController < ApplicationController
   rescue Pay::PaddleBilling::Error, Paddle::ErrorGenerator => e
     Rails.logger.error("Failed to prepare Paddle checkout for booking #{booking.id}: #{e.message}")
     nil
+  end
+
+  # Read through the published scope rather than trusted from the query string:
+  # an unpublished or unknown id simply leaves the select on its prompt.
+  def preselected_package_id
+    Package.published.where(id: params[:package_id]).pick(:id)
   end
 
   def load_package_options

@@ -1,0 +1,71 @@
+<%#
+  One package. `core` and `extra` are translated lists, so they read back as
+  arrays and each section simply disappears when the owner has not filled it in —
+  a package with no add-ons should not render an empty "Dodatkowo" heading.
+
+  locals: package
+%>
+<%= render Card::Component.new(classes: "h-full border-border-strong!") do |card| %>
+  <% card.with_body do %>
+    <div class="flex flex-col h-full gap-6 text-left">
+      <div class="flex flex-col gap-2">
+        <h2 class="text-accent! font-display text-t3! dark:text-cream"><%= package.name %></h2>
+
+        <% if package.duration %>
+          <span class="text-t6 font-display text-taupe">
+            <%= t("packages.duration", count: package.duration) %>
+          </span>
+        <% end %>
+      </div>
+
+      <% if package.for_whom.present? %>
+        <div class="flex flex-col gap-1.5">
+          <span class="text-t6 uppercase text-taupe"><%= content_block("packages.card.for_whom") %></span>
+          <p class="text-t5 text-tan"><%= package.for_whom %></p>
+        </div>
+      <% end %>
+
+      <% if package.core.any? %>
+        <div class="flex flex-col gap-2">
+          <span class="text-t6 uppercase text-taupe"><%= content_block("packages.card.core") %></span>
+
+          <ul class="flex flex-col gap-2 list-none p-0 m-0">
+            <% package.core.each do |benefit| %>
+              <li class="flex items-start gap-2 text-t5 text-cream">
+                <%= icon "circle-check", class: "size-4 shrink-0 mt-1 text-accent" %>
+                <span><%= benefit %></span>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <% if package.extra.any? %>
+        <div class="flex flex-col gap-2">
+          <span class="text-t6 uppercase text-taupe"><%= content_block("packages.card.extra") %></span>
+
+          <ul class="flex flex-col gap-2 list-none p-0 m-0">
+            <% package.extra.each do |addon| %>
+              <li class="flex items-start gap-2 text-t5 text-tan">
+                <%= icon "astroid", class: "size-3.5 shrink-0 mt-1.5 text-accent-coral" %>
+                <span><%= addon %></span>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%# mt-auto pins the button to the bottom, so the CTAs line up across a row
+          of cards whose lists are different lengths %>
+      <div class="mt-auto pt-2">
+        <%= render Buttons::Component.new(
+          text: content_block("packages.card.cta"),
+          pill: true,
+          variant: :primary,
+          href: bookings_path(package_id: package.id),
+          classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold! w-full justify-center"
+        ) %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

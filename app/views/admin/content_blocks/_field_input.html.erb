@@ -1,9 +1,10 @@
 <%
   # names stay short because each section posts its own form with a hidden
-  # `section`; ids carry the section so nothing collides across sections that
-  # share a field name (every section has a "title")
+  # `section`; ids carry the section's full key so nothing collides between two
+  # sections that share a name (home.hero.title and packages.hero.title are both
+  # a "title" in a "hero")
   name = "fields[#{field.key}][#{locale}]"
-  dom_id = "field-#{section.key}-#{field.key}-#{locale}"
+  dom_id = "field-#{section.full_key.tr('.', '-')}-#{field.key}-#{locale}"
   label = locale == :pl ? "Polski" : "English"
   value = block&.public_send(field.rich? ? :"body_#{locale}" : :"value_#{locale}")
 %>
