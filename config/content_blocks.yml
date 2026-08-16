@@ -71,7 +71,7 @@ home:
           label: "Przycisk — adres (np. https://instagram.com/... lub /kontakt)"
           type: plain
           default:
-            pl: "#"
+            pl: "/about"
     stats:
       label: Liczby
       collection:
@@ -192,6 +192,84 @@ packages:
           default:
             pl: "Pakiety pojawią się tutaj wkrótce. Napisz do mnie, a ustalimy wsparcie skrojone na Waszą sytuację."
             en: "Packages are coming soon. Write to me and we will work out support that fits your situation."
+about:
+  label: O mnie
+  sections:
+    intro:
+      label: Przedstawienie
+      fields:
+        photo:
+          label: Zdjęcie
+          type: image
+        name:
+          label: Imię
+          type: plain
+          default:
+            pl: "Karola"
+        role:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "„Baba z internetów” — Konsultantka snu dziecięcego"
+            en: "The \"internet lady\" — Children's Sleep Consultant"
+        lead:
+          label: Wstęp
+          type: rich
+          default:
+            pl: "<div>Nazywam się Karola – ta, co układa sen rodzin jak puzzle. Kawałek po kawałku pomagam odzyskać spokojne noce, równowagę i czas dla siebie, partnera i dziecka.</div>"
+            en: "<div>My name is Karola — the one who pieces family sleep together like a puzzle. Piece by piece, I help you get calm nights back — and time for yourself, your partner and your child.</div>"
+        body:
+          label: Treść przed cytatem
+          type: rich
+          default:
+            pl: "<div>Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego. Dlatego nie działam szablonowo — każda rodzina to inna układanka, inne tempo i inna historia.</div>"
+            en: "<div>I believe healthy sleep starts with empathy, support, and an emotionally cared-for adult. That's why I never use a one-size-fits-all approach — every family is a different puzzle, a different pace, a different story.</div>"
+        quote:
+          label: Cytat
+          type: plain
+          default:
+            pl: "„Piasek jest fajny — na plaży. Nie pod powiekami” :)"
+            en: "\"Sand is fun — at the beach. Not under your eyelids\" :)"
+        body_after_quote:
+          label: Treść po cytacie
+          type: rich
+          default:
+            pl: "<div>Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą. Współpracując ze mną, nie tracisz czasu na sprzeczne informacje — masz swoją gadającą encyklopedię pod telefonem.</div>"
+            en: "<div>For over 20 years I've supported children and parents, combining sleep and development knowledge with mindfulness and real help. Working with me, you don't waste time on conflicting information — you have your own talking encyclopedia in your pocket.</div>"
+    certifications:
+      label: Certyfikaty
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Certyfikaty i kwalifikacje"
+            en: "Certifications & qualifications"
+      collection:
+        item_label: Certyfikat
+        fields:
+          text:
+            label: Treść
+            type: plain
+        defaults:
+          - text:
+              pl: "Certyfikacja OCN Level 6 — Konsultantka Snu, z mentoringiem i egzaminami ocenianymi zewnętrznie"
+              en: "OCN Level 6 Certification — Sleep Consultant, with mentoring and externally assessed exams"
+          - text:
+              pl: "Kwalifikacje Child Care Development (poziom licencjatu)"
+              en: "Child Care Development qualifications (degree level)"
+          - text:
+              pl: "Certyfikowana Terapeutka Bezsenności CBTi"
+              en: "Certified CBTi Insomnia Therapist"
+    cta:
+      label: Wezwanie do działania
+      fields:
+        label:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Umów konsultację"
+            en: "Book a consultation"
 contact:
   label: Kontakt
   sections:

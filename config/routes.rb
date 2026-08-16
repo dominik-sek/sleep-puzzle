@@ -26,6 +26,9 @@ Rails.application.routes.draw do
   resources :products, only: [ :index, :show ]
   # one page that both shows the form and takes it, so there is no id to carry
   resource :contact, only: [ :show, :create ]
+  # singular: there is one "about", so no id and no index. `controller:` keeps the
+  # class singular too, the same way the google_calendar integration does below.
+  resource :about, only: [ :show ], controller: "about"
 
   # staff-only; access is the `admin` boolean on users, granted with
   # `bin/rails 'admin:promote[email]'`

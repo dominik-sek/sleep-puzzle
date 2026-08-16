@@ -15,8 +15,9 @@
     <h3 class="text-accent text-t5 font-display uppercase">Odkrywaj</h3>
     <ul class="text-tan space-y-2">
     <li>Pakiety</li>
-      <li>O mnie</li>
-      <li>Blog</li>
+      <li><%= link_to "O mnie", about_path, class: "text-tan no-underline hover:text-accent" %></li>
+      <%# parked with the navbar entry; see shared/_navbar %>
+      <%#= tag.li(link_to("Blog", blog_path)) %>
       <li>Sklep</li>
     </ul>
   </div>

@@ -8,8 +8,10 @@
   <% end %>
 
   <% navbar.with_item(label: "Pakiety", href: packages_path) %>
-  <% navbar.with_item(label: "O mnie", href: "#") %>
-  <% navbar.with_item(label: "Blog", href: "#") %>
+  <% navbar.with_item(label: "O mnie", href: about_path) %>
+  <%# Blog is designed but parked — hidden rather than left pointing at nothing.
+      Restore this line when the blog ships. %>
+  <%#= navbar.with_item(label: "Blog", href: blog_path) %>
   <% navbar.with_item(label: "Sklep", href: "#") %>
   <% navbar.with_item(label: "Kontakt", href: contact_path) %>
 
