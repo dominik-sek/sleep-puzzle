@@ -7,6 +7,6 @@ module Admin
 
     manages Product,
             label: "produkt",
-            plain_attributes: %i[paddle_price_id kind position published]
+            plain_attributes: %i[paddle_price_id kind icon position published]
   end
 end

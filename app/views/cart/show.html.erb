@@ -1,0 +1,20 @@
+<%# The design's Koszyk: one narrow column, 800px, centred title. %>
+<div class="min-h-screen flex flex-col items-center">
+  <%= render Section::Component.new(
+    background: :ink,
+    align: :left,
+    bordered: false
+  ) do |section| %>
+    <div class="max-w-[800px] mx-auto w-full">
+      <h1 class="text-t2 font-display font-bold text-cream text-center mb-9">
+        <%= content_block("cart.hero.title") %>
+      </h1>
+
+      <%= render "cart/cart", cart: current_cart %>
+    </div>
+  <% end %>
+
+  <%# where the order flow mounts the Paddle overlay, the same way the calendar
+      page does for bookings %>
+  <%= render "shared/paddle_checkout", checkout: nil %>
+</div>

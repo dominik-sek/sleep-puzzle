@@ -4,6 +4,7 @@
 #
 #  id              :bigint           not null, primary key
 #  category        :integer
+#  icon            :string
 #  kind            :integer
 #  position        :integer          default(0), not null
 #  published       :boolean          default(FALSE), not null
@@ -14,6 +15,11 @@
 #
 class Product < ApplicationRecord
   include Purchasable
+
+  # restrict_with_error rather than destroy: an order is a record of what someone
+  # paid for, so deleting a bought product would rewrite their history. The panel
+  # unpublishes instead.
+  has_many :order_items, dependent: :restrict_with_error
 
   # The two things the shop sells, named after how the site talks about them:
   # guided audio for the parent, bedtime stories for the child.
@@ -30,11 +36,23 @@ class Product < ApplicationRecord
     "bedtime_story" => "Bajka na dobranoc"
   }.freeze
 
+  # Only what a product without its own emoji falls back to. The design gives
+  # each one a distinct icon, so `icon` is the real source and this exists so a
+  # newly added product never renders an empty tile.
+  KIND_ICONS = {
+    "audio_process" => "🌙",
+    "bedtime_story" => "🧸"
+  }.freeze
+
   translates :name, :description
 
   validates :kind, presence: true
 
   def kind_label
     KIND_LABELS.fetch(kind, kind)
+  end
+
+  def display_icon
+    icon.presence || KIND_ICONS.fetch(kind, "🎧")
   end
 end

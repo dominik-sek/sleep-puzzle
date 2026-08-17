@@ -270,6 +270,120 @@ about:
           default:
             pl: "Umów konsultację"
             en: "Book a consultation"
+shop:
+  label: Sklep
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Sklep"
+            en: "Shop"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Audioprocesy do samodzielnej pracy nad snem i kojące bajki audio dla najmłodszych."
+            en: "Audio processes for working on sleep on your own, and soothing audio stories for the little ones."
+    card:
+      label: Karta produktu
+      fields:
+        add:
+          label: Przycisk „do koszyka”
+          type: plain
+          default:
+            pl: "Dodaj do koszyka"
+            en: "Add to cart"
+        details:
+          label: Odnośnik do szczegółów
+          type: plain
+          default:
+            pl: "Zobacz szczegóły"
+            en: "See details"
+        unavailable:
+          label: Zamiast ceny, gdy nie da się jej pobrać
+          type: plain
+          default:
+            pl: "Chwilowo niedostępne"
+            en: "Temporarily unavailable"
+    empty:
+      label: Pusty sklep
+      fields:
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Nagrania pojawią się tu wkrótce. Zajrzyj za jakiś czas."
+            en: "Recordings will appear here soon. Do check back."
+cart:
+  label: Koszyk
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Koszyk"
+            en: "Cart"
+        total:
+          label: Etykieta sumy
+          type: plain
+          default:
+            pl: "Razem do zapłaty"
+            en: "Total"
+        checkout:
+          label: Przycisk płatności
+          type: plain
+          default:
+            pl: "Przejdź do płatności"
+            en: "Go to payment"
+    empty:
+      label: Pusty koszyk
+      fields:
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Twój koszyk jest pusty."
+            en: "Your cart is empty."
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Przeglądaj sklep"
+            en: "Browse the shop"
+    done:
+      label: Po zakupie
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Dziękujemy za zakup!"
+            en: "Thank you for your purchase!"
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Twoje audio jest już dostępne na koncie — miłego słuchania."
+            en: "Your audio is available on your account now — happy listening."
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Przejdź do konta"
+            en: "Go to my account"
+        pending:
+          label: Treść, gdy płatność jest jeszcze przetwarzana
+          type: plain
+          default:
+            pl: "Potwierdzamy płatność u operatora. Odśwież stronę za chwilę."
+            en: "We're confirming the payment with the provider. Refresh in a moment."
 terms:
   label: Regulamin
   sections:

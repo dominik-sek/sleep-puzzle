@@ -26,6 +26,11 @@
 
       <hr class="my-2 border-border" />
 
+      <%# the bar's basket is hidden below lg along with the rest of the actions %>
+      <%= link_to cart_path, class: "block rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft hover:text-accent" do %>
+        🧺 Koszyk<%= " (#{current_cart.count})" if current_cart.count.positive? %>
+      <% end %>
+
       <% if user_signed_in? %>
         <%= button_to "Moje konto", dashboard_index_path, method: :get, class: "block w-full text-left rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft cursor-pointer bg-transparent border-0" %>
         <% if current_user.admin? %>
@@ -53,6 +58,7 @@
     <%# hidden below sm: these repeat inside the hamburger panel, and side by side
         with it they push the bar wider than the screen %>
     <li class="ml-2 pl-2 border-l border-border w-full hidden lg:flex gap-2 items-center">
+      <%= render "shared/cart_badge" %>
       <% if user_signed_in? %>
         <button type="button"
                 data-navbar-target="trigger"

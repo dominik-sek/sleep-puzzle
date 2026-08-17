@@ -126,9 +126,10 @@ class BookingsController < ApplicationController
   # dropped. Calling api_record creates the Paddle customer and stores its id.
   def checkout_for(booking)
     {
-      price_id: booking.package.paddle_price_id,
+      items: [ { priceId: booking.package.paddle_price_id, quantity: 1 } ],
       customer_id: current_user.payment_processor.api_record.id,
-      booking_id: booking.id,
+      # the transaction.completed webhook reads this back to find the booking
+      custom_data: { booking_id: booking.id.to_s },
       # Paddle closes the overlay and sends the buyer here once payment succeeds.
       # Must be absolute, and _url picks up the tunnel host in development.
       success_url: booking_url(booking),

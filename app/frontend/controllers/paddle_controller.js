@@ -2,17 +2,21 @@ import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
 import { showToast } from "./toast_controller";
 
-// Opens Paddle checkout for a booking that bookings#create has just saved as
-// pending. Rendered only by the create response, so connect() fires once per
-// booking rather than on every page load.
+// Opens Paddle checkout for something the server has just saved as pending — a
+// booking holding a slot, or an order holding a cart. Rendered only by the
+// create response, so connect() fires once per checkout rather than on every
+// page load.
+//
+// Everything specific to *what* is being bought arrives as values: `items` is
+// what Paddle charges for, `customData` is what the transaction webhook reads
+// back to find the record. The controller itself knows neither.
 export default class extends Controller {
     static values = {
-        priceId: String,
+        items: Array,
+        customData: Object,
         customerId: String,
-        bookingId: Number,
         successUrl: String,
-        abandonUrl: String,
-        quantity: { type: Number, default: 1 }
+        abandonUrl: String
     };
 
     // Paddle closes the overlay itself after a completed payment, so `checkout.closed`
@@ -29,7 +33,7 @@ export default class extends Controller {
                 this.dispatch("completed", { target: window });
                 break;
             case "checkout.closed":
-                if (!this.#completed) this.#clearBooking();
+                if (!this.#completed) this.#abandon();
                 break;
         }
     };
@@ -43,21 +47,24 @@ export default class extends Controller {
         if (typeof Paddle === "undefined") {
             console.warn("[paddle] Paddle.js has not loaded yet");
             this.#reportFailure("Skrypt płatności został zablokowany. Wyłącz blokowanie reklam dla tej strony lub spróbuj w innej przeglądarce.");
+            // no overlay means no `checkout.closed` either, so nothing else would
+            // ever release what the pending record is holding
+            this.#abandon();
             return;
         }
 
         try {
             Paddle.Checkout.open({
-                items: [ { priceId: this.priceIdValue, quantity: this.quantityValue } ],
+                items: this.itemsValue,
                 customer: { id: this.customerIdValue },
-                // the transaction.completed webhook reads this back to find the booking
-                customData: { booking_id: String(this.bookingIdValue) },
+                customData: this.customDataValue,
                 // Paddle closes the overlay itself and sends the buyer here on success
                 settings: { successUrl: this.successUrlValue }
             });
         } catch (error) {
             console.error("[paddle] Checkout.open failed", error);
-            this.#reportFailure("Spróbuj ponownie za chwilę lub wybierz inny termin.");
+            this.#reportFailure("Spróbuj ponownie za chwilę.");
+            this.#abandon();
         }
     }
 
@@ -65,10 +72,10 @@ export default class extends Controller {
         window.removeEventListener("paddle:event", this.#onPaddleEvent);
     }
 
-    // The booking is already saved and holding the slot by the time the overlay opens,
-    // and walking away from it produces no webhook at all — so nothing else would tell
-    // the server that this slot never sold.
-    async #clearBooking() {
+    // The record is already saved by the time the overlay opens — a booking holding
+    // its slot, an order holding the emptied cart — and walking away from it produces
+    // no webhook at all, so nothing else would tell the server it never sold.
+    async #abandon() {
         if (!this.hasAbandonUrlValue) return;
 
         try {
@@ -81,12 +88,13 @@ export default class extends Controller {
             });
             if (!response.ok) throw new Error(`responded ${response.status}`);
 
-            // puts the freed slot back on the calendar without a reload
+            // puts the freed slot back on the calendar, or the lines back in the
+            // cart, without a reload
             Turbo.renderStreamMessage(await response.text());
         } catch (error) {
             // not worth bothering the buyer about: ReleaseAbandonedBookingsJob still
             // frees the slot, they just won't see it come back on this page
-            console.error("[paddle] clearing the abandoned booking failed", error);
+            console.error("[paddle] clearing the abandoned checkout failed", error);
         }
     }
 

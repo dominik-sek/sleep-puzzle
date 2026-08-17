@@ -1,0 +1,41 @@
+<%#
+  One line in the cart, as the design draws it: the product's icon, its name over
+  "unit price × quantity", what the line comes to, and a ✕ to drop it.
+
+  The design shows the quantity as plain text, because its only way to change one
+  is to add the product again from the shop. Keeping it editable here is the one
+  deliberate departure — it sits in exactly the design's slot, and losing it would
+  mean a buyer who wants two instead of three has to empty the line and re-add.
+
+  locals: line
+%>
+<div class="flex items-center gap-4 rounded-2xl border border-border-strong bg-surface px-5.5 py-4.5">
+  <span class="text-[30px] leading-none" aria-hidden="true"><%= line.product.display_icon %></span>
+
+  <div class="flex-1 min-w-0">
+    <%= link_to line.product.name, product_path(line.product),
+          class: "block text-[15px] font-bold text-cream no-underline hover:text-accent truncate" %>
+
+    <div class="flex items-center gap-1.5 text-[13px] text-taupe">
+      <span><%= line.price_label || content_block("shop.card.unavailable") %></span>
+      <span aria-hidden="true">×</span>
+
+      <%= form_with url: cart_item_path(product_id: line.product.id), method: :patch, class: "contents" do |form| %>
+        <%= form.number_field :quantity, value: line.quantity, min: 0, max: Cart::MAX_QUANTITY,
+              onchange: "this.form.requestSubmit()",
+              "aria-label": "Liczba sztuk",
+              class: "w-12 rounded-md border border-border-input bg-ink-soft px-1.5 py-0.5 text-[13px] text-cream tabular-nums" %>
+      <% end %>
+    </div>
+  </div>
+
+  <span class="text-[15px] font-extrabold text-cream tabular-nums whitespace-nowrap">
+    <%= line.line_total_label %>
+  </span>
+
+  <%= button_to cart_item_path(product_id: line.product.id), method: :delete,
+        class: "cursor-pointer border-0 bg-transparent px-2 py-1 text-[20px] leading-none text-taupe hover:text-accent",
+        form_class: "contents", "aria-label": "Usuń z koszyka" do %>
+    ✕
+  <% end %>
+</div>

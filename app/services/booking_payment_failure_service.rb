@@ -32,4 +32,10 @@ class BookingPaymentFailureService < PaddleTransactionService
 
     booking
   end
+
+  private
+
+  def model = Booking
+  def custom_data_key = :booking_id
+  alias_method :booking, :record
 end

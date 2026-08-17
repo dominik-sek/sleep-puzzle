@@ -12,10 +12,11 @@ module CatalogueHelpers
     build_package(**attributes).tap(&:save!)
   end
 
-  def build_product(name: "Bajka o sowie", name_en: nil, **attributes)
+  def build_product(name: "Bajka o sowie", name_en: nil, description: nil, **attributes)
     Product.new({ paddle_price_id: "pri_456", kind: :bedtime_story, published: true }.merge(attributes)).tap do |product|
       product.assign_translation(:name, :pl, name)
       product.assign_translation(:name, :en, name_en) if name_en
+      product.assign_translation(:description, :pl, description) if description
     end
   end
 

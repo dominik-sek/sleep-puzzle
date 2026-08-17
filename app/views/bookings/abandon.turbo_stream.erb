@@ -8,5 +8,5 @@
 
 <%# drops the spent controller, so the next booking's stream connects a fresh one %>
 <%= turbo_stream.replace "paddle_checkout" do %>
-  <%= render "checkout", checkout: nil %>
+  <%= render "shared/paddle_checkout", checkout: nil %>
 <% end %>

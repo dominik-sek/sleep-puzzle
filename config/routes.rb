@@ -24,6 +24,17 @@ Rails.application.routes.draw do
     delete :abandon, on: :member
   end
   resources :products, only: [ :index, :show ]
+  # singular: one cart per visitor, kept in the session, so there is no id to
+  # carry. Its lines are addressed by product id — there are no cart item rows.
+  resource :cart, only: [ :show ], controller: "cart" do
+    delete :clear, on: :collection
+  end
+  resources :cart_items, only: [ :create, :update, :destroy ], param: :product_id
+  # by token for the same reason bookings are: the URL is handed to Paddle as the
+  # checkout success redirect
+  resources :orders, only: [ :create, :show ], param: :token do
+    delete :abandon, on: :member
+  end
   # one page that both shows the form and takes it, so there is no id to carry
   resource :contact, only: [ :show, :create ]
   # singular: there is one "about", so no id and no index. `controller:` keeps the

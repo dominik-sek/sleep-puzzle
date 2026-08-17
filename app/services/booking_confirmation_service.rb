@@ -23,4 +23,11 @@ class BookingConfirmationService < PaddleTransactionService
 
     booking
   end
+
+  private
+
+  def model = Booking
+  def custom_data_key = :booking_id
+  # reads as what it is everywhere above, rather than a generic "record"
+  alias_method :booking, :record
 end

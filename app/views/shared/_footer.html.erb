@@ -27,9 +27,7 @@
           <li><%= link_to "O mnie", about_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
           <%# parked with the navbar entry; see shared/_navbar %>
           <%#= tag.li(link_to("Blog", blog_path)) %>
-          <%# plain text, not a link: there is no shop page to point at yet, and a
-              dead link reads worse than a plain label %>
-          <li class="text-t6 text-tan">Sklep</li>
+          <li><%= link_to "Sklep", products_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
         </ul>
       </div>
 

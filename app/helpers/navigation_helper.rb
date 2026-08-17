@@ -6,15 +6,13 @@ module NavigationHelper
   # hand-written copies drift the first time a link is added.
   #
   # Blog is designed but parked, so its entry stays commented out alongside the
-  # markup that would render it. Sklep has no page yet and points at "#", which is
-  # what the bar has always done; the footer deliberately shows it as plain text
-  # instead, so it does not read from this list.
+  # markup that would render it.
   def primary_nav_items
     [
       { label: "Pakiety", href: packages_path },
       { label: "O mnie", href: about_path },
       # { label: "Blog", href: blog_path },
-      { label: "Sklep", href: "#" },
+      { label: "Sklep", href: products_path },
       { label: "Kontakt", href: contact_path }
     ]
   end

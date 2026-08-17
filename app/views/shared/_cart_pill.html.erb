@@ -1,0 +1,11 @@
+<%# The design's "🧺 Koszyk (n)" pill, sitting opposite the shop heading.
+
+    Its own id rather than sharing the navbar badge's: both are on screen at once
+    on the shop page, and two nodes with one id would leave turbo_stream.replace
+    updating only whichever came first. The cart_items streams target both. %>
+<%= tag.div id: "cart_pill", class: "contents" do %>
+  <%= link_to cart_path,
+        class: "flex items-center gap-2.5 rounded-[26px] border border-border-strong bg-surface px-5.5 py-3.5 text-t6 font-bold text-cream no-underline hover:text-accent" do %>
+    🧺 <%= content_block("cart.hero.title") %> (<%= current_cart.count %>)
+  <% end %>
+<% end %>

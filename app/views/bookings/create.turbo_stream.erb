@@ -8,5 +8,5 @@
 
 <%# replacing the div reconnects the stimulus controller, which opens the checkout overlay %>
 <%= turbo_stream.replace "paddle_checkout" do %>
-  <%= render "checkout", checkout: @checkout %>
+  <%= render "shared/paddle_checkout", checkout: @checkout %>
 <% end %>

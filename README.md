@@ -84,6 +84,76 @@ is read in a view as `content_block("footer.brand.tagline")`.
   is ignored in production — a typo should be loud while building a page and must
   never take a live page down.
 
+## Shop, cart and checkout
+
+Three pieces, and the thing to understand is that **no amount is ever stored
+here**. Paddle owns the money (see `Purchasable`): a `Product` carries a
+`paddle_price_id` and nothing else about price, and every figure on screen is
+read back through `PaddlePriceCatalogService`. That is why a product whose price
+cannot be read renders as "Chwilowo niedostępne" with no add button, and why
+`Cart#total_label` returns `nil` rather than a total that quietly omits a line —
+it is the number the buyer checks before paying.
+
+Each product carries its **own emoji** in `products.icon`, set in the admin
+panel, because the design gives every card and cart line a distinct one (🌙, ☀️,
+🧸) rather than one per kind. It is nullable — `Product#display_icon` falls back
+through `Product::KIND_ICONS` — so a product added without one still renders.
+
+The design has no product detail screen: clicking a card's name in it goes
+nowhere. `/products/:id` is ours, so a product has a shareable URL and somewhere
+to show the full description the card clamps to three lines.
+
+### The cart is the session
+
+`Cart` is not an `ActiveRecord`. It wraps `session["cart"]`, which holds nothing
+but `{ product_id => quantity }`:
+
+* **Nothing to expire.** A table would mean a row per anonymous visitor and a
+  sweep job to clean them up, for a list the buyer can rebuild in three clicks.
+* **Nothing to merge.** The session survives sign-in, so a cart filled while
+  signed out is still there afterwards — which is what lets checkout ask for an
+  account only at the very end.
+* **Products are resolved on read**, through `Product.published`. Something
+  unpublished or deleted after it was added simply drops out of the cart, with
+  nothing having to reach into everyone's session.
+
+Quantities are clamped to `Cart::MAX_QUANTITY`, which is a guard and not a
+business rule: the session is a cookie, and an unbounded cart would let one
+visitor fill it past the 4KB limit and break every later write.
+
+### Checkout is the Paddle overlay
+
+The design draws a payment screen with card fields. It is deliberately not built —
+Paddle's overlay collects the card, so the only thing on our side is turning the
+cart into something Paddle's webhook can name:
+
+1. `OrdersController#create` builds a **pending** `Order` from the cart and empties
+   the cart, because the order now holds what the cart held.
+2. `shared/_paddle_checkout` mounts the Stimulus controller, which opens the
+   overlay with every line and `customData: { order_id }`.
+3. Paddle redirects to `orders#show`, which says "still confirming" until the
+   webhook lands rather than claiming success on its own.
+4. `paddle_billing.transaction.completed` reaches `OrderConfirmationService`,
+   which flips the order to `paid`.
+
+`orders#abandon` is what happens when the buyer closes the overlay: **closing it
+fires no webhook**, so the browser reports it instead. The order is deleted and
+its lines go back into the cart, so a mis-click does not cost the buyer their
+basket.
+
+### Two subscribers on one event
+
+Bookings and orders both check out through Paddle, so both subscribe to
+`paddle_billing.transaction.completed`. Each ignores what is not its own: a
+booking checkout puts `booking_id` in `customData`, an order puts `order_id`, and
+`PaddleTransactionService` returns `nil` for the other one and logs why.
+
+That base class also holds the check worth knowing about — **`customData` is set
+in the browser**, so a tampered checkout could name someone else's record. Before
+anything is acted on, the Paddle customer that was actually charged is matched
+back to the record's owner. Both services are idempotent, because Pay re-runs the
+whole chain when its own charge sync raises.
+
 ## Roadmap
 
 Measured against the design, which is a Claude Design project rather than a file
@@ -105,15 +175,12 @@ reachable; the rest is what is left.
 - [x] **Regulamin** — `/terms`, a `<dl>` over the `terms.clauses` CMS collection
       (heading + body, `white-space: pre-line`), linked from the footer and from
       the contact page's tile
-- [ ] **Sklep** — `ProductsController` is an empty class and there are no views,
-      though `resources :products` is routed and `spec/requests/products_spec.rb`
-      is a pending stub. The `Product` model, its admin CRUD and its Paddle price
-      already exist, so this is the storefront only: a grid of icon / category /
-      name / description / price / "add to cart", plus a product page.
-- [ ] **Koszyk** — nothing yet. Needs somewhere to keep a cart (session or table),
-      line items with quantity, a total, and remove. Checking out means handing the
-      cart to the Paddle overlay the booking flow already drives — there is no
-      payment screen of our own to build.
+- [x] **Sklep** — `/products`, a grid of category / name / description / price /
+      "do koszyka" plus a product page. Prices are read back from Paddle, so a
+      product whose price cannot be read renders without an add button
+- [x] **Koszyk** — `/cart`, session-backed, with quantities, a total and remove.
+      Checkout hands the cart to the Paddle overlay (see *Shop, cart and checkout*
+      below)
 
 ### Newsletter
 
@@ -146,17 +213,13 @@ What is left on our side is one form:
       throughout `config/content_blocks.yml`, `config/locales/en.yml` — but nothing
       ever assigns `I18n.locale`, so every English translation in the database is
       currently unreachable.
-- [ ] **Dead links.** Only the two that want the shop are left: navbar "Sklep"
-      points at `#` (`NavigationHelper#primary_nav_items`), and the home page's
-      "Przejdź do sklepu" renders without an `href`. Neither can be wired yet —
-      `resources :products` is routed but `ProductsController` is an empty class
-      with no index template, so pointing at it would raise rather than render.
-      Both unblock themselves when the Sklep screen lands. Navbar "Blog" is
-      commented out rather than pointing at nothing, which is the right shape for
-      as long as the blog is parked.
+- [x] **Dead links.** All wired. Navbar "Blog" stays commented out rather than
+      pointing at nothing, which is the right shape for as long as the blog is
+      parked.
 - [ ] **CMS coverage.** `config/content_blocks.yml` declares `home`, `packages`,
-      `about`, `terms`, `footer` and `contact`. Each new page above needs its own
-      entry so the owner can edit it, followed by `bin/rails content_blocks:sync`.
+      `about`, `shop`, `cart`, `terms`, `footer` and `contact`. Each new page above
+      needs its own entry so the owner can edit it, followed by
+      `bin/rails content_blocks:sync`.
 
 ### Placeholder, not finished
 
@@ -164,7 +227,14 @@ What is left on our side is one form:
       "Form with account settings will be here"), and `DashboardController` still
       has `@audiobooks` and `@bookings` commented out. The design wants a purchased
       audio library, the upcoming booking, and account settings — each with an
-      empty state.
+      empty state. The library half now has something to read:
+      `current_user.purchased_products` returns the deduplicated products from
+      that user's paid orders.
+- [ ] **Delivering what was bought.** An order records *what* was paid for, but
+      nothing yet attaches an audio file to a `Product` or streams it to the
+      buyer — "Moje audio" has a list and no player. Wants an Active Storage
+      attachment on `Product` and a controller that authorises against
+      `purchased_products` before sending the file.
 
 ### Parked
 

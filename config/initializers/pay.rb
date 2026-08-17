@@ -8,8 +8,12 @@
 #
 # Pay's webhook controller silently drops events nothing is subscribed to, so an
 # event type has to be listed here before it is even stored.
+# Both run for every completed transaction and each ignores the ones that do not
+# name it: a booking checkout puts booking_id in custom_data, an order puts
+# order_id, so the other service finds nothing and says so in the log.
 Pay::Webhooks.delegator.subscribe "paddle_billing.transaction.completed" do |event|
   BookingConfirmationService.call(event: event)
+  OrderConfirmationService.call(event: event)
 end
 
 # Neither of these releases the slot on the spot — BookingPaymentFailureService::GRACE

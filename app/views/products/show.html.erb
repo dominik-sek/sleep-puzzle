@@ -1,0 +1,36 @@
+<%# One product on its own. Deliberately close to the card: there is not much more
+    to say about an audio file than the card already says, so this exists to give
+    a product a shareable URL and room for the full description the card clamps. %>
+<div class="min-h-screen flex flex-col items-center">
+  <%= render Section::Component.new(
+    background: :ink,
+    align: :left,
+    bordered: false
+  ) do |section| %>
+    <div class="max-w-[800px] mx-auto w-full flex flex-col gap-6">
+      <%= link_to products_path, class: "text-t6 text-tan no-underline hover:text-accent" do %>
+        ← <%= content_block("shop.hero.title") %>
+      <% end %>
+
+      <span class="text-t6 uppercase tracking-wide text-taupe"><%= @product.kind_label %></span>
+
+      <h1 class="text-t2 font-display font-bold text-cream"><%= @product.name %></h1>
+
+      <% if @product.description.present? %>
+        <p class="text-t5 text-tan"><%= @product.description %></p>
+      <% end %>
+
+      <% price_label = product_price_label(@product) %>
+
+      <div class="flex flex-wrap items-center gap-5 pt-2">
+        <span class="text-t3 font-display font-bold text-accent tabular-nums">
+          <%= price_label || content_block("shop.card.unavailable") %>
+        </span>
+
+        <% if price_label %>
+          <%= render "products/add_to_cart", product: @product %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,13 @@
+<%# The navbar's basket. Replaced by every cart_items stream, so the count stays
+    honest without a reload; wrapped in its own id for exactly that reason. %>
+<%= tag.span id: "cart_badge", class: "contents" do %>
+  <%= link_to cart_path, class: "relative flex items-center px-2 py-1 no-underline text-cream hover:text-accent",
+        "aria-label": "Koszyk" do %>
+    🧺
+    <% if current_cart.count.positive? %>
+      <span class="absolute -top-1 -right-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-accent text-[11px] font-extrabold text-ink tabular-nums">
+        <%= current_cart.count %>
+      </span>
+    <% end %>
+  <% end %>
+<% end %>

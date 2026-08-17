@@ -6,6 +6,7 @@ require 'rails_helper'
 #
 #  id              :bigint           not null, primary key
 #  category        :integer
+#  icon            :string
 #  kind            :integer
 #  position        :integer          default(0), not null
 #  published       :boolean          default(FALSE), not null

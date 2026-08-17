@@ -1,0 +1,46 @@
+<%#
+  One product in the shop grid.
+
+  Plain markup rather than Card::Component: the design's card opens with a
+  full-bleed icon band that runs edge to edge under the rounded corners, which a
+  padded card body cannot produce.
+
+  The price comes from Paddle rather than from us (see Purchasable), so it can be
+  missing — a price archived in Paddle, or Paddle being unreachable. The card
+  still renders, without the amount and without an add button: offering to sell
+  something at an unknown price is worse than showing it as unavailable.
+
+  locals: product
+%>
+<% price_label = product_price_label(product) %>
+
+<div class="flex flex-col overflow-hidden rounded-[20px] border border-border-strong bg-surface">
+  <div class="flex h-[150px] items-center justify-center bg-linear-[135deg,var(--color-border-strong),var(--color-ink)] text-[44px]"
+       aria-hidden="true">
+    <%= product.display_icon %>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-2.5 p-5.5">
+    <span class="text-[12px] font-extrabold uppercase tracking-[0.5px] text-accent">
+      <%= product.kind_label %>
+    </span>
+
+    <h2 class="text-[18px] font-bold text-cream m-0">
+      <%= link_to product.name, product_path(product), class: "no-underline text-inherit hover:text-accent" %>
+    </h2>
+
+    <% if product.description.present? %>
+      <p class="flex-1 text-[14px] font-normal leading-[1.5] text-tan m-0"><%= product.description %></p>
+    <% end %>
+
+    <div class="mt-2 flex items-center justify-between gap-3">
+      <span class="text-[17px] font-extrabold text-cream tabular-nums">
+        <%= price_label || content_block("shop.card.unavailable") %>
+      </span>
+
+      <% if price_label %>
+        <%= render "products/add_to_cart", product: product %>
+      <% end %>
+    </div>
+  </div>
+</div>

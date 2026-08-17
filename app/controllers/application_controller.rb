@@ -11,6 +11,13 @@ class ApplicationController < ActionController::Base
     dashboard_index_path
   end
 
+  # The session survives sign-in, so a cart filled while signed out is still
+  # there afterwards without anything having to merge it.
+  def current_cart
+    @current_cart ||= Cart.from_session(session)
+  end
+  helper_method :current_cart
+
   private
 
   # Pagy keeps its locale in a thread local, so it has to be set on every

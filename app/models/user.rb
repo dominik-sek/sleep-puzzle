@@ -27,6 +27,11 @@ class User < ApplicationRecord
   pay_customer default_payment_processor: :paddle_billing
 
   has_many :bookings, dependent: :restrict_with_error
+  has_many :orders, dependent: :restrict_with_error
+  # what the dashboard's audio library reads: every product this user has paid
+  # for, deduplicated, so buying the same story twice lists it once
+  has_many :purchased_products, -> { distinct.merge(Order.paid) },
+           through: :orders, source: :products
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable

@@ -16,6 +16,15 @@
                      id: "record-kind", class: "form-control" %>
     </div>
 
+    <div class="flex flex-col gap-1.5">
+      <span class="text-t6 uppercase text-taupe">Ikona</span>
+      <%# one emoji, shown on the shop card and in the cart. Blank falls back to
+          one per rodzaj, so this can be left alone. %>
+      <%= text_field_tag "record[icon]", product.icon, id: "record-icon",
+                         placeholder: Product::KIND_ICONS.values.join(" "),
+                         maxlength: 8, class: "form-control" %>
+    </div>
+
     <%= render "admin/shared/price_field", record: product, prices: prices %>
   </div>
 
