@@ -4,7 +4,7 @@ RSpec.describe OrderConfirmationService do
   let(:user) { User.create!(email: "customer@example.com", password: "password123") }
   let(:product) { create_product(name: "Bajka o sowie") }
   let(:order) do
-    user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product, quantity: 1) ])
+    user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
   end
 
   # what Pay::Webhook#rehydrated_event hands the subscriber

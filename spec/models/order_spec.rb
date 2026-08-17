@@ -27,10 +27,10 @@ RSpec.describe Order, type: :model do
   let(:user) { User.create!(email: "customer@example.com", password: "password123") }
   let(:product) { create_product(name: "Bajka o sowie") }
 
-  def create_order(user: self.user, items: { product => 1 }, **attributes)
+  def create_order(user: self.user, products: [ product ], **attributes)
     user.orders.create!(
       { status: :pending }.merge(attributes),
-      &->(order) { items.each { |p, q| order.order_items.build(product: p, quantity: q) } }
+      &->(order) { products.each { |p| order.order_items.build(product: p) } }
     )
   end
 
@@ -49,15 +49,26 @@ RSpec.describe Order, type: :model do
   end
 
   describe "#paddle_items" do
-    it "gives Paddle one entry per line, with quantities" do
+    # Paddle requires the key; a digital file is only ever bought once per order
+    it "gives Paddle one entry per line, always at quantity 1" do
       other = create_product(name: "Audioproces", paddle_price_id: "pri_789")
-      order = create_order(items: { product => 2, other => 1 })
+      order = create_order(products: [ product, other ])
 
       expect(order.paddle_items).to contain_exactly(
-        { priceId: "pri_456", quantity: 2 },
+        { priceId: "pri_456", quantity: 1 },
         { priceId: "pri_789", quantity: 1 }
       )
     end
+  end
+
+  # the unique index is what enforces it; the validation turns a violation into
+  # an error rather than a 500
+  it "refuses the same product twice in one order" do
+    order = create_order
+
+    duplicate = order.order_items.build(product: product)
+
+    expect(duplicate).not_to be_valid
   end
 
   describe "#mark_paid!" do
@@ -89,22 +100,22 @@ RSpec.describe Order, type: :model do
   describe "User#purchased_products" do
     it "lists only what has actually been paid for" do
       unpaid = create_product(name: "Nieopłacone", paddle_price_id: "pri_789")
-      create_order(items: { unpaid => 1 })
-      create_order(items: { product => 1 }).mark_paid!(transaction_id: "txn_1")
+      create_order(products: [ unpaid ])
+      create_order.mark_paid!(transaction_id: "txn_1")
 
       expect(user.purchased_products).to eq([ product ])
     end
 
     it "lists a product bought twice only once" do
-      create_order(items: { product => 1 }).mark_paid!(transaction_id: "txn_1")
-      create_order(items: { product => 1 }).mark_paid!(transaction_id: "txn_2")
+      create_order.mark_paid!(transaction_id: "txn_1")
+      create_order.mark_paid!(transaction_id: "txn_2")
 
       expect(user.purchased_products).to eq([ product ])
     end
 
     it "does not leak another buyer's purchases" do
       other = User.create!(email: "someone@example.com", password: "password123")
-      create_order(user: other, items: { product => 1 }).mark_paid!(transaction_id: "txn_1")
+      create_order(user: other).mark_paid!(transaction_id: "txn_1")
 
       expect(user.purchased_products).to be_empty
     end

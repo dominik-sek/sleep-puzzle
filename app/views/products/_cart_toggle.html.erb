@@ -1,0 +1,41 @@
+<%#
+  Add or remove, depending on what is already in the cart. One control rather than
+  two, because a digital file is either in the cart or it is not — there is no
+  quantity to nudge, so a second press should undo the first.
+
+  Its own id so the cart_items streams can swap it in place: press "Dodaj" on the
+  shop grid and this button becomes "Usuń" without the page reloading.
+
+  Both branches are real forms, not links: they change state, and a GET that
+  mutates gets fired by every link prefetcher going.
+
+  locals: product, size (:sm on a shop card, :lg on the product page)
+%>
+<% size = local_assigns.fetch(:size, :sm) %>
+<%
+  shape = size == :lg ? "rounded-[26px] px-6.5 py-3.5 text-[15px]" : "rounded-[20px] px-4 py-2.5 text-[13px]"
+%>
+
+<%= tag.span id: dom_id(product, :cart_toggle), class: "contents" do %>
+  <% if current_cart.include?(product) %>
+    <%= button_to cart_item_path(product_id: product.id), method: :delete,
+          form_class: "contents",
+          class: class_names(
+            "cursor-pointer whitespace-nowrap border-[1.5px] border-taupe-dark bg-transparent font-bold text-cream hover:border-accent hover:text-accent",
+            shape
+          ) do %>
+      <%= content_block("shop.card.remove") %>
+    <% end %>
+  <% else %>
+    <%= form_with url: cart_items_path, class: "contents" do |form| %>
+      <%= form.hidden_field :product_id, value: product.id %>
+      <%= form.button type: :submit,
+            class: class_names(
+              "cursor-pointer whitespace-nowrap border-0 bg-accent font-bold text-ink hover:bg-accent-hover",
+              shape
+            ) do %>
+        <%= content_block("shop.card.add") %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

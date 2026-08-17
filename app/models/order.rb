@@ -59,10 +59,11 @@ class Order < ApplicationRecord
     STATUS_LABELS.fetch(status, status)
   end
 
-  # What Paddle's Checkout.open wants: one entry per line, quantity included.
+  # What Paddle's Checkout.open wants. Always quantity 1 — Paddle requires the
+  # key, and a digital file is only ever bought once per order.
   def paddle_items
     order_items.includes(:product).map do |item|
-      { priceId: item.product.paddle_price_id, quantity: item.quantity }
+      { priceId: item.product.paddle_price_id, quantity: 1 }
     end
   end
 

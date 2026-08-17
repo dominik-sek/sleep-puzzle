@@ -297,6 +297,12 @@ shop:
           default:
             pl: "Dodaj do koszyka"
             en: "Add to cart"
+        remove:
+          label: Przycisk „usuń z koszyka”
+          type: plain
+          default:
+            pl: "Usuń z koszyka"
+            en: "Remove from cart"
         details:
           label: Odnośnik do szczegółów
           type: plain
@@ -309,6 +315,75 @@ shop:
           default:
             pl: "Chwilowo niedostępne"
             en: "Temporarily unavailable"
+    product:
+      label: Strona produktu
+      fields:
+        back:
+          label: Powrót do sklepu
+          type: plain
+          default:
+            pl: "Wróć do sklepu"
+            en: "Back to shop"
+        length:
+          label: Etykieta „długość”
+          type: plain
+          default:
+            pl: "Długość"
+            en: "Length"
+        format:
+          label: Etykieta „format”
+          type: plain
+          default:
+            pl: "Format"
+            en: "Format"
+        format_value:
+          label: Format — wartość
+          type: plain
+          default:
+            pl: "MP3 do pobrania"
+            en: "Downloadable MP3"
+        access:
+          label: Etykieta „dostęp”
+          type: plain
+          default:
+            pl: "Dostęp"
+            en: "Access"
+        access_value:
+          label: Dostęp — wartość
+          type: plain
+          default:
+            pl: "Bezterminowy, w Twoim koncie"
+            en: "Lifetime, in your account"
+        about:
+          label: Nagłówek opisu
+          type: plain
+          default:
+            pl: "O tym nagraniu"
+            en: "About this recording"
+        includes:
+          label: Nagłówek „co dostajesz”
+          type: plain
+          default:
+            pl: "Co dostajesz"
+            en: "What you get"
+        added_note:
+          label: Potwierdzenie dodania do koszyka
+          type: plain
+          default:
+            pl: "Dodano do koszyka"
+            en: "Added to cart"
+        go_to_cart:
+          label: Przycisk „przejdź do koszyka”
+          type: plain
+          default:
+            pl: "Przejdź do koszyka"
+            en: "Go to cart"
+        more:
+          label: Nagłówek „inne materiały”
+          type: plain
+          default:
+            pl: "Inne materiały"
+            en: "Other materials"
     empty:
       label: Pusty sklep
       fields:

@@ -25,27 +25,26 @@ RSpec.describe "Cart", type: :request do
     end
 
     it "lists what has been added, with a total" do
-      post cart_items_path, params: { product_id: product.id, quantity: 2 }
+      post cart_items_path, params: { product_id: product.id }
+      post cart_items_path, params: { product_id: create_product(name: "Audioproces", paddle_price_id: "pri_789").id }
 
       get cart_path
 
       expect(response.body).to include("Bajka o sowie")
-      expect(response.body).to include("50,00 PLN")
+      expect(response.body).to include("Audioproces")
       expect(response.body).to include("Przejdź do płatności")
     end
   end
 
-  # the design shows the unit price and quantity under the name, and what the
-  # line comes to on the right
   describe "a cart line" do
-    it "shows the unit price, the quantity and the line total" do
-      post cart_items_path, params: { product_id: product.id, quantity: 3 }
+    it "shows the price and the category, and offers no quantity control" do
+      post cart_items_path, params: { product_id: product.id }
 
       get cart_path
 
       expect(response.body).to include("25,00 PLN")
-      expect(response.body).to include("75,00 PLN")
-      expect(response.body).to include(%(value="3"))
+      expect(response.body).to include(product.kind_label)
+      expect(response.body).not_to include(%(name="quantity"))
     end
 
     it "shows the product's icon" do
@@ -75,32 +74,29 @@ RSpec.describe "Cart", type: :request do
       expect(response).to have_http_status(:not_found)
     end
 
-    it "answers a turbo stream request with the cart and the badge" do
+    it "answers a turbo stream request with the cart, the counters and the toggle" do
       post cart_items_path, params: { product_id: product.id },
            headers: { "Accept" => "text/vnd.turbo-stream.html" }
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('target="cart"')
       expect(response.body).to include('target="cart_badge"')
+      expect(response.body).to include('target="cart_pill"')
+      # so pressing "Dodaj" on the shop grid flips that button to "Usuń"
+      expect(response.body).to include(%(target="cart_toggle_product_#{product.id}"))
+      expect(response.body).to include("Usuń z koszyka")
     end
   end
 
-  describe "PATCH /cart_items/:product_id" do
-    before { post cart_items_path, params: { product_id: product.id } }
-
-    it "changes the quantity" do
-      patch cart_item_path(product_id: product.id), params: { quantity: 4 }
-
-      get cart_path
-      expect(response.body).to include("100,00 PLN")
-    end
-
-    # what the number input produces when the buyer clears it
-    it "treats zero as a removal rather than an error" do
-      patch cart_item_path(product_id: product.id), params: { quantity: 0 }
+  # a file is either in the cart or it is not, so adding twice is not two copies
+  describe "adding the same product twice" do
+    it "leaves one line" do
+      2.times { post cart_items_path, params: { product_id: product.id } }
 
       get cart_path
-      expect(response.body).to include("Twój koszyk jest pusty")
+      # counted by the line's own link, not by the name: the "dodano do koszyka"
+      # flash repeats the name on the page too
+      expect(response.body.scan(%(href="#{product_path(product)}")).size).to eq(1)
     end
   end
 

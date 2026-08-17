@@ -8,6 +8,7 @@ require 'rails_helper'
 #  category        :integer
 #  icon            :string
 #  kind            :integer
+#  length_minutes  :integer
 #  position        :integer          default(0), not null
 #  published       :boolean          default(FALSE), not null
 #  translations    :jsonb            not null

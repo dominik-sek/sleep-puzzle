@@ -99,14 +99,21 @@ panel, because the design gives every card and cart line a distinct one (🌙, �
 🧸) rather than one per kind. It is nullable — `Product#display_icon` falls back
 through `Product::KIND_ICONS` — so a product added without one still renders.
 
-The design has no product detail screen: clicking a card's name in it goes
-nowhere. `/products/:id` is ours, so a product has a shareable URL and somewhere
-to show the full description the card clamps to three lines.
+`/products/:id` follows the design's **Produkt** screen: a large icon panel beside
+the buy column, a spec strip (długość / format / dostęp), then "O tym nagraniu"
+and "Co dostajesz", then up to three other products. Three of those fields are the
+product's own — `length_minutes` (an integer, formatted through
+`t("products.length_minutes")`, because a number reads the same in both languages)
+plus the translated `long_description` and the `includes` bullet list. Format and
+access are the same sentence for everything sold, so they are CMS copy rather than
+columns. Every section below the buy column is skipped when the owner has not
+filled it in, so a product added in a hurry renders as just the top half rather
+than as a page of empty headings.
 
 ### The cart is the session
 
 `Cart` is not an `ActiveRecord`. It wraps `session["cart"]`, which holds nothing
-but `{ product_id => quantity }`:
+but a **set of product ids**:
 
 * **Nothing to expire.** A table would mean a row per anonymous visitor and a
   sweep job to clean them up, for a list the buyer can rebuild in three clicks.
@@ -117,9 +124,16 @@ but `{ product_id => quantity }`:
   unpublished or deleted after it was added simply drops out of the cart, with
   nothing having to reach into everyone's session.
 
-Quantities are clamped to `Cart::MAX_QUANTITY`, which is a guard and not a
-business rule: the session is a cookie, and an unbounded cart would let one
-visitor fill it past the 4KB limit and break every later write.
+**There are no quantities.** Everything sold is a digital file — an MP3, an MP4 —
+so a second copy of one is the same copy. That single decision is why `Cart#add`
+is idempotent, why `OrderItem` is nothing but the join between an order and a
+product, and why the shop's button is a *toggle*: press it once to add, again to
+remove, rather than counting up. `Order#paddle_items` always sends
+`quantity: 1`, because Paddle wants the key.
+
+The cart is capped at `Cart::MAX_ITEMS`, which is a guard and not a business
+rule: the session is a cookie, and an unbounded cart would let one visitor fill
+it past the 4KB limit and break every later write.
 
 ### Checkout is the Paddle overlay
 
@@ -159,10 +173,11 @@ whole chain when its own charge sync raises.
 Measured against the design, which is a Claude Design project rather than a file
 in this repo — <https://claude.ai/design/p/4578fb79-8a91-4124-8203-4b1f54c72f7d>,
 one `Sleep Puzzle Website.dc.html` holding every screen as a
-`<main data-screen-label="…">`. It draws 13 screens; only 12 are counted below,
+`<main data-screen-label="…">`. It draws 14 screens; only 13 are counted below,
 because **Płatność** is deliberately not being built — checkout is Paddle's
-overlay, so there is no payment screen of our own. Ticked items are built and
-reachable; the rest is what is left.
+overlay, so there is no payment screen of our own. The design is edited while this
+is being built, so re-pull it rather than working from an older copy. Ticked items
+are built and reachable; the rest is what is left.
 
 ### Screens
 
@@ -176,9 +191,12 @@ reachable; the rest is what is left.
       (heading + body, `white-space: pre-line`), linked from the footer and from
       the contact page's tile
 - [x] **Sklep** — `/products`, a grid of category / name / description / price /
-      "do koszyka" plus a product page. Prices are read back from Paddle, so a
-      product whose price cannot be read renders without an add button
-- [x] **Koszyk** — `/cart`, session-backed, with quantities, a total and remove.
+      "do koszyka". Prices are read back from Paddle, so a product whose price
+      cannot be read renders without an add button
+- [x] **Produkt** — `/products/:id`, incl. the spec strip, "O tym nagraniu",
+      "Co dostajesz" and the "Inne materiały" tiles
+- [x] **Koszyk** — `/cart`, session-backed, with a total and remove (no
+      quantities — see above).
       Checkout hands the cart to the Paddle overlay (see *Shop, cart and checkout*
       below)
 

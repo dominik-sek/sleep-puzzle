@@ -88,6 +88,10 @@ pl:
       few: "Czas trwania wsparcia: %{count} tygodnie"
       many: "Czas trwania wsparcia: %{count} tygodni"
       other: "Czas trwania wsparcia: %{count} tygodnia"
+  products:
+    length_minutes:
+      one: "%{count} min"
+      other: "%{count} min"
   pagination:
     showing: "Wyświetlono"
     of: "z"

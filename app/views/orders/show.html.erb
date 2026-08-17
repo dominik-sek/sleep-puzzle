@@ -20,9 +20,9 @@
 
       <ul class="mb-8 flex flex-col gap-2 list-none p-0 m-0 text-left">
         <% @order.order_items.each do |item| %>
-          <li class="flex justify-between gap-4 text-t6 text-tan">
+          <li class="flex items-center gap-3 text-t6 text-tan">
+            <span aria-hidden="true"><%= item.product.display_icon %></span>
             <span><%= item.product.name %></span>
-            <span class="tabular-nums">× <%= item.quantity %></span>
           </li>
         <% end %>
       </ul>

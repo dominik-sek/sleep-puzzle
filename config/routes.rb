@@ -29,7 +29,9 @@ Rails.application.routes.draw do
   resource :cart, only: [ :show ], controller: "cart" do
     delete :clear, on: :collection
   end
-  resources :cart_items, only: [ :create, :update, :destroy ], param: :product_id
+  # no :update — a digital file has no quantity to change, so a line is only ever
+  # added or removed
+  resources :cart_items, only: [ :create, :destroy ], param: :product_id
   # by token for the same reason bookings are: the URL is handed to Paddle as the
   # checkout success redirect
   resources :orders, only: [ :create, :show ], param: :token do

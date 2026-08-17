@@ -15,3 +15,9 @@
 <%= turbo_stream.replace "cart_pill" do %>
   <%= render "shared/cart_pill" %>
 <% end %>
+
+<%# the shop grid and the product page both show a toggle for this product; a
+    stream for a target that is not on this page is a no-op %>
+<%= turbo_stream.replace dom_id(@product, :cart_toggle) do %>
+  <%= render "products/cart_toggle", product: @product %>
+<% end %>

@@ -78,17 +78,13 @@ class OrdersController < ApplicationController
   def build_order(cart)
     order = current_user.orders.build(status: :pending)
 
-    cart.lines.each do |line|
-      order.order_items.build(product: line.product, quantity: line.quantity)
-    end
+    cart.lines.each { |line| order.order_items.build(product: line.product) }
 
     order
   end
 
   def restore_cart(order)
-    order.order_items.each do |item|
-      current_cart.set_quantity(item.product, item.quantity)
-    end
+    order.order_items.each { |item| current_cart.add(item.product) }
   end
 
   # Paddle has to be handed a customer we already know about: Pay matches the

@@ -7,6 +7,13 @@
   <%= render "admin/shared/translated_input", record: product, field: "description",
              label: "Opis", type: :textarea %>
 
+  <%= render "admin/shared/translated_input", record: product, field: "long_description",
+             label: "O tym nagraniu", type: :textarea,
+             hint: "dłuższy opis na stronie produktu" %>
+
+  <%= render "admin/shared/translated_input", record: product, field: "includes",
+             label: "Co dostajesz", type: :list %>
+
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="flex flex-col gap-1.5">
       <span class="text-t6 uppercase text-taupe">Rodzaj</span>
@@ -23,6 +30,12 @@
       <%= text_field_tag "record[icon]", product.icon, id: "record-icon",
                          placeholder: Product::KIND_ICONS.values.join(" "),
                          maxlength: 8, class: "form-control" %>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <span class="text-t6 uppercase text-taupe">Długość (min)</span>
+      <%= number_field_tag "record[length_minutes]", product.length_minutes, id: "record-length-minutes",
+                           min: 1, class: "form-control" %>
     </div>
 
     <%= render "admin/shared/price_field", record: product, prices: prices %>

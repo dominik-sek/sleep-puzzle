@@ -6,14 +6,18 @@
 # buyer can rebuild in three clicks. The session already survives sign-in, so the
 # cart carries over on its own.
 #
-# The session holds only { product_id => quantity }, so an edited or unpublished
-# product is resolved fresh on every read and a deleted one simply drops out.
+# A **set of product ids**, with no quantities: everything sold here is a digital
+# file, so a second copy of one is the same copy. That is why adding is
+# idempotent and why the shop's button is a toggle rather than a counter.
+#
+# The session holds nothing but the ids, so an edited or unpublished product is
+# resolved fresh on every read and a deleted one simply drops out.
 class Cart
   # A guard, not a business rule: the session is a cookie, and an unbounded cart
   # would let one visitor fill it past the 4KB limit and break every later write.
-  MAX_QUANTITY = 99
+  MAX_ITEMS = 99
 
-  Line = Struct.new(:product, :quantity, keyword_init: true) do
+  Line = Struct.new(:product, keyword_init: true) do
     def price
       PaddlePriceCatalogService.find(product.paddle_price_id)
     end
@@ -22,16 +26,6 @@ class Cart
     # the line without a price rather than dropping a product the buyer chose
     def price_label
       price&.formatted_amount
-    end
-
-    # What this line comes to: the design puts the unit price and the quantity
-    # under the name, and the line's own total on the right.
-    def line_total_label
-      return if price.nil?
-
-      PaddlePriceCatalogService::Price
-        .new(amount: price.amount.to_i * quantity, currency: price.currency)
-        .formatted_amount
     end
   end
 
@@ -47,25 +41,19 @@ class Cart
   # added should stop being buyable, without a job reaching into everyone's session.
   def lines
     @lines ||= begin
-      products = Product.published.where(id: quantities.keys).index_by(&:id)
+      products = Product.published.where(id: product_ids).index_by(&:id)
 
-      quantities.filter_map do |product_id, quantity|
-        product = products[product_id]
-        Line.new(product: product, quantity: quantity) if product
-      end
+      product_ids.filter_map { |id| Line.new(product: products[id]) if products[id] }
     end
   end
 
-  def add(product, quantity: 1)
-    write(product.id, quantities.fetch(product.id, 0) + quantity.to_i)
-  end
-
-  def set_quantity(product, quantity)
-    write(product.id, quantity.to_i)
+  # Idempotent: a file is either in the cart or it is not.
+  def add(product)
+    write(product_ids | [ product.id ])
   end
 
   def remove(product)
-    write(product.id, 0)
+    write(product_ids - [ product.id ])
   end
 
   def clear
@@ -74,13 +62,11 @@ class Cart
   end
 
   def include?(product)
-    quantities.key?(product.id)
+    product_ids.include?(product.id)
   end
 
-  # The badge in the navbar: total items, not distinct products, so adding a
-  # second copy of one thing still visibly changes the count.
   def count
-    lines.sum(&:quantity)
+    lines.size
   end
 
   def empty?
@@ -90,41 +76,48 @@ class Cart
   # nil rather than 0 when any line's price is unavailable: a total that silently
   # omits a line is worse than no total, since it is the number the buyer checks.
   def total_label
-    amounts = lines.map { |line| [ line.price, line.quantity ] }
-    return if amounts.any? { |price, _| price.nil? }
+    prices = lines.map(&:price)
+    return if prices.any?(&:nil?)
 
-    currencies = amounts.map { |price, _| price.currency }.uniq
+    currencies = prices.map(&:currency).uniq
     return if currencies.many?
 
-    minor = amounts.sum { |price, quantity| price.amount.to_i * quantity }
     PaddlePriceCatalogService::Price
-      .new(amount: minor, currency: currencies.first)
+      .new(amount: prices.sum { |price| price.amount.to_i }, currency: currencies.first)
       .formatted_amount
   end
 
   SESSION_KEY = "cart"
   private_constant :SESSION_KEY
 
-  private
+  # Session values come back from the cookie as strings, so they are normalised
+  # once here rather than at every call site. Insertion order is kept, so the cart
+  # lists what the buyer picked in the order they picked it.
+  #
+  # Whatever is in there has to be *read*, never trusted to be the shape this
+  # version writes. A cookie is a live thing in someone's browser: carts written
+  # before quantities were dropped hold `{ id => qty }` rather than `[id]`, and
+  # since the navbar badge reads the cart on every single page, one unreadable
+  # cookie would 500 the whole site for that visitor until they cleared it. The
+  # next write replaces it with the current shape, so this ages out on its own.
+  def product_ids
+    @product_ids ||= begin
+      stored = @session[SESSION_KEY]
+      ids = stored.is_a?(Hash) ? stored.keys : Array(stored)
 
-  # Session values come back from the cookie with string keys, so they are
-  # normalised once here rather than at every call site.
-  def quantities
-    @quantities ||= (@session[SESSION_KEY] || {})
-      .to_h { |product_id, quantity| [ product_id.to_i, quantity.to_i ] }
-      .select { |product_id, quantity| product_id.positive? && quantity.positive? }
+      ids.filter_map { |id| Integer(id, exception: false) }.select(&:positive?).uniq
+    end
   end
 
-  def write(product_id, quantity)
-    updated = quantities.merge(product_id => quantity.clamp(0, MAX_QUANTITY))
-    updated.delete(product_id) unless updated[product_id]&.positive?
+  private
 
-    @session[SESSION_KEY] = updated.transform_keys(&:to_s)
+  def write(ids)
+    @session[SESSION_KEY] = ids.last(MAX_ITEMS).map(&:to_s)
     reset
   end
 
   def reset
-    @quantities = nil
+    @product_ids = nil
     @lines = nil
     self
   end

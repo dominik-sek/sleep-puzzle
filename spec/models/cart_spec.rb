@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Cart, type: :model do
   # the real thing is an ActionDispatch session, which is a hash as far as Cart
-  # is concerned — including the string keys it hands back
+  # is concerned — including the strings it hands back
   let(:session) { {} }
   let(:cart) { described_class.from_session(session) }
   let(:product) { create_product(name: "Bajka o sowie") }
@@ -15,40 +15,32 @@ RSpec.describe Cart, type: :model do
       expect(cart.lines.map(&:product)).to eq([ product ])
     end
 
-    it "adds to the quantity already there rather than replacing it" do
-      cart.add(product, quantity: 2)
-      cart.add(product)
+    # everything sold is a digital file, so a second copy is the same copy
+    it "is idempotent" do
+      3.times { cart.add(product) }
 
-      expect(cart.count).to eq(3)
+      expect(cart.count).to eq(1)
       expect(cart.lines.size).to eq(1)
     end
 
-    it "clamps at MAX_QUANTITY so the session cookie cannot be filled past its limit" do
-      cart.add(product, quantity: described_class::MAX_QUANTITY + 50)
-
-      expect(cart.count).to eq(described_class::MAX_QUANTITY)
-    end
-  end
-
-  describe "#set_quantity" do
-    it "replaces the quantity" do
-      cart.add(product, quantity: 3)
-      cart.set_quantity(product, 1)
-
-      expect(cart.count).to eq(1)
-    end
-
-    # what the number input produces when the buyer clears it
-    it "drops the line when set to zero" do
+    it "keeps the order things were picked in" do
+      other = create_product(name: "Audioproces")
       cart.add(product)
-      cart.set_quantity(product, 0)
+      cart.add(other)
 
-      expect(cart).to be_empty
+      expect(cart.lines.map(&:product)).to eq([ product, other ])
+    end
+
+    it "caps at MAX_ITEMS so the session cookie cannot be filled past its limit" do
+      products = Array.new(described_class::MAX_ITEMS + 5) { create_product }
+      products.each { |p| cart.add(p) }
+
+      expect(cart.count).to eq(described_class::MAX_ITEMS)
     end
   end
 
   describe "#remove and #clear" do
-    it "removes one line" do
+    it "removes one line and leaves the rest" do
       other = create_product(name: "Audioproces")
       cart.add(product)
       cart.add(other)
@@ -56,6 +48,11 @@ RSpec.describe Cart, type: :model do
       cart.remove(product)
 
       expect(cart.lines.map(&:product)).to eq([ other ])
+    end
+
+    it "is quiet about removing something that was never in there" do
+      expect { cart.remove(product) }.not_to raise_error
+      expect(cart).to be_empty
     end
 
     it "empties the cart" do
@@ -68,16 +65,67 @@ RSpec.describe Cart, type: :model do
     end
   end
 
-  # the session survives sign-in, and comes back from the cookie with string keys
-  describe "reading an existing session" do
-    it "reads quantities stored as strings" do
-      session["cart"] = { product.id.to_s => "2" }
+  describe "#include?" do
+    it "is what the shop's toggle reads" do
+      expect(cart.include?(product)).to be(false)
 
-      expect(cart.count).to eq(2)
+      cart.add(product)
+
+      expect(cart.include?(product)).to be(true)
+    end
+  end
+
+  # the session survives sign-in, and comes back from the cookie as strings
+  describe "reading an existing session" do
+    it "reads ids stored as strings" do
+      session["cart"] = [ product.id.to_s ]
+
+      expect(cart.count).to eq(1)
     end
 
     it "ignores junk rather than raising" do
-      session["cart"] = { "0" => "3", product.id.to_s => "-1" }
+      session["cart"] = [ "0", "-1", "" ]
+
+      expect(cart).to be_empty
+    end
+
+    it "collapses a duplicate left by an older session" do
+      session["cart"] = [ product.id.to_s, product.id.to_s ]
+
+      expect(cart.count).to eq(1)
+    end
+
+    # A cookie is a live thing in someone's browser. Carts written before
+    # quantities were dropped hold { id => qty }, and the navbar badge reads the
+    # cart on every page — so an unreadable one would 500 the whole site for that
+    # visitor until they cleared it.
+    context "written by the version that still had quantities" do
+      it "reads the products out of the old { id => quantity } shape" do
+        other = create_product(name: "Audioproces")
+        session["cart"] = { product.id.to_s => "2", other.id.to_s => "1" }
+
+        expect(cart.lines.map(&:product)).to eq([ product, other ])
+        expect(cart.count).to eq(2)
+      end
+
+      it "drops the old quantity rather than carrying it over" do
+        session["cart"] = { product.id.to_s => "3" }
+
+        expect(cart.count).to eq(1)
+      end
+
+      it "replaces it with the current shape on the next write" do
+        session["cart"] = { product.id.to_s => "2" }
+
+        cart.add(create_product(name: "Audioproces"))
+
+        expect(session["cart"]).to be_an(Array)
+        expect(cart.count).to eq(2)
+      end
+    end
+
+    it "survives a cookie holding something it has never written" do
+      session["cart"] = "nonsense"
 
       expect(cart).to be_empty
     end
@@ -104,13 +152,15 @@ RSpec.describe Cart, type: :model do
   describe "#total_label" do
     before do
       allow(PaddlePriceCatalogService).to receive(:call)
-        .and_return([ paddle_price(id: "pri_456", amount: "2500", currency: "PLN") ])
+        .and_return([ paddle_price(id: "pri_456", amount: "2500", currency: "PLN"),
+                      paddle_price(id: "pri_789", amount: "12900", currency: "PLN") ])
     end
 
-    it "multiplies each line by its quantity" do
-      cart.add(product, quantity: 3)
+    it "adds the lines up" do
+      cart.add(product)
+      cart.add(create_product(name: "Audioproces", paddle_price_id: "pri_789"))
 
-      expect(cart.total_label).to eq("75,00 PLN")
+      expect(cart.total_label).to eq("154,00 PLN")
     end
 
     # a total that silently omits a line is worse than no total, since it is the

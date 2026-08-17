@@ -60,6 +60,10 @@ en:
     duration:
       one: "Support lasts %{count} week"
       other: "Support lasts %{count} weeks"
+  products:
+    length_minutes:
+      one: "%{count} min"
+      other: "%{count} min"
   pagination:
     showing: "Showing"
     of: "of"

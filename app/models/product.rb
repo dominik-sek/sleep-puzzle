@@ -6,6 +6,7 @@
 #  category        :integer
 #  icon            :string
 #  kind            :integer
+#  length_minutes  :integer
 #  position        :integer          default(0), not null
 #  published       :boolean          default(FALSE), not null
 #  translations    :jsonb            not null
@@ -44,9 +45,13 @@ class Product < ApplicationRecord
     "bedtime_story" => "🧸"
   }.freeze
 
-  translates :name, :description
+  # `long_description` is the "O tym nagraniu" prose on the product page, and
+  # `includes` the "Co dostajesz" bullets beside it — the same shape as a
+  # package's `core`, so the admin's one-bullet-per-line editor already handles it.
+  translates :name, :description, :long_description, lists: %i[includes]
 
   validates :kind, presence: true
+  validates :length_minutes, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
 
   def kind_label
     KIND_LABELS.fetch(kind, kind)
@@ -54,5 +59,13 @@ class Product < ApplicationRecord
 
   def display_icon
     icon.presence || KIND_ICONS.fetch(kind, "🎧")
+  end
+
+  # nil when the owner has not filled it in, so the product page can leave the
+  # whole "Długość" slot out rather than printing a unit with no number
+  def length_label
+    return if length_minutes.blank?
+
+    I18n.t("products.length_minutes", count: length_minutes)
   end
 end

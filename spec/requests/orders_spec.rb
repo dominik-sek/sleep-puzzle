@@ -13,8 +13,8 @@ RSpec.describe "Orders", type: :request do
       .and_return(double(api_record: double(id: "ctm_123")))
   end
 
-  def fill_cart(quantity: 1)
-    post cart_items_path, params: { product_id: product.id, quantity: quantity }
+  def fill_cart(with: product)
+    post cart_items_path, params: { product_id: with.id }
   end
 
   describe "POST /orders" do
@@ -31,23 +31,26 @@ RSpec.describe "Orders", type: :request do
       before { sign_in user }
 
       it "turns the cart into a pending order" do
-        fill_cart(quantity: 2)
+        fill_cart
 
         post orders_path
 
         order = Order.sole
         expect(order).to be_pending
         expect(order.user).to eq(user)
-        expect(order.order_items.sole).to have_attributes(product: product, quantity: 2)
+        expect(order.order_items.sole.product).to eq(product)
       end
 
-      it "hands Paddle every line, with quantities" do
-        fill_cart(quantity: 3)
+      it "hands Paddle every line" do
+        other = create_product(name: "Audioproces", paddle_price_id: "pri_789")
+        fill_cart
+        fill_cart(with: other)
 
         post orders_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
 
         expect(response.body).to include("pri_456")
-        expect(response.body).to include("&quot;quantity&quot;:3")
+        expect(response.body).to include("pri_789")
+        expect(response.body).to include("&quot;quantity&quot;:1")
         expect(response.body).to include("ctm_123")
       end
 
@@ -96,7 +99,9 @@ RSpec.describe "Orders", type: :request do
     before { sign_in user }
 
     it "deletes the pending order and puts its lines back in the cart" do
-      fill_cart(quantity: 2)
+      other = create_product(name: "Audioproces", paddle_price_id: "pri_789")
+      fill_cart
+      fill_cart(with: other)
       post orders_path
       order = Order.sole
 
@@ -105,7 +110,7 @@ RSpec.describe "Orders", type: :request do
       expect(Order.count).to eq(0)
       get cart_path
       expect(response.body).to include("Bajka o sowie")
-      expect(response.body).to include("50,00 PLN")
+      expect(response.body).to include("Audioproces")
     end
 
     # closing the overlay after paying fires checkout.closed too, so the browser
