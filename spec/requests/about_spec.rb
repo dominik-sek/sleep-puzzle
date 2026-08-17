@@ -56,7 +56,7 @@ RSpec.describe "About", type: :request do
     end
 
     it "renders the English copy under the English locale" do
-      I18n.with_locale(:en) { get about_path }
+      get about_path(locale: :en)
 
       expect(response.body).to include("Children&#39;s Sleep Consultant")
       expect(response.body).to include("Certifications &amp; qualifications")

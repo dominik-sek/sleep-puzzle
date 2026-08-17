@@ -1,0 +1,19 @@
+<%#
+  The design's "PL / EN" pill. The current language is highlighted and the other
+  one is the link, so the control says where you are as well as where it goes.
+
+  locals: classes (optional, extra classes for the wrapper)
+%>
+<div class="flex items-center gap-1 rounded-[20px] border border-border-input px-3 py-1.5 text-t6 font-bold <%= local_assigns[:classes] %>">
+  <% I18n.available_locales.each_with_index do |locale, index| %>
+    <span class="text-taupe-dark" aria-hidden="true"><%= "/" if index.positive? %></span>
+
+    <% if locale == I18n.locale %>
+      <span class="text-cream uppercase" aria-current="true"><%= locale %></span>
+    <% else %>
+      <%= link_to locale.to_s.upcase, alternate_locale_url(locale),
+            class: "uppercase text-taupe no-underline hover:text-accent",
+            hreflang: locale, rel: "alternate" %>
+    <% end %>
+  <% end %>
+</div>

@@ -63,7 +63,7 @@ RSpec.describe "Contacts", type: :request do
     end
 
     it "renders the English copy under the English locale" do
-      I18n.with_locale(:en) { get contact_path }
+      get contact_path(locale: :en)
 
       expect(response.body).to include("Got a question before booking?", "Send message")
     end

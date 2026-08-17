@@ -200,6 +200,46 @@ anything is acted on, the Paddle customer that was actually charged is matched
 back to the record's owner. Both services are idempotent, because Pay re-runs the
 whole chain when its own charge sync raises.
 
+## Two languages, two addresses
+
+Polish keeps the bare paths it always had; English is the same page under `/en`:
+
+```
+PL   /            /packages     /about     /products/12
+EN   /en          /en/packages  /en/about  /en/products/12
+```
+
+The locale lives in the **path**, not the session, so each language has its own
+indexable, shareable address and the `<link rel="alternate" hreflang>` tags in the
+layout can tell Google they are the same page twice. A session would have left
+every English translation invisible to search and made a shared link open in
+whatever language the reader last chose.
+
+Three things are worth knowing before touching this.
+
+**Only the public routes are scoped.** Devise, the admin panel and the OAuth
+callbacks sit outside `scope "(:locale)"`, because their URLs are registered with
+Google and with Paddle and cannot move. The language still follows you onto them,
+as `?locale=en` — which is what keeps someone who switched to English in English
+when they sign in.
+
+**The constraint is `/en/`, not `/pl|en/`.** Only the non-default locale ever
+appears, so there is one canonical address per page; `/pl/about` is a 404 rather
+than a duplicate of `/about`.
+
+**`Rails.application.routes.default_url_options[:locale] = nil` is load-bearing.**
+An optional *leading* dynamic segment swallows the first positional argument, so
+without that line `product_path(product)` binds the product to `:locale` and
+raises `missing required keys: [:id]`. Declaring the key — as nil, so Polish paths
+stay unprefixed — makes positional arguments land where they were written to. It
+is set at the routes level rather than only in `ApplicationController` because
+mailers and jobs generate URLs with no controller and hit the same bug.
+
+The switch itself is `around_action :switch_locale`, using `I18n.with_locale`
+rather than assigning `I18n.locale`: it is a thread-global, and a request that set
+it and then raised would leave the next request on that thread rendering in the
+wrong language.
+
 ## Roadmap
 
 Measured against the design, which is a Claude Design project rather than a file
@@ -268,11 +308,7 @@ What is left on our side is one form:
       rejection had to be diagnosed by hand. Small, and it makes the next one
       self-explaining.
 
-- [ ] **PL/EN switcher.** The design has a language toggle in both the desktop and
-      mobile nav. The plumbing is already here — `Translatable`, `en` defaults
-      throughout `config/content_blocks.yml`, `config/locales/en.yml` — but nothing
-      ever assigns `I18n.locale`, so every English translation in the database is
-      currently unreachable.
+- [x] **PL/EN switcher.** In the path — see *Two languages, two addresses* above.
 - [x] **Dead links.** All wired. Navbar "Blog" stays commented out rather than
       pointing at nothing, which is the right shape for as long as the blog is
       parked.

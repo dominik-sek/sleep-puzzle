@@ -11,40 +11,50 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  root "home#index"
-  # one page: each card carries everything a package has to say, so there is
-  # no per-package page to link to
-  resources :packages, only: [ :index ]
-  resources :dashboard, only: [ :index ]
-  # looked up by token rather than id: the URL is handed to Paddle as the checkout
-  # success redirect, so it shouldn't expose sequential ids
-  resources :bookings, only: [ :index, :show, :create ], param: :token do
-    # the browser reporting that the Paddle overlay was closed without paying
-    delete :abandon, on: :member
+  # Polish keeps the bare paths it has always had; English is the same route under
+  # an /en prefix. Constrained to /en/ rather than /pl|en/ on purpose: with only
+  # the non-default locale ever in a URL there is one canonical address per page,
+  # instead of /about and /pl/about both answering.
+  #
+  # Only the public pages are in here. Devise, the admin panel and the OAuth
+  # callbacks stay outside it, because their URLs are registered with Google and
+  # with Paddle and must not move.
+  scope "(:locale)", locale: /en/ do
+    # Defines the root path route ("/")
+    root "home#index"
+    # one page: each card carries everything a package has to say, so there is
+    # no per-package page to link to
+    resources :packages, only: [ :index ]
+    resources :dashboard, only: [ :index ]
+    # looked up by token rather than id: the URL is handed to Paddle as the checkout
+    # success redirect, so it shouldn't expose sequential ids
+    resources :bookings, only: [ :index, :show, :create ], param: :token do
+      # the browser reporting that the Paddle overlay was closed without paying
+      delete :abandon, on: :member
+    end
+    resources :products, only: [ :index, :show ]
+    # singular: one cart per visitor, kept in the session, so there is no id to
+    # carry. Its lines are addressed by product id — there are no cart item rows.
+    resource :cart, only: [ :show ], controller: "cart" do
+      delete :clear, on: :collection
+    end
+    # no :update — a digital file has no quantity to change, so a line is only ever
+    # added or removed
+    resources :cart_items, only: [ :create, :destroy ], param: :product_id
+    # by token for the same reason bookings are: the URL is handed to Paddle as the
+    # checkout success redirect
+    resources :orders, only: [ :create, :show ], param: :token do
+      delete :abandon, on: :member
+    end
+    # one page that both shows the form and takes it, so there is no id to carry
+    resource :contact, only: [ :show, :create ]
+    # singular: there is one "about", so no id and no index. `controller:` keeps the
+    # class singular too, the same way the google_calendar integration does below.
+    resource :about, only: [ :show ], controller: "about"
+    # singular for the same reason as `about` above: there is one regulamin. The
+    # `controller:` keeps the class name singular too, matching the file.
+    resource :terms, only: [ :show ], controller: "terms"
   end
-  resources :products, only: [ :index, :show ]
-  # singular: one cart per visitor, kept in the session, so there is no id to
-  # carry. Its lines are addressed by product id — there are no cart item rows.
-  resource :cart, only: [ :show ], controller: "cart" do
-    delete :clear, on: :collection
-  end
-  # no :update — a digital file has no quantity to change, so a line is only ever
-  # added or removed
-  resources :cart_items, only: [ :create, :destroy ], param: :product_id
-  # by token for the same reason bookings are: the URL is handed to Paddle as the
-  # checkout success redirect
-  resources :orders, only: [ :create, :show ], param: :token do
-    delete :abandon, on: :member
-  end
-  # one page that both shows the form and takes it, so there is no id to carry
-  resource :contact, only: [ :show, :create ]
-  # singular: there is one "about", so no id and no index. `controller:` keeps the
-  # class singular too, the same way the google_calendar integration does below.
-  resource :about, only: [ :show ], controller: "about"
-  # singular for the same reason as `about` above: there is one regulamin. The
-  # `controller:` keeps the class name singular too, matching the file.
-  resource :terms, only: [ :show ], controller: "terms"
 
   # staff-only; access is the `admin` boolean on users, granted with
   # `bin/rails 'admin:promote[email]'`

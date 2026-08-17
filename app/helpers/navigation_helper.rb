@@ -17,6 +17,28 @@ module NavigationHelper
     ]
   end
 
+  # The other language, for the nav toggle: two entries so the switcher can label
+  # itself "PL / EN" the way the design does while linking only to the one you are
+  # not on.
+  def alternate_locale
+    (I18n.available_locales - [ I18n.locale ]).first
+  end
+
+  # The current page in the other language.
+  #
+  # Built from the current route's own parameters rather than by rewriting the
+  # path, so /products/12 switches to /en/products/12 rather than dropping the
+  # buyer back on the shop index. `only_path` keeps it relative; the query string
+  # is carried so a status filter or a page number survives the switch.
+  def alternate_locale_url(locale = alternate_locale)
+    url_for(request.query_parameters.merge(locale: locale == I18n.default_locale ? nil : locale,
+                                           only_path: true))
+  rescue ActionController::UrlGenerationError
+    # a route that cannot be expressed in the other language — nothing on the
+    # public site today, but a dead toggle beats a 500
+    root_path(locale: locale == I18n.default_locale ? nil : locale)
+  end
+
   # One row in the profile dropdown. Shared by the links and the sign-out button so
   # the two cannot drift — a hand-styled anchor next to a form-wrapped button was
   # what made the menu look uneven.

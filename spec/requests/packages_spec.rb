@@ -80,7 +80,7 @@ RSpec.describe "Packages", type: :request do
     it "renders the English copy for a translated package" do
       package_with_benefits(name: "Szybka ulga", name_en: "Quick relief")
 
-      I18n.with_locale(:en) { get packages_path }
+      get packages_path(locale: :en)
 
       expect(response.body).to include("Quick relief", "What you get")
       # the benefit list has no English version, so it falls back to Polish

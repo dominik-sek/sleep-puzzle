@@ -184,7 +184,7 @@ RSpec.describe "Home", type: :request do
     it "renders in English once a package has been translated" do
       create_package(name: "Szybka ulga", name_en: "Quick relief")
 
-      I18n.with_locale(:en) { get root_path }
+      get root_path(locale: :en)
 
       expect(response.body).to include("Quick relief")
     end
@@ -193,7 +193,7 @@ RSpec.describe "Home", type: :request do
     it "falls back to Polish for a package with no English version" do
       create_package(name: "Szybka ulga")
 
-      I18n.with_locale(:en) { get root_path }
+      get root_path(locale: :en)
 
       expect(response.body).to include("Szybka ulga")
     end

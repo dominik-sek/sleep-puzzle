@@ -50,7 +50,7 @@ RSpec.describe "Terms", type: :request do
     end
 
     it "renders the English copy under the English locale" do
-      I18n.with_locale(:en) { get terms_path }
+      get terms_path(locale: :en)
 
       expect(response.body).to include("Terms of cooperation")
       expect(response.body).to include("1. General provisions")

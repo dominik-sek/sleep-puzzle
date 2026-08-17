@@ -26,6 +26,10 @@
 
       <hr class="my-2 border-border" />
 
+      <div class="px-3 py-2">
+        <%= render "shared/locale_toggle", classes: "w-fit" %>
+      </div>
+
       <%# the bar's basket is hidden below lg along with the rest of the actions %>
       <%= link_to cart_path, class: mobile_menu_item_classes do %>
         <%= icon "shopping-bag", class: "size-4.5 shrink-0 text-taupe" %>
@@ -69,6 +73,7 @@
     <%# hidden below sm: these repeat inside the hamburger panel, and side by side
         with it they push the bar wider than the screen %>
     <li class="ml-2 pl-2 border-l border-border w-full hidden lg:flex gap-2 items-center">
+      <%= render "shared/locale_toggle" %>
       <%= render "shared/cart_badge" %>
       <% if user_signed_in? %>
         <button type="button"
