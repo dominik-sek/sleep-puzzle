@@ -24,13 +24,22 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = "please-change-me-at-config-initializers-devise@example.com"
+  # Was the generator's placeholder, which is not a deliverable address — a reset
+  # mail sent from it is rejected or filed as spam. ApplicationMailer already
+  # resolves the real sender from the environment, so this defers to it.
+  # `->(*)` because Devise calls this with the devise mapping (see
+  # Devise::Mailers::Helpers#mailer_sender); a zero-arity lambda raises
+  # ArgumentError the first time a reset mail is sent.
+  config.mailer_sender = ->(*) { ENV.fetch("MAIL_FROM", "kontakt@example.com") }
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
 
   # Configure the parent class responsible to send e-mails.
-  # config.parent_mailer = 'ActionMailer::Base'
+  # Inherit our own mailer, so the reset mail gets the layout, the from address and
+  # the reply-to every other mail from this app already has. Without it Devise
+  # renders bare unstyled HTML from an ActionMailer::Base with no defaults.
+  config.parent_mailer = "ApplicationMailer"
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and

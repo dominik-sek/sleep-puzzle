@@ -1,19 +1,26 @@
 <%#
-  The design's "PL / EN" pill. The current language is highlighted and the other
-  one is the link, so the control says where you are as well as where it goes.
+  The language menu's rows, shared by the desktop dropdown and the hamburger panel
+  so the two cannot drift.
 
-  locals: classes (optional, extra classes for the wrapper)
+  Each row is a link to this same page in that language; the one you are already on
+  is marked rather than linked, so the control says where you are as well as where
+  it goes.
+
+  locals: item_classes
 %>
-<div class="flex items-center gap-1 rounded-[20px] border border-border-input px-3 py-1.5 text-t6 font-bold <%= local_assigns[:classes] %>">
-  <% I18n.available_locales.each_with_index do |locale, index| %>
-    <span class="text-taupe-dark" aria-hidden="true"><%= "/" if index.positive? %></span>
+<% I18n.available_locales.each do |locale| %>
+  <% current = locale == I18n.locale %>
 
-    <% if locale == I18n.locale %>
-      <span class="text-cream uppercase" aria-current="true"><%= locale %></span>
-    <% else %>
-      <%= link_to locale.to_s.upcase, alternate_locale_url(locale),
-            class: "uppercase text-taupe no-underline hover:text-accent",
-            hreflang: locale, rel: "alternate" %>
+  <% if current %>
+    <span class="<%= item_classes %> text-accent" aria-current="true">
+      <span aria-hidden="true"><%= locale_flag(locale) %></span>
+      <span><%= locale_name(locale) %></span>
+      <%= icon "circle-check", class: "size-3.5 shrink-0 ml-auto" %>
+    </span>
+  <% else %>
+    <%= link_to alternate_locale_url(locale), class: item_classes, hreflang: locale, rel: "alternate" do %>
+      <span aria-hidden="true"><%= locale_flag(locale) %></span>
+      <span><%= locale_name(locale) %></span>
     <% end %>
   <% end %>
-</div>
+<% end %>

@@ -1,50 +1,28 @@
-<%= render Container::Component.new(classes:"flex justify-center items-center") do %>
+<% content_for :title, t("auth.sign_in.title") %>
 
-  <%= render Card::Component.new(classes: "w-full max-w-128 border-border-strong!") do |card| %>
-<div class="w-full flex flex-col items-center gap-2">
-  <h2 class="text-t2 font-display mb-4"> Zaloguj się</h2>
+<%= render "devise/shared/card", title: t("auth.sign_in.title") do %>
+  <%= render "devise/shared/omniauth" %>
 
-  <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "w-3/5"}) do |f| %>
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name),
+               html: { class: "flex flex-col gap-5" }) do |f| %>
+    <%= render "devise/shared/field", form: f, name: :email, label: t("auth.fields.email"), type: :email,
+               options: { autofocus: true, autocomplete: "email", required: true } %>
 
-<div class="flex flex-col gap-4 w-full">
-  <%= render Forms::Component.new(
-    label: "Email",
-    name: "user[email]",
-    ) do |c| %>
-    <% c.with_input do %>
-      <input type="email" name="user[email]" id="user_email" class="form-control" placeholder="you@example.com">
+    <%= render "devise/shared/field", form: f, name: :password, label: t("auth.fields.password"), type: :password,
+               options: { autocomplete: "current-password", required: true } %>
+
+    <% if devise_mapping.rememberable? %>
+      <label class="flex items-center gap-2.5 text-t6 text-tan">
+        <%= f.check_box :remember_me, class: "size-4 rounded-sm border-border-input bg-ink-soft" %>
+        <%= t("activerecord.attributes.user.remember_me", default: "Nie wylogowuj mnie") %>
+      </label>
     <% end %>
-  <% end %>
 
-
-  <%= render Forms::Component.new(
-    label: "Hasło",
-    name: "user[password]",
-    required: true,
-    ) do |c| %>
-    <% c.with_input do %>
-      <input type="password" name="user[password]" id="user_password" class="form-control" placeholder="Enter password...">
-    <% end %>
-  <% end %>
-
-
-  <div class="actions">
     <%= render Buttons::Component.new(
-      text: "Zaloguj się",
-      pill: true,
-      full_width: true,
-      variant: :primary,
-      type: :submit,
-      classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+      text: t("auth.sign_in.submit"), pill: true, full_width: true, variant: :primary, type: :submit,
+      classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold! justify-center"
     ) %>
-
-  </div>
-</div>
   <% end %>
 
   <%= render "devise/shared/links" %>
-
-</div>
-  <% end %>
-  <% end %>
-
+<% end %>

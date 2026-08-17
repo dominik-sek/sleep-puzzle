@@ -37,14 +37,16 @@ RSpec.describe "Locale", type: :request do
       expect(response.body).to include(%(<html lang="pl">))
     end
 
-    # I18n.locale is a thread-global; a request that set it and raised would leave
-    # the next request on that thread in the wrong language.
-    #
-    # Literal paths, not helpers: an integration session folds the last request's
-    # path parameters into later helper calls, so `about_path` here would itself
-    # come back as /en/about and the assertion would prove nothing.
-    it "does not leak the locale into the next request" do
+    # I18n.locale is a thread-global; a request that set it and left it set would
+    # have the next request on that thread render in the wrong language. The
+    # around_action uses with_locale precisely so it unwinds.
+    it "restores the thread's locale once the request is over" do
       get "/en/about"
+
+      expect(I18n.locale).to eq(I18n.default_locale)
+    end
+
+    it "serves Polish to someone who has not chosen a language" do
       get "/about"
 
       expect(response.body).to include(%(<html lang="pl">))
@@ -65,10 +67,11 @@ RSpec.describe "Locale", type: :request do
       expect(response.body).to include(%(href="/cart"))
       expect(response.body).to include(%(href="/about"))
       expect(response.body).to include(%(href="/packages"))
-      # the only /en addresses on a Polish page are the two switchers — desktop and
-      # hamburger, both rendered and one hidden by CSS — and the hreflang tag. All
-      # three are meant to point at the other language.
-      expect(response.body.scan(%(href="/en/)).size).to eq(3)
+      # the only /en addresses on a Polish page point at the other language: the
+      # hreflang tag and the switcher, which renders twice — once in the desktop
+      # dropdown and once in the hamburger panel, one of them hidden by CSS
+      other_language_links = response.body.scan(%(href="/en/)).size
+      expect(other_language_links).to eq(3)
     end
 
     # Devise is outside the locale scope, so the language rides along as a query
@@ -80,7 +83,81 @@ RSpec.describe "Locale", type: :request do
     end
   end
 
+  # The URL is the whole answer on the public site. The choice is remembered only
+  # for the pages whose path cannot state it — chiefly the Google handshake, which
+  # leaves the site and comes back with nothing to say which language was picked.
+  describe "remembering the choice" do
+    it "still serves Polish at a bare path after a visit to English" do
+      get "/en/about"
+
+      get "/packages"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(%(<html lang="pl">))
+    end
+
+    # the switcher's Polish link is the bare path; if that were overridden by what
+    # was remembered, there would be no way back
+    it "lets the switcher get back to Polish" do
+      get "/en/about"
+
+      get "/about"
+
+      expect(response.body).to include(%(<html lang="pl">))
+    end
+
+    # there is no /en/users/sign_in to send anyone to, so these follow the language
+    # the public site was last showing
+    it "carries the language onto a route that has no localized address" do
+      get "/en/about"
+
+      get "/users/sign_in"
+
+      expect(response.body).to include("Log in")
+      expect(response.body).not_to include("Adres e-mail")
+    end
+
+    it "and back again once the visitor returns to Polish" do
+      get "/en/about"
+      get "/about"
+
+      get "/users/sign_in"
+
+      expect(response.body).to include("Adres e-mail")
+    end
+
+    it "leaves someone who never chose on Polish" do
+      get "/users/sign_in"
+
+      expect(response.body).to include("Adres e-mail")
+    end
+  end
+
   describe "the switcher" do
+    it "is a menu naming each language in itself, with a flag" do
+      get about_path
+
+      expect(response.body).to include("Polski")
+      expect(response.body).to include("English")
+      expect(response.body).to include("🇵🇱")
+      expect(response.body).to include("🇬🇧")
+    end
+
+    it "marks the language you are on rather than linking it" do
+      get about_path
+
+      expect(response.body).to include(%(aria-current="true"))
+    end
+
+    # the trigger is shown to everyone, and one whose content never rendered opens
+    # nothing — which is what happens if the panel is nested in the signed-in branch
+    it "opens for a signed-out visitor too" do
+      get about_path
+
+      expect(response.body).to include(%(id="locale-content"))
+      expect(response.body).to include(%(data-content-id="locale-content"))
+    end
+
     it "offers the other language and marks the current one" do
       get about_path
 

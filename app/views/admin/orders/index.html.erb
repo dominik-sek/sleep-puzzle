@@ -7,7 +7,7 @@
   <nav class="flex flex-wrap gap-2">
     <%= admin_filter_link "Wszystkie", nil, @status, admin_orders_path %>
     <% Order.statuses.each_key do |status| %>
-      <%= admin_filter_link Order::STATUS_LABELS.fetch(status, status), status, @status,
+      <%= admin_filter_link Order.status_label(status), status, @status,
                             admin_orders_path(status: status) %>
     <% end %>
   </nav>

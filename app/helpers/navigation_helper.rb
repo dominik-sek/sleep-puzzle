@@ -9,17 +9,34 @@ module NavigationHelper
   # markup that would render it.
   def primary_nav_items
     [
-      { label: "Pakiety", href: packages_path },
-      { label: "O mnie", href: about_path },
-      # { label: "Blog", href: blog_path },
-      { label: "Sklep", href: products_path },
-      { label: "Kontakt", href: contact_path }
+      { label: t("nav.packages"), href: packages_path },
+      { label: t("nav.about"), href: about_path },
+      # { label: t("nav.blog"), href: blog_path },
+      { label: t("nav.shop"), href: products_path },
+      { label: t("nav.contact"), href: contact_path }
     ]
   end
 
-  # The other language, for the nav toggle: two entries so the switcher can label
-  # itself "PL / EN" the way the design does while linking only to the one you are
-  # not on.
+  # Flags stand for countries rather than languages, which is a compromise — but a
+  # recognisable one at a glance, and the language's own name sits next to it in the
+  # menu for anyone the flag does not help. British rather than American, since the
+  # audience is in the EU.
+  LOCALE_FLAGS = { pl: "🇵🇱", en: "🇬🇧" }.freeze
+
+  # Each language named in itself, so "English" is legible to someone who cannot
+  # read the Polish page they are currently on, and vice versa.
+  LOCALE_NAMES = { pl: "Polski", en: "English" }.freeze
+
+  def locale_flag(locale)
+    LOCALE_FLAGS.fetch(locale.to_sym, "🏳️")
+  end
+
+  def locale_name(locale)
+    LOCALE_NAMES.fetch(locale.to_sym, locale.to_s.upcase)
+  end
+
+  # The other language, for anything that needs the single alternative rather than
+  # the whole list.
   def alternate_locale
     (I18n.available_locales - [ I18n.locale ]).first
   end

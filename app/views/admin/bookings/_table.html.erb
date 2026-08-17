@@ -22,7 +22,7 @@
 
       <% row.with_cell do %>
         <%= admin_status_badge booking.status,
-              Booking::PAYMENT_STATUS_LABELS.fetch(booking.status, booking.status) %>
+              booking.status_label %>
       <% end %>
 
       <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>

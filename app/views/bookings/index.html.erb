@@ -1,7 +1,7 @@
 <%= render Container::Component.new(classes:"flex flex-col gap-6 items-center justify-center") do %>
 <div class="flex flex-col justify-center items-center text-center gap-6 w-full md:w-1/2">
-  <h1 class="text-t2 text-cream font-display">Umów konsultację</h1>
-  <span class="text-tan text-t5">Wybierz dogodny termin w kalendarzu, a potem uzupełnij krótki formularz zgłoszeniowy</span>
+  <h1 class="text-t2 text-cream font-display"><%= content_block("bookings.hero.title") %></h1>
+  <span class="text-tan text-t5"><%= content_block("bookings.hero.subtitle") %></span>
 </div>
   <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking, package_options: @package_options %>
   <%= render "shared/paddle_checkout", checkout: nil %>

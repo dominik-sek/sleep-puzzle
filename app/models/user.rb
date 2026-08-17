@@ -40,6 +40,15 @@ class User < ApplicationRecord
          :omniauthable, omniauth_providers: %i[google_oauth2]
 
 
+  # Whether this account can be signed into with a password at all.
+  #
+  # False for a Google sign-up that has never set one, which is what lets
+  # Users::RegistrationsController accept changes without asking for a "current
+  # password" the holder has no way of knowing.
+  def password_set?
+    encrypted_password.present?
+  end
+
   # Digital files are bought once and kept: owning one is what blocks buying it
   # again, in the shop's button, in the cart and at checkout.
   def purchased?(product)
@@ -61,6 +70,19 @@ class User < ApplicationRecord
     full_name || email
   end
 
+  # Validatable insists on a password whenever a record is created. A Google
+  # sign-up arrives without one by design, so that single case is excused — and
+  # only that case: the moment a password *is* being set, `super` takes over and
+  # the length and confirmation rules apply as normal.
+  #
+  # Narrow on purpose. Returning true whenever no password was submitted would
+  # demand one on every update, which is exactly how an email-only change breaks.
+  def password_required?
+    return false if provider.present? && password.blank? && password_confirmation.blank?
+
+    super
+  end
+
   def self.from_omniauth(access_token)
     data = access_token.info
     user = User.where(email: data["email"]).first
@@ -73,7 +95,9 @@ class User < ApplicationRecord
         last_name: data["last_name"],
         email: data["email"],
         avatar_url: data["image"],
-        password: Devise.friendly_token[0, 20],
+        # deliberately no password: a random one the holder is never told is not a
+        # password, and storing one made /users/edit ask them to confirm it. They
+        # can set a real one later from the account screen.
         provider: access_token.provider,
         uid: access_token.uid
       )

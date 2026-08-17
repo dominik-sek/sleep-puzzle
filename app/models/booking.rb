@@ -45,13 +45,13 @@ class Booking < ApplicationRecord
     where(status: [ :pending, :confirmed ]).where(starts_at: Time.current..).order(:starts_at)
   }
 
-  # shown on the success page and written onto the Google Calendar event
-  PAYMENT_STATUS_LABELS = {
-    "pending" => "Oczekuje na płatność",
-    "confirmed" => "Opłacona",
-    "payment_failed" => "Płatność nieudana",
-    "canceled" => "Anulowana"
-  }.freeze
+  # Shown on the success page, in the dashboard, in the panel and in the mails, so
+  # it follows whatever language the reader is being served — which a frozen Hash
+  # of Polish strings could not do. BookingCalendarService asks for Polish
+  # explicitly, because that one writes into the owner's own calendar.
+  def self.status_label(status, locale: I18n.locale)
+    I18n.t("bookings.statuses.#{status}", locale: locale, default: status.to_s)
+  end
 
   validates :name, presence: true
   validates :starts_at, presence: true
@@ -63,6 +63,10 @@ class Booking < ApplicationRecord
 
   def to_param
     token
+  end
+
+  def status_label
+    self.class.status_label(status)
   end
 
   # Called from BookingConfirmationService when Paddle reports the transaction paid.

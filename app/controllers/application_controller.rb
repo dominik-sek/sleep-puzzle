@@ -38,13 +38,52 @@ class ApplicationController < ActionController::Base
   # request that set it and raised would leave the next request on this thread
   # rendering in whatever language the last one asked for.
   def switch_locale(&action)
-    I18n.with_locale(requested_locale, &action)
+    locale = requested_locale
+
+    # Remember what the public site was last showing, so the pages whose path
+    # *cannot* say it follow along. The Google handshake is the case that needs
+    # this: it leaves for accounts.google.com and comes back to
+    # /users/auth/google_oauth2/callback with nothing to say which language the
+    # visitor had picked, and the sign-in redirect it builds would land on the
+    # Polish dashboard.
+    session[:locale] = locale.to_s if locale_scoped_route?
+
+    I18n.with_locale(locale, &action)
   end
 
-  # An unknown or missing locale is the default rather than an error: these come
-  # from a URL, and a hand-edited one should show the Polish page, not a 500.
+  # The URL first, and on the public site the URL is the whole answer: a scoped
+  # route states the language in its path, so a path without one means Polish.
+  # That is what keeps one address per rendering — /about is always Polish, however
+  # long ago someone clicked EN — and it is what lets the switcher get back.
+  #
+  # Only the routes that cannot carry a locale — Devise, the panel, the OAuth
+  # callback — fall back to what was last chosen.
   def requested_locale
-    params[:locale].presence_in(I18n.available_locales.map(&:to_s)) || I18n.default_locale
+    known = I18n.available_locales.map(&:to_s)
+    from_url = params[:locale].presence_in(known)
+
+    return from_url if from_url
+    return I18n.default_locale if locale_scoped_route?
+
+    session[:locale].presence_in(known) || I18n.default_locale
+  end
+
+  # Whether this route can say the language in its path.
+  #
+  # Read off the matched route's own pattern — "(/:locale)/about(.:format)" for a
+  # scoped route, "/users/sign_in(.:format)" for one outside the scope.
+  #
+  # Deliberately *not* done by generating a URL and looking at it: ActionController
+  # memoises `url_options` on first use, so calling url_for here — before
+  # with_locale has run — froze `locale: nil` into every link the page went on to
+  # generate. The page came out in English with Polish links.
+  def locale_scoped_route?
+    return @locale_scoped_route if defined?(@locale_scoped_route)
+
+    @locale_scoped_route = request.route_uri_pattern.to_s.include?(":locale")
+  rescue StandardError
+    # no matched route to ask (a 404 rendering through here, say)
+    @locale_scoped_route = false
   end
 
   # Pagy keeps its locale in a thread local, so it has to be set on every

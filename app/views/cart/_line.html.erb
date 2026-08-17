@@ -25,7 +25,7 @@
 
   <%= button_to cart_item_path(product_id: line.product.id), method: :delete,
         class: "cursor-pointer border-0 bg-transparent px-2 py-1 text-[20px] leading-none text-taupe hover:text-accent",
-        form_class: "contents", "aria-label": "Usuń z koszyka" do %>
+        form_class: "contents", "aria-label": t("nav.remove_from_cart") do %>
     ✕
   <% end %>
 </div>

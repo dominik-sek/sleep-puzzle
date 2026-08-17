@@ -1,0 +1,15 @@
+<%#
+  One labelled field on an auth form. `form-control` is the app's own input style,
+  defined in application.css, so these match the admin panel's inputs.
+
+  locals: form, name, label, type (default :text), hint, options
+%>
+<div class="flex flex-col gap-1.5">
+  <%= form.label name, label, class: "text-t6 text-taupe" %>
+  <%= form.public_send(:"#{local_assigns.fetch(:type, :text)}_field", name,
+        { class: "form-control" }.merge(local_assigns.fetch(:options, {}))) %>
+
+  <% if local_assigns[:hint].present? %>
+    <span class="text-t6 text-taupe-dark"><%= hint %></span>
+  <% end %>
+</div>

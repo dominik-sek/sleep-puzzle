@@ -42,7 +42,7 @@ RSpec.describe "Admin::Orders", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("customer@example.com")
       expect(response.body).to include("Bajka o sowie")
-      expect(response.body).to include(Order::STATUS_LABELS.fetch("paid"))
+      expect(response.body).to include(Order.status_label("paid"))
     end
 
     it "names every line rather than counting them" do

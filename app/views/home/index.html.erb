@@ -26,14 +26,14 @@
           side by side they are wider than a phone screen %>
       <div class="flex flex-wrap gap-4">
         <%= render Buttons::Component.new(
-          text: "Umów konsultację",
+          text: t("nav.book"),
           pill: true,
           variant: :primary,
           href: bookings_path,
           classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
         ) %>
         <%= render Buttons::Component.new(
-          text: "Zobacz pakiety",
+          text: t("nav.see_packages"),
           pill: true,
           variant: :secondary,
           href: packages_path,
@@ -172,7 +172,7 @@
         <div class="text-tan md:max-w-3/4"><%= content_block("home.audio.body") %></div>
         <div>
           <%= render Buttons::Component.new(
-            text: "Przejdź do sklepu",
+            text: t("nav.go_to_shop"),
             pill: true,
             variant: :primary,
             href: products_path,

@@ -46,6 +46,66 @@ en:
               invalid: "Please give a valid email address"
             body:
               blank: "Please write a message"
+  bookings:
+    statuses:
+      pending: "Awaiting payment"
+      confirmed: "Paid"
+      payment_failed: "Payment failed"
+      canceled: "Cancelled"
+    calendar:
+      processing: "Processing the payment…"
+      processing_hint: "We will take you to the confirmation in a moment."
+      available_hours: "Available times"
+      pick_a_day: "Pick a day in the calendar to see the times available."
+      previous_month: "Previous month"
+      next_month: "Next month"
+    summary:
+      confirmed_title: "Your booking is confirmed"
+      confirmed_body: "Thank you! The payment has gone through and your slot is reserved."
+      failed_title: "The payment did not go through"
+      failed_body: "The slot has been released. You are welcome to try booking it again."
+      processing_title: "Processing the payment"
+      processing_body: "This only takes a moment — the page will update on its own."
+      package: "Package"
+      starts_at: "When"
+      payment_status: "Payment status"
+    available_slots:
+      one: "%{count} slot available"
+      other: "%{count} slots available"
+    form:
+      your_details: "Your details"
+      name: "Name"
+      name_placeholder: "Jane Smith"
+      email: "Email"
+      package: "Choose a package"
+      email_hint: "The email address on your account"
+      choose_slot: "Pick a date and a time"
+      submit: "Pay and confirm the booking"
+    status:
+      awaiting: "Waiting for the payment provider to confirm…"
+      back: "Back to my account"
+  booking_mailer:
+    details:
+      package: "Package"
+      starts_at: "When"
+      status: "Payment status"
+      name: "Name"
+      email: "Email"
+    confirmed:
+      subject: "Your booking is confirmed"
+      heading: "Your booking is confirmed"
+      intro: "Thank you! The payment has gone through and your slot is reserved."
+      cta: "See the booking"
+      outro: "If anything changes, just reply to this email."
+    new_booking:
+      subject: "New paid booking: %{name}"
+      heading: "New paid booking"
+      intro: "The consultation has been paid for and added to the calendar."
+    payment_failed:
+      subject: "The payment did not go through"
+      heading: "The payment did not go through"
+      intro: "We could not take the payment, so the slot has been released. You are welcome to try again."
+      cta: "Pick a new slot"
   contact_mailer:
     details:
       name: "Full name"
@@ -61,9 +121,92 @@ en:
       one: "Support lasts %{count} week"
       other: "Support lasts %{count} weeks"
   products:
+    kinds:
+      audio_process: "Audio process"
+      bedtime_story: "Bedtime story"
     length_minutes:
       one: "%{count} min"
       other: "%{count} min"
+  auth:
+    fields:
+      email: "Email address"
+      password: "Password"
+      password_confirmation: "Repeat password"
+      current_password: "Current password"
+      new_password: "New password"
+    sign_in:
+      title: "Log in"
+      submit: "Log in"
+      forgot: "Forgotten your password?"
+      no_account: "No account yet?"
+      sign_up_link: "Create one"
+    sign_up:
+      title: "Create an account"
+      submit: "Create account"
+      password_hint: "At least %{count} characters."
+      have_account: "Already have an account?"
+      sign_in_link: "Log in"
+    forgot:
+      title: "Forgotten your password?"
+      intro: "Enter the email address you log in with and we will send you a link to set a new password."
+      submit: "Send the link"
+      back: "Back to logging in"
+    reset:
+      title: "Set a new password"
+      submit: "Save new password"
+    edit:
+      title: "Account details"
+      intro: "Change your email address or password. Leave the password fields empty to keep the one you have."
+      current_password_hint: "Enter your current password to confirm the changes."
+      submit: "Save changes"
+      back: "Back to my account"
+      danger_title: "Deleting your account"
+      danger_body: "Account data is deleted permanently. Anything you bought stops being available."
+      destroy: "Delete account"
+      destroy_confirm: "Are you sure? This cannot be undone."
+    set_password:
+      title: "Set a password"
+      hint: "You signed in with Google, so you do not have a password yet. Set one if you would also like to log in with your email address."
+    oauth:
+      google: "Continue with Google"
+      separator: "or"
+    mailer:
+      reset_password:
+        heading: "Set a new password"
+        intro: "Someone — hopefully you — asked to change the password for %{email}."
+        cta: "Set a new password"
+        expires: "The link is valid for %{hours} hours."
+        ignore: "If this was not you, just ignore this email. Your password stays as it is."
+      password_changed:
+        heading: "Your password has changed"
+        intro: "This confirms the password for %{email} has just been changed."
+        warning: "If this was not you, get in touch with us as soon as you can."
+      email_changed:
+        heading: "Your email address has changed"
+        intro: "This confirms the email address on your account has been changed."
+  nav:
+    packages: "Packages"
+    about: "About me"
+    blog: "Blog"
+    shop: "Shop"
+    contact: "Contact"
+    terms: "Terms of cooperation"
+    cart: "Cart"
+    remove_from_cart: "Remove from cart"
+    my_account: "My account"
+    admin: "Admin"
+    sign_in: "Log in"
+    sign_out: "Log out"
+    book: "Book a consultation"
+    see_packages: "See the packages"
+    go_to_shop: "Go to the shop"
+    copyright: "© %{year} Sleep Puzzle. All rights reserved."
+  orders:
+    statuses:
+      pending: "Awaiting payment"
+      paid: "Paid"
+      payment_failed: "Payment failed"
+      canceled: "Cancelled"
   pagination:
     showing: "Showing"
     of: "of"

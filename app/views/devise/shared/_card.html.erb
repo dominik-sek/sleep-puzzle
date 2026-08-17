@@ -1,0 +1,23 @@
+<%#
+  The panel every auth screen sits in. One partial rather than the same wrapper
+  copied five times, which is how the stock views ended up with a styled sign-in
+  and four unstyled siblings.
+
+  Narrow on purpose — 420px, as the design's login card — because a single column
+  of two or three fields reads worse the wider it gets.
+
+  locals: title, subtitle (optional), yields the form
+%>
+<div class="min-h-screen flex flex-col items-center">
+  <%= render Section::Component.new(background: :ink, align: :left, bordered: false) do |section| %>
+    <div class="mx-auto w-full max-w-[420px] rounded-3xl border border-border-strong bg-surface p-8 sm:p-10">
+      <h1 class="font-display font-bold text-t3 text-cream text-center m-0"><%= title %></h1>
+
+      <% if local_assigns[:subtitle].present? %>
+        <p class="mt-3 text-t6 text-tan text-center m-0"><%= subtitle %></p>
+      <% end %>
+
+      <div class="mt-6.5 flex flex-col gap-5"><%= yield %></div>
+    </div>
+  <% end %>
+</div>

@@ -200,6 +200,57 @@ anything is acted on, the Paddle customer that was actually charged is matched
 back to the record's owner. Both services are idempotent, because Pay re-runs the
 whole chain when its own charge sync raises.
 
+## Signing in
+
+The five Devise screens — sign in, sign up, account details, forgotten password,
+set new password — were generator scaffolding: English, unstyled, and each one a
+copy of the same wrapper. They now share `devise/shared/_card` and
+`devise/shared/_field`, which is what stops one of them being restyled and the
+other four being forgotten again.
+
+Copy lives under `auth.*` in `pl.yml` and `en.yml`, deliberately outside the
+`devise.*` scope the gem owns, so there is no chance of colliding with it on a
+gem upgrade. Devise's own flashes and failures come from `config/locales/devise.pl.yml` —
+the gem ships English only, so without that file every message in the sign-in
+flow arrived in English on a Polish site.
+
+Two pieces of wiring were wrong and are worth knowing about:
+
+* **`config.parent_mailer = "ApplicationMailer"`.** Without it Devise's mailer
+  descends from `ActionMailer::Base`, which means no layout and none of the
+  `from`/`reply_to` defaults every other mail in this app gets — the reset mail
+  went out as a bare unstyled fragment.
+* **`config.mailer_sender` was the generator's `please-change-me@example.com`**,
+  which is not a deliverable address; a reset mail from it is rejected or filed as
+  spam. It now reads `MAIL_FROM`, and it is written `->(*)` because Devise calls it
+  with the devise mapping — a zero-arity lambda raises `ArgumentError` on the first
+  send.
+
+**A Google sign-up has no password, deliberately.** It used to be given
+`Devise.friendly_token` — a random string the holder was never told. That let them
+in through Google and nowhere else, but it also made `encrypted_password` look set,
+so `/users/edit` demanded a "current password" they could not possibly know and
+refused every change they tried to make, including setting a real password.
+
+Now nothing is stored, `User#password_set?` answers the question honestly, and
+`Users::RegistrationsController` drops `:current_password` for an account that has
+none. Three details matter if this is ever touched:
+
+* `User#password_required?` excuses **only** the create-with-no-password case.
+  Returning true whenever no password was submitted would demand one on every
+  update, which is exactly how an email-only change breaks for everyone else.
+* The override drops `:current_password` rather than calling Devise's
+  `update_without_password`, because that strips `:password` too — leaving a Google
+  user unable to set the first password they came to set.
+* The exemption ends the moment a password exists. Once set, confirming it is
+  required again, the same as any other account.
+
+Google sign-in uses Google's own multicolour mark and stays on a white button,
+because Google's brand guidelines expect it on white or on its own blue rather
+than tinted to a host palette. `data-turbo: false` on it is required rather than
+cosmetic: the handshake is a full-page redirect off-site, and Turbo would try to
+fetch it and fail.
+
 ## Two languages, two addresses
 
 Polish keeps the bare paths it always had; English is the same page under `/en`:
@@ -239,6 +290,62 @@ The switch itself is `around_action :switch_locale`, using `I18n.with_locale`
 rather than assigning `I18n.locale`: it is a thread-global, and a request that set
 it and then raised would leave the next request on that thread rendering in the
 wrong language.
+
+**On the public site the URL is the whole answer.** A scoped route states the
+language in its path, so a path without one means Polish — however long ago
+someone clicked EN. That is what keeps one address per rendering, and it is what
+lets the switcher get *back*: its Polish link is the bare path, and if a remembered
+choice could override that there would be no way home.
+
+**The choice is remembered only for routes that cannot state it.** Devise, the
+panel, and above all the Google handshake — which leaves for accounts.google.com
+and returns to `/users/auth/google_oauth2/callback` with nothing to say which
+language was picked, so the sign-in redirect it builds would land on the Polish
+dashboard. `session[:locale]` is written on every public page and read only where
+the path has no locale to offer. Which of the two a request is gets read off
+`request.route_uri_pattern` — `"(/:locale)/about(.:format)"` versus
+`"/users/sign_in(.:format)"`.
+
+Do **not** answer that question by generating a URL and looking at it.
+`ActionController` memoises `url_options` on first use, so calling `url_for` before
+`with_locale` has run freezes `locale: nil` into every link the page then
+generates — the page comes out in English with Polish links, which is a confusing
+thing to debug.
+
+**Two places Polish hides that a view-by-view pass will not find.** Both bit this
+codebase and both are now covered by `spec/requests/english_pages_spec.rb`, which
+scans a rendered English page for Polish diacritics rather than checking for a
+handful of phrases someone thought of:
+
+* **Frozen label Hashes on models.** `Booking::PAYMENT_STATUS_LABELS`,
+  `Product::KIND_LABELS` and `Order::STATUS_LABELS` were Polish strings in Ruby, so
+  "Audioproces" appeared on the English shop no matter how well the template was
+  translated. They are `I18n.t` lookups behind `#status_label` / `#kind_label` now.
+  One deliberate exception: `BookingCalendarService` asks for Polish explicitly,
+  because that string goes into the *owner's* calendar and an English buyer's
+  booking should not retitle her day.
+* **JavaScript.** `cally_controller.js` called `dayjs.locale("pl")` at import, so
+  every month and weekday name in the date picker was Polish whatever the page
+  around it said.
+
+  Fixing that by reading `document.documentElement.lang` at import was still wrong,
+  in two ways worth remembering. A controller module is evaluated **once per full
+  page load**, so anything decided at import survives every Turbo navigation
+  afterwards — the picker stayed in whatever language you arrived in until you
+  pressed reload. And `<html lang>` is itself stale after a navigation, because
+  Turbo Drive swaps the `<body>` and merges the `<head>` but never touches the
+  attributes on `<html>`.
+
+  So the locale is rendered by the server onto the element
+  (`data-cally-locale-value`) and read in `connect()`, which runs again on every
+  navigation. `locale_controller.js` separately copies the language from the body
+  back up to `<html lang>`, so screen readers and anything else reading it get the
+  truth.
+
+Unscoped routes still pick up `?locale=en` from `default_url_options`, since it
+cannot know whether the target takes the locale as a path segment or a query
+string. It is redundant now that the session remembers, and harmless — it also
+makes such a link portable.
 
 ## Roadmap
 
@@ -300,6 +407,19 @@ What is left on our side is one form:
 - [ ] Newsletter sign-up form (see Newsletter, above)
 
 ### Cross-cutting
+
+- [x] **Navbar, footer and the home page's CTAs** now read from `nav.*` in
+      `pl.yml`/`en.yml` rather than being hardcoded Polish. Copy the owner writes
+      still lives in the CMS, and a block with no English version falls back to
+      Polish on purpose — that is content waiting to be translated, not a bug.
+- [ ] **The admin panel and the Google Calendar integration screen are
+      Polish-only.** `integrations/google_calendar/show` still holds literals, and
+      nothing under `admin/` has been translated. Both are staff-facing, so this
+      only matters if a non-Polish speaker ever runs the panel.
+- [ ] **Two Devise screens are still stock English** — `confirmations/new` and
+      `unlocks/new`, plus the `confirmation_instructions` and `unlock_instructions`
+      mails. Both modules are switched off in `User`, so nothing reaches them; they
+      only matter if `:confirmable` or `:lockable` is ever enabled.
 
 - [ ] **Paddle errors are still invisible.** The layout re-emits every Paddle event,
       but `paddle_controller.js` switches on `checkout.completed` and

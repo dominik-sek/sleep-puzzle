@@ -1,14 +1,22 @@
 import { Controller } from "@hotwired/stimulus"
 import dayjs from "dayjs";
 import "dayjs/locale/pl";
+import "dayjs/locale/en";
 
-dayjs.locale("pl");
+// No locale is chosen at import. This module is evaluated once per full page load,
+// so anything decided here survives every Turbo navigation afterwards — which is
+// how switching language left the calendar in the language you started in until
+// you pressed reload. The locale arrives per connect() instead, as a value the
+// server renders onto the element.
 
 export default class extends Controller {
     static targets = ["calendarDate", "calendarMonth", "heading", "monthHeading", "hoursHeader", "emptyState", "hoursPanel", "availableCount", "slotForm", "dateField", "timeField", "bookingFrame", "overlay"]
     static values = {
         availableDates: Array,
-        noSlotsLabel: String
+        noSlotsLabel: String,
+        // rendered by the server with the page, so it is right on a Turbo
+        // navigation without anything having to be told the language changed
+        locale: { type: String, default: "pl" }
     }
 
     connect() {
@@ -34,7 +42,10 @@ export default class extends Controller {
         // panel shows a prompt instead of today's slots
         this.calendarDateTarget.min = todayFormatted // earliest date to be selected
         this.calendarDateTarget.max = twoMonthsFromNowFormatted // latest ^
-        // don't set locale — leaving it unset makes cally fall back to the browser locale
+        // both the month heading we format ourselves and cally's own month and
+        // weekday names, so the widget agrees with the page it is on
+        dayjs.locale(this.localeValue)
+        this.calendarDateTarget.locale = this.localeValue
         // format-weekday="short" is set as a static HTML attribute on <calendar-date>
     }
 
@@ -105,7 +116,8 @@ export default class extends Controller {
             : dayjs(date)
 
         const label = day.format('MMMM YYYY')
-        // dayjs' Polish month names are lowercase, but this reads as a title
+        // dayjs' Polish month names are lowercase and this reads as a title. English
+        // ones are already capitalised, so this is a no-op there.
         this.monthHeadingTarget.textContent = label.charAt(0).toUpperCase() + label.slice(1)
     }
 

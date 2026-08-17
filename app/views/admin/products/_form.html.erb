@@ -18,7 +18,7 @@
     <div class="flex flex-col gap-1.5">
       <span class="text-t6 uppercase text-taupe">Rodzaj</span>
       <%= select_tag "record[kind]",
-                     options_for_select(Product::KIND_LABELS.map(&:reverse), product.kind),
+                     options_for_select(Product.kind_options, product.kind),
                      include_blank: "— wybierz rodzaj —",
                      id: "record-kind", class: "form-control" %>
     </div>

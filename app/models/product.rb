@@ -32,10 +32,17 @@ class Product < ApplicationRecord
   # should re-render the page, not raise
   enum :kind, { audio_process: 0, bedtime_story: 1 }, validate: true
 
-  KIND_LABELS = {
-    "audio_process" => "Audioproces",
-    "bedtime_story" => "Bajka na dobranoc"
-  }.freeze
+  # Rendered on the shop, the product page, the cart and the dashboard, so it has
+  # to follow the reader's language — a frozen Hash of Polish strings showed
+  # "Audioproces" on every English page.
+  def self.kind_label(kind)
+    I18n.t("products.kinds.#{kind}", default: kind.to_s)
+  end
+
+  # [label, value] pairs for the admin's rodzaj select.
+  def self.kind_options
+    kinds.keys.map { |kind| [ kind_label(kind), kind ] }
+  end
 
   # Only what a product without its own emoji falls back to. The design gives
   # each one a distinct icon, so `icon` is the real source and this exists so a
@@ -54,7 +61,7 @@ class Product < ApplicationRecord
   validates :length_minutes, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
 
   def kind_label
-    KIND_LABELS.fetch(kind, kind)
+    self.class.kind_label(kind)
   end
 
   def display_icon

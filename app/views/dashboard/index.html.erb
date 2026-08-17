@@ -21,7 +21,7 @@
           </p>
         </div>
 
-        <%= button_to "Wyloguj się", destroy_user_session_path, method: :delete,
+        <%= button_to t("nav.sign_out"), destroy_user_session_path, method: :delete,
               form_class: "contents",
               class: "cursor-pointer rounded-[22px] border border-border-input bg-transparent px-4.5 py-2.5 text-t6 font-bold text-tan hover:border-accent hover:text-accent" %>
       </div>
@@ -68,7 +68,7 @@
                   a payment has to say so, or the buyer reads it as settled %>
               <% unless booking.confirmed? %>
                 <span class="shrink-0 rounded-full border border-border-input px-3 py-1 text-[12px] font-bold text-taupe">
-                  <%= Booking::PAYMENT_STATUS_LABELS.fetch(booking.status, booking.status) %>
+                  <%= booking.status_label %>
                 </span>
               <% end %>
             </div>

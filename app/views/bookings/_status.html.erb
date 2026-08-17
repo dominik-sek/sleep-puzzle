@@ -1,18 +1,18 @@
 <div id="booking_status" class="w-full max-w-xl flex flex-col gap-6 text-center">
   <% if booking.confirmed? %>
-    <h1 class="text-t2 text-cream font-display">Rezerwacja potwierdzona</h1>
+    <h1 class="text-t2 text-cream font-display"><%= t("bookings.summary.confirmed_title") %></h1>
     <span class="text-tan text-t5">
-      Dziękujemy! Płatność została zaksięgowana, a Twój termin jest zarezerwowany.
+      <%= t("bookings.summary.confirmed_body") %>
     </span>
   <% elsif booking.payment_failed? || booking.canceled? %>
-    <h1 class="text-t2 text-cream font-display">Płatność nie powiodła się</h1>
+    <h1 class="text-t2 text-cream font-display"><%= t("bookings.summary.failed_title") %></h1>
     <span class="text-tan text-t5">
-      Termin został zwolniony. Możesz spróbować zarezerwować go ponownie.
+      <%= t("bookings.summary.failed_body") %>
     </span>
   <% else %>
-    <h1 class="text-t2 text-cream font-display">Przetwarzamy płatność</h1>
+    <h1 class="text-t2 text-cream font-display"><%= t("bookings.summary.processing_title") %></h1>
     <span class="text-tan text-t5">
-      To potrwa tylko chwilę — ta strona zaktualizuje się automatycznie.
+      <%= t("bookings.summary.processing_body") %>
     </span>
   <% end %>
 
@@ -26,23 +26,23 @@
             type: :spinner,
             size: :xl,
             color: :accent,
-            text: "Czekamy na potwierdzenie od operatora płatności…",
+            text: t("bookings.status.awaiting"),
             classes: "flex-col text-center"
           ) %>
         </div>
       <% else %>
         <dl class="flex flex-col gap-3 text-left">
           <div class="flex justify-between gap-4">
-            <dt class="text-tan text-t5">Pakiet</dt>
+            <dt class="text-tan text-t5"><%= t("bookings.summary.package") %></dt>
             <dd class="text-cream text-t5"><%= booking.package.name %></dd>
           </div>
           <div class="flex justify-between gap-4">
-            <dt class="text-tan text-t5">Termin</dt>
+            <dt class="text-tan text-t5"><%= t("bookings.summary.starts_at") %></dt>
             <dd class="text-cream text-t5"><%= l booking.starts_at, format: :long, default: booking.starts_at.to_fs(:short) %></dd>
           </div>
           <div class="flex justify-between gap-4">
-            <dt class="text-tan text-t5">Status płatności</dt>
-            <dd class="text-cream text-t5"><%= Booking::PAYMENT_STATUS_LABELS.fetch(booking.status) %></dd>
+            <dt class="text-tan text-t5"><%= t("bookings.summary.payment_status") %></dt>
+            <dd class="text-cream text-t5"><%= booking.status_label %></dd>
           </div>
         </dl>
       <% end %>
@@ -51,7 +51,7 @@
 
   <% if booking.confirmed? %>
     <%= render Buttons::Component.new(
-      text: "Wróć do panelu",
+      text: t("bookings.status.back"),
       href: dashboard_index_path,
       variant: :primary
     ) %>

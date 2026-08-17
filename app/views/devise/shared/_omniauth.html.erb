@@ -1,0 +1,30 @@
+<%#
+  Google sign-in, with Google's own multicolour mark rather than the generator's
+  text-only button_to.
+
+  data-turbo: false is required, not cosmetic: the OAuth handshake is a full-page
+  redirect off-site, and Turbo would try to fetch it and fail.
+
+  The white button is deliberate — Google's brand guidelines expect its mark on
+  white or on its own blue, not tinted to a host palette.
+%>
+<% if devise_mapping.omniauthable? %>
+  <div class="flex flex-col gap-4">
+    <% resource_class.omniauth_providers.each do |provider| %>
+      <%= button_to omniauth_authorize_path(resource_name, provider),
+            data: { turbo: false }, form_class: "contents",
+            class: "flex w-full items-center justify-center gap-3 rounded-full border-0 bg-white px-6 py-3 text-t6 font-bold text-neutral-800 cursor-pointer hover:bg-neutral-200" do %>
+        <%= icon provider.to_s.sub("_oauth2", ""), class: "size-4.5 shrink-0" %>
+        <span><%= t("auth.oauth.#{provider.to_s.sub('_oauth2', '')}") %></span>
+      <% end %>
+    <% end %>
+
+    <%# a rule with the word sitting in it, so the two ways in read as alternatives
+        rather than as a list %>
+    <div class="flex items-center gap-3">
+      <span class="h-px flex-1 bg-border"></span>
+      <span class="text-t6 text-taupe-dark uppercase"><%= t("auth.oauth.separator") %></span>
+      <span class="h-px flex-1 bg-border"></span>
+    </div>
+  </div>
+<% end %>

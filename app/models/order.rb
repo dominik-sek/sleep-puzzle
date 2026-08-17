@@ -40,12 +40,9 @@ class Order < ApplicationRecord
 
   enum :status, { pending: 0, paid: 1, payment_failed: 2, canceled: 3 }
 
-  STATUS_LABELS = {
-    "pending" => "Oczekuje na płatność",
-    "paid" => "Opłacone",
-    "payment_failed" => "Płatność nieudana",
-    "canceled" => "Anulowana"
-  }.freeze
+  def self.status_label(status)
+    I18n.t("orders.statuses.#{status}", default: status.to_s)
+  end
 
   validates :order_items, presence: true
 
@@ -56,7 +53,7 @@ class Order < ApplicationRecord
   end
 
   def status_label
-    STATUS_LABELS.fetch(status, status)
+    self.class.status_label(status)
   end
 
   # What Paddle's Checkout.open wants. Always quantity 1 — Paddle requires the

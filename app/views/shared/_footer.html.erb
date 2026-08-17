@@ -23,20 +23,20 @@
       <div>
         <h3 class="text-t6 font-extrabold uppercase tracking-wide text-accent mb-3.5"><%= content_block("footer.columns.explore") %></h3>
         <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
-          <li><%= link_to "Pakiety", packages_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
-          <li><%= link_to "O mnie", about_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("nav.packages"), packages_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("nav.about"), about_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
           <%# parked with the navbar entry; see shared/_navbar %>
           <%#= tag.li(link_to("Blog", blog_path)) %>
-          <li><%= link_to "Sklep", products_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("nav.shop"), products_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
         </ul>
       </div>
 
       <div>
         <h3 class="text-t6 font-extrabold uppercase tracking-wide text-accent mb-3.5"><%= content_block("footer.columns.account") %></h3>
         <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
-          <li><%= link_to "Umów konsultację", bookings_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
-          <li><%= link_to "Moje konto", dashboard_index_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
-          <li><%= link_to "Regulamin współpracy", terms_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("nav.book"), bookings_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("nav.my_account"), dashboard_index_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("nav.terms"), terms_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
         </ul>
       </div>
 
@@ -48,14 +48,14 @@
                         target: "_blank", rel: "noopener",
                         class: "text-t6 text-accent no-underline hover:text-accent-hover" %>
           </li>
-          <li><%= link_to "Kontakt", contact_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("nav.contact"), contact_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
         </ul>
       </div>
     </div>
 
     <%# year from the clock rather than typed in, so it does not quietly go stale %>
     <div class="border-t border-border pt-6 text-center text-t6 text-taupe-dark">
-      © <%= Date.current.year %> Sleep Puzzle. Wszelkie prawa zastrzeżone.
+      <%= t("nav.copyright", year: Date.current.year) %>
     </div>
   </div>
 </footer>

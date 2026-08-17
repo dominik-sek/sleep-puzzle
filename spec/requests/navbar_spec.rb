@@ -50,11 +50,19 @@ RSpec.describe "Navbar", type: :request do
       expect(response.body).not_to include("<hr>")
     end
 
-    it "renders every row through the one shared set of classes" do
+    # asserted by what the panel contains rather than by counting the shared class
+    # across the page: the language menu draws its rows from the same helper, so a
+    # global count says nothing about this dropdown
+    it "renders the account and sign-out rows through the shared classes" do
       get root_path
 
-      # account, sign out — and the admin row only for an admin
-      expect(response.body.scan("flex w-full items-center gap-2.5").size).to eq(2)
+      # `<div id=` and not just `id=`: the trigger carries data-content-id with the
+      # same value, and anchoring on that matches the button instead of the panel
+      panel = response.body[/<div id="profile-content".{0,2000}/m]
+
+      expect(panel).to include("flex w-full items-center gap-2.5")
+      expect(panel).to include(%(href="#{dashboard_index_path}"))
+      expect(panel).not_to include(%(href="#{admin_root_path}"))
     end
 
     it "gives an admin the panel link too" do
@@ -62,7 +70,6 @@ RSpec.describe "Navbar", type: :request do
 
       get root_path
 
-      expect(response.body.scan("flex w-full items-center gap-2.5").size).to eq(3)
       expect(response.body).to include(%(href="#{admin_root_path}"))
     end
 

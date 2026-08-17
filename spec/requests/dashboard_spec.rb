@@ -118,7 +118,7 @@ RSpec.describe "Dashboard", type: :request do
         get dashboard_index_path
 
         expect(response.body).to include("Szybka ulga")
-        expect(response.body).to include(Booking::PAYMENT_STATUS_LABELS.fetch("pending"))
+        expect(response.body).to include(Booking.status_label("pending"))
       end
 
       it "does not label a confirmed one" do
@@ -126,7 +126,7 @@ RSpec.describe "Dashboard", type: :request do
 
         get dashboard_index_path
 
-        expect(response.body).not_to include(Booking::PAYMENT_STATUS_LABELS.fetch("pending"))
+        expect(response.body).not_to include(Booking.status_label("pending"))
       end
 
       it "does not leak another buyer's bookings" do

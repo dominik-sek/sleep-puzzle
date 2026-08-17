@@ -2,7 +2,7 @@
     honest without a reload; wrapped in its own id for exactly that reason. %>
 <%= tag.span id: "cart_badge", class: "contents" do %>
   <%= link_to cart_path, class: "relative flex items-center rounded-md p-2 no-underline text-cream hover:bg-ink-soft hover:text-accent",
-        "aria-label": "Koszyk" do %>
+        "aria-label": t("nav.cart") do %>
     <%= icon "shopping-bag", class: "size-5" %>
 
     <% if current_cart.count.positive? %>

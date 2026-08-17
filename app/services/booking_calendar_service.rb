@@ -62,7 +62,9 @@ class BookingCalendarService < ApplicationService
   end
 
   def payment_status
-    Booking::PAYMENT_STATUS_LABELS.fetch(@booking.status)
+    # Polish explicitly, not the current locale: this string goes into the owner's
+    # own calendar, and an English buyer's booking should not retitle her day.
+    Booking.status_label(@booking.status, locale: I18n.default_locale)
   end
 
   def summary

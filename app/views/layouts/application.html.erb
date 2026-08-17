@@ -47,7 +47,11 @@
 
   </head>
 
-  <body class="relative min-h-screen flex flex-col">
+  <%# the language is carried on the body, not read back off <html>: Turbo Drive
+      replaces the body and merges the head but leaves the <html> element's own
+      attributes alone, so lang= goes stale the moment you switch language. See
+      locale_controller.js, which copies it back up. %>
+  <body class="relative min-h-screen flex flex-col" data-controller="locale" data-locale-tag-value="<%= I18n.locale %>">
   <%= render "shared/navbar" %>
 
   <%= render Toast::Component.new(

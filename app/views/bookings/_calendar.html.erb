@@ -2,6 +2,7 @@
      data-controller="cally"
      data-cally-available-dates-value="<%= available_dates %>"
      data-cally-no-slots-label-value="<%= t("bookings.available_slots", count: 0) %>"
+     data-cally-locale-value="<%= I18n.locale %>"
      data-action="paddle:completed@window->cally#lock pageshow@window->cally#unlock">
   <%= render Card::Component.new(classes: "self-start") do %>
     <calendar-date data-cally-target="calendarDate" data-action="change->cally#dateChanged focusday->cally#monthChanged" class="w-full" format-weekday="short">
@@ -9,7 +10,7 @@
           both into a single "Miesiąc Rok" label filled in by cally_controller %>
       <div slot="heading" data-cally-target="monthHeading"></div>
       <svg
-        aria-label="Previous"
+        aria-label="<%= t("bookings.calendar.previous_month") %>"
         slot="previous"
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -23,7 +24,7 @@
         <path d="m15 18-6-6 6-6"></path>
       </svg>
       <svg
-        aria-label="Next"
+        aria-label="<%= t("bookings.calendar.next_month") %>"
         slot="next"
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -48,12 +49,12 @@
         <%# stacked until lg: the card is half the grid from md up, so a row only
             has room for both the date and the count on a real desktop %>
         <div data-cally-target="hoursHeader" hidden class="flex flex-col gap-1 mb-4 lg:flex-row lg:items-baseline lg:justify-between lg:gap-4">
-          <h2 class="font-display text-t4">Dostępne godziny - <span data-cally-target="heading"></span></h2>
+          <h2 class="font-display text-t4"><%= t("bookings.calendar.available_hours") %> - <span data-cally-target="heading"></span></h2>
           <span class="text-t6 text-taupe whitespace-nowrap" data-cally-target="availableCount"></span>
         </div>
 
         <p data-cally-target="emptyState" class="text-t5 text-taupe">
-          Wybierz dzień w kalendarzu, aby zobaczyć dostępne godziny.
+          <%= t("bookings.calendar.pick_a_day") %>
         </p>
 
         <% availability[:dates].each do |date| %>
@@ -87,8 +88,8 @@
     <%= render Card::Component.new(padding: :lg, shadow: :xl, classes: "max-w-xs") do %>
       <div class="flex flex-col items-center gap-3 text-center">
         <%= render LoadingIndicator::Component.new(type: :spinner, size: :lg, color: :accent) %>
-        <p class="text-cream text-t5">Przetwarzamy płatność…</p>
-        <p class="text-taupe text-t6 font-normal tracking-normal">Za chwilę przeniesiemy Cię do potwierdzenia.</p>
+        <p class="text-cream text-t5"><%= t("bookings.calendar.processing") %></p>
+        <p class="text-taupe text-t6 font-normal tracking-normal"><%= t("bookings.calendar.processing_hint") %></p>
       </div>
     <% end %>
   </div>

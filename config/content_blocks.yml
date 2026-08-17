@@ -270,6 +270,24 @@ about:
           default:
             pl: "Umów konsultację"
             en: "Book a consultation"
+bookings:
+  label: Kalendarz konsultacji
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Umów konsultację"
+            en: "Book a consultation"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Wybierz dogodny termin w kalendarzu, a potem uzupełnij krótki formularz zgłoszeniowy"
+            en: "Pick a time that suits you, then fill in the short booking form"
 shop:
   label: Sklep
   sections:
