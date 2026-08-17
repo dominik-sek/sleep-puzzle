@@ -270,6 +270,39 @@ about:
           default:
             pl: "Umów konsultację"
             en: "Book a consultation"
+footer:
+  label: Stopka
+  sections:
+    brand:
+      label: Pod logo
+      fields:
+        tagline:
+          label: Opis
+          type: plain
+          default:
+            pl: "Pomagam rodzinom spokojnie poukładać sen - z empatią, wsparciem i bez presji."
+            en: "Helping families calmly piece sleep back together — with empathy, support and no pressure."
+    columns:
+      label: Nagłówki kolumn
+      fields:
+        explore:
+          label: Kolumna z odnośnikami do stron
+          type: plain
+          default:
+            pl: "Odkrywaj"
+            en: "Explore"
+        account:
+          label: Kolumna z odnośnikami do konta
+          type: plain
+          default:
+            pl: "Konto"
+            en: "Account"
+        follow:
+          label: Kolumna z kontaktem
+          type: plain
+          default:
+            pl: "Bądźmy w kontakcie"
+            en: "Stay in touch"
 contact:
   label: Kontakt
   sections:

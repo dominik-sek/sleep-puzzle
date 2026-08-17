@@ -30,7 +30,9 @@ module Navbar
       end
 
       def li_classes
-        base = mobile_hidden ? "hidden sm:block" : ""
+        # lg, not sm: the full bar (logo, links, account, CTA) needs ~770px
+        # before it fits, so a 640px switch put it on screen already overflowing
+        base = mobile_hidden ? "hidden lg:block" : ""
         [ base, @classes ].compact.reject(&:empty?).join(" ")
       end
 

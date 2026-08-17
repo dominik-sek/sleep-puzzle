@@ -16,6 +16,74 @@
 
   The Dockerfile already installs it, so this is a local-setup step only.
 
+## Editable content (`config/content_blocks.yml`)
+
+Everything the owner can edit on the public site is declared in that one YAML
+file and edited at `/admin/content_blocks`. The thing to understand is that
+**the YAML is the schema** — no Ruby anywhere names a field. `ContentBlock::Registry`
+loads the file into a plain Hash and walks it with three nested `map`s, so meaning
+comes from *depth*, not from a list of known names:
+
+| Level | Nested under | Becomes |
+| --- | --- | --- |
+| 1 | (top level) | a page |
+| 2 | `sections:` | a section |
+| 3 | `fields:` | a field |
+
+Whatever key sits at level 3 becomes a field whose `key` is that string. Adding
+one is therefore just adding lines — there is nothing to register it in.
+
+The key used in a template is flattened back up the chain
+(`Section#full_key`, `Field#full_key`), so this:
+
+```yaml
+footer:                 # page
+  label: Stopka
+  sections:
+    brand:              # section
+      label: Pod logo
+      fields:
+        tagline:        # field
+          label: Opis
+          type: plain
+          default:
+            pl: "Pomagam rodzinom…"
+            en: "Helping families…"
+```
+
+is read in a view as `content_block("footer.brand.tagline")`.
+
+### Adding a field
+
+1. Add it to the YAML under the right page/section.
+2. Run `bin/rails content_blocks:sync` — that is
+   `Registry.keys.each { |key| find_or_create_by!(key: key) }`, so it creates a
+   blank row per declared key and never touches copy anyone has already written.
+3. Read it in the template with `content_block("page.section.field")`
+   (`content_image` for `image` fields, `content_items` for a collection).
+
+### Rules worth knowing
+
+* **Types** are `plain`, `rich` (Action Text, with a Trix editor) or `image`
+  (one upload, not one per language). An unknown type raises at boot, naming the
+  exact `page.section.field`.
+* **`label:` is required** at every level — a missing one raises `KeyError` on
+  load rather than rendering an unlabelled box in the panel.
+* **`default:` is optional.** It is the copy the page ships with, used whenever
+  the database has nothing — including on a fresh deploy — so no section ever
+  renders blank. `en` may be omitted and falls back to `pl`.
+* **`fields:` is optional too**, which is what lets a section hold only a
+  `collection:` (see `home.stats`) — a repeating list the owner can add to and
+  remove from, whose items carry short `plain` strings only.
+* **Order follows the file.** Ruby hashes keep insertion order, so the sequence
+  in the YAML is the sequence in the admin panel; moving a field means moving
+  its lines.
+* **The registry reloads per request in development** and is memoised elsewhere,
+  so editing the YAML locally needs a page refresh, not a restart.
+* **An unknown key** passed to `content_block` raises in development and test and
+  is ignored in production — a typo should be loud while building a page and must
+  never take a live page down.
+
 ## Roadmap
 
 Measured against the design (`Sleep Puzzle Website.dc.html`, 12 screens). Ticked

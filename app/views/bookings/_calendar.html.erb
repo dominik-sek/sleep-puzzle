@@ -45,9 +45,11 @@
     <div class="flex flex-col gap-5">
       <div>
         <%# starts hidden — cally_controller reveals it once a day is picked %>
-        <div data-cally-target="hoursHeader" hidden class="flex justify-between">
-          <h2 class="font-display text-t4 pb-4">Dostępne godziny - <span data-cally-target="heading"></span></h2>
-          <span data-cally-target="availableCount"></span>
+        <%# stacked until lg: the card is half the grid from md up, so a row only
+            has room for both the date and the count on a real desktop %>
+        <div data-cally-target="hoursHeader" hidden class="flex flex-col gap-1 mb-4 lg:flex-row lg:items-baseline lg:justify-between lg:gap-4">
+          <h2 class="font-display text-t4">Dostępne godziny - <span data-cally-target="heading"></span></h2>
+          <span class="text-t6 text-taupe whitespace-nowrap" data-cally-target="availableCount"></span>
         </div>
 
         <p data-cally-target="emptyState" class="text-t5 text-taupe">

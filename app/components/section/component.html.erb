@@ -8,7 +8,9 @@
             <%= title %>
           </span>
           <% if @subtitle %>
-            <span class="text-t4 text-tan max-w-3/4">
+            <%# only narrowed once there is room: on a phone the column is already
+                the width of the screen, and 3/4 of that is a very thin measure %>
+            <span class="text-t4 text-tan md:max-w-3/4">
               <%= subtitle %>
             </span>
           <% end %>

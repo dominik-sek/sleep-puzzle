@@ -398,8 +398,9 @@ calendar-month{
   &::part(th){
     @apply p-0
   }
+  /* Sizing lives in the flat rule below, not here — see the note there. */
   &::part(button){
-    @apply rounded-md flex items-center justify-center text-center w-full h-full box-border p-6 text-t6 font-sans transition-all duration-100 ease-in-out bg-ink
+    @apply rounded-md flex items-center justify-center text-center w-full box-border text-t6 font-sans transition-all duration-100 ease-in-out bg-ink
   }
   &::part(week){
     @apply text-t2
@@ -416,6 +417,19 @@ calendar-month{
    previous month's available background and visibly fade into disallowed.
    cally_controller sets data-paging for the frame that re-render lands in;
    the attribute also outranks the plain ::part(button) rule. */
+/* Day cells take their height from their width, so they stay square at every
+   size instead of only at the one the padding was tuned for. Previously a flat
+   p-6 set the height, which held cells at 68px tall even once the column had
+   narrowed to ~40px on a phone — adjacent available days then ran together into
+   bars. Written flat and in plain CSS deliberately: inside the nested
+   &::part(button) above, both Tailwind's aspect-square and responsive variants
+   are silently dropped by this pipeline, the same quirk the hover rules hit. */
+calendar-month::part(button) {
+  aspect-ratio: 1 / 1;
+  height: auto;
+  padding: 0;
+}
+
 calendar-month[data-paging]::part(button) {
   transition: none;
 }

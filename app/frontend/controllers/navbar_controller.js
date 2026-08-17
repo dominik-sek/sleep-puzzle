@@ -73,7 +73,8 @@ export default class extends Controller {
     }
 
     isMobileViewport() {
-        return window.innerWidth < 640;
+        // keep in step with the lg: breakpoint the navbar markup switches on
+        return window.innerWidth < 1024;
     }
 
     toggleMenu(event) {

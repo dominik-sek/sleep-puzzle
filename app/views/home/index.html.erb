@@ -1,7 +1,13 @@
 <%# Copy comes from the CMS (config/content_blocks.yml + /admin/content_blocks).
     Each block falls back to its declared default, so this page renders complete
     even against an empty database. %>
-<div class="min-h-screen flex flex-col items-center justify-center">
+<%# overflow-x-clip: the hero's radial glow is a fixed 24rem circle centred on a
+    mascot in a much narrower box, so on a small phone it reaches past the
+    viewport and drags a horizontal scrollbar with it. Clipped here rather than on
+    the section because Section::Component ignores its own `classes:` argument.
+    This wrapper is full width, so the only thing clipped is already off-screen,
+    and unlike overflow-hidden this does not create a scroll container. %>
+<div class="min-h-screen flex flex-col items-center justify-center overflow-x-clip">
   <%= render Section::Component.new(
     title: content_block("home.hero.title"),
     subtitle: content_block("home.hero.subtitle"),
@@ -16,7 +22,9 @@
     </div>
 
     <% section.with_actions do %>
-      <div class="flex gap-4">
+      <%# wraps rather than overflowing: both pills are whitespace-nowrap, so
+          side by side they are wider than a phone screen %>
+      <div class="flex flex-wrap gap-4">
         <%= render Buttons::Component.new(
           text: "Umów konsultację",
           pill: true,
@@ -54,8 +62,10 @@
     align: :left,
     bordered: false
   ) do |section| %>
-    <div class="flex w-full gap-6 items-center">
-      <div class="w-1/4">
+    <div class="flex flex-col md:flex-row w-full gap-6 md:items-center">
+      <%# full width stacked, the same treatment as the about page — at w-1/4 on a
+          phone the portrait was a thumbnail %>
+      <div class="w-full md:w-1/4">
         <%# uploaded in the panel; until there is one, an empty frame rather than
             a broken <img> %>
         <% photo = content_image("home.about.photo",
@@ -64,14 +74,14 @@
 
         <%= photo || tag.div(class: "border border-dashed border-border-strong rounded-lg w-full aspect-square") %>
       </div>
-      <div class="flex flex-col gap-6 w-3/4">
+      <div class="flex flex-col gap-6 w-full md:w-3/4">
         <h2 class="text-accent font-display text-t2"><%= content_block("home.about.title") %></h2>
 
         <%# divs, not spans: rich text renders a block-level trix-content wrapper %>
-        <div class="text-cream max-w-3/4">
+        <div class="text-cream md:max-w-3/4">
           <%= content_block("home.about.lead") %>
         </div>
-        <div class="text-tan max-w-3/4">
+        <div class="text-tan md:max-w-3/4">
           <%= content_block("home.about.body") %>
         </div>
 
@@ -115,14 +125,15 @@
     bordered: false
   ) do |section| %>
     <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.packages.title") %></h2>
-    <span class="text-tan max-w-3/4"><%= content_block("home.packages.subtitle") %></span>
+    <span class="text-tan md:max-w-3/4"><%= content_block("home.packages.subtitle") %></span>
 
     <%# real packages, in the order set in the admin panel; copy comes off the
         record in the current locale, falling back to Polish %>
     <% if @packages.any? %>
-      <div class="grid grid-cols-3 gap-6">
+      <%# same steps as the catalogue page, so the two read alike %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <% @packages.each do |package| %>
-          <%= render Card::Component.new(classes: "w-auto h-64 border-border-strong!") do |card| %>
+          <%= render Card::Component.new(classes: "w-auto min-h-64 border-border-strong!") do |card| %>
             <% card.with_body do %>
               <div class="flex flex-col justify-start items-start gap-6">
                 <h3 class="text-accent! font-display text-t3! dark:text-cream"><%= package.name %></h3>
@@ -154,10 +165,10 @@
     background: :ink_soft,
     bordered: false
   ) do |section| %>
-    <div class="flex gap-6">
-      <div class="flex flex-col gap-6 w-1/2">
+    <div class="flex flex-col md:flex-row gap-6">
+      <div class="flex flex-col gap-6 w-full md:w-1/2">
         <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.audio.title") %></h2>
-        <div class="text-tan max-w-3/4"><%= content_block("home.audio.body") %></div>
+        <div class="text-tan md:max-w-3/4"><%= content_block("home.audio.body") %></div>
         <div>
           <%= render Buttons::Component.new(
             text: "Przejdź do sklepu",
@@ -170,7 +181,7 @@
       <%# tiles rather than stacked cards: this is a teaser for the shop, so it
           shows several at a glance instead of one wide row each. content-start
           keeps them their natural height instead of stretching to fill the half. %>
-      <div class="grid grid-cols-2 gap-4 w-1/2 content-start">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full md:w-1/2 content-start">
         <% @products.each do |product| %>
           <%= render Card::Component.new(padding: :sm, classes: "h-full border-border-strong!") do |card| %>
             <% card.with_body do %>
