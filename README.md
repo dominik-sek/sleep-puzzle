@@ -86,8 +86,13 @@ is read in a view as `content_block("footer.brand.tagline")`.
 
 ## Roadmap
 
-Measured against the design (`Sleep Puzzle Website.dc.html`, 12 screens). Ticked
-items are built and reachable; the rest is what is left.
+Measured against the design, which is a Claude Design project rather than a file
+in this repo — <https://claude.ai/design/p/4578fb79-8a91-4124-8203-4b1f54c72f7d>,
+one `Sleep Puzzle Website.dc.html` holding every screen as a
+`<main data-screen-label="…">`. It draws 13 screens; only 12 are counted below,
+because **Płatność** is deliberately not being built — checkout is Paddle's
+overlay, so there is no payment screen of our own. Ticked items are built and
+reachable; the rest is what is left.
 
 ### Screens
 
@@ -95,9 +100,11 @@ items are built and reachable; the rest is what is left.
 - [x] **Pakiety** — `/packages`
 - [x] **Kalendarz konsultacji** — `/bookings`, incl. Google Calendar + Paddle
 - [x] **Kontakt** — `/contact`, incl. Cloudflare Turnstile
-- [ ] **O mnie** — no route, controller or view. Navbar links to `#`. Design wants
-      photo, name + role, three paragraphs with a pull-quote, a certificates list
-      and a CTA into the calendar. All copy belongs in the CMS.
+- [x] **O mnie** — `/about`, CMS-driven (`about.*`), incl. the certificates
+      collection and the CTA into the calendar
+- [x] **Regulamin** — `/terms`, a `<dl>` over the `terms.clauses` CMS collection
+      (heading + body, `white-space: pre-line`), linked from the footer and from
+      the contact page's tile
 - [ ] **Sklep** — `ProductsController` is an empty class and there are no views,
       though `resources :products` is routed and `spec/requests/products_spec.rb`
       is a pending stub. The `Product` model, its admin CRUD and its Paddle price
@@ -107,33 +114,24 @@ items are built and reachable; the rest is what is left.
       line items with quantity, a total, and remove. Checking out means handing the
       cart to the Paddle overlay the booking flow already drives — there is no
       payment screen of our own to build.
-- [ ] **Regulamin** — nothing yet. It is a flat list of heading + body sections,
-      which fits a CMS collection rather than a model.
 
 ### Newsletter
 
-**Open decision: build or buy.** Everything below assumes we build it. The
-alternative is to let Brevo hold the list and the campaign editor, and for the
-site to do nothing but hand it an address — which removes the second bullet
-entirely, along with owning consent records, unsubscribe links, bounce handling
-and deliverability. Worth settling before any of this is picked up.
+**Decided: buy, not build.** Brevo holds the list and the campaign editor — the
+app already talks to it (`BREVO_API_KEY` is in the environment). That deliberately
+keeps consent records, confirmed opt-in, unsubscribe links, bounce handling and
+deliverability on Brevo's side rather than ours, and it means there is no
+subscriber model, no issue model and no sending code to write here.
 
-If we build it, nothing exists yet — no model, no form, no sending. Two halves:
+What is left on our side is one form:
 
-- [ ] **Collecting subscribers.** The sign-up form on the home page is drawn in the
-      design (placeholder, button, thank-you state) but not built. Needs a
-      subscriber record, and — since the audience is in the EU — an explicit consent
-      checkbox, confirmed opt-in, and a working unsubscribe link on every send.
-- [ ] **Writing and sending an issue.** The owner has to be able to compose what
-      goes out, not just trigger a fixed template. That is a different shape from
-      `content_blocks.yml`, which edits fixed keys on a page: an issue is a record
-      the owner creates, with a subject and a rich-text body, kept as a draft until
-      they send it. Reuse the Action Text editor the CMS rich fields already use,
-      and send through a background job in batches rather than one mail per
-      request.
-- [ ] Decide whether sending goes through the existing SMTP setup or a dedicated
-      provider. The app already talks to Brevo (`BREVO_API_KEY` is in the
-      environment), so that is the obvious first place to look.
+- [ ] **Sign-up form on the home page.** Drawn in the design (placeholder, button,
+      thank-you state) but not built. All it has to do is hand an address to Brevo's
+      contacts API and render the thank-you state — the double opt-in mail comes
+      from Brevo, so nothing is stored locally. Post it to our own endpoint rather
+      than to Brevo from the browser, so the API key stays server-side, and treat
+      it like the contact form: it is an unauthenticated public POST, so it wants
+      the same rate limiting.
 
 ### Missing sections on the home page
 
@@ -148,15 +146,17 @@ If we build it, nothing exists yet — no model, no form, no sending. Two halves
       throughout `config/content_blocks.yml`, `config/locales/en.yml` — but nothing
       ever assigns `I18n.locale`, so every English translation in the database is
       currently unreachable.
-- [ ] **Dead links.** Navbar "O mnie" and "Sklep" point at `#`; the footer's list
-      items are plain text rather than links (only "Kontakt" is wired); and on the
-      home page "Zobacz pakiety" and "Przejdź do sklepu" render without an `href`.
-      Most of these unblock themselves as the pages above land. Navbar "Blog" stays
-      dead for as long as the blog is parked — worth hiding rather than leaving it
-      pointing at nothing.
-- [ ] **CMS coverage.** `config/content_blocks.yml` declares `home`, `packages` and
-      `contact`. Each new page above needs its own entry so the owner can edit it,
-      followed by `bin/rails content_blocks:sync`.
+- [ ] **Dead links.** Only the two that want the shop are left: navbar "Sklep"
+      points at `#` (`NavigationHelper#primary_nav_items`), and the home page's
+      "Przejdź do sklepu" renders without an `href`. Neither can be wired yet —
+      `resources :products` is routed but `ProductsController` is an empty class
+      with no index template, so pointing at it would raise rather than render.
+      Both unblock themselves when the Sklep screen lands. Navbar "Blog" is
+      commented out rather than pointing at nothing, which is the right shape for
+      as long as the blog is parked.
+- [ ] **CMS coverage.** `config/content_blocks.yml` declares `home`, `packages`,
+      `about`, `terms`, `footer` and `contact`. Each new page above needs its own
+      entry so the owner can edit it, followed by `bin/rails content_blocks:sync`.
 
 ### Placeholder, not finished
 

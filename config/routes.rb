@@ -29,6 +29,9 @@ Rails.application.routes.draw do
   # singular: there is one "about", so no id and no index. `controller:` keeps the
   # class singular too, the same way the google_calendar integration does below.
   resource :about, only: [ :show ], controller: "about"
+  # singular for the same reason as `about` above: there is one regulamin. The
+  # `controller:` keeps the class name singular too, matching the file.
+  resource :terms, only: [ :show ], controller: "terms"
 
   # staff-only; access is the `admin` boolean on users, granted with
   # `bin/rails 'admin:promote[email]'`

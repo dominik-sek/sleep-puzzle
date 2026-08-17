@@ -270,6 +270,69 @@ about:
           default:
             pl: "Umów konsultację"
             en: "Book a consultation"
+terms:
+  label: Regulamin
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Regulamin współpracy"
+            en: "Terms of cooperation"
+    clauses:
+      label: Punkty regulaminu
+      # a collection rather than a fixed set of fields: the owner has to be able
+      # to add and drop clauses without a deploy, and nothing on the page reads
+      # any single one of them by name
+      collection:
+        item_label: Punkt
+        fields:
+          heading:
+            label: Nagłówek
+            type: plain
+          body:
+            label: Treść
+            type: plain
+        defaults:
+          - heading:
+              pl: "1. Postanowienia ogólne"
+              en: "1. General provisions"
+            body:
+              pl: "Niniejszy regulamin określa zasady korzystania z konsultacji, pakietów wsparcia oraz materiałów audio dostępnych w ramach Sleep Puzzle."
+              en: "These terms set out the rules for using consultations, support packages and audio materials available through Sleep Puzzle."
+          - heading:
+              pl: "2. Zakres usług"
+              en: "2. Scope of services"
+            body:
+              pl: "Usługi obejmują konsultacje 1:1, pakiety wsparcia (Szybka ulga, Spokojny rytm, System rodziny) oraz sprzedaż audioprocesów i bajek audio dostępnych po zalogowaniu na koncie klienta."
+              en: "Services include 1:1 consultations, support packages (Quick Relief, Steady Rhythm, Family System) and the sale of audio processes and audio stories available after logging into a customer account."
+          - heading:
+              pl: "3. Rezerwacje i płatności"
+              en: "3. Bookings and payments"
+            body:
+              pl: "Rezerwacji terminu konsultacji dokonuje się poprzez kalendarz dostępny na stronie. Płatności za pakiety i produkty audio obsługiwane są przez zewnętrznego operatora płatności Paddle."
+              en: "Consultation slots are booked via the calendar on the site. Payments for packages and audio products are handled by the third-party payment provider Paddle."
+          - heading:
+              pl: "4. Odwołanie i zmiana terminu"
+              en: "4. Rescheduling and cancellations"
+            body:
+              pl: "Zmiana lub odwołanie terminu możliwe jest z odpowiednim wyprzedzeniem — szczegółowe zasady zostaną ustalone indywidualnie przy zawieraniu współpracy."
+              en: "Rescheduling or cancelling is possible with reasonable notice — detailed rules are agreed individually when starting cooperation."
+          - heading:
+              pl: "5. Charakter wsparcia"
+              en: "5. Nature of support"
+            body:
+              pl: "Konsultacje mają charakter wspierający i edukacyjny, nie zastępują konsultacji medycznej. W razie wątpliwości zdrowotnych zalecany jest kontakt z lekarzem pediatrą."
+              en: "Consultations are supportive and educational in nature and do not replace medical consultation. For health concerns, please contact a pediatrician."
+          - heading:
+              pl: "6. Poufność"
+              en: "6. Confidentiality"
+            body:
+              pl: "Wszystkie informacje przekazane w trakcie współpracy są traktowane jako poufne i nie są udostępniane osobom trzecim."
+              en: "All information shared during cooperation is treated as confidential and is not shared with third parties."
 footer:
   label: Stopka
   sections:
@@ -407,4 +470,4 @@ contact:
               pl: "Regulamin współpracy"
               en: "Terms of cooperation"
             url:
-              pl: "#"
+              pl: "/terms"

@@ -38,8 +38,7 @@
         <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
           <li><%= link_to "Umów konsultację", bookings_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
           <li><%= link_to "Moje konto", dashboard_index_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
-          <%# no terms page yet — see the roadmap in the README %>
-          <li class="text-t6 text-tan">Regulamin współpracy</li>
+          <li><%= link_to "Regulamin współpracy", terms_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
         </ul>
       </div>
 

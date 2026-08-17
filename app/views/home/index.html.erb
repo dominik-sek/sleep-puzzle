@@ -36,7 +36,8 @@
           text: "Zobacz pakiety",
           pill: true,
           variant: :secondary,
-          classes: "hover:cursor-pointer text-t6! py-3 px-6 font-semibold! bg-ink-soft! border-accent-coral!"
+          href: packages_path,
+          classes: "hover:cursor-pointer text-t6! py-3 px-6 font-semibold! bg-ink-soft! border-taupe-dark!"
         ) %>
       </div>
     <% end %>
@@ -169,6 +170,10 @@
       <div class="flex flex-col gap-6 w-full md:w-1/2">
         <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.audio.title") %></h2>
         <div class="text-tan md:max-w-3/4"><%= content_block("home.audio.body") %></div>
+        <%# still without an href: `resources :products` is routed but
+            ProductsController is an empty class with no index template, so
+            pointing at it would raise rather than render. Wire this up when the
+            Sklep screen lands — see the roadmap in the README. %>
         <div>
           <%= render Buttons::Component.new(
             text: "Przejdź do sklepu",
