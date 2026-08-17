@@ -65,6 +65,37 @@ RSpec.describe "Orders", type: :request do
         expect(response.body).to include("Twój koszyk jest pusty")
       end
 
+      # the last line of defence: the cart already filters owned files, so an
+      # order must never be able to carry one
+      it "never charges for something the buyer already owns" do
+        owned = create_product(name: "Już kupione", paddle_price_id: "pri_789")
+        user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: owned) ])
+          .mark_paid!(transaction_id: "txn_old")
+        sign_out user
+        fill_cart
+        fill_cart(with: owned)
+        sign_in user
+
+        post orders_path
+
+        # the paid one is the pre-existing purchase; the new order is the pending one
+        order = Order.pending.sole
+        expect(order.products).to eq([ product ])
+      end
+
+      it "refuses a cart holding nothing but things already owned" do
+        sign_out user
+        fill_cart
+        sign_in user
+        user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
+          .mark_paid!(transaction_id: "txn_old")
+
+        post orders_path
+
+        expect(response).to redirect_to(cart_path)
+        expect(Order.pending).to be_empty
+      end
+
       it "refuses an empty cart" do
         post orders_path
 

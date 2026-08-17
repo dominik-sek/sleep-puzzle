@@ -86,6 +86,43 @@ RSpec.describe "Cart", type: :request do
       expect(response.body).to include(%(target="cart_toggle_product_#{product.id}"))
       expect(response.body).to include("Usuń z koszyka")
     end
+
+    # The product page shows three things that all read the cart — the button, the
+    # link into the cart and the confirmation. Streaming only the button left the
+    # other two behind until a reload, which read as them having been dropped, so
+    # this asserts on the stream rather than on a fresh page load.
+    it "streams the product page's whole cart cluster, not just the button" do
+      post cart_items_path, params: { product_id: product.id },
+           headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      expect(response.body).to include(%(target="cart_actions_product_#{product.id}"))
+      expect(response.body).to include("Przejdź do koszyka")
+      expect(response.body).to include("Dodano do koszyka")
+    end
+
+    it "takes them all away again on removal" do
+      post cart_items_path, params: { product_id: product.id }
+
+      delete cart_item_path(product_id: product.id),
+             headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      expect(response.body).to include(%(target="cart_actions_product_#{product.id}"))
+      expect(response.body).to include("Dodaj do koszyka")
+      expect(response.body).not_to include("Przejdź do koszyka")
+      expect(response.body).not_to include("Dodano do koszyka")
+    end
+
+    # nested regions would let one stream clobber the other depending on the order
+    # turbo applied them
+    it "keeps the two regions separate" do
+      post cart_items_path, params: { product_id: product.id },
+           headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      toggle_region = response.body[/<turbo-stream[^>]*target="cart_toggle_product_#{product.id}".*?<\/turbo-stream>/m]
+
+      expect(toggle_region).to be_present
+      expect(toggle_region).not_to include("cart_actions_product_")
+    end
   end
 
   # a file is either in the cart or it is not, so adding twice is not two copies
@@ -97,6 +134,46 @@ RSpec.describe "Cart", type: :request do
       # counted by the line's own link, not by the name: the "dodano do koszyka"
       # flash repeats the name on the page too
       expect(response.body.scan(%(href="#{product_path(product)}")).size).to eq(1)
+    end
+  end
+
+  # the button already says "W Twoim koncie", but this POST is reachable without
+  # it — a stale page, a direct request — and a file bought twice is money taken
+  # for nothing
+  describe "adding something already owned" do
+    let(:user) { User.create!(email: "customer@example.com", password: "password123") }
+
+    before do
+      user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
+        .mark_paid!(transaction_id: "txn_1")
+      sign_in user
+    end
+
+    it "refuses to put it in the cart" do
+      post cart_items_path, params: { product_id: product.id }
+
+      get cart_path
+      expect(response.body).to include("Twój koszyk jest pusty")
+    end
+
+    it "says why" do
+      post cart_items_path, params: { product_id: product.id },
+           headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      expect(response.body).to include("masz już to nagranie")
+    end
+
+    # added before signing in, and this account turns out to own it
+    it "keeps it out of a cart filled before signing in, and says where it went" do
+      sign_out user
+      post cart_items_path, params: { product_id: product.id }
+      sign_in user
+
+      get cart_path
+
+      expect(response.body).to include("Masz już te nagrania na koncie")
+      expect(response.body).to include(%(href="#{dashboard_index_path}"))
+      expect(response.body).to include("Twój koszyk jest pusty")
     end
   end
 

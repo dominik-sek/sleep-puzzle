@@ -29,22 +29,38 @@ class Cart
     end
   end
 
-  def self.from_session(session)
-    new(session)
+  def self.from_session(session, owner: nil)
+    new(session, owner: owner)
   end
 
-  def initialize(session)
+  # `owner` is the signed-in buyer, or nil while browsing signed out. It is what
+  # keeps something already bought out of the cart: the session survives sign-in,
+  # so a file added before signing in can turn out to be one this account already
+  # owns, and nothing else would notice before checkout charged for it twice.
+  def initialize(session, owner: nil)
     @session = session
+    @owner = owner
   end
 
-  # Only published products, resolved on read: something unpublished after it was
-  # added should stop being buyable, without a job reaching into everyone's session.
   def lines
-    @lines ||= begin
-      products = Product.published.where(id: product_ids).index_by(&:id)
+    @lines ||= buyable.map { |product| Line.new(product: product) }
+  end
 
-      product_ids.filter_map { |id| Line.new(product: products[id]) if products[id] }
-    end
+  # In the session, published, and not already owned — everything the buyer is
+  # actually being asked to pay for. `count`, `total_label` and the order all
+  # read through this, so an owned file cannot be counted, totalled or charged.
+  def buyable
+    @buyable ||= resolved.reject { |product| owned?(product) }
+  end
+
+  # In the session but already paid for. Surfaced rather than silently dropped, so
+  # the cart can say where something went instead of appearing to lose it.
+  def already_owned
+    @already_owned ||= resolved.select { |product| owned?(product) }
+  end
+
+  def owned?(product)
+    @owner.present? && owned_ids.include?(product.id)
   end
 
   # Idempotent: a file is either in the cart or it is not.
@@ -111,6 +127,21 @@ class Cart
 
   private
 
+  # Only published products, resolved on read: something unpublished after it was
+  # added should stop being buyable, without a job reaching into everyone's session.
+  def resolved
+    @resolved ||= begin
+      products = Product.published.where(id: product_ids).index_by(&:id)
+
+      product_ids.filter_map { |id| products[id] }
+    end
+  end
+
+  # One query, not one per line
+  def owned_ids
+    @owned_ids ||= @owner ? @owner.purchased_products.where(id: product_ids).pluck(:id).to_set : Set.new
+  end
+
   def write(ids)
     @session[SESSION_KEY] = ids.last(MAX_ITEMS).map(&:to_s)
     reset
@@ -118,6 +149,10 @@ class Cart
 
   def reset
     @product_ids = nil
+    @resolved = nil
+    @owned_ids = nil
+    @buyable = nil
+    @already_owned = nil
     @lines = nil
     self
   end

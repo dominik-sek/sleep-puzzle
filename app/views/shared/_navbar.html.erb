@@ -27,16 +27,27 @@
       <hr class="my-2 border-border" />
 
       <%# the bar's basket is hidden below lg along with the rest of the actions %>
-      <%= link_to cart_path, class: "block rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft hover:text-accent" do %>
-        🧺 Koszyk<%= " (#{current_cart.count})" if current_cart.count.positive? %>
+      <%= link_to cart_path, class: mobile_menu_item_classes do %>
+        <%= icon "shopping-bag", class: "size-4.5 shrink-0 text-taupe" %>
+        <span>Koszyk<%= " (#{current_cart.count})" if current_cart.count.positive? %></span>
       <% end %>
 
       <% if user_signed_in? %>
-        <%= button_to "Moje konto", dashboard_index_path, method: :get, class: "block w-full text-left rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft cursor-pointer bg-transparent border-0" %>
-        <% if current_user.admin? %>
-          <%= button_to "Panel", admin_root_path, method: :get, class: "block w-full text-left rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft cursor-pointer bg-transparent border-0" %>
+        <%= link_to dashboard_index_path, class: mobile_menu_item_classes do %>
+          <%= icon "user", class: "size-4.5 shrink-0 text-taupe" %>
+          <span>Moje konto</span>
         <% end %>
-        <%= button_to "Wyloguj się", destroy_user_session_path, method: :delete, class: "block w-full text-left rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft cursor-pointer bg-transparent border-0" %>
+        <% if current_user.admin? %>
+          <%= link_to admin_root_path, class: mobile_menu_item_classes do %>
+            <%= icon "layout-dashboard", class: "size-4.5 shrink-0 text-taupe" %>
+            <span>Panel</span>
+          <% end %>
+        <% end %>
+        <%= button_to destroy_user_session_path, method: :delete,
+              form_class: "contents", class: mobile_menu_item_classes do %>
+          <%= icon "log-out", class: "size-4.5 shrink-0 text-taupe" %>
+          <span>Wyloguj się</span>
+        <% end %>
       <% else %>
         <%= link_to "Zaloguj się", new_user_session_path, class: "block rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft hover:text-accent" %>
       <% end %>
@@ -78,13 +89,32 @@
           <% end %>
         </button>
 
-        <% navbar.with_dropdown_content(id: "profile-content", width: "fit") do %>
-          <%= button_to "Moje konto", dashboard_index_path, method: :get, class: "block rounded-md px-3 py-2 text-sm font-medium text-cream no-underline hover:bg-ink-soft cursor-pointer bg-transparent border-0" %>
-          <% if current_user.admin? %>
-            <%= button_to "Panel", admin_root_path, method: :get, class: "block rounded-md px-3 py-2 text-sm font-medium text-cream no-underline hover:bg-ink-soft cursor-pointer bg-transparent border-0" %>
+        <%# w-56, not "fit": `fit` is not a Tailwind class, so it resolved to nothing
+            and the panel collapsed to the width of its longest label. %>
+        <% navbar.with_dropdown_content(id: "profile-content", width: "w-56") do %>
+          <%# link_to, not button_to: these are GETs, and a form per menu item was
+              markup for nothing. Only signing out needs one, because it is a DELETE. %>
+          <%= link_to dashboard_index_path, class: profile_menu_item_classes do %>
+            <%= icon "user", class: "size-4 shrink-0 text-taupe" %>
+            <span>Moje konto</span>
           <% end %>
-          <hr/>
-          <%= button_to "Wyloguj się", destroy_user_session_path, method: :delete, class: "block rounded-md px-3 py-2 text-sm font-medium text-cream no-underline hover:bg-ink-soft cursor-pointer bg-transparent border-0" %>
+
+          <% if current_user.admin? %>
+            <%= link_to admin_root_path, class: profile_menu_item_classes do %>
+              <%= icon "layout-dashboard", class: "size-4 shrink-0 text-taupe" %>
+              <span>Panel</span>
+            <% end %>
+          <% end %>
+
+          <%# a hairline in the panel's own palette. A bare <hr> takes the browser
+              default, which on a dark panel reads as a bright white rule. %>
+          <div class="my-1 h-px bg-border" role="separator"></div>
+
+          <%= button_to destroy_user_session_path, method: :delete,
+                form_class: "contents", class: profile_menu_item_classes do %>
+            <%= icon "log-out", class: "size-4 shrink-0 text-taupe" %>
+            <span>Wyloguj się</span>
+          <% end %>
         <% end %>
 
       <% else %>

@@ -297,6 +297,12 @@ shop:
           default:
             pl: "Dodaj do koszyka"
             en: "Add to cart"
+        owned:
+          label: Przycisk, gdy produkt jest już kupiony
+          type: plain
+          default:
+            pl: "W Twoim koncie"
+            en: "In your account"
         remove:
           label: Przycisk „usuń z koszyka”
           type: plain
@@ -432,6 +438,21 @@ cart:
           default:
             pl: "Przeglądaj sklep"
             en: "Browse the shop"
+    owned:
+      label: Gdy w koszyku jest coś już kupionego
+      fields:
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Masz już te nagrania na koncie, więc nie doliczamy ich do zamówienia."
+            en: "These are already in your account, so we are not charging for them again."
+        cta:
+          label: Odnośnik
+          type: plain
+          default:
+            pl: "Zobacz w koncie"
+            en: "See them in your account"
     done:
       label: Po zakupie
       fields:
@@ -459,6 +480,87 @@ cart:
           default:
             pl: "Potwierdzamy płatność u operatora. Odśwież stronę za chwilę."
             en: "We're confirming the payment with the provider. Refresh in a moment."
+dashboard:
+  label: Moje konto
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Moje konto"
+            en: "My account"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Twoje audiobajki, audioprocesy i najbliższa konsultacja w jednym miejscu."
+            en: "Your audio stories, audio processes and upcoming consultation in one place."
+    library:
+      label: Moje audio
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Moje audio"
+            en: "My audio"
+        empty:
+          label: Gdy nic nie kupiono
+          type: plain
+          default:
+            pl: "Nie masz jeszcze żadnych audio."
+            en: "You don't have any audio yet."
+        empty_link:
+          label: Odnośnik do sklepu
+          type: plain
+          default:
+            pl: "Przejdź do sklepu"
+            en: "Go to shop"
+    bookings:
+      label: Moje konsultacje
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Moje konsultacje"
+            en: "My consultations"
+        empty:
+          label: Gdy nie ma terminu
+          type: plain
+          default:
+            pl: "Nie masz zaplanowanej konsultacji."
+            en: "You don't have a scheduled consultation."
+        empty_link:
+          label: Odnośnik do kalendarza
+          type: plain
+          default:
+            pl: "Umów termin"
+            en: "Book a slot"
+    settings:
+      label: Ustawienia
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Ustawienia"
+            en: "Settings"
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Zmień adres e-mail, hasło i dane konta."
+            en: "Change your email address, password and account details."
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Edytuj dane konta"
+            en: "Edit account details"
 terms:
   label: Regulamin
   sections:

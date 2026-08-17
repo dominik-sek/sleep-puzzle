@@ -40,6 +40,12 @@ class User < ApplicationRecord
          :omniauthable, omniauth_providers: %i[google_oauth2]
 
 
+  # Digital files are bought once and kept: owning one is what blocks buying it
+  # again, in the shop's button, in the cart and at checkout.
+  def purchased?(product)
+    purchased_products.exists?(id: product.id)
+  end
+
   def initials
     [ first_name, last_name ].map { |n| n&.first&.upcase }.compact.join
   end

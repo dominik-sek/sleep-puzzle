@@ -8,6 +8,22 @@
   locals: cart
 %>
 <%= tag.div id: "cart" do %>
+  <%# something added before signing in that this account turns out to own. It is
+      kept out of the lines below rather than charged for twice, so say where it
+      went instead of appearing to have lost it. %>
+  <% if cart.already_owned.any? %>
+    <div class="mb-5 rounded-2xl border border-border-input bg-ink-soft p-4.5">
+      <p class="text-t6 text-tan m-0"><%= content_block("cart.owned.body") %></p>
+      <ul class="mt-2 flex flex-col gap-1 list-none p-0">
+        <% cart.already_owned.each do |product| %>
+          <li class="text-t6 text-taupe"><%= product.display_icon %> <%= product.name %></li>
+        <% end %>
+      </ul>
+      <%= link_to content_block("cart.owned.cta"), dashboard_index_path,
+            class: "mt-2 inline-block text-t6 font-bold text-accent no-underline hover:text-accent-hover" %>
+    </div>
+  <% end %>
+
   <% if cart.empty? %>
     <div class="py-10 text-center">
       <p class="text-t5 text-taupe m-0"><%= content_block("cart.empty.body") %></p>

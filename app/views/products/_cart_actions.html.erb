@@ -1,0 +1,33 @@
+<%#
+  Everything on the product page that changes when the cart does: the add/remove
+  button, the link into the cart, and the confirmation under them.
+
+  All three in **one** streamed region rather than just the button. They are
+  siblings that all read `current_cart`, so streaming the button alone left the
+  link and the note behind until a reload — which read as them having been dropped.
+
+  Renders nothing at all without a price: Paddle owns the money, and something we
+  cannot price is something we cannot sell (see products/_card).
+
+  locals: product
+%>
+<%= tag.div id: dom_id(product, :cart_actions), class: "flex flex-col gap-4" do %>
+  <% if product_price_label(product) %>
+    <div class="flex flex-wrap gap-2.5">
+      <%= render "products/cart_button", product: product, size: :lg %>
+
+      <%# only once it is actually in there, so the second button never points at
+          an empty cart %>
+      <% if current_cart.include?(product) %>
+        <%= link_to cart_path,
+              class: "rounded-[26px] border-[1.5px] border-taupe-dark px-6 py-3.25 text-[15px] font-bold text-cream no-underline hover:border-accent hover:text-accent" do %>
+          <%= content_block("shop.product.go_to_cart") %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <% if current_cart.include?(product) %>
+      <p class="text-[13px] font-bold text-accent m-0">✓ <%= content_block("shop.product.added_note") %></p>
+    <% end %>
+  <% end %>
+<% end %>

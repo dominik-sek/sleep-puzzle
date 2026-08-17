@@ -131,6 +131,16 @@ product, and why the shop's button is a *toggle*: press it once to add, again to
 remove, rather than counting up. `Order#paddle_items` always sends
 `quantity: 1`, because Paddle wants the key.
 
+**Nothing is ever sold twice.** A file already bought is not something to sell
+again, so ownership blocks it at three levels rather than one: the shop's button
+becomes a link into the account, `CartItemsController` refuses the POST behind it,
+and `Cart` keeps owned products out of `#lines` altogether — which is what covers
+the case nothing else would, a cart filled *before* signing in that turns out to
+hold something this account already owns. Because `count`, `total_label` and the
+order all read through `#lines`, an owned file cannot be counted, totalled or
+charged. It is reported separately as `#already_owned` so the cart can say where
+it went instead of appearing to have lost it.
+
 The cart is capped at `Cart::MAX_ITEMS`, which is a guard and not a business
 rule: the session is a cookie, and an unbounded cart would let one visitor fill
 it past the 4KB limit and break every later write.
@@ -154,6 +164,11 @@ cart into something Paddle's webhook can name:
 fires no webhook**, so the browser reports it instead. The order is deleted and
 its lines go back into the cart, so a mis-click does not cost the buyer their
 basket.
+
+One thing Paddle enforces that is easy to trip over: a price can carry a **maximum
+quantity**, and a checkout that asks for more than it allows is rejected outright.
+Nothing here ever sends more than 1 (see *There are no quantities* above), so this
+only matters if quantities are ever reintroduced.
 
 ### Two subscribers on one event
 
@@ -199,6 +214,9 @@ are built and reachable; the rest is what is left.
       quantities — see above).
       Checkout hands the cart to the Paddle overlay (see *Shop, cart and checkout*
       below)
+- [x] **Moje konto** — `/dashboard`, incl. the paid-orders library, upcoming
+      consultations and the link into Devise's account form, each with its empty
+      state. The library has no player yet — see *Placeholder, not finished*
 
 ### Newsletter
 
@@ -226,6 +244,13 @@ What is left on our side is one form:
 
 ### Cross-cutting
 
+- [ ] **Paddle errors are still invisible.** The layout re-emits every Paddle event,
+      but `paddle_controller.js` switches on `checkout.completed` and
+      `checkout.closed` only — `checkout.error` falls through, so Paddle's own
+      message never reaches the console or a toast. That is why the max-quantity
+      rejection had to be diagnosed by hand. Small, and it makes the next one
+      self-explaining.
+
 - [ ] **PL/EN switcher.** The design has a language toggle in both the desktop and
       mobile nav. The plumbing is already here — `Translatable`, `en` defaults
       throughout `config/content_blocks.yml`, `config/locales/en.yml` — but nothing
@@ -234,25 +259,22 @@ What is left on our side is one form:
 - [x] **Dead links.** All wired. Navbar "Blog" stays commented out rather than
       pointing at nothing, which is the right shape for as long as the blog is
       parked.
-- [ ] **CMS coverage.** `config/content_blocks.yml` declares `home`, `packages`,
-      `about`, `shop`, `cart`, `terms`, `footer` and `contact`. Each new page above
-      needs its own entry so the owner can edit it, followed by
-      `bin/rails content_blocks:sync`.
+- [x] **CMS coverage.** Every page that exists is editable: `content_blocks.yml`
+      declares `home`, `packages`, `about`, `shop`, `cart`, `dashboard`, `terms`,
+      `footer` and `contact`. This stays true only if each new page adds its own
+      entry, followed by `bin/rails content_blocks:sync`.
 
 ### Placeholder, not finished
 
-- [ ] **Moje konto** — `/dashboard` renders hardcoded stand-in markup ("Nazwa play",
-      "Form with account settings will be here"), and `DashboardController` still
-      has `@audiobooks` and `@bookings` commented out. The design wants a purchased
-      audio library, the upcoming booking, and account settings — each with an
-      empty state. The library half now has something to read:
-      `current_user.purchased_products` returns the deduplicated products from
-      that user's paid orders.
-- [ ] **Delivering what was bought.** An order records *what* was paid for, but
-      nothing yet attaches an audio file to a `Product` or streams it to the
-      buyer — "Moje audio" has a list and no player. Wants an Active Storage
-      attachment on `Product` and a controller that authorises against
-      `purchased_products` before sending the file.
+- [ ] **Delivering what was bought.** This is the one thing standing between a
+      paid order and a customer with their file. `/dashboard` lists the library,
+      but **there is no player and no download**, because nothing hosts the audio
+      yet — a play button with no file behind it would be a lie, so the rows are
+      links to the product rather than a fake control. The files are going on a
+      CDN; what this app then needs is somewhere to keep the URL per `Product`
+      and a check that the person asking is in `purchased_products` before handing
+      it over. Whether that check is ours or a signed CDN URL is the decision to
+      make when the CDN is picked.
 
 ### Parked
 

@@ -82,6 +82,24 @@ RSpec.describe "Products", type: :request do
       expect(response.body).to include("Dodaj do koszyka")
     end
 
+    # bought already, and a digital file is bought once — the card leads to where
+    # it is rather than offering to sell it again
+    it "shows an account link instead of an add button for something owned" do
+      allow(PaddlePriceCatalogService).to receive(:call)
+        .and_return([ paddle_price(id: "pri_456", amount: "2500", currency: "PLN") ])
+      user = User.create!(email: "customer@example.com", password: "password123")
+      owned = create_product(name: "Bajka o sowie")
+      user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: owned) ])
+        .mark_paid!(transaction_id: "txn_1")
+      sign_in user
+
+      get products_path
+
+      expect(response.body).to include("W Twoim koncie")
+      expect(response.body).to include(%(href="#{dashboard_index_path}"))
+      expect(response.body).not_to include("Dodaj do koszyka")
+    end
+
     it "does not require signing in" do
       get products_path
 

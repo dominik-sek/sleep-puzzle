@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   # The session survives sign-in, so a cart filled while signed out is still
   # there afterwards without anything having to merge it.
   def current_cart
-    @current_cart ||= Cart.from_session(session)
+    @current_cart ||= Cart.from_session(session, owner: current_user)
   end
   helper_method :current_cart
 

@@ -12,6 +12,13 @@ class CartItemsController < ApplicationController
   before_action :load_product
 
   def create
+    # The button already says "W Twoim koncie" for something owned, but this POST
+    # is reachable without it — a stale page, a direct request — and a digital
+    # file bought twice is money taken for nothing.
+    if current_user&.purchased?(@product)
+      return respond_with_cart(alert: "#{@product.name} — masz już to nagranie na swoim koncie.")
+    end
+
     current_cart.add(@product)
 
     respond_with_cart(notice: "#{@product.name} — dodano do koszyka.")
@@ -31,12 +38,13 @@ class CartItemsController < ApplicationController
     @product = Product.published.find(params[:product_id] || params[:cart_item][:product_id])
   end
 
-  def respond_with_cart(notice: nil)
+  def respond_with_cart(notice: nil, alert: nil)
     flash.now[:notice] = notice if notice
+    flash.now[:alert] = alert if alert
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_back fallback_location: cart_path, notice: notice }
+      format.html { redirect_back fallback_location: cart_path, notice: notice, alert: alert }
     end
   end
 end

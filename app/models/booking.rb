@@ -37,6 +37,14 @@ class Booking < ApplicationRecord
 
   enum :status, { pending: 0, confirmed: 1, payment_failed: 2, canceled: 3 }
 
+  # What the dashboard lists. Pending is included on purpose: a booking waiting on
+  # a payment is still a slot the buyer is holding, and hiding it would leave them
+  # wondering whether the booking they just made registered at all. Canceled and
+  # failed are not — the slot is gone, and there is nothing to turn up to.
+  scope :upcoming, -> {
+    where(status: [ :pending, :confirmed ]).where(starts_at: Time.current..).order(:starts_at)
+  }
+
   # shown on the success page and written onto the Google Calendar event
   PAYMENT_STATUS_LABELS = {
     "pending" => "Oczekuje na płatność",

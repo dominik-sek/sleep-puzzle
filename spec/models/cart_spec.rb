@@ -149,6 +149,59 @@ RSpec.describe Cart, type: :model do
     end
   end
 
+  # a digital file is bought once and kept, so owning one takes it out of the
+  # cart entirely rather than letting checkout charge for it a second time
+  describe "when the buyer already owns something in the session" do
+    let(:owner) { User.create!(email: "customer@example.com", password: "password123") }
+    let(:other) { create_product(name: "Audioproces", paddle_price_id: "pri_789") }
+    let(:cart) { described_class.from_session(session, owner: owner) }
+
+    before do
+      allow(PaddlePriceCatalogService).to receive(:call)
+        .and_return([ paddle_price(id: "pri_456", amount: "2500", currency: "PLN"),
+                      paddle_price(id: "pri_789", amount: "12900", currency: "PLN") ])
+
+      order = owner.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
+      order.mark_paid!(transaction_id: "txn_1")
+
+      cart.add(product)
+      cart.add(other)
+    end
+
+    it "leaves the owned product out of the lines" do
+      expect(cart.lines.map(&:product)).to eq([ other ])
+      expect(cart.count).to eq(1)
+    end
+
+    it "leaves it out of the total" do
+      expect(cart.total_label).to eq("129,00 PLN")
+    end
+
+    # surfaced rather than silently dropped, so the cart can say where it went
+    it "reports it as already owned" do
+      expect(cart.already_owned).to eq([ product ])
+    end
+
+    it "counts an unpaid order for nothing" do
+      owner.orders.create!(status: :pending, order_items: [ OrderItem.new(product: other) ])
+
+      expect(cart.lines.map(&:product)).to eq([ other ])
+    end
+
+    it "does not apply to someone browsing signed out" do
+      anonymous = described_class.from_session(session)
+
+      expect(anonymous.count).to eq(2)
+      expect(anonymous.already_owned).to be_empty
+    end
+
+    it "does not apply to a different buyer" do
+      stranger = User.create!(email: "someone@example.com", password: "password123")
+
+      expect(described_class.from_session(session, owner: stranger).count).to eq(2)
+    end
+  end
+
   describe "#total_label" do
     before do
       allow(PaddlePriceCatalogService).to receive(:call)
