@@ -1,0 +1,36 @@
+<%#
+  locals: orders
+%>
+<%= render Table::Component.new(hoverable: true) do |table| %>
+  <% table.with_column(label: "Złożono") %>
+  <% table.with_column(label: "Klient") %>
+  <% table.with_column(label: "Pozycje") %>
+  <% table.with_column(label: "Status") %>
+  <% table.with_column(label: "Opłacono") %>
+
+  <% orders.each do |order| %>
+    <% table.with_row do |row| %>
+      <% row.with_cell(primary: true, classes: "tabular-nums whitespace-nowrap") do %>
+        <%= link_to l(order.created_at, format: :short), admin_order_path(order) %>
+      <% end %>
+
+      <% row.with_cell(primary: true) do %>
+        <%= order.user.email %>
+      <% end %>
+
+      <%# named rather than counted: with one copy per line a count says almost
+          nothing, and what support is asked about is which file is missing %>
+      <% row.with_cell do %>
+        <%= order.order_items.map { |item| item.product.name }.join(", ") %>
+      <% end %>
+
+      <% row.with_cell do %>
+        <%= admin_status_badge order.status, order.status_label %>
+      <% end %>
+
+      <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>
+        <%= order.paid_at ? l(order.paid_at, format: :short) : "—" %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -170,6 +170,23 @@ quantity**, and a checkout that asks for more than it allows is rejected outrigh
 Nothing here ever sends more than 1 (see *There are no quantities* above), so this
 only matters if quantities are ever reintroduced.
 
+### Looking a purchase up afterwards
+
+`/admin/orders` is where "I paid and cannot see my audio" gets answered: the buyer,
+what they bought, and the **Paddle transaction id**, which is what a refund or a
+dispute is looked up by on Paddle's side. An order sitting on *oczekuje* with no
+transaction id is itself the diagnosis — the `transaction.completed` webhook never
+landed.
+
+There is deliberately **no buyer-facing purchase history**. Paddle is Merchant of
+Record, so it is the seller on the transaction and emails the buyer their receipt
+and invoice; the obligation is Paddle's, not ours. What a buyer actually asks is
+"where is the thing I bought", and the dashboard library answers that. Everything
+a history screen would need — `paid_at`, `paddle_transaction_id`, the items — is
+already recorded, so it stays a view away rather than a migration away. That
+changes if Paddle ever stops being Merchant of Record, at which point invoicing
+becomes ours.
+
 ### Two subscribers on one event
 
 Bookings and orders both check out through Paddle, so both subscribe to

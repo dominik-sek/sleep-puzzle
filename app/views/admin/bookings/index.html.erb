@@ -5,9 +5,10 @@
 
   <%# filters stay in the query string, so pagy carries them onto every page link %>
   <nav class="flex flex-wrap gap-2">
-    <%= admin_booking_filter_link "Wszystkie", nil, @status %>
+    <%= admin_filter_link "Wszystkie", nil, @status, admin_bookings_path %>
     <% Booking.statuses.each_key do |status| %>
-      <%= admin_booking_filter_link Booking::PAYMENT_STATUS_LABELS.fetch(status, status), status, @status %>
+      <%= admin_filter_link Booking::PAYMENT_STATUS_LABELS.fetch(status, status), status, @status,
+                            admin_bookings_path(status: status) %>
     <% end %>
   </nav>
 

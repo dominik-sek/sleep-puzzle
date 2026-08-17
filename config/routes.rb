@@ -51,6 +51,9 @@ Rails.application.routes.draw do
   namespace :admin do
     root "dashboard#index"
     resources :bookings, only: [ :index, :show ], param: :token
+    # by token like the public side, so the panel and a customer's own link name
+    # the same order the same way
+    resources :orders, only: [ :index, :show ], param: :token
     resources :content_blocks, only: [ :index ] do
       patch :update, on: :collection
     end

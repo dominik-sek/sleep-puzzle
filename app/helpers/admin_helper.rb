@@ -7,6 +7,8 @@ module AdminHelper
         active: controller_name == "dashboard" },
       { label: "Rezerwacje", href: admin_bookings_path, icon: "calendar-days",
         active: controller_name == "bookings" },
+      { label: "Zamówienia", href: admin_orders_path, icon: "credit-card",
+        active: controller_name == "orders" },
       { label: "Pakiety", href: admin_packages_path, icon: "package",
         active: controller_name == "packages" },
       { label: "Produkty", href: admin_products_path, icon: "audio-lines",
@@ -16,8 +18,9 @@ module AdminHelper
     ]
   end
 
-  # Filter pill on the bookings index. `status` nil means "all".
-  def admin_booking_filter_link(label, status, current_status)
+  # Filter pill on an index that filters by status. `status` nil means "all", and
+  # the caller supplies the path so bookings and orders share one pill.
+  def admin_filter_link(label, status, current_status, path)
     active = status.to_s == current_status.to_s
 
     state_classes =
@@ -27,8 +30,7 @@ module AdminHelper
         "bg-surface text-tan border-border-input hover:bg-ink-soft hover:text-cream"
       end
 
-    link_to label,
-            admin_bookings_path(status: status),
+    link_to label, path,
             class: "inline-block rounded-full border px-3 py-1.5 text-t6 font-medium no-underline #{state_classes}"
   end
 
@@ -52,16 +54,26 @@ module AdminHelper
   end
 
   # One hue per payment state so the statuses stay tellable apart at a glance.
+  # Shared by bookings and orders, which run through the same Paddle states under
+  # two names — a booking ends up "confirmed", an order "paid".
+  #
   # These classes only reach the stylesheet because application.css has
   # `@source "../../helpers"` — without it Tailwind never sees this file.
-  def admin_booking_status_classes(booking)
-    case booking.status
+  def admin_status_classes(status)
+    case status.to_s
     when "pending" then "bg-yellow-400/15 text-yellow-300 border-yellow-400/30"
-    when "confirmed" then "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+    when "confirmed", "paid" then "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
     when "payment_failed" then "bg-orange-500/15 text-orange-400 border-orange-500/30"
     when "canceled" then "bg-red-500/15 text-red-400 border-red-500/30"
     else "bg-taupe/10 text-taupe border-taupe/20"
     end
+  end
+
+  # The pill itself, so an index and a show cannot drift on padding or shape.
+  def admin_status_badge(status, label, classes: nil)
+    tag.span(label,
+             class: class_names("inline-block rounded-full border px-2.5 py-1 whitespace-nowrap",
+                                admin_status_classes(status), classes))
   end
 
   # Which languages a record has actually been written in. The site falls back to

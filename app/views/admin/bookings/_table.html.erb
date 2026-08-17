@@ -21,9 +21,8 @@
       <% end %>
 
       <% row.with_cell do %>
-        <span class="inline-block rounded-full border px-2.5 py-1 whitespace-nowrap <%= admin_booking_status_classes(booking) %>">
-          <%= Booking::PAYMENT_STATUS_LABELS.fetch(booking.status, booking.status) %>
-        </span>
+        <%= admin_status_badge booking.status,
+              Booking::PAYMENT_STATUS_LABELS.fetch(booking.status, booking.status) %>
       <% end %>
 
       <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>

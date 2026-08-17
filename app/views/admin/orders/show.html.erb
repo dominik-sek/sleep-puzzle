@@ -1,0 +1,60 @@
+<% content_for :title, "Zamówienie #{@order.token} — Panel" %>
+
+<div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[800px]">
+  <div class="flex flex-col gap-2">
+    <a href="<%= admin_orders_path %>" class="text-t6">← Zamówienia</a>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <h1 class="text-t2 font-display text-cream"><%= @order.user.email %></h1>
+      <%= admin_status_badge @order.status, @order.status_label, classes: "text-t6 font-medium" %>
+    </div>
+  </div>
+
+  <dl class="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border-strong rounded-xl border border-border-strong overflow-hidden">
+    <% [
+         [ "Złożono", l(@order.created_at, format: :long) ],
+         [ "Opłacono", @order.paid_at ? l(@order.paid_at, format: :long) : "—" ],
+         [ "Konto", @order.user.email ],
+         [ "Pozycji", @order.order_items.size ]
+       ].each do |label, value| %>
+      <div class="bg-surface px-4 py-3 flex flex-col gap-1">
+        <dt class="text-t6 uppercase text-taupe"><%= label %></dt>
+        <dd class="text-t5 text-cream m-0"><%= value %></dd>
+      </div>
+    <% end %>
+  </dl>
+
+  <%# what was actually bought, linked through to the catalogue row — the first
+      thing to check when someone says a file is missing from their account %>
+  <div class="rounded-xl border border-border-strong overflow-hidden">
+    <h2 class="bg-surface px-4 py-3 text-t6 uppercase text-taupe m-0">Kupione pozycje</h2>
+
+    <ul class="flex flex-col gap-px bg-border-strong list-none p-0 m-0">
+      <% @order.order_items.each do |item| %>
+        <li class="flex items-center gap-3 bg-surface px-4 py-3">
+          <span class="text-t4" aria-hidden="true"><%= item.product.display_icon %></span>
+          <span class="flex-1 min-w-0">
+            <%= link_to item.product.name, edit_admin_product_path(item.product), class: "text-t5" %>
+            <span class="block text-t6 text-taupe"><%= item.product.kind_label %></span>
+          </span>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <%# the id to search for in Paddle when a refund or a dispute comes in. Blank
+      until the transaction.completed webhook lands, which is itself the answer
+      when an order is stuck on "oczekuje". %>
+  <dl class="grid grid-cols-1 gap-px bg-border-strong rounded-xl border border-border-strong overflow-hidden">
+    <div class="bg-surface px-4 py-3 flex flex-col gap-1">
+      <dt class="text-t6 uppercase text-taupe">Transakcja Paddle</dt>
+      <dd class="text-t6 text-tan m-0 font-mono break-all">
+        <% if @order.paddle_transaction_id.present? %>
+          <%= @order.paddle_transaction_id %>
+        <% else %>
+          <span class="text-taupe font-sans">Brak — płatność nie została jeszcze potwierdzona</span>
+        <% end %>
+      </dd>
+    </div>
+  </dl>
+</div>

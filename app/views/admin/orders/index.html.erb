@@ -1,0 +1,21 @@
+<% content_for :title, "Zamówienia — Panel" %>
+
+<div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[1100px]">
+  <h1 class="text-t2 font-display text-cream">Zamówienia</h1>
+
+  <%# filters stay in the query string, so pagy carries them onto every page link %>
+  <nav class="flex flex-wrap gap-2">
+    <%= admin_filter_link "Wszystkie", nil, @status, admin_orders_path %>
+    <% Order.statuses.each_key do |status| %>
+      <%= admin_filter_link Order::STATUS_LABELS.fetch(status, status), status, @status,
+                            admin_orders_path(status: status) %>
+    <% end %>
+  </nav>
+
+  <% if @orders.any? %>
+    <%= render "admin/orders/table", orders: @orders %>
+    <%= render Pagination::Component.new(pagy: @pagy) %>
+  <% else %>
+    <p class="text-t5 text-taupe">Brak zamówień dla wybranego filtra.</p>
+  <% end %>
+</div>
