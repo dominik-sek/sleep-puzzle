@@ -12,13 +12,28 @@ RSpec.describe "Devise mailer", type: :mailer do
 
   before { ActionMailer::Base.deliveries.clear }
 
-  it "sends at all — the sender used to be the generator's placeholder" do
-    mail = reset_mail
+  # MAIL_FROM reaches a local run through .env, and CI has no .env, so asserting
+  # on the ambient sender passed here and failed there. Pin it instead: what this
+  # spec can honestly own is that ApplicationMailer reads MAIL_FROM at delivery
+  # time, not that whoever runs the suite has configured a real address.
+  describe "the sender" do
+    before { stub_const("ENV", ENV.to_h.merge("MAIL_FROM" => "hello@sleep-puzzle.test")) }
 
-    expect(mail).to be_present
-    expect(mail.to).to eq([ user.email ])
-    expect(mail.from.first).not_to include("please-change-me")
-    expect(mail.from.first).not_to include("example.com")
+    it "sends at all, from the configured address" do
+      mail = reset_mail
+
+      expect(mail).to be_present
+      expect(mail.to).to eq([ user.email ])
+      expect(mail.from.first).to eq("hello@sleep-puzzle.test")
+    end
+
+    # The devise generator ships `please-change-me@example.com`; the guard against
+    # that one is worth keeping whether or not MAIL_FROM is set.
+    it "is never the devise generator's placeholder" do
+      stub_const("ENV", ENV.to_h.except("MAIL_FROM"))
+
+      expect(reset_mail.from.first).not_to include("please-change-me")
+    end
   end
 
   it "uses a Polish subject" do
