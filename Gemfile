@@ -100,7 +100,7 @@ gem "view_component"
 
 gem "turbo-rails", "~> 2.0"
 
-gem "google-apis-calendar_v3", "~> 0.56.0"
+gem "google-apis-calendar_v3", "~> 0.57.0"
 
 gem "googleauth", "~> 1.17"
 
