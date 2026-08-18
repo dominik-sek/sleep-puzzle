@@ -52,6 +52,7 @@ export default class extends Controller {
         autoDismissDuration: { type: Number, default: 4000 },
         limit: { type: Number, default: 3 },
         gap: { type: Number, default: 14 },
+        closeLabel: { type: String, default: "Close" },
     };
 
     connect() {
@@ -220,7 +221,7 @@ export default class extends Controller {
           <p class="text-t5 text-cream">${escapeHtml(title)}</p>
           ${description ? `<p class="mt-0.5 text-t6 font-normal tracking-normal text-taupe">${escapeHtml(description)}</p>` : ""}
         </div>
-        <button type="button" data-toast-close class="-mr-1 shrink-0 rounded-md p-1 text-taupe transition-colors hover:text-cream" aria-label="Zamknij">
+        <button type="button" data-toast-close class="-mr-1 shrink-0 rounded-md p-1 text-taupe transition-colors hover:text-cream" aria-label="${escapeHtml(this.closeLabelValue)}">
           ${CLOSE_ICON}
         </button>
       </div>

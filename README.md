@@ -491,15 +491,19 @@ are built and reachable; the rest is what is left.
       below)
 - [x] **Moje konto** — `/dashboard`, incl. the paid-orders library, upcoming
       consultations and the link into Devise's account form, each with its empty
-      state. The library has no player yet — see *Placeholder, not finished*
+      state. The library plays what was bought through an `<audio>` element
+      pointed at `/products/:id/stream` — see *Delivering the audio* above
 
 ### Newsletter
 
-**Decided: buy, not build.** Brevo holds the list and the campaign editor — the
-app already talks to it (`BREVO_API_KEY` is in the environment). That deliberately
-keeps consent records, confirmed opt-in, unsubscribe links, bounce handling and
-deliverability on Brevo's side rather than ours, and it means there is no
-subscriber model, no issue model and no sending code to write here.
+**Decided: buy, not build.** Brevo holds the list and the campaign editor. That
+deliberately keeps consent records, confirmed opt-in, unsubscribe links, bounce
+handling and deliverability on Brevo's side rather than ours, and it means there is
+no subscriber model, no issue model and no sending code to write here.
+
+Nothing in the app talks to Brevo yet. `BREVO_API_KEY` is set in the local `.env`,
+but no Ruby reads it and it is not in `.env.example` — provisioned ahead of the
+work, not wired up.
 
 What is left on our side is one form:
 
@@ -513,9 +517,17 @@ What is left on our side is one form:
 
 ### Missing sections on the home page
 
-- [ ] Kicker badge above the hero headline
+The design's home screen runs HERO / TRUST BAR / O MNIE TEASER / PACKAGES TEASER /
+JAK TO DZIALA / AUDIO SHOP TEASER / MEDIA-PODCASTS / BLOG TEASER / NEWSLETTER. The
+app builds hero, the trust bar (as the `home.stats` collection), about, process,
+packages and audio. What is missing:
+
 - [ ] Media / podcast strip
 - [ ] Newsletter sign-up form (see Newsletter, above)
+
+Two things the design draws are deliberately not being built: the **kicker badge**
+above the hero headline (`L.home.kicker`), and the **blog teaser**, which is parked
+along with the blog itself.
 
 ### Cross-cutting
 
@@ -523,21 +535,32 @@ What is left on our side is one form:
       `pl.yml`/`en.yml` rather than being hardcoded Polish. Copy the owner writes
       still lives in the CMS, and a block with no English version falls back to
       Polish on purpose — that is content waiting to be translated, not a bug.
-- [ ] **The admin panel and the Google Calendar integration screen are
-      Polish-only.** `integrations/google_calendar/show` still holds literals, and
-      nothing under `admin/` has been translated. Both are staff-facing, so this
-      only matters if a non-Polish speaker ever runs the panel.
-- [ ] **Two Devise screens are still stock English** — `confirmations/new` and
-      `unlocks/new`, plus the `confirmation_instructions` and `unlock_instructions`
-      mails. Both modules are switched off in `User`, so nothing reaches them; they
-      only matter if `:confirmable` or `:lockable` is ever enabled.
+- **Decided: the admin panel and the Google Calendar integration screen stay
+      Polish-only.** `integrations/google_calendar/show` and everything under
+      `admin/` hold Polish literals on purpose. Both are staff-facing and the staff
+      is Polish, so there is nothing to translate and no gap here.
+- **Decided: the two stock-English Devise screens stay as they are** —
+      `confirmations/new` and `unlocks/new`, plus the `confirmation_instructions`
+      and `unlock_instructions` mails. `:confirmable` and `:lockable` are both
+      switched off in `User`, so nothing ever reaches them.
 
-- [ ] **Paddle errors are still invisible.** The layout re-emits every Paddle event,
-      but `paddle_controller.js` switches on `checkout.completed` and
-      `checkout.closed` only — `checkout.error` falls through, so Paddle's own
-      message never reaches the console or a toast. That is why the max-quantity
-      rejection had to be diagnosed by hand. Small, and it makes the next one
-      self-explaining.
+- [x] **Buyer-facing toast copy is translated.** `paddle_controller.js` and
+      `toast_controller.js` are Stimulus controllers, so they have no `t()` — the
+      strings are resolved server-side and handed over as values instead:
+      `shared/_paddle_checkout` passes the five `paddle.*` keys, and
+      `Toast::Component` passes `toast.close` for the close button's `aria-label`.
+      Adding buyer-facing copy to either controller means adding a value, not a
+      literal.
+
+- [x] **Paddle errors surface now.** `checkout.error` used to fall through the
+      switch, so a declined card or a rejected quantity produced nothing — not a
+      toast, not even a console line, which is why the max-quantity rejection had
+      to be diagnosed by hand. It now logs the whole event and shows Paddle's own
+      message in an error toast, falling back to `paddle.error_fallback` when the
+      payload carries no message (Paddle has moved that field between versions, so
+      `#errorDescription` tries each plausible spot). It deliberately does *not*
+      abandon the pending record: the overlay stays open and the buyer can retry
+      in it, and `checkout.closed` still releases the record if they give up.
 
 - [x] **PL/EN switcher.** In the path — see *Two languages, two addresses* above.
 - [x] **Dead links.** All wired. Navbar "Blog" stays commented out rather than

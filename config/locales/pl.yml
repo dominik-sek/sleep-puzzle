@@ -224,3 +224,11 @@ pl:
     jump_to_page: "Przejdź do strony"
     go: "Idź"
     rows: "Wierszy"
+  paddle:
+    open_failed_title: "Nie udało się otworzyć płatności"
+    blocked: "Skrypt płatności został zablokowany. Wyłącz blokowanie reklam dla tej strony lub spróbuj w innej przeglądarce."
+    retry: "Spróbuj ponownie za chwilę."
+    error_title: "Płatność nie została zrealizowana"
+    error_fallback: "Spróbuj ponownie lub zapłać inną metodą."
+  toast:
+    close: "Zamknij"

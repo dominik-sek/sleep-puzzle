@@ -216,3 +216,11 @@ en:
     jump_to_page: "Jump to page"
     go: "Go"
     rows: "Rows"
+  paddle:
+    open_failed_title: "Couldn't open the payment window"
+    blocked: "The payment script was blocked. Turn off your ad blocker for this site, or try another browser."
+    retry: "Try again in a moment."
+    error_title: "The payment didn't go through"
+    error_fallback: "Try again, or pay with a different method."
+  toast:
+    close: "Close"

@@ -10,13 +10,22 @@ import { showToast } from "./toast_controller";
 // Everything specific to *what* is being bought arrives as values: `items` is
 // what Paddle charges for, `customData` is what the transaction webhook reads
 // back to find the record. The controller itself knows neither.
+//
+// The toast copy arrives as values too. Stimulus controllers have no `t()`, and
+// this one is buyer-facing on both the Polish and the English site, so the
+// strings are resolved by the partial that mounts it rather than living here.
 export default class extends Controller {
     static values = {
         items: Array,
         customData: Object,
         customerId: String,
         successUrl: String,
-        abandonUrl: String
+        abandonUrl: String,
+        openFailedTitle: String,
+        blockedMessage: String,
+        retryMessage: String,
+        errorTitle: String,
+        errorFallback: String
     };
 
     // Paddle closes the overlay itself after a completed payment, so `checkout.closed`
@@ -35,8 +44,35 @@ export default class extends Controller {
             case "checkout.closed":
                 if (!this.#completed) this.#abandon();
                 break;
+            // A declined card, an expired transaction, a network failure inside the
+            // overlay. Paddle shows its own message in the overlay, but only while the
+            // overlay is up — nothing reached us before, which is why the max-quantity
+            // rejection had to be diagnosed by hand.
+            //
+            // Deliberately does *not* abandon: the overlay stays open and the buyer can
+            // retry in it. If they give up instead, `checkout.closed` follows and
+            // releases the record.
+            case "checkout.error":
+                console.error("[paddle] checkout error", event.detail);
+                showToast({
+                    title: this.errorTitleValue,
+                    description: this.#errorDescription(event.detail),
+                    type: "error",
+                    duration: 10000
+                });
+                break;
         }
     };
+
+    // Paddle has moved this field around between versions and does not document a
+    // stable shape for it, so every plausible spot is tried before falling back to
+    // our own copy — a wrong-looking message is still better than none.
+    #errorDescription(detail) {
+        const error = detail?.error ?? detail?.data?.error;
+        const message = typeof error === "string" ? error : error?.detail ?? error?.message;
+
+        return message || this.errorFallbackValue;
+    }
 
     connect() {
         window.addEventListener("paddle:event", this.#onPaddleEvent);
@@ -46,7 +82,7 @@ export default class extends Controller {
         // no checkout ever appeared
         if (typeof Paddle === "undefined") {
             console.warn("[paddle] Paddle.js has not loaded yet");
-            this.#reportFailure("Skrypt płatności został zablokowany. Wyłącz blokowanie reklam dla tej strony lub spróbuj w innej przeglądarce.");
+            this.#reportFailure(this.blockedMessageValue);
             // no overlay means no `checkout.closed` either, so nothing else would
             // ever release what the pending record is holding
             this.#abandon();
@@ -63,7 +99,7 @@ export default class extends Controller {
             });
         } catch (error) {
             console.error("[paddle] Checkout.open failed", error);
-            this.#reportFailure("Spróbuj ponownie za chwilę.");
+            this.#reportFailure(this.retryMessageValue);
             this.#abandon();
         }
     }
@@ -100,7 +136,7 @@ export default class extends Controller {
 
     #reportFailure(description) {
         showToast({
-            title: "Nie udało się otworzyć płatności",
+            title: this.openFailedTitleValue,
             description: description,
             type: "error",
             // longer than the default: this one has to actually be read

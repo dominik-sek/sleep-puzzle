@@ -12,15 +12,20 @@ module Toast
     # @param limit [Integer] Maximum number of visible toasts (default: 3)
     # @param gap [Integer] Gap between toasts in expanded mode (default: 14)
     # @param classes [String] Additional CSS classes for the container
+    # @param close_label [String] Accessible label for each toast's close button
     def initialize(
       position: "top-center",
       layout: "default",
       auto_dismiss_duration: 4000,
       limit: 3,
       gap: 14,
-      classes: nil
+      classes: nil,
+      close_label: nil
     )
       super()
+      # toasts are built client-side, so the one string in their markup has to be
+      # handed to the controller rather than translated in a template
+      @close_label = close_label || I18n.t("toast.close")
       @position = POSITIONS.include?(position) ? position : "top-center"
       @layout = LAYOUTS.include?(layout) ? layout : "default"
       @auto_dismiss_duration = auto_dismiss_duration
@@ -42,6 +47,7 @@ module Toast
         toast_auto_dismiss_duration_value: @auto_dismiss_duration,
         toast_limit_value: @limit,
         toast_gap_value: @gap,
+        toast_close_label_value: @close_label,
         action: "mouseenter->toast#handleMouseEnter mouseleave->toast#handleMouseLeave"
       }
     end
