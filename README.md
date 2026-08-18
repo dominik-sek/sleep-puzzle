@@ -453,10 +453,43 @@ handful of phrases someone thought of:
   back up to `<html lang>`, so screen readers and anything else reading it get the
   truth.
 
-Unscoped routes still pick up `?locale=en` from `default_url_options`, since it
-cannot know whether the target takes the locale as a path segment or a query
-string. It is redundant now that the session remembers, and harmless — it also
-makes such a link portable.
+**Path or query string is one mechanism, not two.** `default_url_options` returns
+the same `{ locale: :en }` for every route; Rails fills the `:locale` path segment
+when the target route has one and appends `?locale=en` when it does not. Nothing
+chose a query string for the auth pages — it is what is left when the route has no
+slot for it. So on a page rendered in English, `/en/cart` and
+`/users/sign_in?locale=en` come from the same line of code.
+
+**The query string is not redundant, and it is not worth removing.** It looks like
+dead weight — `session[:locale]` already carries the language onto `/users/sign_in`
+for anyone who browsed the public site first, which is what the examples under
+*remembering the choice* cover. They all visit `/en/about` before signing in. The
+case they miss is someone who lands on a Devise page *directly* — a shared link, a
+bookmark, the reset mail below — and switches language there. The session is only
+ever written on a locale-scoped route, so on that path the param is the only thing
+that carries English to the next page:
+
+```
+/users/sign_in            → pl          (fresh session)
+/users/sign_in?locale=en  → en, and the sign-up link on it keeps ?locale=en
+```
+
+Removing it would also have to be done per call site, since `default_url_options`
+cannot see which route it is generating for: 20 places in the Devise and shared
+views, plus every link in the admin panel and the integrations screens, which are
+unscoped too. Leave it.
+
+**Mails carry it too, and there it is the only thing that can.**
+`ApplicationMailer#default_url_options` repeats the controller's rule, because a
+mail renders with no request in scope and would otherwise fall back to the
+routes-level `locale: nil` — an English mail whose every link came out Polish. The
+reset mail was the case that mattered: its button opened the Polish password form
+for anyone whose session had gone, which is every recipient on a different device.
+`session[:locale]` cannot help there, so the URL has to say it. Devise delivers
+inline and the booking and contact mails go through `deliver_later`, but ActiveJob
+serialises `I18n.locale` with the job and restores it around `perform`, so the
+language survives the queue either way. Covered by
+`spec/mailers/devise_mailer_spec.rb`.
 
 ## Roadmap
 

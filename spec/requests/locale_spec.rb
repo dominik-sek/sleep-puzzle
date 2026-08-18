@@ -131,6 +131,27 @@ RSpec.describe "Locale", type: :request do
 
       expect(response.body).to include("Adres e-mail")
     end
+
+    # Every example above visits a public page first, which is what writes
+    # session[:locale] — so together they show the session covering the ordinary
+    # route in. They do not cover someone who arrives at a Devise page *directly*,
+    # from a shared link or the reset mail, and switches language there. Nothing
+    # writes the session on an unscoped route, so for them `?locale=en` on the
+    # page's own links is the only thing carrying English to the next page.
+    #
+    # This is why the query string is not the redundancy it looks like. Deleting it
+    # passes every other example in this file and breaks exactly this one.
+    it "carries English between Devise pages for someone who never saw the public site" do
+      get "/users/sign_in", params: { locale: "en" }
+      expect(response.body).to include("Log in")
+
+      sign_up_link = response.body[/href="(\/users\/sign_up[^"]*)"/, 1]
+      expect(sign_up_link).to eq("/users/sign_up?locale=en")
+
+      get sign_up_link
+
+      expect(response.body).not_to include("Adres e-mail")
+    end
   end
 
   describe "the switcher" do
