@@ -1,0 +1,90 @@
+<%# multipart because the audio file is uploaded through this form; form_with only
+    infers that from a builder-based file field, and this form uses tag helpers %>
+<%= form_with model: [ :admin, product ], scope: :record, multipart: true, class: "flex flex-col gap-6" do %>
+  <%= render "admin/shared/form_errors", record: product %>
+
+  <%= render "admin/shared/translated_input", record: product, field: "name",
+             label: "Nazwa", type: :text %>
+
+  <%= render "admin/shared/translated_input", record: product, field: "description",
+             label: "Opis", type: :textarea %>
+
+  <%= render "admin/shared/translated_input", record: product, field: "long_description",
+             label: "O tym nagraniu", type: :textarea,
+             hint: "dłuższy opis na stronie produktu" %>
+
+  <%= render "admin/shared/translated_input", record: product, field: "includes",
+             label: "Co dostajesz", type: :list %>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1.5">
+      <span class="text-t6 uppercase text-taupe">Rodzaj</span>
+      <%= select_tag "record[kind]",
+                     options_for_select(Product.kind_options, product.kind),
+                     include_blank: "— wybierz rodzaj —",
+                     id: "record-kind", class: "form-control" %>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <span class="text-t6 uppercase text-taupe">Ikona</span>
+      <%# one emoji, shown on the shop card and in the cart. Blank falls back to
+          one per rodzaj, so this can be left alone. %>
+      <%= text_field_tag "record[icon]", product.icon, id: "record-icon",
+                         placeholder: Product::KIND_ICONS.values.join(" "),
+                         maxlength: 8, class: "form-control" %>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <span class="text-t6 uppercase text-taupe">Długość (min)</span>
+      <%= number_field_tag "record[length_minutes]", product.length_minutes, id: "record-length-minutes",
+                           min: 1, class: "form-control" %>
+    </div>
+
+    <%= render "admin/shared/price_field", record: product, prices: prices %>
+  </div>
+
+  <div class="flex flex-col gap-1.5">
+    <span class="text-t6 uppercase text-taupe">Plik audio (Bunny)</span>
+
+    <%# what is on the CDN right now, shown whichever way it got there. Read-only:
+        the path is where the file actually is, not a preference — it changes by
+        uploading a different file. %>
+    <% if product.cdn_path.present? %>
+      <p class="text-t6 text-cream m-0">
+        Wgrany plik:
+        <code class="rounded bg-white/5 px-1.5 py-0.5"><%= product.cdn_path %></code>
+      </p>
+    <% end %>
+
+    <% if BunnyStorageService.configured? %>
+      <%= file_field_tag "record[audio]", accept: "audio/*", id: "record-audio",
+                         class: "form-control file:mr-3 file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-cream file:cursor-pointer" %>
+      <span class="text-t6 text-taupe">
+        <%= product.cdn_path.present? ? "Wgranie nowego pliku zastąpi obecny." : "Wgraj nagranie — trafi prosto do Bunny Storage." %>
+        Formaty: <%= BunnyStorageService::ALLOWED_EXTENSIONS.join(", ") %>, do
+        <%= BunnyStorageService::MAX_BYTES / 1.megabyte %> MB. Bez pliku produkt nadal
+        się sprzedaje — po prostu nie ma odtwarzacza w „Moim koncie”.
+      </span>
+    <% else %>
+      <%# no storage credentials — local development, or a deploy that lost them.
+          The path stays typeable so the field is not simply dead, and the reason
+          the uploader is missing is on the screen rather than in a log. %>
+      <%= text_field_tag "record[cdn_path]", product.cdn_path, id: "record-cdn-path",
+                         placeholder: "/bajki/o-sowie.mp3", class: "form-control" %>
+      <span class="text-t6 text-taupe">
+        Wgrywanie plików jest wyłączone — brakuje BUNNY_STORAGE_ZONE i
+        BUNNY_STORAGE_PASSWORD. Na razie można wpisać ścieżkę pliku w Bunny Storage ręcznie.
+      </span>
+    <% end %>
+  </div>
+
+  <%= render "admin/shared/publication_fields", record: product %>
+
+  <div class="flex items-center gap-3">
+    <%= submit_tag product.persisted? ? "Zapisz produkt" : "Dodaj produkt",
+                   class: "inline-flex items-center justify-center rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink shadow-sm cursor-pointer hover:bg-accent-hover" %>
+
+    <%= link_to "Anuluj", admin_products_path,
+                class: "text-t6 text-taupe no-underline hover:text-cream" %>
+  </div>
+<% end %>

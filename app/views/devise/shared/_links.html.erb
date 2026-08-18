@@ -1,0 +1,33 @@
+<%#
+  The way out of whichever auth screen you are on. Rewritten from the generator's
+  stack of <p><a> — every label was English, and the omniauth button was an
+  unstyled button_to.
+
+  Each block is guarded by the module actually being enabled, so nothing here
+  renders a link to a screen this app does not have (confirmable and lockable are
+  both off).
+%>
+<div class="flex flex-col items-center gap-2 text-t6">
+  <% if controller_name != "sessions" %>
+    <%= link_to t("auth.sign_in.title"), new_session_path(resource_name), class: "text-accent no-underline hover:text-accent-hover" %>
+  <% end %>
+
+  <% if devise_mapping.registerable? && controller_name != "registrations" %>
+    <span class="text-taupe">
+      <%= t("auth.sign_in.no_account") %>
+      <%= link_to t("auth.sign_in.sign_up_link"), new_registration_path(resource_name), class: "font-bold text-accent no-underline hover:text-accent-hover" %>
+    </span>
+  <% end %>
+
+  <% if devise_mapping.recoverable? && controller_name != "passwords" && controller_name != "registrations" %>
+    <%= link_to t("auth.sign_in.forgot"), new_password_path(resource_name), class: "text-taupe no-underline hover:text-accent" %>
+  <% end %>
+
+  <% if devise_mapping.confirmable? && controller_name != "confirmations" %>
+    <%= link_to t("devise.confirmations.send_instructions"), new_confirmation_path(resource_name), class: "text-taupe no-underline hover:text-accent" %>
+  <% end %>
+
+  <% if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != "unlocks" %>
+    <%= link_to t("devise.unlocks.send_instructions"), new_unlock_path(resource_name), class: "text-taupe no-underline hover:text-accent" %>
+  <% end %>
+</div>

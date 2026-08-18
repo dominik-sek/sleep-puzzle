@@ -1,11 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <script type="text/javascript">
+        Paddle.Environment.set("sandbox");
+        Paddle.Initialize({
+            token: "<%= Pay::PaddleBilling.client_token %>",
+            // Paddle.js only takes one global callback, so it is re-emitted as a DOM
+            // event and paddle_controller decides what to do with it
+            eventCallback: function (event) {
+                window.dispatchEvent(new CustomEvent("paddle:event", { detail: event }));
+            }
+        });
+    </script>
+
     <title><%= content_for(:title) || "Sleep Puzzle" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Sleep Puzzle">
     <meta name="mobile-web-app-capable" content="yes">
+    <%# tells search engines the two addresses are the same page in two languages,
+        which is the whole reason the locale is in the path rather than the session %>
+    <% I18n.available_locales.each do |locale| %>
+      <%= tag.link rel: "alternate", hreflang: locale, href: alternate_locale_url(locale) %>
+    <% end %>
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -14,16 +33,42 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%= vite_client_tag %>
+    <%= vite_stylesheet_tag 'application', data: { "turbo-track": "reload" } %>
     <%= vite_javascript_tag 'application' %>
 
   </head>
 
-  <body>
-    <%= yield %>
+  <%# the language is carried on the body, not read back off <html>: Turbo Drive
+      replaces the body and merges the head but leaves the <html> element's own
+      attributes alone, so lang= goes stale the moment you switch language. See
+      locale_controller.js, which copies it back up. %>
+  <body class="relative min-h-screen flex flex-col" data-controller="locale" data-locale-tag-value="<%= I18n.locale %>">
+  <%= render "shared/navbar" %>
+
+  <%= render Toast::Component.new(
+    position: "top-right",
+    layout: "default",
+    auto_dismiss_duration: 5000,
+    limit: 4,
+    gap: 16,
+  ) %>
+
+  <%= render "shared/flash" %>
+
+
+    <main class="flex-1 flex flex-col">
+      <%= yield %>
+    </main>
+
+    <%= render "shared/footer" %>
   </body>
 </html>

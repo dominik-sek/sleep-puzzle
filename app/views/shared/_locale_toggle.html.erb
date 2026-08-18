@@ -1,0 +1,26 @@
+<%#
+  The language menu's rows, shared by the desktop dropdown and the hamburger panel
+  so the two cannot drift.
+
+  Each row is a link to this same page in that language; the one you are already on
+  is marked rather than linked, so the control says where you are as well as where
+  it goes.
+
+  locals: item_classes
+%>
+<% I18n.available_locales.each do |locale| %>
+  <% current = locale == I18n.locale %>
+
+  <% if current %>
+    <span class="<%= item_classes %> text-accent" aria-current="true">
+      <span aria-hidden="true"><%= locale_flag(locale) %></span>
+      <span><%= locale_name(locale) %></span>
+      <%= icon "circle-check", class: "size-3.5 shrink-0 ml-auto" %>
+    </span>
+  <% else %>
+    <%= link_to alternate_locale_url(locale), class: item_classes, hreflang: locale, rel: "alternate" do %>
+      <span aria-hidden="true"><%= locale_flag(locale) %></span>
+      <span><%= locale_name(locale) %></span>
+    <% end %>
+  <% end %>
+<% end %>

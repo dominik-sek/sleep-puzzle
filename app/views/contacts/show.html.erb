@@ -1,0 +1,46 @@
+<%# Copy comes from the CMS (config/content_blocks.yml + /admin/content_blocks),
+    including the link tiles, so the owner can retire a podcast or point the
+    terms tile somewhere real without a deploy. %>
+<%# no min-h-screen here, unlike the longer pages: the layout's <main> is
+    already flex-1, and on a page this short the extra screenful would push the
+    footer out of view behind dead space %>
+<div class="flex flex-col items-center w-full">
+  <%= render Section::Component.new(
+    background: :ink,
+    align: :center,
+    bordered: false
+  ) do |section| %>
+    <div class="flex flex-col gap-3 items-center">
+      <h1 class="text-t2 font-display font-bold text-cream">
+        <%= content_block("contact.hero.title") %>
+      </h1>
+      <p class="text-t5 text-tan max-w-2xl">
+        <%= content_block("contact.hero.subtitle") %>
+      </p>
+    </div>
+
+    <%# one column until there is room for two, matching the design's
+        auto-fit/minmax(280px) grid %>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-4xl text-left">
+      <%= render "contacts/form", contact_message: @contact_message %>
+
+      <div class="flex flex-col gap-4">
+        <% content_items("contact.links").each do |link| %>
+          <%# through safe_link_url: the value is typed into the panel, and a
+              mistyped one should land on "#" rather than in an href as-is %>
+          <% url = safe_link_url(link["url"]) %>
+          <% external = url.start_with?("http") %>
+          <%= link_to url,
+                      target: external ? "_blank" : nil,
+                      rel: external ? "noopener" : nil,
+                      class: "flex items-center gap-3 no-underline rounded-2xl border border-border-strong bg-surface px-5.5 py-4.5 text-t5 font-bold text-cream hover:text-accent hover:border-border-input" do %>
+            <%# decoration, so it is hidden from a screen reader rather than read
+                out as "camera" before the name of the link %>
+            <span aria-hidden="true"><%= link["icon"] %></span>
+            <span><%= link["label"] %></span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

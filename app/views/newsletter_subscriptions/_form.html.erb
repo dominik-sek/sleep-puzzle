@@ -1,0 +1,48 @@
+<%# Swapped for "newsletter_subscriptions/subscribed" by
+    newsletter_subscriptions#create, so the frame wraps the form rather than
+    sitting inside it — the same shape as the contact form. %>
+<%= turbo_frame_tag "newsletter_form" do %>
+  <% if local_assigns[:alert].present? %>
+    <div class="mx-auto mb-4 max-w-lg">
+      <%= render Alert::Component.new(title: alert, tone: :warning) %>
+    </div>
+  <% end %>
+
+  <%= form_with model: signup, url: newsletter_subscription_path,
+                class: "flex flex-wrap items-start justify-center gap-3" do |f| %>
+    <%# the design is one row — a wide pill and a button beside it — so the field
+        carries no visible label and the placeholder has to be the accessible
+        name too. Fixed width on the input rather than flex-1: at full width it
+        swallowed the row on a tablet and pushed the button onto its own line. %>
+    <div class="w-full sm:w-80">
+      <%= render Forms::Component.new(
+        label: content_block("home.newsletter.placeholder"),
+        name: "newsletter_signup[email]",
+        required: true,
+        label_hidden: true,
+        error: signup.errors[:email].first
+      ) do |field| %>
+        <% field.with_input do %>
+          <%# h-12 on both this and the button rather than matching their padding:
+              .form-control is py-2 on a 24px line-height and the button is py-3.5
+              on 20px, so equal padding would still leave them 4px apart — and
+              .form-control drops to 14px type above 640px while the button does
+              not, which would move the gap again at that breakpoint. A fixed
+              height is the only thing that holds at every size. %>
+          <%= f.email_field :email,
+                            class: "form-control h-12 rounded-full!",
+                            placeholder: content_block("home.newsletter.placeholder"),
+                            autocomplete: "email" %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%= render Buttons::Component.new(
+      text: content_block("home.newsletter.button"),
+      type: "submit",
+      pill: true,
+      variant: :primary,
+      classes: "hover:cursor-pointer bg-accent! text-ink! h-12 px-6 font-bold!"
+    ) %>
+  <% end %>
+<% end %>

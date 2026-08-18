@@ -1,0 +1,8 @@
+<%= t("contact_mailer.new_message.heading") %>
+
+<%= render "shared/mail_details", rows: {
+      t("contact_mailer.details.name") => @message.name,
+      t("contact_mailer.details.email") => @message.email
+    } -%>
+
+<%= @message.body %>

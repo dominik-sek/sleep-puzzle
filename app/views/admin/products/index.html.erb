@@ -1,0 +1,75 @@
+<% content_for :title, "Produkty — Panel" %>
+
+<div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[1100px]">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div class="flex flex-col gap-1">
+      <h1 class="text-t2 font-display text-cream">Produkty</h1>
+      <p class="text-t5 text-taupe">
+        Audioprocesy i bajki. Cenę ustawiasz w Paddle — tutaj wybierasz, która cena należy do produktu.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <%= link_to admin_paddle_prices_path,
+                  data: { turbo_method: :patch },
+                  class: "inline-flex items-center gap-1.5 rounded-lg border border-border-input bg-surface px-3 py-2 text-t6 font-medium text-cream no-underline hover:bg-ink-soft" do %>
+        <%= icon "refresh-cw", class: "size-3.5 shrink-0" %>
+        Odśwież ceny
+      <% end %>
+
+      <%= link_to new_admin_product_path,
+                  class: "inline-flex items-center gap-1.5 rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink no-underline shadow-sm hover:bg-accent-hover" do %>
+        <%= icon "plus", class: "size-3.5 shrink-0" %>
+        Nowy produkt
+      <% end %>
+    </div>
+  </div>
+
+  <% if @records.any? %>
+    <%= render Table::Component.new(hoverable: true) do |table| %>
+      <% table.with_column(label: "Nazwa") %>
+      <% table.with_column(label: "Rodzaj") %>
+      <% table.with_column(label: "Języki") %>
+      <% table.with_column(label: "Cena") %>
+      <% table.with_column(label: "Widoczność") %>
+      <% table.with_column(label: "", align: :right) %>
+
+      <% @records.each do |product| %>
+        <% table.with_row do |row| %>
+          <% row.with_cell(primary: true) do %>
+            <div><%= link_to product.name, edit_admin_product_path(product) %></div>
+            <div class="text-taupe"><%= truncate(product.description, length: 60) %></div>
+          <% end %>
+
+          <% row.with_cell(classes: "whitespace-nowrap") do %>
+            <%= product.kind_label %>
+          <% end %>
+
+          <% row.with_cell do %>
+            <%= admin_translation_badges(product) %>
+          <% end %>
+
+          <% row.with_cell do %>
+            <%= admin_paddle_price_cell(product, @prices) %>
+          <% end %>
+
+          <% row.with_cell do %>
+            <%= admin_published_badge(product) %>
+          <% end %>
+
+          <% row.with_cell(align: :right, classes: "whitespace-nowrap") do %>
+            <%= link_to "Edytuj", edit_admin_product_path(product),
+                        class: "text-t6 text-cream no-underline hover:text-accent" %>
+            <%= link_to "Usuń", admin_product_path(product),
+                        data: { turbo_method: :delete, turbo_confirm: "Usunąć „#{product.name}”?" },
+                        class: "ml-3 text-t6 text-red-400 no-underline hover:text-red-300" %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render Pagination::Component.new(pagy: @pagy) %>
+  <% else %>
+    <p class="text-t5 text-taupe">Brak produktów. Dodaj pierwszy, żeby pojawił się na stronie.</p>
+  <% end %>
+</div>

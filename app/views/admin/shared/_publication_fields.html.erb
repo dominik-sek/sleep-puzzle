@@ -1,0 +1,28 @@
+<%#
+  Where the record sits on the public site. Unpublished means it exists in the
+  panel and nowhere else — which is how a package gets written before it is ready
+  to sell, rather than being created at the moment it goes live.
+
+  locals: record
+%>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div class="flex flex-col gap-1.5">
+    <span class="text-t6 uppercase text-taupe">Kolejność</span>
+    <%= number_field_tag "record[position]", record.position, id: "record-position", min: 0,
+                         class: "form-control" %>
+    <span class="text-t6 text-taupe-dark">Niższa liczba wyświetla się wyżej.</span>
+  </div>
+
+  <div class="flex flex-col gap-1.5">
+    <span class="text-t6 uppercase text-taupe">Widoczność</span>
+
+    <label class="flex items-center gap-2 text-t5 text-cream">
+      <%# hidden field first, so unchecking actually posts a value %>
+      <%= hidden_field_tag "record[published]", "0", id: nil %>
+      <%= check_box_tag "record[published]", "1", record.published,
+                        id: "record-published",
+                        class: "size-4 rounded border-border-input bg-surface accent-accent" %>
+      Widoczny na stronie
+    </label>
+  </div>
+</div>

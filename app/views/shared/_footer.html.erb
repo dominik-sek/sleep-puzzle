@@ -1,0 +1,61 @@
+<footer class="bg-surface-dark border-t border-border px-[clamp(20px,4vw,28px)] pt-15 pb-8">
+  <%# headings and the tagline come from the CMS (config/content_blocks.yml +
+      /admin/content_blocks); the link labels stay in the markup, since each one
+      is tied to a specific route rather than being free copy %>
+  <div class="max-w-[1240px] mx-auto">
+    <%# auto-fit rather than fixed breakpoints: these are all short lists, so
+        letting them pack themselves against a 180px floor gives one column on a
+        phone and four on a desktop without naming either. The gap is the actual
+        mobile fix — without one the stacked columns ran straight into each other. %>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-9 mb-11">
+      <div>
+        <%# the width belongs on the image: it used to sit on this flex row, which
+            squeezed the wordmark into 32px along with the mascot %>
+        <div class="flex items-center gap-2.5 mb-3.5">
+          <%= image_tag "mascot-peach.png", alt: "", class: "h-8 w-8 object-contain" %>
+          <span class="text-t3 font-display text-cream">sleep.puzzle</span>
+        </div>
+        <p class="text-t6 text-taupe leading-relaxed max-w-[260px]">
+          <%= content_block("footer.brand.tagline") %>
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-t6 font-extrabold uppercase tracking-wide text-accent mb-3.5"><%= content_block("footer.columns.explore") %></h3>
+        <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
+          <li><%= link_to t("nav.packages"), packages_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("nav.about"), about_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <%# parked with the navbar entry; see shared/_navbar %>
+          <%#= tag.li(link_to("Blog", blog_path)) %>
+          <li><%= link_to t("nav.shop"), products_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-t6 font-extrabold uppercase tracking-wide text-accent mb-3.5"><%= content_block("footer.columns.account") %></h3>
+        <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
+          <li><%= link_to t("nav.book"), bookings_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("nav.my_account"), dashboard_index_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("nav.terms"), terms_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-t6 font-extrabold uppercase tracking-wide text-accent mb-3.5"><%= content_block("footer.columns.follow") %></h3>
+        <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
+          <li>
+            <%= link_to "Instagram", "https://www.instagram.com/sleep.puzzle",
+                        target: "_blank", rel: "noopener",
+                        class: "text-t6 text-accent no-underline hover:text-accent-hover" %>
+          </li>
+          <li><%= link_to t("nav.contact"), contact_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+        </ul>
+      </div>
+    </div>
+
+    <%# year from the clock rather than typed in, so it does not quietly go stale %>
+    <div class="border-t border-border pt-6 text-center text-t6 text-taupe-dark">
+      <%= t("nav.copyright", year: Date.current.year) %>
+    </div>
+  </div>
+</footer>

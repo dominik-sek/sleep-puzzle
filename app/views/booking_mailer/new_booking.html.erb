@@ -1,0 +1,14 @@
+<h1 style="margin:0 0 12px; font-size:22px; line-height:30px; color:#211e1c;">
+  <%= t("booking_mailer.new_booking.heading") %>
+</h1>
+
+<p style="margin:0; font-size:15px; line-height:24px; color:#57514a;">
+  <%= t("booking_mailer.new_booking.intro") %>
+</p>
+
+<%= render "shared/mail_details", rows: {
+      t("booking_mailer.details.name") => @booking.name,
+      t("booking_mailer.details.email") => @booking.email,
+      t("booking_mailer.details.package") => @booking.package.name,
+      t("booking_mailer.details.starts_at") => l(@booking.starts_at, format: :long)
+    } %>

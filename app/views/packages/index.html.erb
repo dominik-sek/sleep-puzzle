@@ -1,0 +1,33 @@
+<div class="min-h-screen flex flex-col items-center">
+  <%= render Section::Component.new(
+    background: :ink,
+    align: :center,
+    bordered: false
+  ) do |section| %>
+    <div class="flex flex-col gap-4 items-center">
+      <h1 class="text-t1 font-display font-bold text-cream">
+        <%= content_block("packages.hero.title") %>
+      </h1>
+      <div class="text-t4 text-tan max-w-2xl">
+        <%= content_block("packages.hero.subtitle") %>
+      </div>
+    </div>
+
+    <% if @packages.any? %>
+      <%# items-stretch so cards in a row match height regardless of list length %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch w-full">
+        <% @packages.each do |package| %>
+          <%# anchor for the home page's "Zobacz szczegóły"; scroll-mt keeps the
+              card clear of the navbar when it is jumped to %>
+          <div id="<%= dom_id(package) %>" class="scroll-mt-24 h-full">
+            <%= render "packages/card", package: package %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-t4 text-tan max-w-2xl">
+        <%= content_block("packages.empty.body") %>
+      </p>
+    <% end %>
+  <% end %>
+</div>

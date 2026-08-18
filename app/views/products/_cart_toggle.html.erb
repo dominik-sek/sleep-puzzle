@@ -1,0 +1,13 @@
+<%#
+  The shop card's add/remove button, in a region the cart_items streams replace —
+  press "Dodaj" on the grid and that card's button becomes "Usuń" without the page
+  reloading.
+
+  The product page uses products/cart_actions instead, which streams the button
+  together with everything else that depends on the cart.
+
+  locals: product
+%>
+<%= tag.span id: dom_id(product, :cart_toggle), class: "contents" do %>
+  <%= render "products/cart_button", product: product %>
+<% end %>

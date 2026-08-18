@@ -1,0 +1,82 @@
+<%# Swapped for "contacts/sent" by contacts#create, so the frame wraps the form
+    rather than sitting inside it. %>
+<%= turbo_frame_tag "contact_form" do %>
+  <% if local_assigns[:alert].present? %>
+    <div class="mb-4">
+      <%= render Alert::Component.new(title: alert, tone: :warning) %>
+    </div>
+  <% end %>
+
+  <%= form_with model: contact_message, url: contact_path, class: "flex flex-col gap-3" do |f| %>
+    <%# labels are hidden rather than absent: the design shows placeholders only,
+        so the same copy has to carry the accessible name %>
+    <%= render Forms::Component.new(
+      label: content_block("contact.form.name_label"),
+      name: "contact_message[name]",
+      required: true,
+      label_hidden: true,
+      error: contact_message.errors[:name].first
+    ) do |field| %>
+      <% field.with_input do %>
+        <%= f.text_field :name,
+                         class: "form-control",
+                         placeholder: content_block("contact.form.name_label"),
+                         autocomplete: "name" %>
+      <% end %>
+    <% end %>
+
+    <%= render Forms::Component.new(
+      label: content_block("contact.form.email_label"),
+      name: "contact_message[email]",
+      required: true,
+      label_hidden: true,
+      error: contact_message.errors[:email].first
+    ) do |field| %>
+      <% field.with_input do %>
+        <%= f.email_field :email,
+                          class: "form-control",
+                          placeholder: content_block("contact.form.email_label"),
+                          autocomplete: "email" %>
+      <% end %>
+    <% end %>
+
+    <%= render Forms::Component.new(
+      label: content_block("contact.form.body_label"),
+      name: "contact_message[body]",
+      required: true,
+      label_hidden: true,
+      error: contact_message.errors[:body].first
+    ) do |field| %>
+      <% field.with_input do %>
+        <%= f.text_area :body,
+                        rows: 5,
+                        maxlength: ContactMessage::BODY_LIMIT,
+                        class: "form-control resize-y",
+                        placeholder: content_block("contact.form.body_label") %>
+      <% end %>
+    <% end %>
+
+    <%# nothing to render when Turnstile is unconfigured, so local development
+        without a key still has a working form %>
+    <% if TurnstileVerificationService.site_key %>
+      <%# theme pinned rather than "auto": the widget would otherwise follow the
+          visitor's OS setting and render a light card on a page that is only
+          ever dark. Language follows the page, not the browser. %>
+      <div data-controller="turnstile"
+           data-turnstile-site-key-value="<%= TurnstileVerificationService.site_key %>"
+           data-turnstile-action-value="<%= ContactsController::TURNSTILE_ACTION %>"
+           data-turnstile-theme-value="dark"
+           data-turnstile-language-value="<%= I18n.locale %>"
+           class="mt-1.5"></div>
+    <% end %>
+
+    <%= render Buttons::Component.new(
+      text: content_block("contact.form.submit"),
+      type: "submit",
+      pill: true,
+      variant: :primary,
+      full_width: true,
+      classes: "hover:cursor-pointer bg-accent! text-ink! py-3.5 font-bold! mt-1.5"
+    ) %>
+  <% end %>
+<% end %>

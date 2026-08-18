@@ -1,3 +1,229 @@
-<div class="min-h-screen flex items-center justify-center bg-slate-900">
-  <h1 class="text-4xl font-bold text-white">Tailwind 4 + Vite works</h1>
+<%# Copy comes from the CMS (config/content_blocks.yml + /admin/content_blocks).
+    Each block falls back to its declared default, so this page renders complete
+    even against an empty database. %>
+<%# overflow-x-clip: the hero's radial glow is a fixed 24rem circle centred on a
+    mascot in a much narrower box, so on a small phone it reaches past the
+    viewport and drags a horizontal scrollbar with it. Clipped here rather than on
+    the section because Section::Component ignores its own `classes:` argument.
+    This wrapper is full width, so the only thing clipped is already off-screen,
+    and unlike overflow-hidden this does not create a scroll container. %>
+<div class="min-h-screen flex flex-col items-center justify-center overflow-x-clip">
+  <%= render Section::Component.new(
+    title: content_block("home.hero.title"),
+    subtitle: content_block("home.hero.subtitle"),
+    align: :left,
+    background: :ink,
+    bordered: false,
+    classes: "flex justify-center! items-center!"
+  ) do |section| %>
+    <div class="w-80 max-w-[70%] relative flex items-center justify-center">
+      <%= image_tag "mascot-grey.png", class: "z-10" %>
+      <div class="absolute block w-96 h-96 rounded-full bg-radial from-gradient-hero to-transparent to-70%"></div>
+    </div>
+
+    <% section.with_actions do %>
+      <%# wraps rather than overflowing: both pills are whitespace-nowrap, so
+          side by side they are wider than a phone screen %>
+      <div class="flex flex-wrap gap-4">
+        <%= render Buttons::Component.new(
+          text: t("nav.book"),
+          pill: true,
+          variant: :primary,
+          href: bookings_path,
+          classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+        ) %>
+        <%= render Buttons::Component.new(
+          text: t("nav.see_packages"),
+          pill: true,
+          variant: :secondary,
+          href: packages_path,
+          classes: "hover:cursor-pointer text-t6! py-3 px-6 font-semibold! bg-ink-soft! border-taupe-dark!"
+        ) %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= render Section::Component.new(
+    background: :ink_soft,
+    align: :center,
+    padding: :compact
+  ) do |section| %>
+    <ul class="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 list-none p-0 m-0">
+      <% content_items("home.stats").each do |stat| %>
+        <li class="flex items-center gap-2 text-t5 text-cream">
+          <%= icon "astroid", class: "size-4 shrink-0 text-accent" %>
+          <%= stat["text"] %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= render Section::Component.new(
+    background: :ink,
+    align: :left,
+    bordered: false
+  ) do |section| %>
+    <div class="flex flex-col md:flex-row w-full gap-6 md:items-center">
+      <%# full width stacked, the same treatment as the about page — at w-1/4 on a
+          phone the portrait was a thumbnail %>
+      <div class="w-full md:w-1/4">
+        <%# uploaded in the panel; until there is one, an empty frame rather than
+            a broken <img> %>
+        <% photo = content_image("home.about.photo",
+                                 alt: content_block("home.about.title"),
+                                 class: "border border-border-strong rounded-lg border-px w-full aspect-square object-cover") %>
+
+        <%= photo || tag.div(class: "border border-dashed border-border-strong rounded-lg w-full aspect-square") %>
+      </div>
+      <div class="flex flex-col gap-6 w-full md:w-3/4">
+        <h2 class="text-accent font-display text-t2"><%= content_block("home.about.title") %></h2>
+
+        <%# divs, not spans: rich text renders a block-level trix-content wrapper %>
+        <div class="text-cream md:max-w-3/4">
+          <%= content_block("home.about.lead") %>
+        </div>
+        <div class="text-tan md:max-w-3/4">
+          <%= content_block("home.about.body") %>
+        </div>
+
+        <%# label and target both editable; the arrow is chrome, so it is not
+            part of the copy the owner types %>
+        <%= link_to content_link_url("home.about.cta_url") do %>
+          <span class="font-bold text-t6! text-accent">
+            <%= content_block("home.about.cta_label") %>
+          </span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= render Section::Component.new(
+    align: :center,
+    background: :ink_soft,
+    bordered: false
+  ) do |section| %>
+    <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.packages.title") %></h2>
+    <span class="text-tan md:max-w-3/4"><%= content_block("home.packages.subtitle") %></span>
+
+    <%# real packages, in the order set in the admin panel; copy comes off the
+        record in the current locale, falling back to Polish %>
+    <% if @packages.any? %>
+      <%# same steps as the catalogue page, so the two read alike %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @packages.each do |package| %>
+          <%= render Card::Component.new(classes: "w-auto min-h-64 border-border-strong!") do |card| %>
+            <% card.with_body do %>
+              <div class="flex flex-col justify-start items-start gap-6">
+                <h3 class="text-accent! font-display text-t3! dark:text-cream"><%= package.name %></h3>
+
+                <% if package.duration %>
+                  <span class="text-t5 font-display text-taupe">
+                    <%= t("packages.duration", count: package.duration) %>
+                  </span>
+                <% end %>
+
+                <p class="text-t5 text-tan text-start"><%= package.for_whom %></p>
+
+                <%# no per-package page: land on the catalogue at this card.
+                    Label is CMS copy, the arrow is chrome — the same split as the
+                    about section's CTA, so the owner rewording this does not have
+                    to retype an arrow or risk losing it. %>
+                <%= link_to packages_path(anchor: dom_id(package)) do %>
+                  <span class="text-t6 text-cream hover:text-accent">
+                    <%= content_block("home.packages.details") %> -&gt;
+                  </span>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= render Section::Component.new(
+    align: :center,
+    background: :ink,
+    bordered: false
+  ) do |section| %>
+    <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.process.title") %></h2>
+
+    <%# owner-managed list: numbering follows display order rather than being stored.
+        flex-1 rather than a fixed column count — the owner can add a fourth step
+        in the panel, and the row should divide itself rather than break. %>
+    <div class="flex flex-col md:flex-row w-full gap-10 md:gap-12">
+      <% content_items("home.process").each_with_index do |step, index| %>
+        <div class="flex-1 flex flex-col items-center text-center gap-4">
+          <div class="w-16 h-16 shrink-0 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">
+            <%= index + 1 %>
+          </div>
+          <span class="text-t4 font-display"><%= step["title"] %></span>
+          <span class="text-taupe"><%= step["body"] %></span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= render Section::Component.new(
+    align: :left,
+    background: :ink_soft,
+    bordered: false
+  ) do |section| %>
+    <div class="flex flex-col md:flex-row gap-6">
+      <div class="flex flex-col gap-6 w-full md:w-1/2">
+        <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.audio.title") %></h2>
+        <div class="text-tan md:max-w-3/4"><%= content_block("home.audio.body") %></div>
+        <div>
+          <%= render Buttons::Component.new(
+            text: t("nav.go_to_shop"),
+            pill: true,
+            variant: :primary,
+            href: products_path,
+            classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+          ) %>
+        </div>
+      </div>
+      <%# tiles rather than stacked cards: this is a teaser for the shop, so it
+          shows several at a glance instead of one wide row each. content-start
+          keeps them their natural height instead of stretching to fill the half. %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full md:w-1/2 content-start">
+        <% @products.each do |product| %>
+          <%= render Card::Component.new(padding: :sm, classes: "h-full border-border-strong!") do |card| %>
+            <% card.with_body do %>
+              <div class="flex flex-col items-start gap-1.5">
+                <span class="text-t6 uppercase text-taupe"><%= product.kind_label %></span>
+                <h3 class="text-accent! font-display text-t5! dark:text-cream"><%= product.name %></h3>
+                <%# clamped, not truncated server-side: the full description still
+                    belongs on the product itself %>
+                <p class="text-t6 text-tan text-start line-clamp-2"><%= product.description %></p>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Last section on the page, as in the design. The form is its own partial and
+      its own frame so a rejected address re-renders inside it rather than
+      reloading the whole home page — the visitor is at the bottom of a long page
+      and a full reload would put them back at the top. %>
+  <%# Heading and copy sit in the block rather than in `title:`/`subtitle:` on
+      purpose. Passing them to the component switches it to its two-column
+      layout, which puts the heading in a `md:max-w-1/2` column and leaves it
+      hanging on the left of a section the design centres. Written this way it
+      takes the single-column branch, the same as the packages and process
+      sections above. %>
+  <%= render Section::Component.new(
+    align: :center,
+    background: :ink,
+    bordered: false
+  ) do |section| %>
+    <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.newsletter.title") %></h2>
+    <%# narrower than the section so the line breaks near the middle rather than
+        running the full 1240px, which is what the design's 900px box does %>
+    <span class="text-tan max-w-xl"><%= content_block("home.newsletter.subtitle") %></span>
+
+    <%= render "newsletter_subscriptions/form", signup: NewsletterSignup.new %>
+  <% end %>
 </div>

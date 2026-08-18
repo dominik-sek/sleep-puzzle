@@ -1,0 +1,109 @@
+<%# The design's Moje konto: the library, the upcoming consultation and account
+    settings, each with an empty state.
+
+    The design draws a login form here for signed-out visitors. Devise already
+    owns that screen, and `authenticate_user!` sends them to it, so there is no
+    second copy of a login form in this app. %>
+<div class="min-h-screen flex flex-col items-center">
+  <%= render Section::Component.new(
+    background: :ink,
+    align: :left,
+    bordered: false
+  ) do |section| %>
+    <div class="max-w-[1000px] mx-auto w-full">
+      <div class="mb-10 flex flex-wrap items-center justify-between gap-3.5">
+        <div>
+          <h1 class="font-display font-bold text-t2 text-cream m-0">
+            <%= content_block("dashboard.hero.title") %>
+          </h1>
+          <p class="mt-1.5 text-t6 text-tan m-0">
+            <%= content_block("dashboard.hero.subtitle") %>
+          </p>
+        </div>
+
+        <%= button_to t("nav.sign_out"), destroy_user_session_path, method: :delete,
+              form_class: "contents",
+              class: "cursor-pointer rounded-[22px] border border-border-input bg-transparent px-4.5 py-2.5 text-t6 font-bold text-tan hover:border-accent hover:text-accent" %>
+      </div>
+
+      <%= render "dashboard/section_heading", title: content_block("dashboard.library.title") %>
+
+      <% if @products.any? %>
+        <div class="mb-11 flex flex-col gap-3">
+          <% @products.each do |product| %>
+            <%# the row is no longer one big link: a player nested inside an anchor
+                would navigate away the moment someone reached for the scrubber %>
+            <div class="rounded-2xl border border-border-strong bg-surface px-5 py-4">
+              <%= link_to product_path(product), class: "group flex items-center gap-4 no-underline" do %>
+                <span class="text-[26px] leading-none" aria-hidden="true"><%= product.display_icon %></span>
+                <span class="flex-1 min-w-0">
+                  <span class="block text-[15px] font-bold text-cream truncate group-hover:text-accent"><%= product.name %></span>
+                  <span class="block text-[12px] text-taupe"><%= product.kind_label %></span>
+                </span>
+              <% end %>
+
+              <%# preload="none" so nothing is fetched and no token is minted until
+                  play is actually pressed. Products with no file uploaded keep the
+                  plain row — a control with nothing behind it would be a lie. %>
+              <% if product.streamable? %>
+                <audio controls preload="none" class="mt-3.5 w-full"
+                       src="<%= stream_product_path(product) %>"
+                       aria-label="<%= t('products.player.label', name: product.name) %>"></audio>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <%= render "dashboard/empty_state",
+                   body: content_block("dashboard.library.empty"),
+                   label: content_block("dashboard.library.empty_link"),
+                   href: products_path %>
+      <% end %>
+
+      <%= render "dashboard/section_heading", title: content_block("dashboard.bookings.title") %>
+
+      <% if @bookings.any? %>
+        <div class="mb-11 flex flex-col gap-3">
+          <% @bookings.each do |booking| %>
+            <div class="flex items-center gap-4 rounded-2xl border border-border-strong bg-surface px-5.5 py-4.5">
+              <span class="text-[26px] leading-none" aria-hidden="true">📅</span>
+              <div class="flex-1 min-w-0">
+                <div class="text-[15px] font-bold text-cream">
+                  <%= l(booking.starts_at, format: :long) %>
+                </div>
+                <div class="text-[12px] text-taupe"><%= booking.package.name %></div>
+              </div>
+
+              <%# only when it is not simply confirmed: a booking still waiting on
+                  a payment has to say so, or the buyer reads it as settled %>
+              <% unless booking.confirmed? %>
+                <span class="shrink-0 rounded-full border border-border-input px-3 py-1 text-[12px] font-bold text-taupe">
+                  <%= booking.status_label %>
+                </span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <%= render "dashboard/empty_state",
+                   body: content_block("dashboard.bookings.empty"),
+                   label: content_block("dashboard.bookings.empty_link"),
+                   href: bookings_path %>
+      <% end %>
+
+      <%= render "dashboard/section_heading", title: content_block("dashboard.settings.title") %>
+
+      <%# the design leaves this a block of text; Devise already owns the form, so
+          this points at it rather than growing a second one %>
+      <div class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border-strong bg-surface p-5.5">
+        <div>
+          <p class="text-t6 text-tan m-0"><%= content_block("dashboard.settings.body") %></p>
+          <p class="mt-1 text-t6 text-taupe m-0"><%= current_user.email %></p>
+        </div>
+
+        <%= link_to content_block("dashboard.settings.cta"), edit_user_registration_path,
+              class: "rounded-[22px] border border-border-input px-4.5 py-2.5 text-t6 font-bold text-cream no-underline hover:border-accent hover:text-accent" %>
+      </div>
+    </div>
+  <% end %>
+</div>

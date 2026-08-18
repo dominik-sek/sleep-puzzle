@@ -1,0 +1,33 @@
+<% content_for :title, "Kalendarz Google — Panel" %>
+
+<div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[800px]">
+  <div class="flex flex-col gap-1">
+    <h1 class="text-t2 font-display text-cream">Kalendarz Google</h1>
+    <p class="text-t5 text-taupe">
+      Opłacone rezerwacje trafiają do tego kalendarza jako wydarzenia.
+    </p>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-4 rounded-xl border border-border-strong bg-surface px-4 py-3">
+    <% if @integration.present? %>
+      <span class="inline-block rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 text-t6 font-medium text-emerald-300 whitespace-nowrap">
+        Połączono
+      </span>
+
+      <%= button_to "Odłącz kalendarz", integrations_google_calendar_path, method: :delete,
+            form_class: "contents ml-auto",
+            data: { turbo_confirm: "Odłączyć kalendarz Google? Nowe rezerwacje przestaną trafiać do kalendarza." },
+            class: "inline-flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-transparent px-3 py-2 text-t6 font-medium text-red-400 cursor-pointer hover:bg-red-500/10" %>
+    <% else %>
+      <span class="inline-block rounded-full border border-taupe/20 bg-taupe/10 px-2.5 py-1 text-t6 font-medium text-taupe whitespace-nowrap">
+        Nie połączono
+      </span>
+
+      <%= link_to connect_integrations_google_calendar_path,
+                  class: "ml-auto inline-flex items-center gap-1.5 rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink no-underline shadow-sm hover:bg-accent-hover" do %>
+        <%= icon "calendar-cog", class: "size-3.5 shrink-0" %>
+        Połącz kalendarz Google
+      <% end %>
+    <% end %>
+  </div>
+</div>

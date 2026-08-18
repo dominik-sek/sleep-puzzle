@@ -4,7 +4,9 @@
       "Bash(wsl.exe -d Ubuntu -e bash -lc 'cd /home/dsek4/sleep-puzzle && ls -la bin/ | head -20')",
       "Bash(wsl.exe -d Ubuntu -e bash -lc 'cd /home/dsek4/sleep-puzzle && eval \"$\\(~/.local/bin/mise activate bash\\)\" && bin/rubocop 2>&1 | tail -10')",
       "Bash(wsl.exe -d Ubuntu -e bash -lc 'cd /home/dsek4/sleep-puzzle && sed -i \"s/def index\\\\\\\\n  end/def index\\\\\\\\nend/\" /dev/null 2>&1; printf \"class HomeController < ApplicationController\\\\n  def index\\\\n\\\\n  end\\\\nend\\\\n\" > app/controllers/home_controller.rb && git add -A app/controllers/home_controller.rb && git commit -m \"test hook\" --dry-run 2>&1 | head -5')",
-      "Bash(wsl.exe -d Ubuntu -e bash -lc 'cd /home/dsek4/sleep-puzzle && eval \"$\\(~/.local/bin/mise activate bash\\)\" && bundle exec rspec 2>&1 | tail -30')"
+      "Bash(wsl.exe -d Ubuntu -e bash -lc 'cd /home/dsek4/sleep-puzzle && eval \"$\\(~/.local/bin/mise activate bash\\)\" && bundle exec rspec 2>&1 | tail -30')",
+      "WebSearch",
+      "WebFetch(domain:wicky.nillia.ms)"
     ]
   }
 }

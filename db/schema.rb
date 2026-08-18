@@ -10,7 +10,269 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 0) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_17_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "action_text_rich_texts", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "bookings", force: :cascade do |t|
+    t.string "calendar_event_id"
+    t.datetime "confirmed_at"
+    t.datetime "created_at", null: false
+    t.string "email", default: "", null: false
+    t.string "name"
+    t.integer "package_id", null: false
+    t.string "paddle_transaction_id"
+    t.datetime "starts_at"
+    t.integer "status", default: 0, null: false
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["package_id"], name: "index_bookings_on_package_id"
+    t.index ["paddle_transaction_id"], name: "index_bookings_on_paddle_transaction_id", unique: true
+    t.index ["starts_at", "status"], name: "index_bookings_on_starts_at_and_status"
+    t.index ["token"], name: "index_bookings_on_token", unique: true
+    t.index ["user_id"], name: "index_bookings_on_user_id"
+  end
+
+  create_table "content_blocks", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "key", null: false
+    t.datetime "updated_at", null: false
+    t.text "value_en"
+    t.text "value_pl"
+    t.index ["key"], name: "index_content_blocks_on_key", unique: true
+  end
+
+  create_table "content_items", force: :cascade do |t|
+    t.string "collection_key", null: false
+    t.datetime "created_at", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "values", default: {}, null: false
+    t.index ["collection_key", "position"], name: "index_content_items_on_collection_key_and_position"
+  end
+
+  create_table "integrations", force: :cascade do |t|
+    t.text "access_token"
+    t.datetime "created_at", null: false
+    t.datetime "expires_at"
+    t.text "refresh_token"
+    t.string "service_name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_name"], name: "index_integrations_on_service_name", unique: true
+  end
+
+  create_table "order_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "order_id", null: false
+    t.bigint "product_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id", "product_id"], name: "index_order_items_on_order_id_and_product_id", unique: true
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "paddle_transaction_id"
+    t.datetime "paid_at"
+    t.integer "status", default: 0, null: false
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["paddle_transaction_id"], name: "index_orders_on_paddle_transaction_id", unique: true
+    t.index ["token"], name: "index_orders_on_token", unique: true
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "packages", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "duration"
+    t.string "paddle_price_id"
+    t.integer "position", default: 0, null: false
+    t.boolean "published", default: false, null: false
+    t.jsonb "translations", default: {}, null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "pay_charges", force: :cascade do |t|
+    t.integer "amount", null: false
+    t.integer "amount_refunded"
+    t.integer "application_fee_amount"
+    t.datetime "created_at", null: false
+    t.string "currency"
+    t.bigint "customer_id", null: false
+    t.jsonb "data"
+    t.jsonb "metadata"
+    t.jsonb "object"
+    t.string "processor_id", null: false
+    t.string "stripe_account"
+    t.bigint "subscription_id"
+    t.string "type"
+    t.datetime "updated_at", null: false
+    t.index ["customer_id", "processor_id"], name: "index_pay_charges_on_customer_id_and_processor_id", unique: true
+    t.index ["subscription_id"], name: "index_pay_charges_on_subscription_id"
+  end
+
+  create_table "pay_customers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.jsonb "data"
+    t.boolean "default"
+    t.datetime "deleted_at", precision: nil
+    t.jsonb "object"
+    t.bigint "owner_id"
+    t.string "owner_type"
+    t.string "processor", null: false
+    t.string "processor_id"
+    t.string "stripe_account"
+    t.string "type"
+    t.datetime "updated_at", null: false
+    t.index ["owner_type", "owner_id", "deleted_at"], name: "pay_customer_owner_index", unique: true
+    t.index ["processor", "processor_id"], name: "index_pay_customers_on_processor_and_processor_id", unique: true
+  end
+
+  create_table "pay_merchants", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.jsonb "data"
+    t.boolean "default"
+    t.bigint "owner_id"
+    t.string "owner_type"
+    t.string "processor", null: false
+    t.string "processor_id"
+    t.string "type"
+    t.datetime "updated_at", null: false
+    t.index ["owner_type", "owner_id", "processor"], name: "index_pay_merchants_on_owner_type_and_owner_id_and_processor"
+  end
+
+  create_table "pay_payment_methods", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "customer_id", null: false
+    t.jsonb "data"
+    t.boolean "default"
+    t.string "payment_method_type"
+    t.string "processor_id", null: false
+    t.string "stripe_account"
+    t.string "type"
+    t.datetime "updated_at", null: false
+    t.index ["customer_id", "processor_id"], name: "index_pay_payment_methods_on_customer_id_and_processor_id", unique: true
+  end
+
+  create_table "pay_subscriptions", force: :cascade do |t|
+    t.decimal "application_fee_percent", precision: 8, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "current_period_end", precision: nil
+    t.datetime "current_period_start", precision: nil
+    t.bigint "customer_id", null: false
+    t.jsonb "data"
+    t.datetime "ends_at", precision: nil
+    t.jsonb "metadata"
+    t.boolean "metered"
+    t.string "name", null: false
+    t.jsonb "object"
+    t.string "pause_behavior"
+    t.datetime "pause_resumes_at", precision: nil
+    t.datetime "pause_starts_at", precision: nil
+    t.string "payment_method_id"
+    t.string "processor_id", null: false
+    t.string "processor_plan", null: false
+    t.integer "quantity", default: 1, null: false
+    t.string "status", null: false
+    t.string "stripe_account"
+    t.datetime "trial_ends_at", precision: nil
+    t.string "type"
+    t.datetime "updated_at", null: false
+    t.index ["customer_id", "processor_id"], name: "index_pay_subscriptions_on_customer_id_and_processor_id", unique: true
+    t.index ["metered"], name: "index_pay_subscriptions_on_metered"
+    t.index ["pause_starts_at"], name: "index_pay_subscriptions_on_pause_starts_at"
+  end
+
+  create_table "pay_webhooks", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.jsonb "event"
+    t.string "event_type"
+    t.string "processor"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.integer "category"
+    t.string "cdn_path"
+    t.datetime "created_at", null: false
+    t.string "icon"
+    t.integer "kind"
+    t.integer "length_minutes"
+    t.string "paddle_price_id"
+    t.integer "position", default: 0, null: false
+    t.boolean "published", default: false, null: false
+    t.jsonb "translations", default: {}, null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.boolean "admin", default: false, null: false
+    t.string "avatar_url"
+    t.datetime "created_at", null: false
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "first_name"
+    t.string "last_name"
+    t.string "provider"
+    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at"
+    t.string "reset_password_token"
+    t.string "uid"
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "bookings", "packages"
+  add_foreign_key "bookings", "users"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "products"
+  add_foreign_key "orders", "users"
+  add_foreign_key "pay_charges", "pay_customers", column: "customer_id"
+  add_foreign_key "pay_charges", "pay_subscriptions", column: "subscription_id"
+  add_foreign_key "pay_payment_methods", "pay_customers", column: "customer_id"
+  add_foreign_key "pay_subscriptions", "pay_customers", column: "customer_id"
 end

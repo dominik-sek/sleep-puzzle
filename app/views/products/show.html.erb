@@ -1,0 +1,106 @@
+<%# The design's Produkt screen: a big icon panel beside the buy column, then the
+    prose and the "co dostajesz" bullets, then three other products.
+
+    Every section below the fold is skipped when the owner has not filled it in —
+    a product with no long description and no bullets renders as just the top
+    half rather than as empty headings. %>
+<div class="min-h-screen flex flex-col items-center">
+  <%= render Section::Component.new(
+    background: :ink,
+    align: :left,
+    bordered: false
+  ) do |section| %>
+    <div class="max-w-[1080px] mx-auto w-full">
+      <%= link_to products_path, class: "text-t6 font-bold text-accent no-underline hover:text-accent-hover" do %>
+        ← <%= content_block("shop.product.back") %>
+      <% end %>
+
+      <div class="mt-6.5 grid items-start gap-7 md:gap-12 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
+        <div class="flex aspect-square items-center justify-center rounded-3xl border border-border-strong bg-linear-[135deg,var(--color-border-strong),var(--color-ink)] text-[110px]"
+             aria-hidden="true">
+          <%= @product.display_icon %>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <span class="text-[12px] font-extrabold uppercase tracking-[0.6px] text-accent">
+            <%= @product.kind_label %>
+          </span>
+
+          <h1 class="font-display font-bold text-[clamp(28px,4.5vw,40px)] leading-[1.15] text-cream text-pretty m-0">
+            <%= @product.name %>
+          </h1>
+
+          <% if @product.description.present? %>
+            <p class="text-[17px] leading-[1.65] text-tan text-pretty m-0"><%= @product.description %></p>
+          <% end %>
+
+          <% price_label = product_price_label(@product) %>
+
+          <div class="mt-1 flex items-baseline gap-3.5">
+            <span class="font-display font-bold text-[34px] text-cream tabular-nums">
+              <%= price_label || content_block("shop.card.unavailable") %>
+            </span>
+            <% if @product.length_label %>
+              <span class="text-t6 font-semibold text-taupe"><%= @product.length_label %></span>
+            <% end %>
+          </div>
+
+          <%= render "products/cart_actions", product: @product %>
+
+          <dl class="mt-3 grid gap-3 border-t border-border pt-5.5 [grid-template-columns:repeat(auto-fit,minmax(120px,1fr))]">
+            <% if @product.length_label %>
+              <%= render "products/spec_item", label: content_block("shop.product.length"), value: @product.length_label %>
+            <% end %>
+            <%= render "products/spec_item", label: content_block("shop.product.format"),
+                       value: content_block("shop.product.format_value") %>
+            <%= render "products/spec_item", label: content_block("shop.product.access"),
+                       value: content_block("shop.product.access_value") %>
+          </dl>
+        </div>
+      </div>
+
+      <% if @product.long_description.present? || @product.includes.any? %>
+        <div class="mt-11 md:mt-16 grid gap-7 md:gap-12 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
+          <% if @product.long_description.present? %>
+            <div>
+              <h2 class="mb-3.5 text-[13px] font-extrabold uppercase tracking-[0.6px] text-accent">
+                <%= content_block("shop.product.about") %>
+              </h2>
+              <p class="text-t5 leading-[1.75] text-tan text-pretty m-0"><%= @product.long_description %></p>
+            </div>
+          <% end %>
+
+          <% if @product.includes.any? %>
+            <div>
+              <h2 class="mb-3.5 text-[13px] font-extrabold uppercase tracking-[0.6px] text-accent">
+                <%= content_block("shop.product.includes") %>
+              </h2>
+              <ul class="flex flex-col gap-3 list-none p-0 m-0">
+                <% @product.includes.each do |item| %>
+                  <li class="flex items-start gap-3">
+                    <span class="text-[15px] font-extrabold leading-[1.5] text-accent shrink-0" aria-hidden="true">✦</span>
+                    <span class="text-[15.5px] leading-[1.55] text-cream"><%= item %></span>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if @also.any? %>
+        <div class="mt-12 md:mt-20 border-t border-border pt-9">
+          <h2 class="mb-5.5 font-display font-bold text-t3 text-cream">
+            <%= content_block("shop.product.more") %>
+          </h2>
+
+          <div class="grid gap-4.5 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+            <% @also.each do |other| %>
+              <%= render "products/also_card", product: other %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

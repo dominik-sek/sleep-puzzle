@@ -1,0 +1,46 @@
+<%= turbo_frame_tag "booking_form", data: { cally_target: "bookingFrame" } do %>
+<%= form_with model: booking, url: bookings_path do |f| %>
+
+    <%= hidden_field_tag "booking[date]", local_assigns[:submitted_date], data: { cally_target: "dateField" } %>
+    <%= hidden_field_tag "booking[hour]", local_assigns[:submitted_hour], data: { cally_target: "timeField" } %>
+
+  <h2 class="font-display text-t4 mb-4"><%= t("bookings.form.your_details") %></h2>
+
+<div class="space-y-4">
+  <%= render Forms::Component.new(label: t("bookings.form.name"), name: "booking[name]", required: true, error: booking.errors[:name].first) do |c| %>
+    <% c.with_input do %>
+      <%= f.text_field :name, class: "form-control", placeholder: t("bookings.form.name_placeholder") %>
+    <% end %>
+  <% end %>
+
+  <%# locked to the account email: bookings require sign-in, and the server ignores
+      whatever is posted here in favour of current_user.email %>
+  <%= render Forms::Component.new(label: t("bookings.form.email"), name: "booking[email]", required: true, helper_text: t("bookings.form.email_hint"), error: booking.errors[:email].first) do |c| %>
+    <% c.with_input do %>
+      <%= f.email_field :email, class: "form-control", readonly: true %>
+    <% end %>
+  <% end %>
+
+  <%= render Forms::Component.new(label: t("bookings.form.package"), name: "booking[package]", required: true, error: booking.errors[:package].first) do |c| %>
+    <% c.with_input do %>
+      <%= f.select :package_id, package_options, { prompt: true }, { class: "form-control" } %>
+    <% end %>
+  <% end %>
+</div>
+
+  <% if booking.errors[:starts_at].present? %>
+    <p class="text-red-400 text-xs mt-1">Wybierz ponownie termin w kalendarzu.</p>
+  <% end %>
+
+
+    <%# submits the booking first; bookings#create responds with the stream that opens checkout %>
+    <%= render Buttons::Component.new(
+      text: t("bookings.form.submit"),
+      type: "submit",
+      variant: :primary,
+      full_width: true,
+      classes: "hover:cursor-pointer mt-4")
+    %>
+
+<% end %>
+<% end %>

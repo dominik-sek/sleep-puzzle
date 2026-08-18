@@ -1,0 +1,29 @@
+<%= turbo_stream.replace "flash" do %>
+  <%= render "shared/flash" %>
+<% end %>
+
+<%= turbo_stream.replace "cart" do %>
+  <%= render "cart/cart", cart: current_cart %>
+<% end %>
+
+<%= turbo_stream.replace "cart_badge" do %>
+  <%= render "shared/cart_badge" %>
+<% end %>
+
+<%# only on the shop page; a stream for a target that is not on this page is a
+    no-op, so both can be sent unconditionally %>
+<%= turbo_stream.replace "cart_pill" do %>
+  <%= render "shared/cart_pill" %>
+<% end %>
+
+<%# whichever of the two is on screen: the shop grid carries the bare toggle, the
+    product page the whole cluster that depends on the cart. A stream for a target
+    that is not on this page is a no-op, so both go out every time. They are never
+    nested, so neither can clobber the other.  %>
+<%= turbo_stream.replace dom_id(@product, :cart_toggle) do %>
+  <%= render "products/cart_toggle", product: @product %>
+<% end %>
+
+<%= turbo_stream.replace dom_id(@product, :cart_actions) do %>
+  <%= render "products/cart_actions", product: @product %>
+<% end %>

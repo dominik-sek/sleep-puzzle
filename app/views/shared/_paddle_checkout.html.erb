@@ -1,0 +1,27 @@
+<%#
+  Mounts the Paddle overlay for a pending record. Shared by the booking and the
+  order flows: everything specific to what is being bought is already resolved
+  into `checkout` by the controller, so this only has to hand it over.
+
+  Empty when checkout couldn't be prepared, so the turbo stream still clears any
+  previous one.
+
+  The toast copy is resolved here rather than in the controller: Stimulus has no
+  `t()`, and these strings are shown to buyers on both the Polish and the English
+  site.
+
+  locals: checkout
+%>
+<%= tag.div id: "paddle_checkout", data: (checkout && {
+      controller: "paddle",
+      paddle_items_value: checkout[:items].to_json,
+      paddle_custom_data_value: checkout[:custom_data].to_json,
+      paddle_customer_id_value: checkout[:customer_id],
+      paddle_success_url_value: checkout[:success_url],
+      paddle_abandon_url_value: checkout[:abandon_url],
+      paddle_open_failed_title_value: t("paddle.open_failed_title"),
+      paddle_blocked_message_value: t("paddle.blocked"),
+      paddle_retry_message_value: t("paddle.retry"),
+      paddle_error_title_value: t("paddle.error_title"),
+      paddle_error_fallback_value: t("paddle.error_fallback")
+    }) %>

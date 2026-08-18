@@ -1,1 +1,598 @@
 @import "tailwindcss";
+
+@source "../../views";
+@source "../../components";
+@source "../../helpers";
+
+@utility section-padding {
+  padding: clamp(50px, 8vw, 90px) clamp(20px, 4vw, 28px);
+}
+
+@utility section-padding-compact {
+  padding: clamp(12px, 2vw, 28px) clamp(20px, 4vw, 28px);
+}
+
+@utility section-padding-none {
+  padding: 0 clamp(20px, 4vw, 28px);
+}
+
+@theme {
+  /* Fonts — Quicksand for body copy, Baloo 2 for display/headings */
+  --font-sans: "Quicksand", sans-serif;
+  --font-display: "Baloo 2", sans-serif;
+
+  /* Line heights, from the prototype's most-tracked-to-loosest copy */
+  --leading-display: 1.08;   /* hero title */
+  --leading-heading: 1.2;    /* section headings */
+  --leading-title: 1.4;      /* card / post titles */
+  --leading-normal: 1.5;
+  --leading-body: 1.6;       /* default paragraph copy */
+  --leading-relaxed: 1.7;
+  --leading-copy: 1.75;      /* long-form (about page) paragraphs */
+  --leading-loose: 1.8;
+
+  /* Text styles — size + line-height + weight bundled per level (font-family still separate: pair with font-display / font-sans) */
+  --text-t1: clamp(2.25rem, 6vw, 4rem);   /* 36–64px, hero */
+  --text-t1--line-height: 1.08;
+  --text-t1--font-weight: 700;
+
+  --text-t2: clamp(1.75rem, 5vw, 2.5rem); /* 28–40px, page/section title */
+  --text-t2--line-height: 1.2;
+  --text-t2--font-weight: 700;
+
+  --text-t3: 1.625rem;                    /* 26px, card/subsection title */
+  --text-t3--line-height: 1.2;
+  --text-t3--font-weight: 700;
+
+  --text-t4: 1.1875rem;                   /* 19px, lead paragraph */
+  --text-t4--line-height: 1.7;
+  --text-t4--font-weight: 400;
+
+  --text-t5: 1rem;                        /* 16px, body */
+  --text-t5--line-height: 1.6;
+  --text-t5--font-weight: 500;
+
+  --text-t6: 0.875rem;                    /* 14px, small/label */
+  --text-t6--line-height: 1.4;
+  --text-t6--font-weight: 700;
+  --text-t6--letter-spacing: 0.02em;
+
+  /* Surfaces, darkest to lightest */
+  --color-ink: #211e1c;         /* page background */
+  --color-ink-soft: #26221f;    /* alternating section background */
+  --color-surface: #2b2724;     /* card background */
+  --color-surface-dark: #1a1817; /* footer background */
+
+  /* Borders */
+  --color-border: #35302c;        /* hairline / section dividers */
+  --color-border-strong: #3d3833; /* card borders */
+  --color-border-input: #47413b;  /* pill / input borders */
+
+  /* Text */
+  --color-cream: #f5f0e8;    /* primary text */
+  --color-tan: #cfc7bc;      /* secondary text */
+  --color-taupe: #9b948a;    /* muted text */
+  --color-taupe-dark: #57504a; /* faint / placeholder text */
+
+  /* Accent — configurable brand color, default warm amber */
+  --color-accent: #e2933e;
+  --color-accent-hover: #ffb35e;
+  --color-accent-terracotta: #c97a2e;
+  --color-accent-coral: #e3987a;
+  --color-accent-gold: #d9a441;
+  --color-gradient-hero: #C97A2E33;
+}
+
+@layer base {
+  body {
+    margin: 0;
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-taupe);
+  }
+
+  a {
+    color: var(--color-accent);
+  }
+
+  a:hover {
+    color: var(--color-accent-hover);
+  }
+}
+
+
+/* Forms */
+
+label,
+.label {
+  @apply text-sm font-medium text-neutral-700 dark:text-neutral-100;
+}
+
+.form-input[disabled] {
+  @apply cursor-not-allowed bg-neutral-200;
+}
+
+/* Custom search input clear button styling */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 16px;
+  width: 16px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cg fill='%236b7280'%3E%3Cpath d='m2.25,10.5c-.192,0-.384-.073-.53-.22-.293-.293-.293-.768,0-1.061L9.22,1.72c.293-.293.768-.293,1.061,0s.293.768,0,1.061l-7.5,7.5c-.146.146-.338.22-.53.22Z' stroke-width='0'%3E%3C/path%3E%3Cpath d='m9.75,10.5c-.192,0-.384-.073-.53-.22L1.72,2.78c-.293-.293-.293-.768,0-1.061s.768-.293,1.061,0l7.5,7.5c.293.293.293.768,0,1.061-.146.146-.338.22-.53.22Z' stroke-width='0'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+  background-size: 12px 12px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+input[type="search"]::-webkit-search-cancel-button:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cg fill='%23374151'%3E%3Cpath d='m2.25,10.5c-.192,0-.384-.073-.53-.22-.293-.293-.293-.768,0-1.061L9.22,1.72c.293-.293.768-.293,1.061,0s.293.768,0,1.061l-7.5,7.5c-.146.146-.338.22-.53.22Z' stroke-width='0'%3E%3C/path%3E%3Cpath d='m9.75,10.5c-.192,0-.384-.073-.53-.22L1.72,2.78c-.293-.293-.293-.768,0-1.061s.768-.293,1.061,0l7.5,7.5c.293.293.293.768,0,1.061-.146.146-.338.22-.53.22Z' stroke-width='0'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+}
+
+.dark input[type="search"]::-webkit-search-cancel-button {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cg fill='%23d1d5db'%3E%3Cpath d='m2.25,10.5c-.192,0-.384-.073-.53-.22-.293-.293-.293-.768,0-1.061L9.22,1.72c.293-.293.768-.293,1.061,0s.293.768,0,1.061l-7.5,7.5c-.146.146-.338.22-.53.22Z' stroke-width='0'%3E%3C/path%3E%3Cpath d='m9.75,10.5c-.192,0-.384-.073-.53-.22L1.72,2.78c-.293-.293-.293-.768,0-1.061s.768-.293,1.061,0l7.5,7.5c.293.293.293.768,0,1.061-.146.146-.338.22-.53.22Z' stroke-width='0'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+}
+
+.dark input[type="search"]::-webkit-search-cancel-button:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cg fill='%23f3f4f6'%3E%3Cpath d='m2.25,10.5c-.192,0-.384-.073-.53-.22-.293-.293-.293-.768,0-1.061L9.22,1.72c.293-.293.768-.293,1.061,0s.293.768,0,1.061l-7.5,7.5c-.146.146-.338.22-.53.22Z' stroke-width='0'%3E%3C/path%3E%3Cpath d='m9.75,10.5c-.192,0-.384-.073-.53-.22L1.72,2.78c-.293-.293-.293-.768,0-1.061s.768-.293,1.061,0l7.5,7.5c.293.293.293.768,0,1.061-.146.146-.338.22-.53.22Z' stroke-width='0'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* non-input elements (like the Stripe card form) can be styled to look like an input */
+div.form-control {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  border-width: 1px;
+  padding-top: 0.5rem;
+  padding-right: 0.75rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.form-control {
+  @apply block w-full rounded-lg bg-ink-soft border-0 px-3 py-2 text-base/6 text-cream shadow-xs ring-1 ring-border-input outline-hidden ring-inset placeholder:text-taupe focus:ring-2 focus:ring-accent;
+}
+
+@media (min-width: 640px) {
+  .form-control {
+    font-size: 0.875rem; /* text-sm equivalent (14px) for larger screens */
+  }
+}
+
+.form-control[disabled] {
+  @apply cursor-not-allowed bg-surface-dark;
+}
+
+/* value comes from the account and can't be edited, but stays selectable */
+.form-control[readonly] {
+  @apply cursor-default bg-surface-dark text-tan focus:ring-1 focus:ring-border-input;
+}
+
+.form-control.error {
+  @apply border-red-400 ring-red-400;
+}
+
+select:not([multiple]) {
+  @apply w-full appearance-none rounded-lg border-0 bg-white px-3 py-2 text-base/6 text-neutral-900 shadow-xs ring-1 ring-neutral-300 outline-hidden ring-inset focus:ring-2 focus:ring-neutral-600;
+
+  /* Custom dropdown arrow */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23737373' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  padding-right: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  select:not([multiple]) {
+    font-size: 0.875rem; /* text-sm equivalent (14px) for larger screens */
+  }
+}
+
+/* Dark mode styling for single select */
+.dark {
+  select:not([multiple]) {
+    @apply dark:bg-neutral-700 dark:text-white dark:ring-neutral-600 dark:focus:ring-neutral-500;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23A1A1AA' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  }
+}
+
+select:not([multiple])[disabled] {
+  @apply cursor-not-allowed bg-neutral-100 opacity-75 ring-neutral-200 dark:bg-neutral-600 dark:ring-neutral-500;
+}
+
+select[multiple] {
+  @apply w-full rounded-lg rounded-r-none border-0 bg-white px-3 py-2.5 text-base/6 text-neutral-900 shadow-xs outline-1 -outline-offset-1 outline-neutral-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-neutral-600 dark:outline-neutral-600;
+  min-height: 120px;
+}
+
+select[multiple] option {
+  @apply rounded-md;
+}
+
+@media (min-width: 640px) {
+  select[multiple] {
+    font-size: 0.875rem; /* text-sm equivalent (14px) for larger screens */
+  }
+}
+
+/* Dark mode styling for multiple select */
+.dark {
+  select[multiple] {
+    @apply dark:bg-neutral-700 dark:text-white dark:ring-neutral-600 dark:focus:ring-neutral-500;
+  }
+}
+
+select[multiple][disabled] {
+  @apply cursor-not-allowed bg-neutral-100 opacity-75 ring-neutral-200 dark:bg-neutral-600 dark:ring-neutral-500;
+}
+
+option {
+  @apply bg-white px-3 py-2 text-sm text-neutral-900 dark:bg-neutral-700 dark:text-neutral-100;
+}
+
+option:checked {
+  @apply bg-neutral-100 dark:bg-neutral-600;
+}
+
+option:hover {
+  @apply bg-neutral-50 dark:bg-neutral-600;
+}
+
+.caret {
+  @apply pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-800;
+}
+
+[type="checkbox"] {
+  @apply size-4 cursor-pointer appearance-none rounded-sm border border-neutral-300 bg-white checked:border-neutral-700 checked:bg-neutral-700 focus:outline-2 focus:outline-offset-2 focus:outline-neutral-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-600 disabled:border-neutral-300 disabled:bg-neutral-100 disabled:checked:bg-neutral-100 dark:border-white/20 dark:bg-neutral-800 dark:checked:border-white/20 dark:checked:bg-neutral-900 dark:focus:outline-neutral-200 dark:focus-visible:outline-neutral-200 dark:disabled:border-neutral-500 dark:disabled:bg-neutral-400 dark:disabled:checked:bg-neutral-500 forced-colors:appearance-auto;
+}
+
+[type="checkbox"]:checked {
+  @apply text-white dark:text-neutral-800;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+[type="checkbox"]:indeterminate {
+  @apply border-neutral-400 bg-neutral-500 dark:border-white/20 dark:bg-neutral-700;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3e%3cg fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' %3e%3cline x1='10.75' y1='6' x2='1.25' y2='6'%3e%3c/line%3e%3c/g%3e%3c/svg%3e");
+  background-size: 75% 75%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+[type="checkbox"]:disabled {
+  @apply cursor-not-allowed border-neutral-300 bg-neutral-200 text-neutral-400 opacity-75 hover:text-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:text-neutral-500;
+}
+
+[type="checkbox"]:disabled:checked {
+  @apply border-neutral-300 bg-neutral-200 dark:border-neutral-600 dark:bg-neutral-600;
+}
+
+/* Anchor indicator for shift-click range selection */
+[type="checkbox"].checkbox-anchor {
+  outline: 2px dashed currentColor;
+  outline-offset: 2px;
+  @apply outline-neutral-600 dark:outline-neutral-200;
+}
+
+[type="radio"] {
+  @apply size-4 cursor-pointer appearance-none rounded-full border border-neutral-300 bg-white checked:border-neutral-700 checked:bg-neutral-700 focus:outline-2 focus:outline-offset-2 focus:outline-neutral-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-600 disabled:border-neutral-300 disabled:bg-neutral-100 disabled:checked:bg-neutral-100 dark:border-white/20 dark:bg-neutral-800 dark:checked:border-white/20 dark:checked:bg-neutral-900 dark:focus:outline-neutral-200 dark:focus-visible:outline-neutral-200 dark:disabled:border-neutral-500 dark:disabled:bg-neutral-400 dark:disabled:checked:bg-neutral-500 forced-colors:appearance-auto;
+}
+
+[type="radio"]:checked {
+  @apply text-white dark:text-neutral-800;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+[type="radio"]:disabled {
+  @apply cursor-not-allowed border-neutral-300 bg-neutral-300 text-neutral-400 opacity-75 hover:text-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:text-neutral-500;
+}
+
+[type="radio"]:disabled:checked {
+  @apply border-neutral-300 dark:border-neutral-600 dark:bg-neutral-600;
+}
+
+/* Datalist styling */
+input[list] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Replace default datalist arrow in WebKit browsers */
+input[list].replace-default-datalist-arrow::-webkit-calendar-picker-indicator {
+  display: none !important;
+  -webkit-appearance: none !important;
+}
+
+input[list].replace-default-datalist-arrow {
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23737373' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+}
+
+/* Dark mode datalist arrow */
+.dark {
+  input[list].replace-default-datalist-arrow {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23A1A1AA' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  }
+}
+
+/* custom styles go under, above are railsblocks defaults and design system */
+
+/* dark select to match .form-control (railsblocks' select:not([multiple]) above is light-themed) */
+select.form-control:not([multiple]) {
+  @apply bg-ink-soft text-cream ring-border-input focus:ring-accent;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239b948a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  padding-right: 2.5rem;
+}
+
+select.form-control:not([multiple]) option {
+  @apply bg-ink-soft text-cream;
+}
+calendar-date{
+
+  &::part(button) {
+    @apply text-cream bg-transparent border-none shadow-none appearance-none transition-all duration-100 ease-in-out w-10 h-10 rounded-lg
+  }
+  &::part(months) {
+      @apply text-t5
+  }
+  /* filled in by cally_controller with "MonthName Year" */
+  &::part(heading) {
+      @apply text-t5 font-display text-cream
+  }
+
+}
+
+/* written flat (not nested under calendar-date{}) because Tailwind's hover:
+   variant wraps declarations in @media(hover:hover), and that combination
+   nested inside &::part() silently fails to apply in this browser/pipeline
+   even though the exact same rule works fine written flat */
+calendar-date::part(button):hover {
+  background-color: color-mix(in oklab, var(--color-cream) 10%, transparent);
+}
+
+calendar-month{
+
+  --color-accent: #e2933e;
+  --color-text-on-accent: var(--color-cream);
+
+  /* the month name lives in calendar-date's heading slot (next to the arrows) instead */
+  &::part(heading){
+    @apply hidden
+  }
+  &::part(table){
+    @apply table-fixed w-full border-separate border-spacing-1
+  }
+  &::part(th){
+    @apply p-0
+  }
+  /* Sizing lives in the flat rule below, not here — see the note there. */
+  &::part(button){
+    @apply rounded-md flex items-center justify-center text-center w-full box-border text-t6 font-sans transition-all duration-100 ease-in-out bg-ink
+  }
+  &::part(week){
+    @apply text-t2
+  }
+  &::part(disallowed){
+    @apply bg-transparent text-border-input
+  }
+  &::part(selected){
+    @apply text-ink bg-accent
+  }
+}
+/* paging to another month re-renders every cell in place, so the button
+   transition above replays across the whole grid — the incoming days hold the
+   previous month's available background and visibly fade into disallowed.
+   cally_controller sets data-paging for the frame that re-render lands in;
+   the attribute also outranks the plain ::part(button) rule. */
+/* Day cells take their height from their width, so they stay square at every
+   size instead of only at the one the padding was tuned for. Previously a flat
+   p-6 set the height, which held cells at 68px tall even once the column had
+   narrowed to ~40px on a phone — adjacent available days then ran together into
+   bars. Written flat and in plain CSS deliberately: inside the nested
+   &::part(button) above, both Tailwind's aspect-square and responsive variants
+   are silently dropped by this pipeline, the same quirk the hover rules hit. */
+calendar-month::part(button) {
+  aspect-ratio: 1 / 1;
+  height: auto;
+  padding: 0;
+}
+
+calendar-month[data-paging]::part(button) {
+  transition: none;
+}
+
+/* written flat for the same reason as calendar-date::part(button):hover above */
+calendar-month::part(button):hover:not(:disabled) {
+  background-color: color-mix(in oklab, var(--color-accent) 20%, transparent);
+}
+
+/* ::part(disallowed) is how cally marks isDateDisallowed days — no native
+   disabled attribute is set, so :not(:disabled) above never excludes them.
+   :hover:not(:disabled) here matches the generic rule's specificity so this,
+   coming after it in source order, wins the tie and keeps disallowed days
+   transparent on hover instead of picking up the accent tint. */
+calendar-month::part(disallowed):hover:not(:disabled) {
+  @apply bg-transparent;
+}
+
+/* the selected day (part="button ... selected") also matches the rule above;
+   :not(:disabled) here matches its specificity so this rule, coming after it
+   in source order, wins the tie and keeps the selected day's solid accent
+   background instead of the lighter hover tint */
+calendar-month::part(selected):hover:not(:disabled) {
+  background-color: var(--color-accent);
+}
+
+/* hour-slot buttons (bookings/index) use aria-pressed as their "selected" state,
+   set by cally_controller#timeSelected — mirrors the calendar's selected-day styling */
+[data-cally-target="hoursPanel"] [aria-pressed="true"] {
+  @apply bg-accent text-ink;
+}
+
+
+/* Pagination — pagy generates the anchor markup inside Pagination::Component,
+   so it's styled by selector here rather than in the component. Scoped to .pagy
+   (not .pagy.series-nav) because the compact/minimal variants render bare
+   prev/next anchors outside the series nav. Rule order matters: the current
+   page also carries aria-disabled, so its rule has to come after that one. */
+.pagy.series-nav {
+  @apply flex items-center gap-1;
+}
+
+.pagy a {
+  @apply inline-flex items-center justify-center min-w-9 h-9 px-2 rounded-lg border border-border-input bg-surface text-sm font-medium text-tan no-underline tabular-nums transition-colors duration-100;
+}
+
+.pagy a:hover {
+  @apply bg-ink-soft text-cream;
+}
+
+.pagy a[aria-disabled="true"] {
+  @apply bg-transparent text-taupe-dark cursor-default;
+}
+
+.pagy a[role="separator"] {
+  @apply border-transparent bg-transparent;
+}
+
+.pagy a[aria-current="page"] {
+  @apply bg-accent text-ink border-accent-terracotta/30 cursor-default;
+}
+
+/* Action Text / Trix — trix.css (imported in application.js) ships a light
+   editor, so the chrome is restyled for the dark panel here. The toolbar icons
+   are dark SVG data URIs baked into that stylesheet, so they get inverted
+   rather than replaced. .trix-content styles both the editor body and the
+   rendered output on the public site, so what you type matches what ships. */
+trix-toolbar .trix-button-group {
+  @apply mb-2 rounded-lg border border-border-input bg-ink-soft overflow-hidden;
+}
+
+trix-toolbar .trix-button {
+  @apply border-0 border-r border-border-input bg-transparent text-cream text-xs;
+}
+
+trix-toolbar .trix-button:last-child {
+  @apply border-r-0;
+}
+
+trix-toolbar .trix-button:not(:disabled):hover {
+  @apply bg-surface;
+}
+
+trix-toolbar .trix-button.trix-active {
+  @apply bg-accent text-ink;
+}
+
+trix-toolbar .trix-button--icon::before {
+  filter: invert(1);
+  opacity: 0.7;
+}
+
+trix-toolbar .trix-button--icon.trix-active::before {
+  filter: invert(0);
+  opacity: 1;
+}
+
+trix-toolbar .trix-dialog {
+  @apply rounded-lg border border-border-input bg-surface p-3 text-cream;
+}
+
+trix-toolbar .trix-dialog input[type="url"] {
+  @apply rounded-lg border border-border-input bg-ink-soft px-2 py-1 text-cream;
+}
+
+trix-editor {
+  @apply min-h-56 rounded-lg border border-border-input bg-ink-soft px-3 py-2;
+}
+
+trix-editor:focus {
+  @apply outline-hidden ring-2 ring-accent;
+}
+
+trix-editor:empty:not(:focus)::before {
+  @apply text-taupe;
+}
+
+/* Preflight strips heading sizes and list markers, so the rendered rich text
+   needs them back explicitly. Trix's heading button emits <h1>. */
+.trix-content {
+  @apply text-t5 text-tan;
+}
+
+.trix-content h1 {
+  @apply mb-4 font-display text-t2 text-cream;
+}
+
+.trix-content p {
+  @apply mb-4;
+}
+
+.trix-content p:last-child {
+  @apply mb-0;
+}
+
+.trix-content strong {
+  @apply font-bold text-cream;
+}
+
+.trix-content a {
+  @apply text-accent underline;
+}
+
+.trix-content ul {
+  @apply mb-4 list-disc pl-6;
+}
+
+.trix-content ol {
+  @apply mb-4 list-decimal pl-6;
+}
+
+.trix-content blockquote {
+  @apply mb-4 border-l-2 border-accent pl-4 italic;
+}
+
+.trix-content figure.attachment {
+  @apply my-4;
+}
+
+.trix-content figure.attachment img {
+  @apply max-w-full h-auto rounded-lg;
+}
+
+.trix-content .attachment__caption {
+  @apply mt-2 text-t6 text-taupe;
+}

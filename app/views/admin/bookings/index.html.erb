@@ -1,0 +1,21 @@
+<% content_for :title, "Rezerwacje — Panel" %>
+
+<div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[1100px]">
+  <h1 class="text-t2 font-display text-cream">Rezerwacje</h1>
+
+  <%# filters stay in the query string, so pagy carries them onto every page link %>
+  <nav class="flex flex-wrap gap-2">
+    <%= admin_filter_link "Wszystkie", nil, @status, admin_bookings_path %>
+    <% Booking.statuses.each_key do |status| %>
+      <%= admin_filter_link Booking.status_label(status), status, @status,
+                            admin_bookings_path(status: status) %>
+    <% end %>
+  </nav>
+
+  <% if @bookings.any? %>
+    <%= render "admin/bookings/table", bookings: @bookings %>
+    <%= render Pagination::Component.new(pagy: @pagy) %>
+  <% else %>
+    <p class="text-t5 text-taupe">Brak rezerwacji dla wybranego filtra.</p>
+  <% end %>
+</div>

@@ -1,0 +1,11 @@
+<%#
+  What a dashboard section says before the buyer has done the thing. Always
+  carries the link that fills it — an empty section that only says "nothing here"
+  leaves the buyer to go and find the shop themselves.
+
+  locals: body, label, href
+%>
+<p class="mb-11 text-[15px] text-taupe m-0">
+  <%= body %>
+  <%= link_to label, href, class: "font-bold text-accent no-underline hover:text-accent-hover" %>
+</p>

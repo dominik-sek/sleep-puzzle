@@ -36,7 +36,22 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 2.0"
 
+gem "rails-i18n"
+
+# Pagination [https://ddnexus.github.io/pagy/]
+gem "pagy"
+
+gem "omniauth"
+
+gem "omniauth-google-oauth2"
+
+gem "omniauth-rails_csrf_protection"
+
+
 group :development, :test do
+  # Loads .env into ENV for any boot path (console, runner, server), not just `bin/dev`/foreman
+  gem "dotenv-rails"
+
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
@@ -59,6 +74,12 @@ group :development do
 
   # Run rails server and vite dev server together [https://github.com/ddollar/foreman]
   gem "foreman", require: false
+
+  # Auto-annotate models with schema info [https://github.com/drwl/annotaterb]
+  gem "annotaterb"
+
+  # Opens outgoing mail in the browser instead of trying to deliver it
+  gem "letter_opener"
 end
 
 group :test do
@@ -69,3 +90,21 @@ group :test do
   # Code coverage reporting [https://github.com/simplecov-ruby/simplecov]
   gem "simplecov", require: false
 end
+
+gem "devise", "~> 5.0"
+
+gem "view_component"
+
+gem "turbo-rails", "~> 2.0"
+
+gem "google-apis-calendar_v3", "~> 0.56.0"
+
+gem "googleauth", "~> 1.17"
+
+gem "rails_semantic_logger"
+
+gem "pay", "~> 11.5"
+
+gem "paddle", "~> 2.9"
+
+

@@ -1,0 +1,821 @@
+# The editable content of the public site, as pages > sections > fields.
+#
+# This file is the source of truth: `bin/rails content_blocks:sync` creates a row
+# for every field declared here. Nothing in the admin panel can invent a key,
+# because a typo in a key silently blanks a section of the site.
+#
+# field type:
+#   plain - a short string, rendered as-is into the template (titles, subtitles)
+#   rich  - Action Text, with a Trix editor and formatting (paragraphs, links)
+#   image - an uploaded picture, one file per key rather than one per language.
+#           Has no `default`: until something is uploaded the template decides
+#           what an empty slot looks like.
+#
+# default:
+#   The copy the page ships with. Used whenever the database has nothing for a
+#   field — including a fresh deploy, before anything has been seeded or edited —
+#   so the site never renders a blank section. Editing a block in the admin panel
+#   overrides it. `en` may be omitted: it falls back to `pl`.
+#
+#   For rich fields the default is HTML, and it is trusted: it comes from this
+#   file, not from user input.
+#
+# collection:
+#   A section may also hold a repeating list the owner can add to and remove from
+#   (process steps, stats). Items carry only plain short strings, and their
+#   `defaults` seed the list when the database has none.
+home:
+  label: Strona główna
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Układamy sen Twojej rodziny jak puzzle."
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Kawałek po kawałku pomagam odzyskać spokojne noce, równowagę i czas dla siebie, partnera i dziecka - z empatią, wiedzą i bez presji."
+    about:
+      label: O mnie
+      fields:
+        photo:
+          label: Zdjęcie
+          type: image
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Cześć, jestem Karola"
+        lead:
+          label: Wstęp
+          type: rich
+          default:
+            pl: "<div>Nazywam się Karola — ta, co układa sen rodzin jak puzzle. Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego.</div>"
+        body:
+          label: Treść
+          type: rich
+          default:
+            pl: "<div>„Piasek jest fajny — na plaży. Nie pod powiekami” :) Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą.</div>"
+        cta_label:
+          label: Przycisk — tekst
+          type: plain
+          default:
+            pl: "Poznaj mnie lepiej"
+            en: "More about me"
+        cta_url:
+          label: "Przycisk — adres (np. https://instagram.com/... lub /kontakt)"
+          type: plain
+          default:
+            pl: "/about"
+    stats:
+      label: Liczby
+      collection:
+        item_label: Liczba
+        fields:
+          text:
+            label: Treść
+            type: plain
+        defaults:
+          - text:
+              pl: "20+ lat"
+    process:
+      label: Jak wygląda współpraca
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Jak wygląda współpraca"
+      collection:
+        item_label: Krok
+        fields:
+          title:
+            label: Nagłówek
+            type: plain
+          body:
+            label: Opis
+            type: plain
+        defaults:
+          - title:
+              pl: "Krok pierwszy"
+            body:
+              pl: "Opis kroku"
+          - title:
+              pl: "Krok drugi"
+            body:
+              pl: "Opis kroku"
+          - title:
+              pl: "Krok trzeci"
+            body:
+              pl: "Opis kroku"
+    packages:
+      label: Pakiety współpracy
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Pakiety współpracy"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Od szybkiej ulgi po pełne poukładanie rodzinnego systemu — Ty wybierasz tempo."
+        details:
+          label: Odnośnik do szczegółów na kafelku
+          type: plain
+          default:
+            pl: "Zobacz szczegóły"
+            en: "See details"
+    audio:
+      label: Audioprocesy i bajki
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Audioprocesy i bajki na dobranoc"
+        body:
+          label: Treść
+          type: rich
+          default:
+            pl: "<div>Nagrania do samodzielnej pracy nad rutyną oraz kojące bajki audio dla dzieci — dostępne po zalogowaniu na Twoim koncie.</div>"
+    newsletter:
+      label: Newsletter
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Newsletter Sleep Puzzle"
+            en: "Sleep Puzzle newsletter"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Raz na jakiś czas — konkretna wiedza o śnie dziecka, bez spamu."
+            en: "Every now and then — real advice on child sleep, no spam."
+        placeholder:
+          label: Pole adresu — podpowiedź
+          type: plain
+          default:
+            pl: "Twój adres e-mail"
+            en: "Your email address"
+        button:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Zapisz się"
+            en: "Subscribe"
+        thanks:
+          label: Podziękowanie
+          type: plain
+          default:
+            pl: "Dzięki! Sprawdź skrzynkę, żeby potwierdzić zapis."
+            en: "Thanks! Check your inbox to confirm."
+packages:
+  label: Pakiety
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Pakiety współpracy"
+            en: "Working together"
+        subtitle:
+          label: Podtytuł
+          type: rich
+          default:
+            pl: "<div>Od szybkiej ulgi po pełne poukładanie rodzinnego systemu — Ty wybierasz tempo. Każdy pakiet zaczyna się od rozmowy o Waszej sytuacji.</div>"
+    card:
+      label: Etykiety na kartach
+      fields:
+        for_whom:
+          label: Nagłówek „dla kogo”
+          type: plain
+          default:
+            pl: "Dla kogo"
+            en: "Who it is for"
+        core:
+          label: Nagłówek listy korzyści
+          type: plain
+          default:
+            pl: "Co otrzymujecie"
+            en: "What you get"
+        extra:
+          label: Nagłówek listy dodatków
+          type: plain
+          default:
+            pl: "Dodatkowo"
+            en: "Also included"
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Umów konsultację"
+            en: "Book a consultation"
+    empty:
+      label: Gdy nie ma pakietów
+      fields:
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Pakiety pojawią się tutaj wkrótce. Napisz do mnie, a ustalimy wsparcie skrojone na Waszą sytuację."
+            en: "Packages are coming soon. Write to me and we will work out support that fits your situation."
+about:
+  label: O mnie
+  sections:
+    intro:
+      label: Przedstawienie
+      fields:
+        photo:
+          label: Zdjęcie
+          type: image
+        name:
+          label: Imię
+          type: plain
+          default:
+            pl: "Karola"
+        role:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "„Baba z internetów” — Konsultantka snu dziecięcego"
+            en: "The \"internet lady\" — Children's Sleep Consultant"
+        lead:
+          label: Wstęp
+          type: rich
+          default:
+            pl: "<div>Nazywam się Karola – ta, co układa sen rodzin jak puzzle. Kawałek po kawałku pomagam odzyskać spokojne noce, równowagę i czas dla siebie, partnera i dziecka.</div>"
+            en: "<div>My name is Karola — the one who pieces family sleep together like a puzzle. Piece by piece, I help you get calm nights back — and time for yourself, your partner and your child.</div>"
+        body:
+          label: Treść przed cytatem
+          type: rich
+          default:
+            pl: "<div>Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego. Dlatego nie działam szablonowo — każda rodzina to inna układanka, inne tempo i inna historia.</div>"
+            en: "<div>I believe healthy sleep starts with empathy, support, and an emotionally cared-for adult. That's why I never use a one-size-fits-all approach — every family is a different puzzle, a different pace, a different story.</div>"
+        quote:
+          label: Cytat
+          type: plain
+          default:
+            pl: "„Piasek jest fajny — na plaży. Nie pod powiekami” :)"
+            en: "\"Sand is fun — at the beach. Not under your eyelids\" :)"
+        body_after_quote:
+          label: Treść po cytacie
+          type: rich
+          default:
+            pl: "<div>Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą. Współpracując ze mną, nie tracisz czasu na sprzeczne informacje — masz swoją gadającą encyklopedię pod telefonem.</div>"
+            en: "<div>For over 20 years I've supported children and parents, combining sleep and development knowledge with mindfulness and real help. Working with me, you don't waste time on conflicting information — you have your own talking encyclopedia in your pocket.</div>"
+    certifications:
+      label: Certyfikaty
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Certyfikaty i kwalifikacje"
+            en: "Certifications & qualifications"
+      collection:
+        item_label: Certyfikat
+        fields:
+          text:
+            label: Treść
+            type: plain
+        defaults:
+          - text:
+              pl: "Certyfikacja OCN Level 6 — Konsultantka Snu, z mentoringiem i egzaminami ocenianymi zewnętrznie"
+              en: "OCN Level 6 Certification — Sleep Consultant, with mentoring and externally assessed exams"
+          - text:
+              pl: "Kwalifikacje Child Care Development (poziom licencjatu)"
+              en: "Child Care Development qualifications (degree level)"
+          - text:
+              pl: "Certyfikowana Terapeutka Bezsenności CBTi"
+              en: "Certified CBTi Insomnia Therapist"
+    cta:
+      label: Wezwanie do działania
+      fields:
+        label:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Umów konsultację"
+            en: "Book a consultation"
+bookings:
+  label: Kalendarz konsultacji
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Umów konsultację"
+            en: "Book a consultation"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Wybierz dogodny termin w kalendarzu, a potem uzupełnij krótki formularz zgłoszeniowy"
+            en: "Pick a time that suits you, then fill in the short booking form"
+shop:
+  label: Sklep
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Sklep"
+            en: "Shop"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Audioprocesy do samodzielnej pracy nad snem i kojące bajki audio dla najmłodszych."
+            en: "Audio processes for working on sleep on your own, and soothing audio stories for the little ones."
+    card:
+      label: Karta produktu
+      fields:
+        add:
+          label: Przycisk „do koszyka”
+          type: plain
+          default:
+            pl: "Dodaj do koszyka"
+            en: "Add to cart"
+        owned:
+          label: Przycisk, gdy produkt jest już kupiony
+          type: plain
+          default:
+            pl: "W Twoim koncie"
+            en: "In your account"
+        remove:
+          label: Przycisk „usuń z koszyka”
+          type: plain
+          default:
+            pl: "Usuń z koszyka"
+            en: "Remove from cart"
+        details:
+          label: Odnośnik do szczegółów
+          type: plain
+          default:
+            pl: "Zobacz szczegóły"
+            en: "See details"
+        unavailable:
+          label: Zamiast ceny, gdy nie da się jej pobrać
+          type: plain
+          default:
+            pl: "Chwilowo niedostępne"
+            en: "Temporarily unavailable"
+    product:
+      label: Strona produktu
+      fields:
+        back:
+          label: Powrót do sklepu
+          type: plain
+          default:
+            pl: "Wróć do sklepu"
+            en: "Back to shop"
+        length:
+          label: Etykieta „długość”
+          type: plain
+          default:
+            pl: "Długość"
+            en: "Length"
+        format:
+          label: Etykieta „format”
+          type: plain
+          default:
+            pl: "Format"
+            en: "Format"
+        format_value:
+          label: Format — wartość
+          type: plain
+          default:
+            pl: "MP3 do pobrania"
+            en: "Downloadable MP3"
+        access:
+          label: Etykieta „dostęp”
+          type: plain
+          default:
+            pl: "Dostęp"
+            en: "Access"
+        access_value:
+          label: Dostęp — wartość
+          type: plain
+          default:
+            pl: "Bezterminowy, w Twoim koncie"
+            en: "Lifetime, in your account"
+        about:
+          label: Nagłówek opisu
+          type: plain
+          default:
+            pl: "O tym nagraniu"
+            en: "About this recording"
+        includes:
+          label: Nagłówek „co dostajesz”
+          type: plain
+          default:
+            pl: "Co dostajesz"
+            en: "What you get"
+        added_note:
+          label: Potwierdzenie dodania do koszyka
+          type: plain
+          default:
+            pl: "Dodano do koszyka"
+            en: "Added to cart"
+        go_to_cart:
+          label: Przycisk „przejdź do koszyka”
+          type: plain
+          default:
+            pl: "Przejdź do koszyka"
+            en: "Go to cart"
+        more:
+          label: Nagłówek „inne materiały”
+          type: plain
+          default:
+            pl: "Inne materiały"
+            en: "Other materials"
+    empty:
+      label: Pusty sklep
+      fields:
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Nagrania pojawią się tu wkrótce. Zajrzyj za jakiś czas."
+            en: "Recordings will appear here soon. Do check back."
+cart:
+  label: Koszyk
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Koszyk"
+            en: "Cart"
+        total:
+          label: Etykieta sumy
+          type: plain
+          default:
+            pl: "Razem do zapłaty"
+            en: "Total"
+        checkout:
+          label: Przycisk płatności
+          type: plain
+          default:
+            pl: "Przejdź do płatności"
+            en: "Go to payment"
+    empty:
+      label: Pusty koszyk
+      fields:
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Twój koszyk jest pusty."
+            en: "Your cart is empty."
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Przeglądaj sklep"
+            en: "Browse the shop"
+    owned:
+      label: Gdy w koszyku jest coś już kupionego
+      fields:
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Masz już te nagrania na koncie, więc nie doliczamy ich do zamówienia."
+            en: "These are already in your account, so we are not charging for them again."
+        cta:
+          label: Odnośnik
+          type: plain
+          default:
+            pl: "Zobacz w koncie"
+            en: "See them in your account"
+    done:
+      label: Po zakupie
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Dziękujemy za zakup!"
+            en: "Thank you for your purchase!"
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Twoje audio jest już dostępne na koncie — miłego słuchania."
+            en: "Your audio is available on your account now — happy listening."
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Przejdź do konta"
+            en: "Go to my account"
+        pending:
+          label: Treść, gdy płatność jest jeszcze przetwarzana
+          type: plain
+          default:
+            pl: "Potwierdzamy płatność u operatora. Odśwież stronę za chwilę."
+            en: "We're confirming the payment with the provider. Refresh in a moment."
+dashboard:
+  label: Moje konto
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Moje konto"
+            en: "My account"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Twoje audiobajki, audioprocesy i najbliższa konsultacja w jednym miejscu."
+            en: "Your audio stories, audio processes and upcoming consultation in one place."
+    library:
+      label: Moje audio
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Moje audio"
+            en: "My audio"
+        empty:
+          label: Gdy nic nie kupiono
+          type: plain
+          default:
+            pl: "Nie masz jeszcze żadnych audio."
+            en: "You don't have any audio yet."
+        empty_link:
+          label: Odnośnik do sklepu
+          type: plain
+          default:
+            pl: "Przejdź do sklepu"
+            en: "Go to shop"
+    bookings:
+      label: Moje konsultacje
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Moje konsultacje"
+            en: "My consultations"
+        empty:
+          label: Gdy nie ma terminu
+          type: plain
+          default:
+            pl: "Nie masz zaplanowanej konsultacji."
+            en: "You don't have a scheduled consultation."
+        empty_link:
+          label: Odnośnik do kalendarza
+          type: plain
+          default:
+            pl: "Umów termin"
+            en: "Book a slot"
+    settings:
+      label: Ustawienia
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Ustawienia"
+            en: "Settings"
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Zmień adres e-mail, hasło i dane konta."
+            en: "Change your email address, password and account details."
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Edytuj dane konta"
+            en: "Edit account details"
+terms:
+  label: Regulamin
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Regulamin współpracy"
+            en: "Terms of cooperation"
+    clauses:
+      label: Punkty regulaminu
+      # a collection rather than a fixed set of fields: the owner has to be able
+      # to add and drop clauses without a deploy, and nothing on the page reads
+      # any single one of them by name
+      collection:
+        item_label: Punkt
+        fields:
+          heading:
+            label: Nagłówek
+            type: plain
+          body:
+            label: Treść
+            type: plain
+        defaults:
+          - heading:
+              pl: "1. Postanowienia ogólne"
+              en: "1. General provisions"
+            body:
+              pl: "Niniejszy regulamin określa zasady korzystania z konsultacji, pakietów wsparcia oraz materiałów audio dostępnych w ramach Sleep Puzzle."
+              en: "These terms set out the rules for using consultations, support packages and audio materials available through Sleep Puzzle."
+          - heading:
+              pl: "2. Zakres usług"
+              en: "2. Scope of services"
+            body:
+              pl: "Usługi obejmują konsultacje 1:1, pakiety wsparcia (Szybka ulga, Spokojny rytm, System rodziny) oraz sprzedaż audioprocesów i bajek audio dostępnych po zalogowaniu na koncie klienta."
+              en: "Services include 1:1 consultations, support packages (Quick Relief, Steady Rhythm, Family System) and the sale of audio processes and audio stories available after logging into a customer account."
+          - heading:
+              pl: "3. Rezerwacje i płatności"
+              en: "3. Bookings and payments"
+            body:
+              pl: "Rezerwacji terminu konsultacji dokonuje się poprzez kalendarz dostępny na stronie. Płatności za pakiety i produkty audio obsługiwane są przez zewnętrznego operatora płatności Paddle."
+              en: "Consultation slots are booked via the calendar on the site. Payments for packages and audio products are handled by the third-party payment provider Paddle."
+          - heading:
+              pl: "4. Odwołanie i zmiana terminu"
+              en: "4. Rescheduling and cancellations"
+            body:
+              pl: "Zmiana lub odwołanie terminu możliwe jest z odpowiednim wyprzedzeniem — szczegółowe zasady zostaną ustalone indywidualnie przy zawieraniu współpracy."
+              en: "Rescheduling or cancelling is possible with reasonable notice — detailed rules are agreed individually when starting cooperation."
+          - heading:
+              pl: "5. Charakter wsparcia"
+              en: "5. Nature of support"
+            body:
+              pl: "Konsultacje mają charakter wspierający i edukacyjny, nie zastępują konsultacji medycznej. W razie wątpliwości zdrowotnych zalecany jest kontakt z lekarzem pediatrą."
+              en: "Consultations are supportive and educational in nature and do not replace medical consultation. For health concerns, please contact a pediatrician."
+          - heading:
+              pl: "6. Poufność"
+              en: "6. Confidentiality"
+            body:
+              pl: "Wszystkie informacje przekazane w trakcie współpracy są traktowane jako poufne i nie są udostępniane osobom trzecim."
+              en: "All information shared during cooperation is treated as confidential and is not shared with third parties."
+footer:
+  label: Stopka
+  sections:
+    brand:
+      label: Pod logo
+      fields:
+        tagline:
+          label: Opis
+          type: plain
+          default:
+            pl: "Pomagam rodzinom spokojnie poukładać sen - z empatią, wsparciem i bez presji."
+            en: "Helping families calmly piece sleep back together — with empathy, support and no pressure."
+    columns:
+      label: Nagłówki kolumn
+      fields:
+        explore:
+          label: Kolumna z odnośnikami do stron
+          type: plain
+          default:
+            pl: "Odkrywaj"
+            en: "Explore"
+        account:
+          label: Kolumna z odnośnikami do konta
+          type: plain
+          default:
+            pl: "Konto"
+            en: "Account"
+        follow:
+          label: Kolumna z kontaktem
+          type: plain
+          default:
+            pl: "Bądźmy w kontakcie"
+            en: "Stay in touch"
+contact:
+  label: Kontakt
+  sections:
+    hero:
+      label: Sekcja główna
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Kontakt"
+            en: "Contact"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Masz pytanie zanim się umówisz? Napisz — odpowiadam osobiście."
+            en: "Got a question before booking? Write to me — I reply personally."
+    form:
+      label: Formularz
+      fields:
+        # each label doubles as the field's placeholder: the design shows no
+        # visible labels, so the same words carry the accessible name
+        name_label:
+          label: Pole „imię i nazwisko”
+          type: plain
+          default:
+            pl: "Imię i nazwisko"
+            en: "Full name"
+        email_label:
+          label: Pole „adres e-mail”
+          type: plain
+          default:
+            pl: "Adres e-mail"
+            en: "Email address"
+        body_label:
+          label: Pole „wiadomość”
+          type: plain
+          default:
+            pl: "Twoja wiadomość"
+            en: "Your message"
+        submit:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Wyślij wiadomość"
+            en: "Send message"
+        thanks:
+          label: Podziękowanie po wysłaniu
+          type: plain
+          default:
+            pl: "Dziękuję za wiadomość! Odezwę się najszybciej, jak mogę."
+            en: "Thanks for your message! I'll get back to you as soon as I can."
+    links:
+      label: Odnośniki obok formularza
+      collection:
+        item_label: Odnośnik
+        fields:
+          # an emoji rather than a name from the icon set: this is typed into the
+          # panel, and a mistyped set name would raise where a stray character
+          # only looks odd
+          icon:
+            label: Ikona (emoji)
+            type: plain
+          label:
+            label: Nazwa
+            type: plain
+          url:
+            label: Adres (np. https://... lub /pakiety)
+            type: plain
+        defaults:
+          - icon:
+              pl: "📷"
+            label:
+              pl: "Instagram @sleep.puzzle"
+            url:
+              pl: "https://www.instagram.com/sleep.puzzle"
+          - icon:
+              pl: "🎙️"
+            label:
+              pl: "Podcast o rodzicielstwie"
+              en: "Parenting podcast"
+            url:
+              pl: "#"
+          - icon:
+              pl: "🎙️"
+            label:
+              pl: "Podcast o zdrowiu dziecka"
+              en: "Child health podcast"
+            url:
+              pl: "#"
+          - icon:
+              pl: "🎙️"
+            label:
+              pl: "Rozmowy o śnie"
+              en: "Sleep talks"
+            url:
+              pl: "#"
+          - icon:
+              pl: "📄"
+            label:
+              pl: "Regulamin współpracy"
+              en: "Terms of cooperation"
+            url:
+              pl: "/terms"

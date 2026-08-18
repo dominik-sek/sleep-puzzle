@@ -1,0 +1,36 @@
+<%# Copy comes from the CMS (config/content_blocks.yml + /admin/content_blocks).
+    Narrower than the prose pages: this is a single column of legal text, so it
+    follows the design's 800px rather than the 1000px "O mnie" uses. %>
+<div class="flex flex-col items-center w-full">
+  <%= render Section::Component.new(
+    background: :ink,
+    align: :left,
+    bordered: false
+  ) do |section| %>
+    <div class="max-w-[800px] mx-auto w-full">
+      <h1 class="font-display font-bold text-t2 text-cream text-center mb-8">
+        <%= content_block("terms.hero.title") %>
+      </h1>
+
+      <%# <dl> rather than a heading-per-clause: each item is a term and its
+          definition, and the numbering lives in the copy the owner types, so
+          real <h2>s would put owner-entered numbers into the document outline %>
+      <dl class="flex flex-col gap-6.5 m-0">
+        <% content_items("terms.clauses").each do |clause| %>
+          <div>
+            <dt class="text-t6 font-extrabold text-accent mb-2">
+              <%= clause["heading"] %>
+            </dt>
+            <%# pre-line: the design renders these with white-space:pre-line, so a
+                clause the owner splits over several lines in the panel keeps its
+                breaks instead of collapsing into one paragraph. That is also why
+                the tag hugs the value below rather than sitting on its own
+                indented line: pre-line preserves newlines, so the template's own
+                line break would render as a blank first line under every heading. %>
+            <dd class="text-t6 text-tan leading-relaxed whitespace-pre-line m-0"><%= clause["body"] %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+  <% end %>
+</div>

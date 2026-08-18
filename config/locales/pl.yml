@@ -1,0 +1,237 @@
+pl:
+  activemodel:
+    attributes:
+      contact_message:
+        name: "Imię i nazwisko"
+        email: "Adres e-mail"
+        body: "Wiadomość"
+    errors:
+      models:
+        contact_message:
+          attributes:
+            name:
+              blank: "Podaj imię i nazwisko"
+            email:
+              blank: "Podaj adres e-mail"
+              invalid: "Podaj prawidłowy adres e-mail"
+            body:
+              blank: "Napisz wiadomość"
+  activerecord:
+    # Package and Product name is a translated value, not a column, so the label
+    # says which language is missing — rails-i18n supplies the "nie może być
+    # puste" half.
+    attributes:
+      user:
+        email: "Adres e-mail"
+        password: "Hasło"
+        password_confirmation: "Powtórzone hasło"
+        current_password: "Obecne hasło"
+        remember_me: "Nie wylogowuj mnie"
+      package:
+        name: "Nazwa (polski)"
+      product:
+        name: "Nazwa (polski)"
+    errors:
+      models:
+        package:
+          attributes:
+            name:
+              blank: "nie może być pusta"
+        product:
+          attributes:
+            name:
+              blank: "nie może być pusta"
+        booking:
+          attributes:
+            name:
+              blank: "Podaj imię i nazwisko"
+            email:
+              blank: "Podaj adres email"
+              invalid: "Podaj prawidłowy adres email"
+            package:
+              required: "Wybierz pakiet"
+  booking_mailer:
+    details:
+      package: "Pakiet"
+      starts_at: "Termin"
+      status: "Status płatności"
+      name: "Imię i nazwisko"
+      email: "Email"
+    confirmed:
+      subject: "Rezerwacja potwierdzona"
+      heading: "Rezerwacja potwierdzona"
+      intro: "Dziękujemy! Płatność została zaksięgowana, a Twój termin jest zarezerwowany."
+      cta: "Zobacz szczegóły rezerwacji"
+      outro: "Gdyby coś się zmieniło, po prostu odpisz na tę wiadomość."
+    new_booking:
+      subject: "Nowa opłacona rezerwacja: %{name}"
+      heading: "Nowa opłacona rezerwacja"
+      intro: "Konsultacja została opłacona i dodana do kalendarza."
+    payment_failed:
+      subject: "Płatność nie powiodła się"
+      heading: "Płatność nie powiodła się"
+      intro: "Nie udało się zaksięgować płatności, więc zwolniliśmy zarezerwowany termin. Możesz spróbować ponownie."
+      cta: "Wybierz nowy termin"
+  contact_mailer:
+    details:
+      name: "Imię i nazwisko"
+      email: "Email"
+    new_message:
+      subject: "Wiadomość z formularza kontaktowego: %{name}"
+      heading: "Nowa wiadomość z formularza kontaktowego"
+  contacts:
+    rate_limited: "Wysłano zbyt wiele wiadomości. Spróbuj ponownie za chwilę."
+    turnstile_failed: "Nie udało się potwierdzić, że nie jesteś robotem. Spróbuj ponownie."
+  newsletter:
+    rate_limited: "Zbyt wiele prób zapisu. Spróbuj ponownie za chwilę."
+    failed: "Nie udało się zapisać Cię do newslettera. Spróbuj ponownie za chwilę."
+  bookings:
+    statuses:
+      pending: "Oczekuje na płatność"
+      confirmed: "Opłacona"
+      payment_failed: "Płatność nieudana"
+      canceled: "Anulowana"
+    calendar:
+      processing: "Przetwarzamy płatność…"
+      processing_hint: "Za chwilę przeniesiemy Cię do potwierdzenia."
+      available_hours: "Dostępne godziny"
+      pick_a_day: "Wybierz dzień w kalendarzu, aby zobaczyć dostępne godziny."
+      previous_month: "Poprzedni miesiąc"
+      next_month: "Następny miesiąc"
+    summary:
+      confirmed_title: "Rezerwacja potwierdzona"
+      confirmed_body: "Dziękujemy! Płatność została zaksięgowana, a Twój termin jest zarezerwowany."
+      failed_title: "Płatność nie powiodła się"
+      failed_body: "Termin został zwolniony. Możesz spróbować zarezerwować go ponownie."
+      processing_title: "Przetwarzamy płatność"
+      processing_body: "To potrwa tylko chwilę — ta strona zaktualizuje się automatycznie."
+      package: "Pakiet"
+      starts_at: "Termin"
+      payment_status: "Status płatności"
+    available_slots:
+      one: "%{count} termin dostępny"
+      few: "%{count} terminy dostępne"
+      many: "%{count} terminów dostępnych"
+      other: "%{count} terminu dostępnego"
+    form:
+      your_details: "Twoje dane"
+      name: "Imię i nazwisko"
+      name_placeholder: "Jan Kowalski"
+      email: "Email"
+      package: "Wybierz pakiet"
+      email_hint: "Adres e-mail z Twojego konta"
+      choose_slot: "Wybierz dzień i godzinę"
+      submit: "Zapłać i potwierdź rezerwację"
+    status:
+      awaiting: "Czekamy na potwierdzenie od operatora płatności…"
+      back: "Wróć do panelu"
+  packages:
+    duration:
+      one: "Czas trwania wsparcia: %{count} tydzień"
+      few: "Czas trwania wsparcia: %{count} tygodnie"
+      many: "Czas trwania wsparcia: %{count} tygodni"
+      other: "Czas trwania wsparcia: %{count} tygodnia"
+  products:
+    kinds:
+      audio_process: "Audioproces"
+      bedtime_story: "Bajka na dobranoc"
+    player:
+      label: "Odtwórz: %{name}"
+    length_minutes:
+      one: "%{count} min"
+      other: "%{count} min"
+  auth:
+    fields:
+      email: "Adres e-mail"
+      password: "Hasło"
+      password_confirmation: "Powtórz hasło"
+      current_password: "Obecne hasło"
+      new_password: "Nowe hasło"
+    sign_in:
+      title: "Zaloguj się"
+      submit: "Zaloguj się"
+      forgot: "Nie pamiętasz hasła?"
+      no_account: "Nie masz jeszcze konta?"
+      sign_up_link: "Załóż konto"
+    sign_up:
+      title: "Załóż konto"
+      submit: "Załóż konto"
+      password_hint: "Minimum %{count} znaków."
+      have_account: "Masz już konto?"
+      sign_in_link: "Zaloguj się"
+    forgot:
+      title: "Nie pamiętasz hasła?"
+      intro: "Podaj adres e-mail, którym się logujesz. Wyślemy link do ustawienia nowego hasła."
+      submit: "Wyślij link"
+      back: "Wróć do logowania"
+    reset:
+      title: "Ustaw nowe hasło"
+      submit: "Zapisz nowe hasło"
+    edit:
+      title: "Dane konta"
+      intro: "Zmień adres e-mail lub hasło. Pola hasła zostaw puste, jeśli nie chcesz go zmieniać."
+      current_password_hint: "Podaj obecne hasło, aby potwierdzić zmiany."
+      submit: "Zapisz zmiany"
+      back: "Wróć do konta"
+      danger_title: "Usunięcie konta"
+      danger_body: "Usuwamy dane konta na stałe. Zakupione nagrania przestaną być dostępne."
+      destroy: "Usuń konto"
+      destroy_confirm: "Na pewno? Tej operacji nie da się cofnąć."
+    set_password:
+      title: "Ustaw hasło"
+      hint: "Zalogowałaś się przez Google, więc nie masz jeszcze hasła. Możesz je ustawić, żeby móc logować się także adresem e-mail."
+    oauth:
+      google: "Kontynuuj z Google"
+      separator: "albo"
+    mailer:
+      reset_password:
+        heading: "Ustaw nowe hasło"
+        intro: "Ktoś — mamy nadzieję, że Ty — poprosił o zmianę hasła do konta %{email}."
+        cta: "Ustaw nowe hasło"
+        expires: "Link jest ważny przez %{hours} godzin."
+        ignore: "Jeśli to nie Ty, po prostu zignoruj tę wiadomość. Hasło pozostanie bez zmian."
+      password_changed:
+        heading: "Hasło zostało zmienione"
+        intro: "Potwierdzamy, że hasło do konta %{email} zostało właśnie zmienione."
+        warning: "Jeśli to nie Ty, odezwij się do nas jak najszybciej."
+      email_changed:
+        heading: "Adres e-mail został zmieniony"
+        intro: "Potwierdzamy zmianę adresu e-mail przypisanego do konta."
+  nav:
+    packages: "Pakiety"
+    about: "O mnie"
+    blog: "Blog"
+    shop: "Sklep"
+    contact: "Kontakt"
+    terms: "Regulamin współpracy"
+    cart: "Koszyk"
+    remove_from_cart: "Usuń z koszyka"
+    my_account: "Moje konto"
+    admin: "Panel"
+    sign_in: "Zaloguj się"
+    sign_out: "Wyloguj się"
+    book: "Umów konsultację"
+    see_packages: "Zobacz pakiety"
+    go_to_shop: "Przejdź do sklepu"
+    copyright: "© %{year} Sleep Puzzle. Wszelkie prawa zastrzeżone."
+  orders:
+    statuses:
+      pending: "Oczekuje na płatność"
+      paid: "Opłacone"
+      payment_failed: "Płatność nieudana"
+      canceled: "Anulowana"
+  pagination:
+    showing: "Wyświetlono"
+    of: "z"
+    page: "Strona"
+    jump_to_page: "Przejdź do strony"
+    go: "Idź"
+    rows: "Wierszy"
+  paddle:
+    open_failed_title: "Nie udało się otworzyć płatności"
+    blocked: "Skrypt płatności został zablokowany. Wyłącz blokowanie reklam dla tej strony lub spróbuj w innej przeglądarce."
+    retry: "Spróbuj ponownie za chwilę."
+    error_title: "Płatność nie została zrealizowana"
+    error_fallback: "Spróbuj ponownie lub zapłać inną metodą."
+  toast:
+    close: "Zamknij"

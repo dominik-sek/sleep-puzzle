@@ -1,0 +1,168 @@
+<%= render(Navbar::Component.new(variant: :transparent, sticky: true, classes:"w-full text-t5 bg-surface-dark border-b border-border-strong py-1")) do |navbar| %>
+  <% navbar.with_logo do %>
+    <%# root_path, not a literal "/": a hardcoded href drops the locale, so clicking
+        the logo on an English page used to land back on the Polish home page %>
+    <%= link_to root_path, class: "flex items-center gap-4 py-2 px-6" do %>
+      <span class="font-display text-t3 text-cream">
+        sleep.puzzle
+      </span>
+    <% end %>
+  <% end %>
+
+  <%# One list, two presentations: inline in the bar here, and again in the
+      hamburger panel below. Both read NavigationHelper#primary_nav_items, so a
+      new link only has to be added once. mobile_hidden drops these out of the bar
+      below lg, where the hamburger takes over. %>
+  <% primary_nav_items.each do |item| %>
+    <% navbar.with_item(label: item[:label], href: item[:href], mobile_hidden: true) %>
+  <% end %>
+
+  <%# What the hamburger opens. Without a dropdown content whose id matches the
+      button's data-content-id, navbar#openMenu finds nothing and returns, which
+      is why the button used to do nothing at all. %>
+  <% navbar.with_dropdown_content(id: "mobile-menu-content") do %>
+    <div class="flex flex-col">
+      <% primary_nav_items.each do |item| %>
+        <%= link_to item[:label], item[:href], class: "block rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft hover:text-accent" %>
+      <% end %>
+
+      <hr class="my-2 border-border" />
+
+      <%= render "shared/locale_toggle", item_classes: mobile_menu_item_classes %>
+
+      <%# the bar's basket is hidden below lg along with the rest of the actions %>
+      <%= link_to cart_path, class: mobile_menu_item_classes do %>
+        <%= icon "shopping-bag", class: "size-4.5 shrink-0 text-taupe" %>
+        <span><%= t("nav.cart") %><%= " (#{current_cart.count})" if current_cart.count.positive? %></span>
+      <% end %>
+
+      <% if user_signed_in? %>
+        <%= link_to dashboard_index_path, class: mobile_menu_item_classes do %>
+          <%= icon "user", class: "size-4.5 shrink-0 text-taupe" %>
+          <span><%= t("nav.my_account") %></span>
+        <% end %>
+        <% if current_user.admin? %>
+          <%= link_to admin_root_path, class: mobile_menu_item_classes do %>
+            <%= icon "layout-dashboard", class: "size-4.5 shrink-0 text-taupe" %>
+            <span><%= t("nav.admin") %></span>
+          <% end %>
+        <% end %>
+        <%= button_to destroy_user_session_path, method: :delete,
+              form_class: "contents", class: mobile_menu_item_classes do %>
+          <%= icon "log-out", class: "size-4.5 shrink-0 text-taupe" %>
+          <span><%= t("nav.sign_out") %></span>
+        <% end %>
+      <% else %>
+        <%= link_to t("nav.sign_in"), new_user_session_path, class: "block rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft hover:text-accent" %>
+      <% end %>
+
+      <div class="mt-2 px-1">
+        <%= render Buttons::Component.new(
+          text: t("nav.book"),
+          pill: true,
+          variant: :secondary,
+          href: bookings_path,
+          full_width: true,
+          classes: "hover:cursor-pointer bg-accent! font-bold! text-ink!"
+        ) %>
+      </div>
+    </div>
+  <% end %>
+
+  <% navbar.with_actions do %>
+    <%# hidden below sm: these repeat inside the hamburger panel, and side by side
+        with it they push the bar wider than the screen %>
+    <li class="ml-2 pl-2 border-l border-border w-full hidden lg:flex gap-2 items-center">
+      <%# same trigger shape as the profile menu beside it, so the two read as a pair %>
+      <div class="relative">
+        <button type="button"
+                data-navbar-target="trigger"
+                data-content-id="locale-content"
+                aria-controls="locale-content"
+                aria-expanded="false"
+                aria-label="<%= locale_name(I18n.locale) %>"
+                data-align="end"
+                data-action="click->navbar#toggleMenu pointerenter->navbar#handlePointerEnter pointermove->navbar#handlePointerMove pointerleave->navbar#handlePointerLeave keydown->navbar#handleTriggerKeydown"
+                data-state="closed"
+                class="group flex items-center gap-1.5 rounded-md px-2 py-2 text-sm font-medium text-cream select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          <span aria-hidden="true"><%= locale_flag(I18n.locale) %></span>
+          <span class="uppercase text-t6 font-bold"><%= I18n.locale %></span>
+          <%= icon "chevron-down", class: "size-3.5 shrink-0 text-taupe" %>
+        </button>
+      </div>
+
+      <%# outside the signed-in branch, unlike the profile menu: the trigger is shown
+          to everyone, and a trigger whose content never rendered opens nothing %>
+      <% navbar.with_dropdown_content(id: "locale-content", width: "w-44") do %>
+        <%= render "shared/locale_toggle", item_classes: profile_menu_item_classes %>
+      <% end %>
+
+      <%= render "shared/cart_badge" %>
+      <% if user_signed_in? %>
+        <button type="button"
+                data-navbar-target="trigger"
+                data-content-id="profile-content"
+                aria-controls="profile-content"
+                aria-expanded="false"
+                data-align="end"
+                data-action="click->navbar#toggleMenu pointerenter->navbar#handlePointerEnter pointermove->navbar#handlePointerMove pointerleave->navbar#handlePointerLeave keydown->navbar#handleTriggerKeydown"
+                data-state="closed"
+                class="group hover:cursor-pointer flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-cream select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          <% if current_user.avatar_url.present? %>
+            <%= image_tag current_user.avatar_url, class: "size-6 rounded-full object-cover", alt: "" %>
+          <% else %>
+            <div class="flex items-center justify-center size-6 rounded-full bg-gradient-to-br from-red-400 to-red-600 text-white text-xs font-semibold">
+              <%= current_user.initials %>
+            </div>
+          <% end %>
+        </button>
+
+        <%# w-56, not "fit": `fit` is not a Tailwind class, so it resolved to nothing
+            and the panel collapsed to the width of its longest label. %>
+        <% navbar.with_dropdown_content(id: "profile-content", width: "w-56") do %>
+          <%# link_to, not button_to: these are GETs, and a form per menu item was
+              markup for nothing. Only signing out needs one, because it is a DELETE. %>
+          <%= link_to dashboard_index_path, class: profile_menu_item_classes do %>
+            <%= icon "user", class: "size-4 shrink-0 text-taupe" %>
+            <span><%= t("nav.my_account") %></span>
+          <% end %>
+
+          <% if current_user.admin? %>
+            <%= link_to admin_root_path, class: profile_menu_item_classes do %>
+              <%= icon "layout-dashboard", class: "size-4 shrink-0 text-taupe" %>
+              <span><%= t("nav.admin") %></span>
+            <% end %>
+          <% end %>
+
+          <%# a hairline in the panel's own palette. A bare <hr> takes the browser
+              default, which on a dark panel reads as a bright white rule. %>
+          <div class="my-1 h-px bg-border" role="separator"></div>
+
+          <%= button_to destroy_user_session_path, method: :delete,
+                form_class: "contents", class: profile_menu_item_classes do %>
+            <%= icon "log-out", class: "size-4 shrink-0 text-taupe" %>
+            <span><%= t("nav.sign_out") %></span>
+          <% end %>
+        <% end %>
+
+      <% else %>
+        <%= render Buttons::Component.new(
+          text: t("nav.sign_in"),
+          href: "/users/sign_in",
+          pill: true,
+          variant: :secondary,
+          classes: "hover:cursor-pointer bg-accent! font-bold! text-ink!"
+        ) %>
+      <% end %>
+      <%= render Buttons::Component.new(
+        text: t("nav.book"),
+        pill: true,
+        variant: :secondary,
+        href: bookings_path,
+        classes: "hover:cursor-pointer bg-accent! font-bold! text-ink!"
+      ) %>
+    </li>
+  <% end %>
+
+
+<% end %>

@@ -1,0 +1,17 @@
+<%# The navbar's basket. Replaced by every cart_items stream, so the count stays
+    honest without a reload; wrapped in its own id for exactly that reason. %>
+<%= tag.span id: "cart_badge", class: "contents" do %>
+  <%= link_to cart_path, class: "relative flex items-center rounded-md p-2 no-underline text-cream hover:bg-ink-soft hover:text-accent",
+        "aria-label": t("nav.cart") do %>
+    <%= icon "shopping-bag", class: "size-5" %>
+
+    <% if current_cart.count.positive? %>
+      <%# -top-0.5/-right-0.5 rather than a negative inset large enough to clip:
+          the trigger beside it is the same height, so the bubble has to stay
+          inside the bar %>
+      <span class="absolute -top-0.5 -right-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-accent px-1 text-[11px] font-extrabold text-ink tabular-nums">
+        <%= current_cart.count %>
+      </span>
+    <% end %>
+  <% end %>
+<% end %>

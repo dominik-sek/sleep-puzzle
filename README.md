@@ -1,13 +1,722 @@
 # README
 
+## System dependencies
+
+* Ruby 4.0.5 (see `.ruby-version`)
+* PostgreSQL
+* **libvips** — Active Storage resizes uploaded CMS images through it
+  (`ActiveStorage.variant_processor` is `:vips`). Without it an upload succeeds
+  but every variant URL 500s with `undefined method 'new' for nil`, because the
+  `image_processing` gem is only a wrapper around the C library.
+
+  ```sh
+  brew install vips          # macOS
+  apt-get install libvips    # Debian/Ubuntu
+  ```
+
+  The Dockerfile already installs it, so this is a local-setup step only.
+
+## Editable content (`config/content_blocks.yml`)
+
+Everything the owner can edit on the public site is declared in that one YAML
+file and edited at `/admin/content_blocks`. The thing to understand is that
+**the YAML is the schema** — no Ruby anywhere names a field. `ContentBlock::Registry`
+loads the file into a plain Hash and walks it with three nested `map`s, so meaning
+comes from *depth*, not from a list of known names:
+
+| Level | Nested under | Becomes |
+| --- | --- | --- |
+| 1 | (top level) | a page |
+| 2 | `sections:` | a section |
+| 3 | `fields:` | a field |
+
+Whatever key sits at level 3 becomes a field whose `key` is that string. Adding
+one is therefore just adding lines — there is nothing to register it in.
+
+The key used in a template is flattened back up the chain
+(`Section#full_key`, `Field#full_key`), so this:
+
+```yaml
+footer:                 # page
+  label: Stopka
+  sections:
+    brand:              # section
+      label: Pod logo
+      fields:
+        tagline:        # field
+          label: Opis
+          type: plain
+          default:
+            pl: "Pomagam rodzinom…"
+            en: "Helping families…"
+```
+
+is read in a view as `content_block("footer.brand.tagline")`.
+
+### Adding a field
+
+1. Add it to the YAML under the right page/section.
+2. Run `bin/rails content_blocks:sync` — that is
+   `Registry.keys.each { |key| find_or_create_by!(key: key) }`, so it creates a
+   blank row per declared key and never touches copy anyone has already written.
+3. Read it in the template with `content_block("page.section.field")`
+   (`content_image` for `image` fields, `content_items` for a collection).
+
+### Rules worth knowing
+
+* **Types** are `plain`, `rich` (Action Text, with a Trix editor) or `image`
+  (one upload, not one per language). An unknown type raises at boot, naming the
+  exact `page.section.field`.
+* **`label:` is required** at every level — a missing one raises `KeyError` on
+  load rather than rendering an unlabelled box in the panel.
+* **`default:` is optional.** It is the copy the page ships with, used whenever
+  the database has nothing — including on a fresh deploy — so no section ever
+  renders blank. `en` may be omitted and falls back to `pl`.
+* **`fields:` is optional too**, which is what lets a section hold only a
+  `collection:` (see `home.stats`) — a repeating list the owner can add to and
+  remove from, whose items carry short `plain` strings only.
+* **Order follows the file.** Ruby hashes keep insertion order, so the sequence
+  in the YAML is the sequence in the admin panel; moving a field means moving
+  its lines.
+* **The registry reloads per request in development** and is memoised elsewhere,
+  so editing the YAML locally needs a page refresh, not a restart.
+* **An unknown key** passed to `content_block` raises in development and test and
+  is ignored in production — a typo should be loud while building a page and must
+  never take a live page down.
+
+## Shop, cart and checkout
+
+Three pieces, and the thing to understand is that **no amount is ever stored
+here**. Paddle owns the money (see `Purchasable`): a `Product` carries a
+`paddle_price_id` and nothing else about price, and every figure on screen is
+read back through `PaddlePriceCatalogService`. That is why a product whose price
+cannot be read renders as "Chwilowo niedostępne" with no add button, and why
+`Cart#total_label` returns `nil` rather than a total that quietly omits a line —
+it is the number the buyer checks before paying.
+
+Each product carries its **own emoji** in `products.icon`, set in the admin
+panel, because the design gives every card and cart line a distinct one (🌙, ☀️,
+🧸) rather than one per kind. It is nullable — `Product#display_icon` falls back
+through `Product::KIND_ICONS` — so a product added without one still renders.
+
+`/products/:id` follows the design's **Produkt** screen: a large icon panel beside
+the buy column, a spec strip (długość / format / dostęp), then "O tym nagraniu"
+and "Co dostajesz", then up to three other products. Three of those fields are the
+product's own — `length_minutes` (an integer, formatted through
+`t("products.length_minutes")`, because a number reads the same in both languages)
+plus the translated `long_description` and the `includes` bullet list. Format and
+access are the same sentence for everything sold, so they are CMS copy rather than
+columns. Every section below the buy column is skipped when the owner has not
+filled it in, so a product added in a hurry renders as just the top half rather
+than as a page of empty headings.
+
+### The cart is the session
+
+`Cart` is not an `ActiveRecord`. It wraps `session["cart"]`, which holds nothing
+but a **set of product ids**:
+
+* **Nothing to expire.** A table would mean a row per anonymous visitor and a
+  sweep job to clean them up, for a list the buyer can rebuild in three clicks.
+* **Nothing to merge.** The session survives sign-in, so a cart filled while
+  signed out is still there afterwards — which is what lets checkout ask for an
+  account only at the very end.
+* **Products are resolved on read**, through `Product.published`. Something
+  unpublished or deleted after it was added simply drops out of the cart, with
+  nothing having to reach into everyone's session.
+
+**There are no quantities.** Everything sold is a digital file — an MP3, an MP4 —
+so a second copy of one is the same copy. That single decision is why `Cart#add`
+is idempotent, why `OrderItem` is nothing but the join between an order and a
+product, and why the shop's button is a *toggle*: press it once to add, again to
+remove, rather than counting up. `Order#paddle_items` always sends
+`quantity: 1`, because Paddle wants the key.
+
+**Nothing is ever sold twice.** A file already bought is not something to sell
+again, so ownership blocks it at three levels rather than one: the shop's button
+becomes a link into the account, `CartItemsController` refuses the POST behind it,
+and `Cart` keeps owned products out of `#lines` altogether — which is what covers
+the case nothing else would, a cart filled *before* signing in that turns out to
+hold something this account already owns. Because `count`, `total_label` and the
+order all read through `#lines`, an owned file cannot be counted, totalled or
+charged. It is reported separately as `#already_owned` so the cart can say where
+it went instead of appearing to have lost it.
+
+The cart is capped at `Cart::MAX_ITEMS`, which is a guard and not a business
+rule: the session is a cookie, and an unbounded cart would let one visitor fill
+it past the 4KB limit and break every later write.
+
+### Checkout is the Paddle overlay
+
+The design draws a payment screen with card fields. It is deliberately not built —
+Paddle's overlay collects the card, so the only thing on our side is turning the
+cart into something Paddle's webhook can name:
+
+1. `OrdersController#create` builds a **pending** `Order` from the cart and empties
+   the cart, because the order now holds what the cart held.
+2. `shared/_paddle_checkout` mounts the Stimulus controller, which opens the
+   overlay with every line and `customData: { order_id }`.
+3. Paddle redirects to `orders#show`, which says "still confirming" until the
+   webhook lands rather than claiming success on its own.
+4. `paddle_billing.transaction.completed` reaches `OrderConfirmationService`,
+   which flips the order to `paid`.
+
+`orders#abandon` is what happens when the buyer closes the overlay: **closing it
+fires no webhook**, so the browser reports it instead. The order is deleted and
+its lines go back into the cart, so a mis-click does not cost the buyer their
+basket.
+
+One thing Paddle enforces that is easy to trip over: a price can carry a **maximum
+quantity**, and a checkout that asks for more than it allows is rejected outright.
+Nothing here ever sends more than 1 (see *There are no quantities* above), so this
+only matters if quantities are ever reintroduced.
+
+### Looking a purchase up afterwards
+
+`/admin/orders` is where "I paid and cannot see my audio" gets answered: the buyer,
+what they bought, and the **Paddle transaction id**, which is what a refund or a
+dispute is looked up by on Paddle's side. An order sitting on *oczekuje* with no
+transaction id is itself the diagnosis — the `transaction.completed` webhook never
+landed.
+
+There is deliberately **no buyer-facing purchase history**. Paddle is Merchant of
+Record, so it is the seller on the transaction and emails the buyer their receipt
+and invoice; the obligation is Paddle's, not ours. What a buyer actually asks is
+"where is the thing I bought", and the dashboard library answers that. Everything
+a history screen would need — `paid_at`, `paddle_transaction_id`, the items — is
+already recorded, so it stays a view away rather than a migration away. That
+changes if Paddle ever stops being Merchant of Record, at which point invoicing
+becomes ours.
+
+### Delivering the audio
+
+The recordings live on a **Bunny** storage zone, behind a pull zone with **Token
+Authentication** switched on. That matters: a pull zone is public by default, so
+without token auth anyone who guessed a filename would have the file. With it,
+the zone refuses every request that does not carry a valid signature, and minting
+signatures is the only thing this app has to guard.
+
+Each `Product` stores a `cdn_path` — the path inside the storage zone,
+`/bajki/o-sowie-3f9a1c04.mp3` — and not a URL. The hostname is one pull zone for the whole
+catalogue and lives in `BUNNY_CDN_HOST`, and the URL a buyer actually gets is
+signed per play, so a stored URL would be a stored expiry date. The column is
+nullable on purpose: a product whose audio has not been uploaded is a perfectly
+good shop listing, it just has no player.
+
+The dashboard draws an `<audio>` pointed at **`/products/:id/stream`**, never at
+Bunny. That action authenticates, checks `current_user.purchased?`, and only then
+redirects to a freshly signed URL. Three reasons for the indirection rather than
+rendering the signed URL straight into the page:
+
+- the token key never reaches the HTML,
+- the URL is minted when play is pressed — `preload="none"` — rather than baked
+  into a page that may sit open for a day,
+- moving a file on the CDN cannot strand a link someone already holds.
+
+`BunnySignedUrlService` implements Bunny's advanced token authentication:
+HMAC-SHA256 over the path and the expiry, base64url, prefixed `HS256-`. A
+signature that is subtly wrong fails as a 403 from someone else's server rather
+than as anything debuggable here, so the spec pins it to the **test vector Bunny
+publishes** alongside its own reference implementations rather than to whatever
+this code happens to produce.
+
+Two decisions inside it are worth knowing:
+
+- **Six hours, not minutes.** Seeking is a fresh Range request against the same
+  signed URL, so a short window would expire mid-recording — the one moment this
+  must not break — rather than at a page load, where it would at least be obvious.
+- **No IP binding**, though Bunny's scheme offers it. A phone moving from wi-fi to
+  mobile data changes address mid-recording, and the buyer would get a 403 for
+  doing nothing wrong.
+
+`cdn_path` is validated to characters that survive a URL untouched, because Bunny
+signs the path *as it appears in the URL* — a filename needing percent-encoding
+would be signed in one form and requested in another. `BunnyStorageService`
+already produces paths in that shape, so this now mostly guards the manual
+fallback below.
+
+With `BUNNY_CDN_HOST` or `BUNNY_CDN_TOKEN` unset — local development, the test
+suite — `Product#streamable?` is false and the library renders exactly as it did
+before the CDN existed. Nothing half-works.
+
+### Uploading the audio
+
+The admin form takes the recording itself, not a path to one. Before that, the
+owner uploaded through Bunny's dashboard and pasted the resulting path into the
+form — two systems to be logged into, and a typo in the paste failed as a **403
+the first time a buyer pressed play** rather than as anything visible at the time.
+
+`BunnyStorageService` PUTs the file to `https://{host}/{zone}/{path}` with the
+zone's key in an `AccessKey` header. Three things about it are deliberate:
+
+- **Proxied through the app, not sent from the browser.** The storage password is
+  a write key for the *whole* zone, so handing it to the page would put it in the
+  HTML of every admin screen and the network log of every machine that opened one.
+  Rack has already buffered the upload to a tempfile by then, so proxying costs a
+  streamed copy rather than memory — nothing reads the file into a string, the
+  body and the checksum are both chunked.
+- **Uploaded before the record is saved.** A zone that is down or misconfigured
+  re-renders the form with everything still in it, instead of quietly saving a
+  product whose player never appears. The cost is an orphaned file when the upload
+  lands and the save then fails validation, which is much cheaper than the reverse.
+- **Filename transliterated, plus a random suffix.** `Nagranie Śpiącej Sowy.mp3`
+  becomes `/bajki/nagranie-spiacej-sowy-3f9a1c04.mp3`: transliterated because the
+  pull zone signs the path as it appears in the URL, suffixed because two products
+  uploaded from the same `nagranie.mp3` would otherwise become one file, silently
+  replacing a recording another product still points at.
+
+The folder follows the product's kind — `audioprocesy` or `bajki` — so the zone
+reads the way the shop talks about itself and Bunny's own file browser makes sense
+without the database open beside it. The map lives in the service rather than on
+`Product`, which means no caller ever supplies a path segment: everything about
+where a file lands is decided in one class, from a kind the enum has already
+narrowed to two values. A product with no kind chosen yet is refused rather than
+defaulted, because a guessed folder files the recording somewhere the owner has no
+reason to look.
+
+A `Checksum` header carries a SHA256 of the bytes; Bunny hashes what it received
+and 400s on a mismatch, which turns a connection dropped near the end into a
+refusal rather than a stored file that plays as far as it got. `401` and `404` are
+reported separately in the form — one is the wrong password, the other the wrong
+zone or region, and from a bare "upload failed" there is no telling which was
+pasted wrong.
+
+The form caps uploads at **250 MB** and to audio extensions — not to police the
+owner's files but to fail on the obvious mistake, a video or an unrendered project,
+before it has been pushed across the wire. Anything sitting in front of the app has
+its own, lower limit worth checking first: Cloudflare's free tier stops at 100 MB,
+and the upload will die there rather than here.
+
+Replacing a file leaves the old one in the zone. Nothing points at it any more —
+the paths are unique — but nothing deletes it either: an app that silently deletes
+from the storage zone is a worse thing to own than a few stale files, which Bunny's
+own file browser can prune.
+
+`BUNNY_STORAGE_ZONE` and `BUNNY_STORAGE_PASSWORD` (the zone's **FTP & API
+password**, not the read-only one and not the CDN token) switch the uploader on.
+`BUNNY_STORAGE_HOST` is only needed if the zone is outside Falkenstein —
+`ny.storage.bunnycdn.com` and friends; a PUT to the wrong region 404s. With none
+of them set the form falls back to a typeable path and says on screen why the
+uploader is missing, so local development is not left with a dead field.
+
+### Two subscribers on one event
+
+Bookings and orders both check out through Paddle, so both subscribe to
+`paddle_billing.transaction.completed`. Each ignores what is not its own: a
+booking checkout puts `booking_id` in `customData`, an order puts `order_id`, and
+`PaddleTransactionService` returns `nil` for the other one and logs why.
+
+That base class also holds the check worth knowing about — **`customData` is set
+in the browser**, so a tampered checkout could name someone else's record. Before
+anything is acted on, the Paddle customer that was actually charged is matched
+back to the record's owner. Both services are idempotent, because Pay re-runs the
+whole chain when its own charge sync raises.
+
+## Signing in
+
+The five Devise screens — sign in, sign up, account details, forgotten password,
+set new password — were generator scaffolding: English, unstyled, and each one a
+copy of the same wrapper. They now share `devise/shared/_card` and
+`devise/shared/_field`, which is what stops one of them being restyled and the
+other four being forgotten again.
+
+Copy lives under `auth.*` in `pl.yml` and `en.yml`, deliberately outside the
+`devise.*` scope the gem owns, so there is no chance of colliding with it on a
+gem upgrade. Devise's own flashes and failures come from `config/locales/devise.pl.yml` —
+the gem ships English only, so without that file every message in the sign-in
+flow arrived in English on a Polish site.
+
+Two pieces of wiring were wrong and are worth knowing about:
+
+* **`config.parent_mailer = "ApplicationMailer"`.** Without it Devise's mailer
+  descends from `ActionMailer::Base`, which means no layout and none of the
+  `from`/`reply_to` defaults every other mail in this app gets — the reset mail
+  went out as a bare unstyled fragment.
+* **`config.mailer_sender` was the generator's `please-change-me@example.com`**,
+  which is not a deliverable address; a reset mail from it is rejected or filed as
+  spam. It now reads `MAIL_FROM`, and it is written `->(*)` because Devise calls it
+  with the devise mapping — a zero-arity lambda raises `ArgumentError` on the first
+  send.
+
+**A Google sign-up has no password, deliberately.** It used to be given
+`Devise.friendly_token` — a random string the holder was never told. That let them
+in through Google and nowhere else, but it also made `encrypted_password` look set,
+so `/users/edit` demanded a "current password" they could not possibly know and
+refused every change they tried to make, including setting a real password.
+
+Now nothing is stored, `User#password_set?` answers the question honestly, and
+`Users::RegistrationsController` drops `:current_password` for an account that has
+none. Three details matter if this is ever touched:
+
+* `User#password_required?` excuses **only** the create-with-no-password case.
+  Returning true whenever no password was submitted would demand one on every
+  update, which is exactly how an email-only change breaks for everyone else.
+* The override drops `:current_password` rather than calling Devise's
+  `update_without_password`, because that strips `:password` too — leaving a Google
+  user unable to set the first password they came to set.
+* The exemption ends the moment a password exists. Once set, confirming it is
+  required again, the same as any other account.
+
+Google sign-in uses Google's own multicolour mark and stays on a white button,
+because Google's brand guidelines expect it on white or on its own blue rather
+than tinted to a host palette. `data-turbo: false` on it is required rather than
+cosmetic: the handshake is a full-page redirect off-site, and Turbo would try to
+fetch it and fail.
+
+### Who counts as an admin
+
+One boolean, `users.admin`. There are only ever a couple of people, so it is a
+flag rather than a role system, and it is granted from the console:
+
+```sh
+bin/rails 'admin:promote[you@example.com]'
+bin/rails 'admin:demote[you@example.com]'
+bin/rails admin:list
+```
+
+`Admin::BaseController` gates every `/admin` screen on it, and the navbar shows
+the panel link off the same check, so promoting a second person needs no deploy.
+
+The Google Calendar screen at `/integrations/google_calendar` used to be the
+exception: it compared `current_user.email` against `ENV["OWNER_EMAIL"]`, which
+allowed exactly one address and made adding a second person a redeploy. It now
+uses `admin?` like everything else. **`OWNER_EMAIL` is not a permission** — it is
+only where booking and contact mail is delivered and the `reply_to` fallback, and
+holding that address grants nothing. `spec/requests/integrations/google_calendar_spec.rb`
+pins both halves of that, including the case of a non-admin whose email happens to
+match `OWNER_EMAIL`.
+
+It is the one panel screen living outside the `Admin::` namespace, which shows up
+in two places. Its sidebar entry in `AdminHelper#admin_sidebar_items` cannot key
+its `active` rule off an `admin_`-prefixed controller like the rest, so it matches
+`controller_name == "google_calendar"`; and the controller sets `layout "admin"`
+explicitly, since it inherits from `ApplicationController` and would otherwise
+render the sidebar link's destination with the public navbar and footer. Both are
+pinned by specs, along with the sidebar icons resolving — `icon` raises on an
+unknown name, so a typo there is a 500 rather than a missing glyph.
+
+## Two languages, two addresses
+
+Polish keeps the bare paths it always had; English is the same page under `/en`:
+
+```
+PL   /            /packages     /about     /products/12
+EN   /en          /en/packages  /en/about  /en/products/12
+```
+
+The locale lives in the **path**, not the session, so each language has its own
+indexable, shareable address and the `<link rel="alternate" hreflang>` tags in the
+layout can tell Google they are the same page twice. A session would have left
+every English translation invisible to search and made a shared link open in
+whatever language the reader last chose.
+
+Three things are worth knowing before touching this.
+
+**Only the public routes are scoped.** Devise, the admin panel and the OAuth
+callbacks sit outside `scope "(:locale)"`, because their URLs are registered with
+Google and with Paddle and cannot move. The language still follows you onto them,
+as `?locale=en` — which is what keeps someone who switched to English in English
+when they sign in.
+
+**The constraint is `/en/`, not `/pl|en/`.** Only the non-default locale ever
+appears, so there is one canonical address per page; `/pl/about` is a 404 rather
+than a duplicate of `/about`.
+
+**`Rails.application.routes.default_url_options[:locale] = nil` is load-bearing.**
+An optional *leading* dynamic segment swallows the first positional argument, so
+without that line `product_path(product)` binds the product to `:locale` and
+raises `missing required keys: [:id]`. Declaring the key — as nil, so Polish paths
+stay unprefixed — makes positional arguments land where they were written to. It
+is set at the routes level rather than only in `ApplicationController` because
+mailers and jobs generate URLs with no controller and hit the same bug.
+
+The switch itself is `around_action :switch_locale`, using `I18n.with_locale`
+rather than assigning `I18n.locale`: it is a thread-global, and a request that set
+it and then raised would leave the next request on that thread rendering in the
+wrong language.
+
+**On the public site the URL is the whole answer.** A scoped route states the
+language in its path, so a path without one means Polish — however long ago
+someone clicked EN. That is what keeps one address per rendering, and it is what
+lets the switcher get *back*: its Polish link is the bare path, and if a remembered
+choice could override that there would be no way home.
+
+**The choice is remembered only for routes that cannot state it.** Devise, the
+panel, and above all the Google handshake — which leaves for accounts.google.com
+and returns to `/users/auth/google_oauth2/callback` with nothing to say which
+language was picked, so the sign-in redirect it builds would land on the Polish
+dashboard. `session[:locale]` is written on every public page and read only where
+the path has no locale to offer. Which of the two a request is gets read off
+`request.route_uri_pattern` — `"(/:locale)/about(.:format)"` versus
+`"/users/sign_in(.:format)"`.
+
+Do **not** answer that question by generating a URL and looking at it.
+`ActionController` memoises `url_options` on first use, so calling `url_for` before
+`with_locale` has run freezes `locale: nil` into every link the page then
+generates — the page comes out in English with Polish links, which is a confusing
+thing to debug.
+
+**Two places Polish hides that a view-by-view pass will not find.** Both bit this
+codebase and both are now covered by `spec/requests/english_pages_spec.rb`, which
+scans a rendered English page for Polish diacritics rather than checking for a
+handful of phrases someone thought of:
+
+* **Frozen label Hashes on models.** `Booking::PAYMENT_STATUS_LABELS`,
+  `Product::KIND_LABELS` and `Order::STATUS_LABELS` were Polish strings in Ruby, so
+  "Audioproces" appeared on the English shop no matter how well the template was
+  translated. They are `I18n.t` lookups behind `#status_label` / `#kind_label` now.
+  One deliberate exception: `BookingCalendarService` asks for Polish explicitly,
+  because that string goes into the *owner's* calendar and an English buyer's
+  booking should not retitle her day.
+* **JavaScript.** `cally_controller.js` called `dayjs.locale("pl")` at import, so
+  every month and weekday name in the date picker was Polish whatever the page
+  around it said.
+
+  Fixing that by reading `document.documentElement.lang` at import was still wrong,
+  in two ways worth remembering. A controller module is evaluated **once per full
+  page load**, so anything decided at import survives every Turbo navigation
+  afterwards — the picker stayed in whatever language you arrived in until you
+  pressed reload. And `<html lang>` is itself stale after a navigation, because
+  Turbo Drive swaps the `<body>` and merges the `<head>` but never touches the
+  attributes on `<html>`.
+
+  So the locale is rendered by the server onto the element
+  (`data-cally-locale-value`) and read in `connect()`, which runs again on every
+  navigation. `locale_controller.js` separately copies the language from the body
+  back up to `<html lang>`, so screen readers and anything else reading it get the
+  truth.
+
+**Path or query string is one mechanism, not two.** `default_url_options` returns
+the same `{ locale: :en }` for every route; Rails fills the `:locale` path segment
+when the target route has one and appends `?locale=en` when it does not. Nothing
+chose a query string for the auth pages — it is what is left when the route has no
+slot for it. So on a page rendered in English, `/en/cart` and
+`/users/sign_in?locale=en` come from the same line of code.
+
+**The query string is not redundant, and it is not worth removing.** It looks like
+dead weight — `session[:locale]` already carries the language onto `/users/sign_in`
+for anyone who browsed the public site first, which is what the examples under
+*remembering the choice* cover. They all visit `/en/about` before signing in. The
+case they miss is someone who lands on a Devise page *directly* — a shared link, a
+bookmark, the reset mail below — and switches language there. The session is only
+ever written on a locale-scoped route, so on that path the param is the only thing
+that carries English to the next page:
+
+```
+/users/sign_in            → pl          (fresh session)
+/users/sign_in?locale=en  → en, and the sign-up link on it keeps ?locale=en
+```
+
+Removing it would also have to be done per call site, since `default_url_options`
+cannot see which route it is generating for: 20 places in the Devise and shared
+views, plus every link in the admin panel and the integrations screens, which are
+unscoped too. Leave it.
+
+**Mails carry it too, and there it is the only thing that can.**
+`ApplicationMailer#default_url_options` repeats the controller's rule, because a
+mail renders with no request in scope and would otherwise fall back to the
+routes-level `locale: nil` — an English mail whose every link came out Polish. The
+reset mail was the case that mattered: its button opened the Polish password form
+for anyone whose session had gone, which is every recipient on a different device.
+`session[:locale]` cannot help there, so the URL has to say it. Devise delivers
+inline and the booking and contact mails go through `deliver_later`, but ActiveJob
+serialises `I18n.locale` with the job and restores it around `perform`, so the
+language survives the queue either way. Covered by
+`spec/mailers/devise_mailer_spec.rb`.
+
+## The production image
+
+`Dockerfile` builds the image Kamal deploys. It is the stock Rails 8 file with the
+changes below; everything else there is untouched generator output.
+
+**Node exists only in the build stage.** This is the part that isn't optional: the
+app bundles JS and CSS through `vite_rails`, and `vite_ruby`'s rake hook enhances
+`assets:precompile` to run `vite build`. A Ruby-only image cannot precompile, so the
+build stage lifts `node` and `npm` out of the official Node image with `COPY --from`
+rather than compiling them from source, which costs seconds instead of minutes. The
+Node image is pinned to `bookworm` on purpose — its glibc has to be no newer than the
+Ruby base image's, or the copied binary won't link. The final stage never copies any
+of it, so the shipped image has no Node in it at all.
+
+**`npm ci` runs once, in its own layer.** `package.json` and `package-lock.json` are
+copied before the app code so editing a view doesn't reinstall the JS tree. That
+means the `vite:install_dependencies` half of the precompile hook would be a second,
+uncached `npm ci` that wipes the first one, so `VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true`
+turns it off. `--include=dev` is required and easy to lose: `vite`, `tailwindcss` and
+`vite-plugin-ruby` are all devDependencies, and `RAILS_ENV=production` is enough to
+make npm skip them, which fails the build with a missing-vite error. `node_modules`
+is deleted once the bundles are written.
+
+**Smaller odds and ends.** `BUNDLE_WITHOUT` excludes `test` alongside `development`
+— nothing in the image runs specs, so rspec, capybara and selenium don't belong in
+it. `RUBY_YJIT_ENABLE=1` turns the JIT on. apt and npm downloads use BuildKit cache
+mounts, so repeat builds skip the network. A `HEALTHCHECK` curls `/up`; it targets
+`HTTP_PORT` (Thruster's own listener, default 80) rather than `PORT`, which is the
+Puma port Thruster proxies *to*.
+
+**Migrations on boot.** `bin/docker-entrypoint` still runs `db:prepare`, but only
+when the command is `./bin/rails server` and `SKIP_DB_PREPARE` is unset. Set that
+variable if you ever split jobs onto their own host or run a second web server, so
+one container owns the schema change instead of all of them racing.
+
+`.dockerignore` additionally drops `public/vite*` (stale local bundles that the build
+regenerates anyway), `spec/`, `coverage/` and editor config, purely to keep the build
+context small.
+
+## Roadmap
+
+Measured against the design, which is a Claude Design project rather than a file
+in this repo — <https://claude.ai/design/p/4578fb79-8a91-4124-8203-4b1f54c72f7d>,
+one `Sleep Puzzle Website.dc.html` holding every screen as a
+`<main data-screen-label="…">`. It draws 14 screens; only 13 are counted below,
+because **Płatność** is deliberately not being built — checkout is Paddle's
+overlay, so there is no payment screen of our own. The design is edited while this
+is being built, so re-pull it rather than working from an older copy. Ticked items
+are built and reachable; the rest is what is left.
+
+### Screens
+
+- [x] **Strona główna** — `/` (some sections missing, see below)
+- [x] **Pakiety** — `/packages`
+- [x] **Kalendarz konsultacji** — `/bookings`, incl. Google Calendar + Paddle
+- [x] **Kontakt** — `/contact`, incl. Cloudflare Turnstile
+- [x] **O mnie** — `/about`, CMS-driven (`about.*`), incl. the certificates
+      collection and the CTA into the calendar
+- [x] **Regulamin** — `/terms`, a `<dl>` over the `terms.clauses` CMS collection
+      (heading + body, `white-space: pre-line`), linked from the footer and from
+      the contact page's tile
+- [x] **Sklep** — `/products`, a grid of category / name / description / price /
+      "do koszyka". Prices are read back from Paddle, so a product whose price
+      cannot be read renders without an add button
+- [x] **Produkt** — `/products/:id`, incl. the spec strip, "O tym nagraniu",
+      "Co dostajesz" and the "Inne materiały" tiles
+- [x] **Koszyk** — `/cart`, session-backed, with a total and remove (no
+      quantities — see above).
+      Checkout hands the cart to the Paddle overlay (see *Shop, cart and checkout*
+      below)
+- [x] **Moje konto** — `/dashboard`, incl. the paid-orders library, upcoming
+      consultations and the link into Devise's account form, each with its empty
+      state. The library plays what was bought through an `<audio>` element
+      pointed at `/products/:id/stream` — see *Delivering the audio* above
+
+### Newsletter
+
+**Decided: buy, not build.** Brevo holds the list and the campaign editor. That
+deliberately keeps consent records, confirmed opt-in, unsubscribe links, bounce
+handling and deliverability on Brevo's side rather than ours, and it means there is
+no subscriber model, no issue model and no sending code to write here.
+
+- [x] **Sign-up form on the home page.** Built. `NewsletterSignup` validates the
+      address, `NewsletterSubscriptionsController` posts it to Brevo through
+      `BrevoSubscriptionService`, and the form swaps for the thank-you state inside
+      its own Turbo frame — the visitor is at the bottom of a long page, so a full
+      reload would put them back at the top.
+
+**It posts to the double opt-in endpoint**, `/v3/contacts/doubleOptinConfirmation`,
+rather than plain `/contacts`. That is the difference between Brevo mailing a
+confirmation link and us adding someone to a marketing list because an address was
+typed into a box, and it is why the thank-you says *check your inbox* rather than
+*you are subscribed*: until they follow Brevo's link they are not on the list.
+Nothing about them is stored here, so there is no subscriber model and no
+unsubscribe route of ours to keep in step with Brevo's.
+
+**Three environment variables, all required** — `configured?` is false without any
+one of them, and an unconfigured Brevo fails the submission loudly rather than
+showing a thank-you for an address that went nowhere:
+
+| | |
+| --- | --- |
+| `BREVO_API_KEY` | authorises the call |
+| `BREVO_LIST_ID` | what they are subscribing *to* |
+| `BREVO_DOI_TEMPLATE_ID` | the confirmation mail — a DOI template, not a campaign one |
+
+Two behaviours worth knowing. An address **already on the list** is treated as
+success: Brevo answers `duplicate_parameter`, and saying so would tell anyone who
+asks which addresses are subscribed. And there is **no Turnstile on this form**,
+unlike the contact one — that puts mail in the owner's inbox on every submission,
+whereas this hands an address to Brevo, which mails a link only its owner can act
+on. The rate limit (3/minute, tighter than contact's 5) is the proportionate
+control; a challenge on a one-field box mid-page is not.
+
+### Missing sections on the home page
+
+The design's home screen runs HERO / TRUST BAR / O MNIE TEASER / PACKAGES TEASER /
+JAK TO DZIALA / AUDIO SHOP TEASER / MEDIA-PODCASTS / BLOG TEASER / NEWSLETTER. The
+app builds hero, the trust bar (as the `home.stats` collection), about, process,
+packages, audio and the newsletter form. What is missing:
+
+- [ ] Media / podcast strip
+
+Two things the design draws are deliberately not being built: the **kicker badge**
+above the hero headline (`L.home.kicker`), and the **blog teaser**, which is parked
+along with the blog itself.
+
+### Cross-cutting
+
+- [x] **Navbar, footer and the home page's CTAs** now read from `nav.*` in
+      `pl.yml`/`en.yml` rather than being hardcoded Polish. Copy the owner writes
+      still lives in the CMS, and a block with no English version falls back to
+      Polish on purpose — that is content waiting to be translated, not a bug.
+- **Decided: the admin panel and the Google Calendar integration screen stay
+      Polish-only.** `integrations/google_calendar/show` and everything under
+      `admin/` hold Polish literals on purpose. Both are staff-facing and the staff
+      is Polish, so there is nothing to translate and no gap here.
+- **Decided: the two stock-English Devise screens stay as they are** —
+      `confirmations/new` and `unlocks/new`, plus the `confirmation_instructions`
+      and `unlock_instructions` mails. `:confirmable` and `:lockable` are both
+      switched off in `User`, so nothing ever reaches them.
+
+- [x] **Buyer-facing toast copy is translated.** `paddle_controller.js` and
+      `toast_controller.js` are Stimulus controllers, so they have no `t()` — the
+      strings are resolved server-side and handed over as values instead:
+      `shared/_paddle_checkout` passes the five `paddle.*` keys, and
+      `Toast::Component` passes `toast.close` for the close button's `aria-label`.
+      Adding buyer-facing copy to either controller means adding a value, not a
+      literal.
+
+- [x] **Paddle errors surface now.** `checkout.error` used to fall through the
+      switch, so a declined card or a rejected quantity produced nothing — not a
+      toast, not even a console line, which is why the max-quantity rejection had
+      to be diagnosed by hand. It now logs the whole event and shows Paddle's own
+      message in an error toast, falling back to `paddle.error_fallback` when the
+      payload carries no message (Paddle has moved that field between versions, so
+      `#errorDescription` tries each plausible spot). It deliberately does *not*
+      abandon the pending record: the overlay stays open and the buyer can retry
+      in it, and `checkout.closed` still releases the record if they give up.
+
+- [x] **PL/EN switcher.** In the path — see *Two languages, two addresses* above.
+- [x] **Dead links.** All wired. Navbar "Blog" stays commented out rather than
+      pointing at nothing, which is the right shape for as long as the blog is
+      parked.
+- [x] **CMS coverage.** Every page that exists is editable: `content_blocks.yml`
+      declares `home`, `packages`, `about`, `shop`, `cart`, `dashboard`, `terms`,
+      `footer` and `contact`. This stays true only if each new page adds its own
+      entry, followed by `bin/rails content_blocks:sync`.
+
+      **Which of the two a string belongs in** is not always obvious, and the line
+      is *who owns the wording*, not where it appears. Chrome the owner would never
+      rewrite — the navbar, the footer's column headings, the locale switcher —
+      is `nav.*` in `pl.yml`/`en.yml`. Anything she might reword is CMS, even when
+      it is a two-word button: `home.packages.details` ("Zobacz szczegóły" on a
+      package card) went to the CMS for exactly that reason. Arrows and other
+      decoration stay in the template either way, so rewording a label cannot lose
+      them.
+- [x] **Delivering what was bought.** Done — the audio is on Bunny, and
+      `/dashboard` plays it. The check is both ours *and* a signed CDN URL: the
+      app authorises, Bunny enforces. See *Delivering the audio* above. What is
+      left is per-product: uploading the files and filling in each `cdn_path` in
+      the admin panel. A product without one still sells, it just has no player.
+
+### Parked
+
+- **Blog** and **Wpis na blogu** — designed (list and post screens) but deliberately
+  not being built for now. Nothing in the app depends on them.
+
+## Everything else
+
 This README would normally document whatever steps are necessary to get the
 application up and running.
 
 Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
 
 * Configuration
 

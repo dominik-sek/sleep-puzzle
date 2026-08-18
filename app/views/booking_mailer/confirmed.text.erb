@@ -1,0 +1,13 @@
+<%= t("booking_mailer.confirmed.heading") %>
+
+<%= t("booking_mailer.confirmed.intro") %>
+
+<%= render "shared/mail_details", rows: {
+      t("booking_mailer.details.package") => @booking.package.name,
+      t("booking_mailer.details.starts_at") => l(@booking.starts_at, format: :long),
+      t("booking_mailer.details.status") => @booking.status_label
+    } -%>
+
+<%= t("booking_mailer.confirmed.cta") %>: <%= booking_url(@booking) %>
+
+<%= t("booking_mailer.confirmed.outro") %>

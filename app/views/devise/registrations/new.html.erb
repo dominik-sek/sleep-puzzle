@@ -1,0 +1,28 @@
+<% content_for :title, t("auth.sign_up.title") %>
+
+<%= render "devise/shared/card", title: t("auth.sign_up.title") do %>
+  <%= render "devise/shared/omniauth" %>
+
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name),
+               html: { class: "flex flex-col gap-5" }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+
+    <%= render "devise/shared/field", form: f, name: :email, label: t("auth.fields.email"), type: :email,
+               options: { autofocus: true, autocomplete: "email", required: true } %>
+
+    <%= render "devise/shared/field", form: f, name: :password, label: t("auth.fields.password"), type: :password,
+               hint: (@minimum_password_length && t("auth.sign_up.password_hint", count: @minimum_password_length)),
+               options: { autocomplete: "new-password", required: true } %>
+
+    <%= render "devise/shared/field", form: f, name: :password_confirmation,
+               label: t("auth.fields.password_confirmation"), type: :password,
+               options: { autocomplete: "new-password", required: true } %>
+
+    <%= render Buttons::Component.new(
+      text: t("auth.sign_up.submit"), pill: true, full_width: true, variant: :primary, type: :submit,
+      classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold! justify-center"
+    ) %>
+  <% end %>
+
+  <%= render "devise/shared/links" %>
+<% end %>

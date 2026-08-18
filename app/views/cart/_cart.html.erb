@@ -1,0 +1,60 @@
+<%#
+  The cart itself, in a turbo frame so adding, changing a quantity or removing a
+  line can replace it without a reload.
+
+  Wrapped in an id rather than rendered inline by the page: cart_items streams
+  target this, and so does orders#abandon when it puts a discarded checkout back.
+
+  locals: cart
+%>
+<%= tag.div id: "cart" do %>
+  <%# something added before signing in that this account turns out to own. It is
+      kept out of the lines below rather than charged for twice, so say where it
+      went instead of appearing to have lost it. %>
+  <% if cart.already_owned.any? %>
+    <div class="mb-5 rounded-2xl border border-border-input bg-ink-soft p-4.5">
+      <p class="text-t6 text-tan m-0"><%= content_block("cart.owned.body") %></p>
+      <ul class="mt-2 flex flex-col gap-1 list-none p-0">
+        <% cart.already_owned.each do |product| %>
+          <li class="text-t6 text-taupe"><%= product.display_icon %> <%= product.name %></li>
+        <% end %>
+      </ul>
+      <%= link_to content_block("cart.owned.cta"), dashboard_index_path,
+            class: "mt-2 inline-block text-t6 font-bold text-accent no-underline hover:text-accent-hover" %>
+    </div>
+  <% end %>
+
+  <% if cart.empty? %>
+    <div class="py-10 text-center">
+      <p class="text-t5 text-taupe m-0"><%= content_block("cart.empty.body") %></p>
+
+      <%= link_to products_path,
+            class: "mt-5.5 inline-block rounded-[26px] bg-accent px-6.5 py-3.5 text-[15px] font-bold text-ink no-underline hover:bg-accent-hover" do %>
+        <%= content_block("cart.empty.cta") %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="flex flex-col gap-3.5">
+      <% cart.lines.each do |line| %>
+        <%= render "cart/line", line: line %>
+      <% end %>
+    </div>
+
+    <%# only when every line has a price: a total that quietly omits a line is
+        worse than none, since it is the number the buyer checks %>
+    <% if (total = cart.total_label) %>
+      <div class="mt-7.5 flex items-center justify-between rounded-2xl border border-border-strong bg-surface p-5.5">
+        <span class="text-t5 font-bold text-cream"><%= content_block("cart.hero.total") %></span>
+        <span class="text-[22px] font-extrabold text-accent tabular-nums"><%= total %></span>
+      </div>
+    <% end %>
+
+    <%# a form, so checkout is a POST: it creates an order %>
+    <%= form_with url: orders_path, class: "block mt-6.5" do |form| %>
+      <%= form.button type: :submit,
+            class: "w-full cursor-pointer rounded-[28px] border-0 bg-accent px-6 py-4 text-t5 font-bold text-ink hover:bg-accent-hover" do %>
+        <%= content_block("cart.hero.checkout") %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

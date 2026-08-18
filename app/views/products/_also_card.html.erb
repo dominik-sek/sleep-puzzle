@@ -1,0 +1,19 @@
+<%#
+  One of the "Inne materiały" tiles under a product: a small icon square beside
+  the category, name and price.
+
+  locals: product
+%>
+<%= link_to product_path(product),
+      class: "flex items-center gap-4 rounded-[18px] border border-border-strong bg-surface p-5 no-underline hover:border-accent" do %>
+  <span class="flex size-13 shrink-0 items-center justify-center rounded-[14px] bg-linear-[135deg,var(--color-border-strong),var(--color-ink)] text-[26px]"
+        aria-hidden="true">
+    <%= product.display_icon %>
+  </span>
+
+  <span class="flex min-w-0 flex-col gap-1">
+    <span class="text-[11px] font-extrabold uppercase tracking-[0.5px] text-taupe"><%= product.kind_label %></span>
+    <span class="text-[15px] font-bold leading-[1.35] text-cream"><%= product.name %></span>
+    <span class="text-t6 font-extrabold text-accent"><%= product_price_label(product) %></span>
+  </span>
+<% end %>

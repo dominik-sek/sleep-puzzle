@@ -1,0 +1,61 @@
+<nav aria-label="Pagination" class="<%= wrapper_classes %>">
+  <%# Info section %>
+  <% if @show_info %>
+    <div class="flex items-center gap-3">
+      <p class="<%= info_classes %>">
+        <%= t("pagination.showing") %> <span class="font-medium text-cream"><%= @pagy.from %></span>–<span class="font-medium text-cream"><%= @pagy.to %></span> <%= t("pagination.of") %> <span class="font-medium text-cream"><%= @pagy.count %></span>
+      </p>
+
+      <% if @variant == :compact %>
+        <span class="hidden sm:block border-l border-border h-4"></span>
+        <p class="hidden sm:block <%= info_classes %>">
+          <%= t("pagination.page") %> <span class="font-medium text-cream"><%= @pagy.page %></span> <%= t("pagination.of") %> <span class="font-medium text-cream"><%= @pagy.pages %></span>
+        </p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Navigation controls %>
+  <div class="flex flex-wrap items-center gap-3">
+    <% case @variant %>
+    <% when :full %>
+      <%# Full numbered pagination %>
+      <div class="pagy <%= nav_wrapper_classes %>">
+        <%== nav_html %>
+      </div>
+
+      <% if @show_page_form %>
+        <%= form_with url: form_path, method: :get, data: { turbo_frame: @frame_id }, class: "flex items-center", local: true do %>
+          <% query_params.except(limit_key).each do |k, v| %>
+            <%= hidden_field_tag k, v %>
+          <% end %>
+          <%= hidden_field_tag limit_key, @pagy.limit %>
+          <label class="text-t6! font-medium! text-taupe! mr-2"><%= t("pagination.jump_to_page") %></label>
+          <%= number_field_tag page_key, @pagy.page, min: 1, max: @pagy.pages, class: "w-20 rounded-l-lg border border-border-input bg-ink-soft px-2 leading-7 text-sm text-cream outline-hidden focus-visible:outline-2 focus-visible:outline-accent" %>
+          <%= submit_tag t("pagination.go"), class: "cursor-pointer rounded-r-lg border border-l-0 border-border-input bg-surface px-2.5 py-1 text-sm font-medium text-cream hover:bg-ink-soft" %>
+        <% end %>
+      <% end %>
+
+    <% when :compact, :minimal %>
+      <%# Prev/Next only %>
+      <div class="pagy <%= nav_wrapper_classes %>">
+        <%== prev_html %>
+        <%== next_html %>
+      </div>
+    <% end %>
+
+    <% if @show_limit_form %>
+      <%= form_with url: form_path, method: :get, data: { turbo_frame: @frame_id }, class: "flex items-center gap-2", local: true do %>
+        <% query_params.except(limit_key).each do |k, v| %>
+          <%= hidden_field_tag k, v %>
+        <% end %>
+        <%= hidden_field_tag page_key, 1 %>
+        <label class="text-t6! font-medium! text-taupe!"><%= t("pagination.rows") %></label>
+        <%= select_tag limit_key,
+                       options_for_select(@limit_options, @pagy.limit),
+                       class: "form-control w-auto py-1",
+                       onchange: "this.form.requestSubmit()" %>
+      <% end %>
+    <% end %>
+  </div>
+</nav>

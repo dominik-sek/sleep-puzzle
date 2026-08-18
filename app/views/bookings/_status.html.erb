@@ -1,0 +1,59 @@
+<div id="booking_status" class="w-full max-w-xl flex flex-col gap-6 text-center">
+  <% if booking.confirmed? %>
+    <h1 class="text-t2 text-cream font-display"><%= t("bookings.summary.confirmed_title") %></h1>
+    <span class="text-tan text-t5">
+      <%= t("bookings.summary.confirmed_body") %>
+    </span>
+  <% elsif booking.payment_failed? || booking.canceled? %>
+    <h1 class="text-t2 text-cream font-display"><%= t("bookings.summary.failed_title") %></h1>
+    <span class="text-tan text-t5">
+      <%= t("bookings.summary.failed_body") %>
+    </span>
+  <% else %>
+    <h1 class="text-t2 text-cream font-display"><%= t("bookings.summary.processing_title") %></h1>
+    <span class="text-tan text-t5">
+      <%= t("bookings.summary.processing_body") %>
+    </span>
+  <% end %>
+
+  <%= render Card::Component.new(variant: :well, padding: :lg) do |card| %>
+    <% card.with_body do %>
+      <% if booking.pending? %>
+        <%# the webhook decides what actually goes in this card, so until it lands the
+            card holds the spinner rather than a half-true summary %>
+        <div class="flex items-center justify-center py-6" role="status" aria-live="polite">
+          <%= render LoadingIndicator::Component.new(
+            type: :spinner,
+            size: :xl,
+            color: :accent,
+            text: t("bookings.status.awaiting"),
+            classes: "flex-col text-center"
+          ) %>
+        </div>
+      <% else %>
+        <dl class="flex flex-col gap-3 text-left">
+          <div class="flex justify-between gap-4">
+            <dt class="text-tan text-t5"><%= t("bookings.summary.package") %></dt>
+            <dd class="text-cream text-t5"><%= booking.package.name %></dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-tan text-t5"><%= t("bookings.summary.starts_at") %></dt>
+            <dd class="text-cream text-t5"><%= l booking.starts_at, format: :long, default: booking.starts_at.to_fs(:short) %></dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-tan text-t5"><%= t("bookings.summary.payment_status") %></dt>
+            <dd class="text-cream text-t5"><%= booking.status_label %></dd>
+          </div>
+        </dl>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if booking.confirmed? %>
+    <%= render Buttons::Component.new(
+      text: t("bookings.status.back"),
+      href: dashboard_index_path,
+      variant: :primary
+    ) %>
+  <% end %>
+</div>

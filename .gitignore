@@ -44,3 +44,4 @@ node_modules
 # SimpleCov coverage reports
 /coverage
 
+!/.env.example
