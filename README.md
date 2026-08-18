@@ -534,29 +534,46 @@ deliberately keeps consent records, confirmed opt-in, unsubscribe links, bounce
 handling and deliverability on Brevo's side rather than ours, and it means there is
 no subscriber model, no issue model and no sending code to write here.
 
-Nothing in the app talks to Brevo yet. `BREVO_API_KEY` is set in the local `.env`,
-but no Ruby reads it and it is not in `.env.example` — provisioned ahead of the
-work, not wired up.
+- [x] **Sign-up form on the home page.** Built. `NewsletterSignup` validates the
+      address, `NewsletterSubscriptionsController` posts it to Brevo through
+      `BrevoSubscriptionService`, and the form swaps for the thank-you state inside
+      its own Turbo frame — the visitor is at the bottom of a long page, so a full
+      reload would put them back at the top.
 
-What is left on our side is one form:
+**It posts to the double opt-in endpoint**, `/v3/contacts/doubleOptinConfirmation`,
+rather than plain `/contacts`. That is the difference between Brevo mailing a
+confirmation link and us adding someone to a marketing list because an address was
+typed into a box, and it is why the thank-you says *check your inbox* rather than
+*you are subscribed*: until they follow Brevo's link they are not on the list.
+Nothing about them is stored here, so there is no subscriber model and no
+unsubscribe route of ours to keep in step with Brevo's.
 
-- [ ] **Sign-up form on the home page.** Drawn in the design (placeholder, button,
-      thank-you state) but not built. All it has to do is hand an address to Brevo's
-      contacts API and render the thank-you state — the double opt-in mail comes
-      from Brevo, so nothing is stored locally. Post it to our own endpoint rather
-      than to Brevo from the browser, so the API key stays server-side, and treat
-      it like the contact form: it is an unauthenticated public POST, so it wants
-      the same rate limiting.
+**Three environment variables, all required** — `configured?` is false without any
+one of them, and an unconfigured Brevo fails the submission loudly rather than
+showing a thank-you for an address that went nowhere:
+
+| | |
+| --- | --- |
+| `BREVO_API_KEY` | authorises the call |
+| `BREVO_LIST_ID` | what they are subscribing *to* |
+| `BREVO_DOI_TEMPLATE_ID` | the confirmation mail — a DOI template, not a campaign one |
+
+Two behaviours worth knowing. An address **already on the list** is treated as
+success: Brevo answers `duplicate_parameter`, and saying so would tell anyone who
+asks which addresses are subscribed. And there is **no Turnstile on this form**,
+unlike the contact one — that puts mail in the owner's inbox on every submission,
+whereas this hands an address to Brevo, which mails a link only its owner can act
+on. The rate limit (3/minute, tighter than contact's 5) is the proportionate
+control; a challenge on a one-field box mid-page is not.
 
 ### Missing sections on the home page
 
 The design's home screen runs HERO / TRUST BAR / O MNIE TEASER / PACKAGES TEASER /
 JAK TO DZIALA / AUDIO SHOP TEASER / MEDIA-PODCASTS / BLOG TEASER / NEWSLETTER. The
 app builds hero, the trust bar (as the `home.stats` collection), about, process,
-packages and audio. What is missing:
+packages, audio and the newsletter form. What is missing:
 
 - [ ] Media / podcast strip
-- [ ] Newsletter sign-up form (see Newsletter, above)
 
 Two things the design draws are deliberately not being built: the **kicker badge**
 above the hero headline (`L.home.kicker`), and the **blog teaser**, which is parked
@@ -603,6 +620,15 @@ along with the blog itself.
       declares `home`, `packages`, `about`, `shop`, `cart`, `dashboard`, `terms`,
       `footer` and `contact`. This stays true only if each new page adds its own
       entry, followed by `bin/rails content_blocks:sync`.
+
+      **Which of the two a string belongs in** is not always obvious, and the line
+      is *who owns the wording*, not where it appears. Chrome the owner would never
+      rewrite — the navbar, the footer's column headings, the locale switcher —
+      is `nav.*` in `pl.yml`/`en.yml`. Anything she might reword is CMS, even when
+      it is a two-word button: `home.packages.details` ("Zobacz szczegóły" on a
+      package card) went to the CMS for exactly that reason. Arrows and other
+      decoration stay in the template either way, so rewording a label cannot lose
+      them.
 - [x] **Delivering what was bought.** Done — the audio is on Bunny, and
       `/dashboard` plays it. The check is both ours *and* a signed CDN URL: the
       app authorises, Bunny enforces. See *Delivering the audio* above. What is

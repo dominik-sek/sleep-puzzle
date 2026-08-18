@@ -4,6 +4,12 @@ RSpec.describe "Home", type: :request do
   # The state a fresh deploy is in: migrations run, nothing seeded, nobody has
   # opened the admin panel yet. The page must still render its real copy.
   context "with an empty database" do
+    # "Empty" is about the CMS — no ContentBlock rows, asserted below. One package
+    # still has to exist: `home.packages.details` is the label on a package card,
+    # so it only renders inside the `@packages.any?` branch. Without this the
+    # example would pass while that field went unchecked.
+    before { create_package(name: "Szybka ulga") }
+
     it "renders every content block from its declared default" do
       expect(ContentBlock.count).to eq(0)
 
@@ -14,6 +20,11 @@ RSpec.describe "Home", type: :request do
       home_fields = ContentBlock::Registry.fields.select { |field| field.section.page.key == "home" }
 
       home_fields.each do |field|
+        # the one field on this page that belongs to a state rather than to the
+        # page: it replaces the newsletter form once Brevo has the address, so it
+        # is deliberately absent until then. Covered by the newsletter request spec.
+        next if field.full_key == "home.newsletter.thanks"
+
         default = field.default_for(:pl)
         next if default.blank?
 

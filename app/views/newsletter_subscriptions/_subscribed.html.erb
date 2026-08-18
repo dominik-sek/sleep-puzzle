@@ -1,0 +1,6 @@
+<%# Replaces the form in place, so the confirmation lands where the visitor was
+    looking. The copy says to go and check the inbox, because the address is not
+    on the list until they follow Brevo's link — see BrevoSubscriptionService. %>
+<%= turbo_frame_tag "newsletter_form" do %>
+  <p class="text-t5 font-bold text-accent"><%= content_block("home.newsletter.thanks") %></p>
+<% end %>

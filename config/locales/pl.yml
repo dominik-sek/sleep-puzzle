@@ -82,6 +82,9 @@ pl:
   contacts:
     rate_limited: "Wysłano zbyt wiele wiadomości. Spróbuj ponownie za chwilę."
     turnstile_failed: "Nie udało się potwierdzić, że nie jesteś robotem. Spróbuj ponownie."
+  newsletter:
+    rate_limited: "Zbyt wiele prób zapisu. Spróbuj ponownie za chwilę."
+    failed: "Nie udało się zapisać Cię do newslettera. Spróbuj ponownie za chwilę."
   bookings:
     statuses:
       pending: "Oczekuje na płatność"

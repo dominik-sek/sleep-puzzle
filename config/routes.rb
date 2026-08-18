@@ -58,6 +58,10 @@ Rails.application.routes.draw do
     end
     # one page that both shows the form and takes it, so there is no id to carry
     resource :contact, only: [ :show, :create ]
+    # create only: the form lives on the home page, and everything after the
+    # address is handed over — the confirmation, the list, the unsubscribe — is
+    # Brevo's, so there is nothing here to show, edit or destroy
+    resource :newsletter_subscription, only: [ :create ]
     # singular: there is one "about", so no id and no index. `controller:` keeps the
     # class singular too, the same way the google_calendar integration does below.
     resource :about, only: [ :show ], controller: "about"

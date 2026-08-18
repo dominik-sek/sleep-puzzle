@@ -126,6 +126,12 @@ home:
           type: plain
           default:
             pl: "Od szybkiej ulgi po pełne poukładanie rodzinnego systemu — Ty wybierasz tempo."
+        details:
+          label: Odnośnik do szczegółów na kafelku
+          type: plain
+          default:
+            pl: "Zobacz szczegóły"
+            en: "See details"
     audio:
       label: Audioprocesy i bajki
       fields:
@@ -139,6 +145,39 @@ home:
           type: rich
           default:
             pl: "<div>Nagrania do samodzielnej pracy nad rutyną oraz kojące bajki audio dla dzieci — dostępne po zalogowaniu na Twoim koncie.</div>"
+    newsletter:
+      label: Newsletter
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Newsletter Sleep Puzzle"
+            en: "Sleep Puzzle newsletter"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Raz na jakiś czas — konkretna wiedza o śnie dziecka, bez spamu."
+            en: "Every now and then — real advice on child sleep, no spam."
+        placeholder:
+          label: Pole adresu — podpowiedź
+          type: plain
+          default:
+            pl: "Twój adres e-mail"
+            en: "Your email address"
+        button:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Zapisz się"
+            en: "Subscribe"
+        thanks:
+          label: Podziękowanie
+          type: plain
+          default:
+            pl: "Dzięki! Sprawdź skrzynkę, żeby potwierdzić zapis."
+            en: "Thanks! Check your inbox to confirm."
 packages:
   label: Pakiety
   sections:

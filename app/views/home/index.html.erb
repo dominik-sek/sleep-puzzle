@@ -102,29 +102,6 @@
     background: :ink_soft,
     bordered: false
   ) do |section| %>
-    <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.process.title") %></h2>
-
-    <%# owner-managed list: numbering follows display order rather than being stored.
-        flex-1 rather than a fixed column count — the owner can add a fourth step
-        in the panel, and the row should divide itself rather than break. %>
-    <div class="flex flex-col md:flex-row w-full gap-10 md:gap-12">
-      <% content_items("home.process").each_with_index do |step, index| %>
-        <div class="flex-1 flex flex-col items-center text-center gap-4">
-          <div class="w-16 h-16 shrink-0 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">
-            <%= index + 1 %>
-          </div>
-          <span class="text-t4 font-display"><%= step["title"] %></span>
-          <span class="text-taupe"><%= step["body"] %></span>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-
-  <%= render Section::Component.new(
-    align: :center,
-    background: :ink,
-    bordered: false
-  ) do |section| %>
     <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.packages.title") %></h2>
     <span class="text-tan md:max-w-3/4"><%= content_block("home.packages.subtitle") %></span>
 
@@ -147,10 +124,13 @@
 
                 <p class="text-t5 text-tan text-start"><%= package.for_whom %></p>
 
-                <%# no per-package page: land on the catalogue at this card %>
+                <%# no per-package page: land on the catalogue at this card.
+                    Label is CMS copy, the arrow is chrome — the same split as the
+                    about section's CTA, so the owner rewording this does not have
+                    to retype an arrow or risk losing it. %>
                 <%= link_to packages_path(anchor: dom_id(package)) do %>
                   <span class="text-t6 text-cream hover:text-accent">
-                    Zobacz szczegóły -&gt;
+                    <%= content_block("home.packages.details") %> -&gt;
                   </span>
                 <% end %>
               </div>
@@ -159,6 +139,29 @@
         <% end %>
       </div>
     <% end %>
+  <% end %>
+
+  <%= render Section::Component.new(
+    align: :center,
+    background: :ink,
+    bordered: false
+  ) do |section| %>
+    <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.process.title") %></h2>
+
+    <%# owner-managed list: numbering follows display order rather than being stored.
+        flex-1 rather than a fixed column count — the owner can add a fourth step
+        in the panel, and the row should divide itself rather than break. %>
+    <div class="flex flex-col md:flex-row w-full gap-10 md:gap-12">
+      <% content_items("home.process").each_with_index do |step, index| %>
+        <div class="flex-1 flex flex-col items-center text-center gap-4">
+          <div class="w-16 h-16 shrink-0 bg-accent rounded-full flex items-center justify-center text-t3 text-ink">
+            <%= index + 1 %>
+          </div>
+          <span class="text-t4 font-display"><%= step["title"] %></span>
+          <span class="text-taupe"><%= step["body"] %></span>
+        </div>
+      <% end %>
+    </div>
   <% end %>
 
   <%= render Section::Component.new(
@@ -199,5 +202,28 @@
         <% end %>
       </div>
     </div>
+  <% end %>
+
+  <%# Last section on the page, as in the design. The form is its own partial and
+      its own frame so a rejected address re-renders inside it rather than
+      reloading the whole home page — the visitor is at the bottom of a long page
+      and a full reload would put them back at the top. %>
+  <%# Heading and copy sit in the block rather than in `title:`/`subtitle:` on
+      purpose. Passing them to the component switches it to its two-column
+      layout, which puts the heading in a `md:max-w-1/2` column and leaves it
+      hanging on the left of a section the design centres. Written this way it
+      takes the single-column branch, the same as the packages and process
+      sections above. %>
+  <%= render Section::Component.new(
+    align: :center,
+    background: :ink,
+    bordered: false
+  ) do |section| %>
+    <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.newsletter.title") %></h2>
+    <%# narrower than the section so the line breaks near the middle rather than
+        running the full 1240px, which is what the design's 900px box does %>
+    <span class="text-tan max-w-xl"><%= content_block("home.newsletter.subtitle") %></span>
+
+    <%= render "newsletter_subscriptions/form", signup: NewsletterSignup.new %>
   <% end %>
 </div>
