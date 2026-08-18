@@ -24,7 +24,7 @@ module Pagination
       show_info: true,
       show_page_form: false,
       show_limit_form: false,
-      limit_options: [10, 25, 50],
+      limit_options: [ 10, 25, 50 ],
       preserve_params: {},
       request_path: nil,
       classes: nil
@@ -45,7 +45,7 @@ module Pagination
 
     def wrapper_classes
       base = "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-      [@classes, base].compact.reject(&:empty?).join(" ")
+      [ @classes, base ].compact.reject(&:empty?).join(" ")
     end
 
     def nav_wrapper_classes

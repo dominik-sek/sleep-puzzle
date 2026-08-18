@@ -50,14 +50,14 @@ module Accordion
       # Styling methods
       def item_classes
         base = case @variant
-               when :bordered
+        when :bordered
                  "overflow-hidden bg-surface border border-border-strong items-center justify-between font-semibold transition-all hover:bg-ink-soft rounded-lg"
-               when :floating
+        when :floating
                  "mb-2"
-               else
+        else
                  "border-b pb-2 border-border"
-               end
-        [@classes, base].compact.join(" ")
+        end
+        [ @classes, base ].compact.join(" ")
       end
 
       def h3_classes
@@ -67,23 +67,23 @@ module Accordion
       def trigger_classes
         # Icon rotation class based on icon type
         icon_class = case @icon
-                     when :plus_minus
+        when :plus_minus
                        ""
-                     when :left_arrow
+        when :left_arrow
                        "[&[data-state=open]>svg]:rotate-0 [&[data-state=closed]>svg]:-rotate-90"
-                     else
+        else
                        "[&[data-state=open]>svg]:rotate-180"
-                     end
+        end
 
         if bordered?
           base = "w-full rounded-lg flex flex-1 p-3 items-center justify-between font-medium transition-all"
           focus = "focus:outline-accent focus:-outline-offset-1"
-          [base, icon_class, focus].reject(&:empty?).join(" ")
+          [ base, icon_class, focus ].reject(&:empty?).join(" ")
         else
           base = "w-full flex flex-1 items-center text-left py-2 font-medium transition-all focus:outline-accent focus:outline-offset-2 px-2"
           justify = @icon_position == :left ? "" : "justify-between"
           hover = "hover:underline"
-          [base, justify, hover, icon_class].reject(&:empty?).join(" ")
+          [ base, justify, hover, icon_class ].reject(&:empty?).join(" ")
         end
       end
 

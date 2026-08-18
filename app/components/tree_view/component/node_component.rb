@@ -79,7 +79,7 @@ module TreeView
 
       def node_classes
         base = "flex flex-col gap-y-1"
-        [base, @classes].compact.reject(&:empty?).join(" ")
+        [ base, @classes ].compact.reject(&:empty?).join(" ")
       end
 
       def row_classes

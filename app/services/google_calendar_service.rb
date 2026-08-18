@@ -10,7 +10,7 @@ class GoogleCalendarService < ApplicationService
       time_min: Time.current.beginning_of_day.iso8601,
       time_max: 2.months.from_now.end_of_day.iso8601,
       time_zone: Time.zone.tzinfo.name,
-      items: [Google::Apis::CalendarV3::FreeBusyRequestItem.new(id: ENV["GOOGLE_CALENDAR_ID"])]
+      items: [ Google::Apis::CalendarV3::FreeBusyRequestItem.new(id: ENV["GOOGLE_CALENDAR_ID"]) ]
     )
 
     response = @service.query_freebusy(request)

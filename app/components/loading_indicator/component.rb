@@ -27,7 +27,7 @@ module LoadingIndicator
     def wrapper_classes
       base = "inline-flex items-center"
       gap = @text.present? ? "gap-2" : ""
-      [base, gap, @classes].compact.reject(&:empty?).join(" ")
+      [ base, gap, @classes ].compact.reject(&:empty?).join(" ")
     end
 
     def spinner_classes
@@ -46,11 +46,11 @@ module LoadingIndicator
       else ""
       end
       opacity = case index
-                when 0 then ""
-                when 1 then "opacity-80"
-                when 2 then "opacity-60"
-                else ""
-                end
+      when 0 then ""
+      when 1 then "opacity-80"
+      when 2 then "opacity-60"
+      else ""
+      end
       [
         dot_size_classes,
         dot_color_classes,

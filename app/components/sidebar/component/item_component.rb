@@ -27,26 +27,26 @@ module Sidebar
         base = "group w-full flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm"
         state_classes = if @disabled
                           "text-taupe-dark cursor-not-allowed opacity-50"
-                        elsif @active
+        elsif @active
                           "text-cream bg-ink"
-                        else
+        else
                           "text-taupe hover:bg-ink-soft hover:text-cream focus-visible:bg-ink-soft focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
-                        end
+        end
 
-        [base, state_classes, @classes].compact.reject(&:empty?).join(" ")
+        [ base, state_classes, @classes ].compact.reject(&:empty?).join(" ")
       end
 
       def collapsed_item_classes
         base = "flex h-8 w-8.5 items-center justify-center rounded-lg"
         state_classes = if @disabled
                           "text-taupe-dark cursor-not-allowed opacity-50"
-                        elsif @active
+        elsif @active
                           "text-cream bg-ink"
-                        else
+        else
                           "text-taupe hover:bg-ink-soft hover:text-cream focus:outline-none focus-visible:bg-ink-soft disabled:opacity-50"
-                        end
+        end
 
-        [base, state_classes].join(" ")
+        [ base, state_classes ].join(" ")
       end
 
       def render?

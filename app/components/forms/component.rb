@@ -55,64 +55,64 @@ module Forms
 
     def wrapper_classes
       base = case @variant
-             when :inline then "flex items-center gap-4"
-             when :floating then "relative"
-             else "flex flex-col gap-y-1.5"
-             end
+      when :inline then "flex items-center gap-4"
+      when :floating then "relative"
+      else "flex flex-col gap-y-1.5"
+      end
 
-      [base, @classes].compact.reject(&:empty?).join(" ")
+      [ base, @classes ].compact.reject(&:empty?).join(" ")
     end
 
     def label_classes
       base = "font-medium"
       size_class = case @size
-                   when :sm then "text-xs"
-                   when :lg then "text-base"
-                   else "text-sm"
-                   end
+      when :sm then "text-xs"
+      when :lg then "text-base"
+      else "text-sm"
+      end
 
       visibility_class = @label_hidden ? "sr-only" : ""
 
       color_class = if @disabled
                       "text-taupe-dark"
-                    elsif @error.present?
+      elsif @error.present?
                       "text-red-400"
-                    else
+      else
                       "text-cream"
-                    end
+      end
 
       width_class = @variant == :inline ? "shrink-0" : ""
 
-      [base, size_class, visibility_class, color_class, width_class, @label_classes].compact.reject(&:empty?).join(" ")
+      [ base, size_class, visibility_class, color_class, width_class, @label_classes ].compact.reject(&:empty?).join(" ")
     end
 
     def input_wrapper_classes
       base = @variant == :inline ? "flex-1" : ""
       addon_class = addons? ? "flex" : ""
 
-      [base, addon_class, @input_wrapper_classes].compact.reject(&:empty?).join(" ")
+      [ base, addon_class, @input_wrapper_classes ].compact.reject(&:empty?).join(" ")
     end
 
     def helper_text_classes
       size_class = case @size
-                   when :sm then "text-[11px]"
-                   when :lg then "text-sm"
-                   else "text-xs"
-                   end
+      when :sm then "text-[11px]"
+      when :lg then "text-sm"
+      else "text-xs"
+      end
 
       color_class = @disabled ? "text-taupe-dark" : "text-taupe"
 
-      [size_class, color_class, "mt-1"].join(" ")
+      [ size_class, color_class, "mt-1" ].join(" ")
     end
 
     def error_classes
       size_class = case @size
-                   when :sm then "text-[11px]"
-                   when :lg then "text-sm"
-                   else "text-xs"
-                   end
+      when :sm then "text-[11px]"
+      when :lg then "text-sm"
+      else "text-xs"
+      end
 
-      [size_class, "text-red-400 mt-1"].join(" ")
+      [ size_class, "text-red-400 mt-1" ].join(" ")
     end
 
     def addon_classes(position)
@@ -121,17 +121,17 @@ module Forms
       border = "border border-border-input"
 
       size_class = case @size
-                   when :sm then "text-xs"
-                   when :lg then "text-base"
-                   else "text-sm"
-                   end
+      when :sm then "text-xs"
+      when :lg then "text-base"
+      else "text-sm"
+      end
 
       position_class = case position
-                       when :left then "rounded-l-lg border-r-0"
-                       when :right then "rounded-r-lg border-l-0"
-                       end
+      when :left then "rounded-l-lg border-r-0"
+      when :right then "rounded-r-lg border-l-0"
+      end
 
-      [base, bg, border, size_class, position_class].join(" ")
+      [ base, bg, border, size_class, position_class ].join(" ")
     end
 
     def addons?

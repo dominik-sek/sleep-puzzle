@@ -36,6 +36,9 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 2.0"
 
+# image_processing 2.0 made its backends opt-in; Active Storage defaults to the vips processor
+gem "ruby-vips", "~> 2.0"
+
 gem "rails-i18n"
 
 # Pagination [https://ddnexus.github.io/pagy/]
@@ -106,5 +109,3 @@ gem "rails_semantic_logger"
 gem "pay", "~> 11.5"
 
 gem "paddle", "~> 2.9"
-
-
