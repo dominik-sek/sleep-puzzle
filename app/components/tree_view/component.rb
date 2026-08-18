@@ -51,16 +51,16 @@ module TreeView
     def wrapper_classes
       base = "h-auto w-full"
       variant_class = case @variant
-                      when :bordered
+      when :bordered
                         "p-4 rounded-lg border border-border-strong bg-surface"
-                      else
+      else
                         ""
-                      end
-      [base, variant_class, @classes].compact.reject(&:empty?).join(" ")
+      end
+      [ base, variant_class, @classes ].compact.reject(&:empty?).join(" ")
     end
 
     def controller_data
-      controllers = ["tree-view"]
+      controllers = [ "tree-view" ]
       controllers << "checkbox-select-all" if @selectable
 
       data = { controller: controllers.join(" ") }

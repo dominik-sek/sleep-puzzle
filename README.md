@@ -9,6 +9,13 @@
   but every variant URL 500s with `undefined method 'new' for nil`, because the
   `image_processing` gem is only a wrapper around the C library.
 
+  Two pieces are needed, and they fail differently. The `ruby-vips` gem is the
+  Ruby binding, and it is an explicit entry in the Gemfile: `image_processing`
+  2.0 dropped it as a dependency and made its backends opt-in, so without that
+  line the app does not boot at all — Active Storage's initializer requires
+  `image_processing/vips` and raises `LoadError`. The libvips C library below is
+  the thing the binding binds to, and its absence is the 500 described above.
+
   ```sh
   brew install vips          # macOS
   apt-get install libvips    # Debian/Ubuntu
@@ -710,6 +717,35 @@ along with the blog itself.
 
 - **Blog** and **Wpis na blogu** — designed (list and post screens) but deliberately
   not being built for now. Nothing in the app depends on them.
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every pull request and on pushes to `main`
+and `development`. Three jobs, all of which you can reproduce locally:
+
+| Job | Command |
+| --- | --- |
+| `scan_ruby` | `bin/brakeman --no-pager` and `bin/bundler-audit` |
+| `lint` | `bin/rubocop -f github` |
+| `test` | `bin/rails db:test:prepare && bundle exec rspec` |
+
+`development` is in the push triggers deliberately. It used to be absent, and
+because feature work happens there and only reaches `main` through one large
+merge, nothing was checked until after that merge landed — 161 RuboCop offenses
+accumulated on the branch and all surfaced at once on `main`, on a commit that
+was already merged. Checking `development` on push moves that feedback to the
+branch where the code was written.
+
+There is no `system-test` job. There used to be, but `spec/system` was removed
+in `054908d` and a job pointed at a missing directory can only ever be red.
+Capybara, selenium-webdriver and `spec/support/capybara.rb` are all still in
+place, so restoring it is adding the job back once a system spec exists.
+
+Note that `bin/brakeman` does *not* pass `--ensure-latest`. That flag makes the
+scan exit non-zero whenever a newer Brakeman has been released, which turns an
+upstream release into a red build on code that did not change. Dependabot keeps
+the gem current; the scanner's job here is to fail on warnings, not on its own
+version.
 
 ## Everything else
 

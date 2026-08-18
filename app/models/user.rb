@@ -23,7 +23,6 @@
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #
 class User < ApplicationRecord
-
   pay_customer default_payment_processor: :paddle_billing
 
   has_many :bookings, dependent: :restrict_with_error

@@ -82,20 +82,20 @@ module Sidebar
 
     def wrapper_classes
       base = "flex h-full w-full flex-col relative"
-      [base, @classes].compact.reject(&:empty?).join(" ")
+      [ base, @classes ].compact.reject(&:empty?).join(" ")
     end
 
     def sidebar_classes
       base = "#{@collapsed_width} #{open_width_class} group/sidebar relative z-20 h-full shrink-0 overflow-hidden max-md:hidden motion-safe:transition-all motion-safe:duration-300"
 
       variant_class = case @variant
-                      when :minimal
+      when :minimal
                         "bg-ink"
-                      else
+      else
                         "border-r border-border-strong bg-surface-dark"
-                      end
+      end
 
-      [base, variant_class].join(" ")
+      [ base, variant_class ].join(" ")
     end
 
     def mobile_panel_classes
@@ -103,52 +103,52 @@ module Sidebar
       position_class = @position == :right ? "right-0" : "left-0"
 
       variant_class = case @variant
-                      when :minimal
+      when :minimal
                         "bg-ink border-r border-border-strong"
-                      else
+      else
                         "bg-surface-dark border-r border-border-strong"
-                      end
+      end
 
-      [base, position_class, variant_class].join(" ")
+      [ base, position_class, variant_class ].join(" ")
     end
 
     def nav_classes
       base = "#{@min_height_class} relative flex h-full w-full flex-1 flex-col overflow-y-auto select-none"
 
       bg_class = case @variant
-                 when :minimal
+      when :minimal
                    "bg-ink"
-                 else
+      else
                    "bg-surface-dark"
-                 end
+      end
 
-      [base, bg_class].join(" ")
+      [ base, bg_class ].join(" ")
     end
 
     def header_classes
       base = "sticky top-0 z-30"
 
       bg_class = case @variant
-                 when :minimal
+      when :minimal
                    "bg-ink"
-                 else
+      else
                    "bg-surface-dark"
-                 end
+      end
 
-      [base, bg_class].join(" ")
+      [ base, bg_class ].join(" ")
     end
 
     def footer_classes
       base = "sticky bottom-0 z-30 p-1.5 empty:hidden sm:p-2"
 
       bg_class = case @variant
-                 when :minimal
+      when :minimal
                    "bg-ink"
-                 else
+      else
                    "bg-surface-dark"
-                 end
+      end
 
-      [base, bg_class].join(" ")
+      [ base, bg_class ].join(" ")
     end
 
     def collapsed_footer_classes
@@ -159,13 +159,13 @@ module Sidebar
       base = "h-full overflow-x-clip overflow-y-auto text-clip whitespace-nowrap"
 
       bg_class = case @variant
-                 when :minimal
+      when :minimal
                    "bg-ink"
-                 else
+      else
                    "bg-surface-dark"
-                 end
+      end
 
-      [@width.to_s, base, bg_class].join(" ")
+      [ @width.to_s, base, bg_class ].join(" ")
     end
 
     def controller_data

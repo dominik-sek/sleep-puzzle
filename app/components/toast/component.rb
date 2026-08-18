@@ -36,7 +36,7 @@ module Toast
 
     def container_classes
       base = "fixed z-[99999] w-full px-4 sm:px-0 sm:w-auto pointer-events-none transition-all duration-300 ease-in-out"
-      [base, position_classes, @classes].compact.reject(&:empty?).join(" ")
+      [ base, position_classes, @classes ].compact.reject(&:empty?).join(" ")
     end
 
     def data_attributes

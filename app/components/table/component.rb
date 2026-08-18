@@ -62,7 +62,7 @@ module Table
 
     def container_wrapper_classes
       base = "bg-surface overflow-hidden"
-      classes = [base]
+      classes = [ base ]
       classes << rounded_classes
       classes << "border border-border-strong" if @bordered
       classes << "shadow-xs"
@@ -72,7 +72,7 @@ module Table
 
     def scroll_wrapper_classes
       base = "overflow-x-auto"
-      classes = [base]
+      classes = [ base ]
       if @max_height
         classes << "overflow-y-auto small-scrollbar"
       end
@@ -109,7 +109,7 @@ module Table
       base = "text-t6 font-bold uppercase text-taupe"
       padding = density_header_padding
       border = header_border_style.to_s
-      [base, padding, border].reject(&:empty?).join(" ")
+      [ base, padding, border ].reject(&:empty?).join(" ")
     end
 
     def render_with_container?

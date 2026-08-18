@@ -32,7 +32,7 @@ module Accordion
     def wrapper_classes
       base = "w-full"
       variant_class = @variant == :bordered ? "flex flex-col gap-2" : ""
-      [base, variant_class, @classes].compact.reject(&:empty?).join(" ")
+      [ base, variant_class, @classes ].compact.reject(&:empty?).join(" ")
     end
 
     def controller_data

@@ -27,7 +27,7 @@ module Sidebar
 
       def section_classes
         base = "group/options mb-4 px-1.5 sm:px-2"
-        [base, @classes].compact.reject(&:empty?).join(" ")
+        [ base, @classes ].compact.reject(&:empty?).join(" ")
       end
 
       def summary_classes

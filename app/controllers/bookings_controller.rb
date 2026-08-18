@@ -1,5 +1,5 @@
 class BookingsController < ApplicationController
-  require 'google/apis/calendar_v3'
+  require "google/apis/calendar_v3"
 
   before_action :authenticate_user!
   before_action :load_package_options, only: [ :index, :create, :abandon ]

@@ -16,7 +16,7 @@ module Table
         base = "text-t6 font-bold uppercase text-taupe"
         align_class = alignment_class
         padding = "px-3 first:pl-6 last:pr-6"
-        [@classes, base, align_class, padding].compact.reject(&:empty?).join(" ")
+        [ @classes, base, align_class, padding ].compact.reject(&:empty?).join(" ")
       end
 
       attr_reader :label, :align
