@@ -14,7 +14,11 @@ module AdminHelper
       { label: "Produkty", href: admin_products_path, icon: "audio-lines",
         active: controller_name == "products" },
       { label: "Treści", href: admin_content_blocks_path, icon: "file-text",
-        active: controller_name.in?(%w[content_blocks content_items]) }
+        active: controller_name.in?(%w[content_blocks content_items]) },
+      # Outside the Admin:: namespace — it hangs off /integrations — but it is a
+      # panel screen in every other respect, so it belongs in the panel's nav.
+      { label: "Kalendarz", href: integrations_google_calendar_path, icon: "calendar-cog",
+        active: controller_name == "google_calendar" }
     ]
   end
 

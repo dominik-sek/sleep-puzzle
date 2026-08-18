@@ -1,6 +1,37 @@
 require 'rails_helper'
 
 RSpec.describe AdminHelper, type: :helper do
+  describe "#admin_sidebar_items" do
+    it "offers the Google Calendar screen" do
+      item = helper.admin_sidebar_items.find { |i| i[:href] == integrations_google_calendar_path }
+
+      expect(item).to be_present
+      expect(item[:label]).to eq("Kalendarz")
+    end
+
+    # It is the one nav entry pointing outside the Admin:: namespace, so the
+    # active rule cannot key off an `admin_` controller name like the others.
+    it "marks the calendar item active on its own screen" do
+      allow(helper).to receive(:controller_name).and_return("google_calendar")
+
+      active = helper.admin_sidebar_items.select { |i| i[:active] }
+
+      expect(active.map { |i| i[:label] }).to eq([ "Kalendarz" ])
+    end
+
+    it "leaves it inactive elsewhere" do
+      allow(helper).to receive(:controller_name).and_return("bookings")
+
+      active = helper.admin_sidebar_items.select { |i| i[:active] }
+
+      expect(active.map { |i| i[:label] }).to eq([ "Rezerwacje" ])
+    end
+
+    it "points every item at an icon that exists" do
+      expect { helper.admin_sidebar_items.each { |i| helper.icon(i[:icon]) } }.not_to raise_error
+    end
+  end
+
   describe "#google_calendar_event_url" do
     around do |example|
       original = ENV["GOOGLE_CALENDAR_ID"]

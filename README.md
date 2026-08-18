@@ -362,6 +362,38 @@ than tinted to a host palette. `data-turbo: false` on it is required rather than
 cosmetic: the handshake is a full-page redirect off-site, and Turbo would try to
 fetch it and fail.
 
+### Who counts as an admin
+
+One boolean, `users.admin`. There are only ever a couple of people, so it is a
+flag rather than a role system, and it is granted from the console:
+
+```sh
+bin/rails 'admin:promote[you@example.com]'
+bin/rails 'admin:demote[you@example.com]'
+bin/rails admin:list
+```
+
+`Admin::BaseController` gates every `/admin` screen on it, and the navbar shows
+the panel link off the same check, so promoting a second person needs no deploy.
+
+The Google Calendar screen at `/integrations/google_calendar` used to be the
+exception: it compared `current_user.email` against `ENV["OWNER_EMAIL"]`, which
+allowed exactly one address and made adding a second person a redeploy. It now
+uses `admin?` like everything else. **`OWNER_EMAIL` is not a permission** — it is
+only where booking and contact mail is delivered and the `reply_to` fallback, and
+holding that address grants nothing. `spec/requests/integrations/google_calendar_spec.rb`
+pins both halves of that, including the case of a non-admin whose email happens to
+match `OWNER_EMAIL`.
+
+It is the one panel screen living outside the `Admin::` namespace, which shows up
+in two places. Its sidebar entry in `AdminHelper#admin_sidebar_items` cannot key
+its `active` rule off an `admin_`-prefixed controller like the rest, so it matches
+`controller_name == "google_calendar"`; and the controller sets `layout "admin"`
+explicitly, since it inherits from `ApplicationController` and would otherwise
+render the sidebar link's destination with the public navbar and footer. Both are
+pinned by specs, along with the sidebar icons resolving — `icon` raises on an
+unknown name, so a typo there is a 500 rather than a missing glyph.
+
 ## Two languages, two addresses
 
 Polish keeps the bare paths it always had; English is the same page under `/en`:
@@ -490,6 +522,45 @@ inline and the booking and contact mails go through `deliver_later`, but ActiveJ
 serialises `I18n.locale` with the job and restores it around `perform`, so the
 language survives the queue either way. Covered by
 `spec/mailers/devise_mailer_spec.rb`.
+
+## The production image
+
+`Dockerfile` builds the image Kamal deploys. It is the stock Rails 8 file with the
+changes below; everything else there is untouched generator output.
+
+**Node exists only in the build stage.** This is the part that isn't optional: the
+app bundles JS and CSS through `vite_rails`, and `vite_ruby`'s rake hook enhances
+`assets:precompile` to run `vite build`. A Ruby-only image cannot precompile, so the
+build stage lifts `node` and `npm` out of the official Node image with `COPY --from`
+rather than compiling them from source, which costs seconds instead of minutes. The
+Node image is pinned to `bookworm` on purpose — its glibc has to be no newer than the
+Ruby base image's, or the copied binary won't link. The final stage never copies any
+of it, so the shipped image has no Node in it at all.
+
+**`npm ci` runs once, in its own layer.** `package.json` and `package-lock.json` are
+copied before the app code so editing a view doesn't reinstall the JS tree. That
+means the `vite:install_dependencies` half of the precompile hook would be a second,
+uncached `npm ci` that wipes the first one, so `VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true`
+turns it off. `--include=dev` is required and easy to lose: `vite`, `tailwindcss` and
+`vite-plugin-ruby` are all devDependencies, and `RAILS_ENV=production` is enough to
+make npm skip them, which fails the build with a missing-vite error. `node_modules`
+is deleted once the bundles are written.
+
+**Smaller odds and ends.** `BUNDLE_WITHOUT` excludes `test` alongside `development`
+— nothing in the image runs specs, so rspec, capybara and selenium don't belong in
+it. `RUBY_YJIT_ENABLE=1` turns the JIT on. apt and npm downloads use BuildKit cache
+mounts, so repeat builds skip the network. A `HEALTHCHECK` curls `/up`; it targets
+`HTTP_PORT` (Thruster's own listener, default 80) rather than `PORT`, which is the
+Puma port Thruster proxies *to*.
+
+**Migrations on boot.** `bin/docker-entrypoint` still runs `db:prepare`, but only
+when the command is `./bin/rails server` and `SKIP_DB_PREPARE` is unset. Set that
+variable if you ever split jobs onto their own host or run a second web server, so
+one container owns the schema change instead of all of them racing.
+
+`.dockerignore` additionally drops `public/vite*` (stale local bundles that the build
+regenerates anyway), `spec/`, `coverage/` and editor config, purely to keep the build
+context small.
 
 ## Roadmap
 

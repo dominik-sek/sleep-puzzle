@@ -1,6 +1,11 @@
 class Integrations::GoogleCalendarController < ApplicationController
+  # Admin-only and linked from the panel's sidebar, so it wears the panel's
+  # chrome. Without this the sidebar link led out of the panel and onto a page
+  # with the public navbar and footer, which is a strange place to land.
+  layout "admin"
+
   before_action :authenticate_user!
-  before_action :require_owner!
+  before_action :require_admin
 
   def show
     @integration = Integration.find_by(service_name: Integration::GOOGLE_CALENDAR)
@@ -25,8 +30,13 @@ class Integrations::GoogleCalendarController < ApplicationController
 
   private
 
-  def require_owner!
-    return if current_user&.email == ENV["OWNER_EMAIL"]
+  # Same rule as every other gated screen: the `admin` boolean on users, granted
+  # with `bin/rails 'admin:promote[…]'`. This used to compare against OWNER_EMAIL,
+  # which allowed exactly one person and needed a redeploy to change. OWNER_EMAIL
+  # is only the notification inbox now, and says nothing about who may sign in.
+  def require_admin
+    return if current_user&.admin?
+
     redirect_to root_path, alert: "Brak dostępu."
   end
 
