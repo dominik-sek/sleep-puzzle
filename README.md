@@ -23,6 +23,26 @@
 
   The Dockerfile already installs it, so this is a local-setup step only.
 
+## Database configuration
+
+`config/database.yml` holds no credentials. Host, port, username and password
+all come from the environment — `.env` locally (dotenv-rails is in the
+`development, test` group, so it loads for every boot path), real env vars in
+production:
+
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `DATABASE_HOST` | `localhost` | |
+| `DATABASE_PORT` | `5432` | |
+| `DATABASE_USERNAME` | blank | Blank means peer auth as the OS user |
+| `DATABASE_PASSWORD` | blank | |
+| `DATABASE_NAME` | `sleep_puzzle_development` / `sleep_puzzle_production` | Production derives `_cache`, `_queue` and `_cable` from it |
+| `TEST_DATABASE_NAME` | `sleep_puzzle_test` | Separate key so dev and test never collide when `DATABASE_NAME` is set |
+
+Only the database names have defaults, and those are not secrets. `DATABASE_URL`
+still wins over everything above — Rails merges it on top of the file — which is
+how CI points the suite at its own postgres service without touching this file.
+
 ## Editable content (`config/content_blocks.yml`)
 
 Everything the owner can edit on the public site is declared in that one YAML
