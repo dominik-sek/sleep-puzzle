@@ -124,6 +124,8 @@ en:
     kinds:
       audio_process: "Audio process"
       bedtime_story: "Bedtime story"
+    player:
+      label: "Play: %{name}"
     length_minutes:
       one: "%{count} min"
       other: "%{count} min"

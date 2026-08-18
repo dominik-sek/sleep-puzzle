@@ -75,6 +75,51 @@ RSpec.describe "Dashboard", type: :request do
         expect(response.body).not_to include("Bajka o sowie")
       end
 
+      describe "the player" do
+        let(:product) { create_product(name: "Bajka o sowie", cdn_path: "/bajki/o-sowie.mp3") }
+
+        it "gives a bought recording a player pointed at the gated stream" do
+          with_bunny_cdn
+          paid_order_for(product)
+
+          get dashboard_index_path
+
+          expect(response.body).to include(%(src="#{stream_product_path(product)}"))
+        end
+
+        # nothing is fetched from the CDN, and no token is minted, until the buyer
+        # actually presses play
+        it "does not preload the audio" do
+          with_bunny_cdn
+          paid_order_for(product)
+
+          get dashboard_index_path
+
+          expect(response.body).to include(%(preload="none"))
+        end
+
+        # a control with nothing behind it would be a lie — the same reason the
+        # library had no player at all before the CDN existed
+        it "leaves out the player when no file has been uploaded" do
+          with_bunny_cdn
+          paid_order_for(create_product(name: "Bez pliku"))
+
+          get dashboard_index_path
+
+          expect(response.body).to include("Bez pliku")
+          expect(response.body).not_to include("<audio")
+        end
+
+        it "leaves out the player when the CDN is unconfigured" do
+          paid_order_for(product)
+
+          get dashboard_index_path
+
+          expect(response.body).to include("Bajka o sowie")
+          expect(response.body).not_to include("<audio")
+        end
+      end
+
       # an empty section that only says "nothing here" leaves the buyer to go and
       # find the shop themselves
       it "points an empty library at the shop" do

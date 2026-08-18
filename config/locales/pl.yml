@@ -132,6 +132,8 @@ pl:
     kinds:
       audio_process: "Audioproces"
       bedtime_story: "Bajka na dobranoc"
+    player:
+      label: "Odtwórz: %{name}"
     length_minutes:
       one: "%{count} min"
       other: "%{count} min"

@@ -37,7 +37,12 @@ Rails.application.routes.draw do
       # the browser reporting that the Paddle overlay was closed without paying
       delete :abandon, on: :member
     end
-    resources :products, only: [ :index, :show ]
+    resources :products, only: [ :index, :show ] do
+      # what a buyer's player points at: it authorises, then redirects to a
+      # freshly signed CDN URL. A member route rather than a nested resource
+      # because there is only ever one file per product
+      get :stream, on: :member
+    end
     # singular: one cart per visitor, kept in the session, so there is no id to
     # carry. Its lines are addressed by product id — there are no cart item rows.
     resource :cart, only: [ :show ], controller: "cart" do

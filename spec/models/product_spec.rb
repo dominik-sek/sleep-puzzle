@@ -6,6 +6,7 @@ require 'rails_helper'
 #
 #  id              :bigint           not null, primary key
 #  category        :integer
+#  cdn_path        :string
 #  icon            :string
 #  kind            :integer
 #  length_minutes  :integer
@@ -48,6 +49,62 @@ RSpec.describe Product, type: :model do
 
       expect(product).not_to be_valid
       expect(product.errors[:name]).to be_present
+    end
+  end
+
+  # The path is signed exactly as it appears in the URL, so anything needing
+  # percent-encoding would be signed in one form and requested in another, and
+  # every play would come back a 403 from Bunny.
+  describe "the audio file's path" do
+    it "accepts a plain path" do
+      expect(build_product(cdn_path: "/bajki/o-sowie.mp3")).to be_valid
+    end
+
+    it "is optional — a product with no audio yet is still a shop listing" do
+      expect(build_product(cdn_path: nil)).to be_valid
+      expect(build_product(cdn_path: "")).to be_valid
+    end
+
+    # Bunny's file browser shows paths both ways, and the owner pastes what they see
+    it "adds the leading slash the owner left off" do
+      product = create_product(cdn_path: "bajki/o-sowie.mp3")
+
+      expect(product.cdn_path).to eq("/bajki/o-sowie.mp3")
+    end
+
+    it "trims surrounding whitespace from a paste" do
+      product = create_product(cdn_path: "  /bajki/o-sowie.mp3  ")
+
+      expect(product.cdn_path).to eq("/bajki/o-sowie.mp3")
+    end
+
+    it "rejects a path that would not survive a URL intact" do
+      [ "/bajki/o sowie.mp3", "/bajki/ó-sowie.mp3", "/bajki/o-sowie.mp3?x=1", "https://cdn.example/x.mp3" ].each do |path|
+        product = build_product(cdn_path: path)
+
+        expect(product).not_to be_valid, "expected #{path.inspect} to be rejected"
+        expect(product.errors[:cdn_path]).to be_present
+      end
+    end
+  end
+
+  describe "#streamable?" do
+    it "is true for an uploaded file with the CDN configured" do
+      with_bunny_cdn
+
+      expect(build_product(cdn_path: "/bajki/o-sowie.mp3")).to be_streamable
+    end
+
+    it "is false before the file is uploaded" do
+      with_bunny_cdn
+
+      expect(build_product(cdn_path: nil)).not_to be_streamable
+    end
+
+    # development and the test suite, where the library renders exactly as it did
+    # before the CDN existed
+    it "is false with no CDN credentials" do
+      expect(build_product(cdn_path: "/bajki/o-sowie.mp3")).not_to be_streamable
     end
   end
 

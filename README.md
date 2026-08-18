@@ -187,6 +187,117 @@ already recorded, so it stays a view away rather than a migration away. That
 changes if Paddle ever stops being Merchant of Record, at which point invoicing
 becomes ours.
 
+### Delivering the audio
+
+The recordings live on a **Bunny** storage zone, behind a pull zone with **Token
+Authentication** switched on. That matters: a pull zone is public by default, so
+without token auth anyone who guessed a filename would have the file. With it,
+the zone refuses every request that does not carry a valid signature, and minting
+signatures is the only thing this app has to guard.
+
+Each `Product` stores a `cdn_path` — the path inside the storage zone,
+`/bajki/o-sowie-3f9a1c04.mp3` — and not a URL. The hostname is one pull zone for the whole
+catalogue and lives in `BUNNY_CDN_HOST`, and the URL a buyer actually gets is
+signed per play, so a stored URL would be a stored expiry date. The column is
+nullable on purpose: a product whose audio has not been uploaded is a perfectly
+good shop listing, it just has no player.
+
+The dashboard draws an `<audio>` pointed at **`/products/:id/stream`**, never at
+Bunny. That action authenticates, checks `current_user.purchased?`, and only then
+redirects to a freshly signed URL. Three reasons for the indirection rather than
+rendering the signed URL straight into the page:
+
+- the token key never reaches the HTML,
+- the URL is minted when play is pressed — `preload="none"` — rather than baked
+  into a page that may sit open for a day,
+- moving a file on the CDN cannot strand a link someone already holds.
+
+`BunnySignedUrlService` implements Bunny's advanced token authentication:
+HMAC-SHA256 over the path and the expiry, base64url, prefixed `HS256-`. A
+signature that is subtly wrong fails as a 403 from someone else's server rather
+than as anything debuggable here, so the spec pins it to the **test vector Bunny
+publishes** alongside its own reference implementations rather than to whatever
+this code happens to produce.
+
+Two decisions inside it are worth knowing:
+
+- **Six hours, not minutes.** Seeking is a fresh Range request against the same
+  signed URL, so a short window would expire mid-recording — the one moment this
+  must not break — rather than at a page load, where it would at least be obvious.
+- **No IP binding**, though Bunny's scheme offers it. A phone moving from wi-fi to
+  mobile data changes address mid-recording, and the buyer would get a 403 for
+  doing nothing wrong.
+
+`cdn_path` is validated to characters that survive a URL untouched, because Bunny
+signs the path *as it appears in the URL* — a filename needing percent-encoding
+would be signed in one form and requested in another. `BunnyStorageService`
+already produces paths in that shape, so this now mostly guards the manual
+fallback below.
+
+With `BUNNY_CDN_HOST` or `BUNNY_CDN_TOKEN` unset — local development, the test
+suite — `Product#streamable?` is false and the library renders exactly as it did
+before the CDN existed. Nothing half-works.
+
+### Uploading the audio
+
+The admin form takes the recording itself, not a path to one. Before that, the
+owner uploaded through Bunny's dashboard and pasted the resulting path into the
+form — two systems to be logged into, and a typo in the paste failed as a **403
+the first time a buyer pressed play** rather than as anything visible at the time.
+
+`BunnyStorageService` PUTs the file to `https://{host}/{zone}/{path}` with the
+zone's key in an `AccessKey` header. Three things about it are deliberate:
+
+- **Proxied through the app, not sent from the browser.** The storage password is
+  a write key for the *whole* zone, so handing it to the page would put it in the
+  HTML of every admin screen and the network log of every machine that opened one.
+  Rack has already buffered the upload to a tempfile by then, so proxying costs a
+  streamed copy rather than memory — nothing reads the file into a string, the
+  body and the checksum are both chunked.
+- **Uploaded before the record is saved.** A zone that is down or misconfigured
+  re-renders the form with everything still in it, instead of quietly saving a
+  product whose player never appears. The cost is an orphaned file when the upload
+  lands and the save then fails validation, which is much cheaper than the reverse.
+- **Filename transliterated, plus a random suffix.** `Nagranie Śpiącej Sowy.mp3`
+  becomes `/bajki/nagranie-spiacej-sowy-3f9a1c04.mp3`: transliterated because the
+  pull zone signs the path as it appears in the URL, suffixed because two products
+  uploaded from the same `nagranie.mp3` would otherwise become one file, silently
+  replacing a recording another product still points at.
+
+The folder follows the product's kind — `audioprocesy` or `bajki` — so the zone
+reads the way the shop talks about itself and Bunny's own file browser makes sense
+without the database open beside it. The map lives in the service rather than on
+`Product`, which means no caller ever supplies a path segment: everything about
+where a file lands is decided in one class, from a kind the enum has already
+narrowed to two values. A product with no kind chosen yet is refused rather than
+defaulted, because a guessed folder files the recording somewhere the owner has no
+reason to look.
+
+A `Checksum` header carries a SHA256 of the bytes; Bunny hashes what it received
+and 400s on a mismatch, which turns a connection dropped near the end into a
+refusal rather than a stored file that plays as far as it got. `401` and `404` are
+reported separately in the form — one is the wrong password, the other the wrong
+zone or region, and from a bare "upload failed" there is no telling which was
+pasted wrong.
+
+The form caps uploads at **250 MB** and to audio extensions — not to police the
+owner's files but to fail on the obvious mistake, a video or an unrendered project,
+before it has been pushed across the wire. Anything sitting in front of the app has
+its own, lower limit worth checking first: Cloudflare's free tier stops at 100 MB,
+and the upload will die there rather than here.
+
+Replacing a file leaves the old one in the zone. Nothing points at it any more —
+the paths are unique — but nothing deletes it either: an app that silently deletes
+from the storage zone is a worse thing to own than a few stale files, which Bunny's
+own file browser can prune.
+
+`BUNNY_STORAGE_ZONE` and `BUNNY_STORAGE_PASSWORD` (the zone's **FTP & API
+password**, not the read-only one and not the CDN token) switch the uploader on.
+`BUNNY_STORAGE_HOST` is only needed if the zone is outside Falkenstein —
+`ny.storage.bunnycdn.com` and friends; a PUT to the wrong region 404s. With none
+of them set the form falls back to a typeable path and says on screen why the
+uploader is missing, so local development is not left with a dead field.
+
 ### Two subscribers on one event
 
 Bookings and orders both check out through Paddle, so both subscribe to
@@ -436,18 +547,11 @@ What is left on our side is one form:
       declares `home`, `packages`, `about`, `shop`, `cart`, `dashboard`, `terms`,
       `footer` and `contact`. This stays true only if each new page adds its own
       entry, followed by `bin/rails content_blocks:sync`.
-
-### Placeholder, not finished
-
-- [ ] **Delivering what was bought.** This is the one thing standing between a
-      paid order and a customer with their file. `/dashboard` lists the library,
-      but **there is no player and no download**, because nothing hosts the audio
-      yet — a play button with no file behind it would be a lie, so the rows are
-      links to the product rather than a fake control. The files are going on a
-      CDN; what this app then needs is somewhere to keep the URL per `Product`
-      and a check that the person asking is in `purchased_products` before handing
-      it over. Whether that check is ours or a signed CDN URL is the decision to
-      make when the CDN is picked.
+- [x] **Delivering what was bought.** Done — the audio is on Bunny, and
+      `/dashboard` plays it. The check is both ours *and* a signed CDN URL: the
+      app authorises, Bunny enforces. See *Delivering the audio* above. What is
+      left is per-product: uploading the files and filling in each `cdn_path` in
+      the admin panel. A product without one still sells, it just has no player.
 
 ### Parked
 

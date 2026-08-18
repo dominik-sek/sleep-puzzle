@@ -240,4 +240,106 @@ RSpec.describe "Products", type: :request do
 
     expect(response.body).to include(%(href="#{products_path}"))
   end
+
+  # The gate on the audio itself. The pull zone serves anyone holding a signed
+  # URL, so this action is the only thing deciding who gets one.
+  describe "GET /products/:id/stream" do
+    let(:user) { User.create!(email: "customer@example.com", password: "password123") }
+    let(:product) { create_product(name: "Bajka o sowie", cdn_path: "/bajki/o-sowie.mp3") }
+
+    def buy(item, buyer: user)
+      order = buyer.orders.create!(status: :pending, order_items: [ OrderItem.new(product: item) ])
+      order.mark_paid!(transaction_id: "txn_#{order.id}")
+    end
+
+    before { with_bunny_cdn }
+
+    it "redirects a buyer to a signed CDN URL" do
+      buy(product)
+      sign_in user
+
+      get stream_product_path(product)
+
+      expect(response).to have_http_status(:redirect)
+      expect(response.location).to start_with("https://#{BunnyHelpers::HOST}/bajki/o-sowie.mp3?token=HS256-")
+      expect(response.location).to include("expires=")
+    end
+
+    it "sends a signed-out visitor to sign in" do
+      get stream_product_path(product)
+
+      expect(response).to redirect_to(new_user_session_path)
+    end
+
+    # 403 rather than 404: the shop lists the product, so its existence is not the
+    # secret — the recording behind it is
+    it "refuses someone who has not bought it" do
+      sign_in user
+
+      get stream_product_path(product)
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    # a cart that was never paid for is not a purchase, and this is the last place
+    # that distinction can still be enforced
+    it "refuses an unpaid order" do
+      user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
+      sign_in user
+
+      get stream_product_path(product)
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "refuses a buyer of a different product" do
+      buy(create_product(name: "Coś innego", paddle_price_id: "pri_999"))
+      sign_in user
+
+      get stream_product_path(product)
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "does not hand one buyer's purchase to another account" do
+      buy(product, buyer: User.create!(email: "other@example.com", password: "password123"))
+      sign_in user
+
+      get stream_product_path(product)
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "404s on an unpublished product, the same as its page" do
+      unpublished = create_product(name: "Szkic", published: false, cdn_path: "/szkic.mp3")
+      buy(unpublished)
+      sign_in user
+
+      get stream_product_path(unpublished)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "404s when the product has no file uploaded yet" do
+      fileless = create_product(name: "Bez pliku", paddle_price_id: "pri_888")
+      buy(fileless)
+      sign_in user
+
+      get stream_product_path(fileless)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    # a deploy that lost the credentials must not redirect to an unsigned URL,
+    # which the pull zone would refuse anyway
+    it "404s when the CDN is unconfigured" do
+      allow(BunnySignedUrlService).to receive_messages(token: nil, host: nil)
+      buy(product)
+      sign_in user
+
+      get stream_product_path(product)
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

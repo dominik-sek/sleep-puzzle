@@ -4,6 +4,7 @@
 #
 #  id              :bigint           not null, primary key
 #  category        :integer
+#  cdn_path        :string
 #  icon            :string
 #  kind            :integer
 #  length_minutes  :integer
@@ -60,6 +61,19 @@ class Product < ApplicationRecord
   validates :kind, presence: true
   validates :length_minutes, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
 
+  # Restricted to characters that survive a URL untouched. Bunny signs the path
+  # as it appears in the URL, so a name needing percent-encoding would be signed
+  # in one form and requested in another, and every play would 403. Keeping the
+  # filenames plain is far easier to live with than encoding both sides.
+  validates :cdn_path,
+            format: { with: %r{\A/[a-zA-Z0-9/._-]+\z}, message: :invalid },
+            allow_blank: true
+
+  # BunnyStorageService always hands back a leading slash, but the admin form falls
+  # back to a typed path when the storage zone is unconfigured, and that may or may
+  # not have one.
+  before_validation :normalize_cdn_path
+
   def kind_label
     self.class.kind_label(kind)
   end
@@ -74,5 +88,22 @@ class Product < ApplicationRecord
     return if length_minutes.blank?
 
     I18n.t("products.length_minutes", count: length_minutes)
+  end
+
+  # Whether a buyer can be given a player for this. False for a product whose
+  # audio has not been uploaded yet, and false everywhere the CDN is unconfigured
+  # — development and the test suite — so those render the library exactly as
+  # they did before the CDN existed rather than a control that 404s.
+  def streamable?
+    cdn_path.present? && BunnySignedUrlService.configured?
+  end
+
+  private
+
+  def normalize_cdn_path
+    return if cdn_path.blank?
+
+    self.cdn_path = cdn_path.strip
+    self.cdn_path = "/#{cdn_path}" unless cdn_path.start_with?("/")
   end
 end

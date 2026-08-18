@@ -29,18 +29,28 @@
       <%= render "dashboard/section_heading", title: content_block("dashboard.library.title") %>
 
       <% if @products.any? %>
-        <%# no play control yet: the files are not hosted anywhere, so a play
-            button would be a lie. It arrives with the CDN — see the roadmap. %>
         <div class="mb-11 flex flex-col gap-3">
           <% @products.each do |product| %>
-            <%= link_to product_path(product),
-                  class: "flex items-center gap-4 rounded-2xl border border-border-strong bg-surface px-5 py-4 no-underline hover:border-accent" do %>
-              <span class="text-[26px] leading-none" aria-hidden="true"><%= product.display_icon %></span>
-              <span class="flex-1 min-w-0">
-                <span class="block text-[15px] font-bold text-cream truncate"><%= product.name %></span>
-                <span class="block text-[12px] text-taupe"><%= product.kind_label %></span>
-              </span>
-            <% end %>
+            <%# the row is no longer one big link: a player nested inside an anchor
+                would navigate away the moment someone reached for the scrubber %>
+            <div class="rounded-2xl border border-border-strong bg-surface px-5 py-4">
+              <%= link_to product_path(product), class: "group flex items-center gap-4 no-underline" do %>
+                <span class="text-[26px] leading-none" aria-hidden="true"><%= product.display_icon %></span>
+                <span class="flex-1 min-w-0">
+                  <span class="block text-[15px] font-bold text-cream truncate group-hover:text-accent"><%= product.name %></span>
+                  <span class="block text-[12px] text-taupe"><%= product.kind_label %></span>
+                </span>
+              <% end %>
+
+              <%# preload="none" so nothing is fetched and no token is minted until
+                  play is actually pressed. Products with no file uploaded keep the
+                  plain row — a control with nothing behind it would be a lie. %>
+              <% if product.streamable? %>
+                <audio controls preload="none" class="mt-3.5 w-full"
+                       src="<%= stream_product_path(product) %>"
+                       aria-label="<%= t('products.player.label', name: product.name) %>"></audio>
+              <% end %>
+            </div>
           <% end %>
         </div>
       <% else %>
