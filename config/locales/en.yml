@@ -46,6 +46,34 @@ en:
               invalid: "Please give a valid email address"
             body:
               blank: "Please write a message"
+  # Only the halves of activerecord that a buyer can actually reach. `package` and
+  # `product` — both their `name` labels and their blank messages — are missing on
+  # purpose: they surface nowhere but the admin panel, which is Polish-only by
+  # decision (see the Roadmap note in README.md), so an English copy would be dead
+  # weight pretending the panel is translated.
+  activerecord:
+    attributes:
+      # not what the auth forms label their inputs with — that is `auth.fields`,
+      # shared with the screens that have no model behind them. These are what
+      # `errors.full_messages` prepends in the devise error panel, and without
+      # them production's i18n fallback prints the Polish ones to English users.
+      user:
+        email: "Email address"
+        password: "Password"
+        password_confirmation: "Repeat password"
+        current_password: "Current password"
+        remember_me: "Keep me logged in"
+    errors:
+      models:
+        booking:
+          attributes:
+            name:
+              blank: "Please give your name"
+            email:
+              blank: "Please give an email address"
+              invalid: "Please give a valid email address"
+            package:
+              required: "Please choose a package"
   bookings:
     statuses:
       pending: "Awaiting payment"
@@ -140,6 +168,7 @@ en:
       password_confirmation: "Repeat password"
       current_password: "Current password"
       new_password: "New password"
+      remember_me: "Keep me logged in"
     sign_in:
       title: "Log in"
       submit: "Log in"

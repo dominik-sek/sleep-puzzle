@@ -148,6 +148,7 @@ pl:
       password_confirmation: "Powtórz hasło"
       current_password: "Obecne hasło"
       new_password: "Nowe hasło"
+      remember_me: "Nie wylogowuj mnie"
     sign_in:
       title: "Zaloguj się"
       submit: "Zaloguj się"

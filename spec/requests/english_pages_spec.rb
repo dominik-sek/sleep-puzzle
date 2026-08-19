@@ -19,6 +19,7 @@ RSpec.describe "English pages", type: :request do
   # are also English ("email", "status", "panel", "nie"), which would fire on every
   # correctly translated page.
   POLISH_WORDS = %w[twoje dane pakiet pakiety termin terminy wybierz zaloguj wyloguj
+                    wylogowuj wylogowywac zapamietaj
                     koszyk konto haslo imie nazwisko wyslij zapisz usun dodaj].freeze
 
   let(:user) { User.create!(email: "customer@example.com", password: "password123") }
@@ -174,6 +175,45 @@ RSpec.describe "English pages", type: :request do
 
       expect(response.body).to include(%(data-locale-tag-value="pl"))
       expect(response.body).to include(%(<html lang="pl">))
+    end
+  end
+
+  # The auth screens were outside this net entirely, which is how the remember-me
+  # checkbox shipped reading "Nie wylogowuj mnie" on the English sign-in page. It
+  # had a hardcoded Polish `default:` in the view, so unlike a missing key it never
+  # even rendered as "translation missing".
+  describe "the auth screens" do
+    it "translates the remember-me checkbox" do
+      get new_user_session_path(locale: :en)
+
+      expect(response.body).to include("Keep me logged in")
+      expect(response.body).not_to include("wylogowuj")
+    end
+
+    it "leaves no Polish behind on the sign-in page" do
+      get new_user_session_path(locale: :en)
+
+      expect(polish_leftovers(response.body)).to be_empty
+    end
+
+    it "leaves no Polish behind on the sign-up page" do
+      get new_user_registration_path(locale: :en)
+
+      expect(polish_leftovers(response.body)).to be_empty
+    end
+
+    # `errors.full_messages` prepends the attribute name, which comes from
+    # activerecord.attributes.user rather than the auth.fields the inputs are
+    # labelled with — a separate set of keys, and one en.yml did not have.
+    # asserted on the whole message, not just the attribute name: "Email address"
+    # is also what labels the input, so it is on the page either way
+    it "names the attribute in English when a sign-up fails validation" do
+      post user_registration_path(locale: :en), params: {
+        user: { email: "", password: "short", password_confirmation: "mismatch" }
+      }
+
+      expect(response.body).to include(CGI.escapeHTML("Email address can't be blank"))
+      expect(response.body).to include(CGI.escapeHTML("Repeat password doesn't match Password"))
     end
   end
 
