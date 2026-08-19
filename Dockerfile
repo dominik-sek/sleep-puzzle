@@ -3,7 +3,7 @@
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t sleep_puzzle .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name sleep_puzzle sleep_puzzle
+# docker run -d -p 80:80 --env-file .env --name sleep_puzzle sleep_puzzle
 #
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
@@ -80,7 +80,7 @@ COPY . .
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
 
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY.
+# Precompiling assets for production without requiring the real SECRET_KEY_BASE.
 # vite_rails hooks `vite build` into this task, so it needs the Node toolchain above.
 # Left alone it would also re-run `npm ci` here, wiping the layer installed above and
 # re-downloading every package without the cache mount, so that half is skipped.

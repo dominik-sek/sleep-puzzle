@@ -707,6 +707,25 @@ mounts, so repeat builds skip the network. A `HEALTHCHECK` curls `/up`; it targe
 `HTTP_PORT` (Thruster's own listener, default 80) rather than `PORT`, which is the
 Puma port Thruster proxies *to*.
 
+**Secrets come from ENV, not encrypted credentials.** Every secret this app reads —
+database, Google, Paddle, Brevo, Bunny, SMTP — comes from environment variables, and
+`secret_key_base` is no exception: it lives in `.env` as `SECRET_KEY_BASE`, and
+`config/credentials.yml.enc` is unused (there is no `config/master.key`). Rails checks
+`ENV["SECRET_KEY_BASE"]` before it tries to decrypt credentials, so setting it is all
+that's needed. Note that `dotenv-rails` is a development/test gem and `BUNDLE_WITHOUT`
+drops it from the image, so the container never reads `.env` itself — the variables have
+to arrive as real environment variables:
+
+- plain Docker: `docker run --env-file .env …`
+- Kamal: `.kamal/secrets` reads `SECRET_KEY_BASE` out of `.env` and `config/deploy.yml`
+  lists it under `env.secret`, so `kamal deploy` carries it to the server.
+
+Asset precompilation in the build stage doesn't need the real value — `SECRET_KEY_BASE_DUMMY=1`
+makes Rails invent a throwaway one — which is why a missing secret only shows up at
+container start, as `db:prepare` aborting with ``Missing `secret_key_base` for 'production'``.
+`bin/rails secret` generates a replacement; changing it invalidates every existing session
+and signed cookie.
+
 **Migrations on boot.** `bin/docker-entrypoint` still runs `db:prepare`, but only
 when the command is `./bin/rails server` and `SKIP_DB_PREPARE` is unset. Set that
 variable if you ever split jobs onto their own host or run a second web server, so
