@@ -197,6 +197,38 @@ quantity**, and a checkout that asks for more than it allows is rejected outrigh
 Nothing here ever sends more than 1 (see *There are no quantities* above), so this
 only matters if quantities are ever reintroduced.
 
+### Paddle.js loads only at checkout
+
+`cdn.paddle.com/paddle/v2/paddle.js` used to sit in the application layout, so it
+ran on every page — including the home page, for a visitor who was never going to
+buy anything. Paddle sets cookies when it initialises, and none of them are
+exempt from the ePrivacy "strictly necessary" carve-out at that point: the visitor
+has not asked for anything a payment processor is needed for. That is a cookie
+banner's worth of obligation for a script almost nobody on the page will use.
+
+So `app/frontend/lib/paddle.js` fetches it instead, the first time a checkout
+actually opens. By then the buyer has clicked through to a pending order or
+booking and asked for the overlay, which is what makes the storage necessary to a
+service they requested — no consent gate needed. The load is memoised on the
+promise, so a second checkout in the same visit waits on the first fetch rather
+than racing it, and a failure clears the memo so a retry starts over.
+
+Two consequences worth knowing:
+
+- **The token and environment come from the checkout partial now**, not the
+  layout. `shared/_paddle_checkout` passes `Pay::PaddleBilling.client_token` and
+  `Pay::PaddleBilling.environment` as Stimulus values. The environment used to be
+  hardcoded to `"sandbox"` in the layout; it now follows
+  `PADDLE_BILLING_ENVIRONMENT`, which is what production needs.
+- **Opening the overlay is asynchronous.** `paddle_controller` awaits the script
+  before calling `Checkout.open`, and a blocked CDN now surfaces as a rejected
+  load rather than a missing global. The blocked-script toast and the automatic
+  abandon behave as before; there is also a 10s timeout, because a blocker that
+  answers with an empty 200 fires neither `load` usefully nor `error`.
+
+The remaining third-party request on a cold page is Google Fonts, which sets no
+cookies but does hand Google every visitor's IP. Self-hosting it is still open.
+
 ### Looking a purchase up afterwards
 
 `/admin/orders` is where "I paid and cannot see my audio" gets answered: the buyer,

@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
 import { showToast } from "./toast_controller";
+import { loadPaddle } from "../lib/paddle";
 
 // Opens Paddle checkout for something the server has just saved as pending — a
 // booking holding a slot, or an order holding a cart. Rendered only by the
@@ -14,8 +15,13 @@ import { showToast } from "./toast_controller";
 // The toast copy arrives as values too. Stimulus controllers have no `t()`, and
 // this one is buyer-facing on both the Polish and the English site, so the
 // strings are resolved by the partial that mounts it rather than living here.
+//
+// Paddle.js itself is fetched here rather than by the layout, so a visitor who
+// never buys anything never gets Paddle's cookies — see lib/paddle.js.
 export default class extends Controller {
     static values = {
+        token: String,
+        environment: String,
         items: Array,
         customData: Object,
         customerId: String,
@@ -32,7 +38,11 @@ export default class extends Controller {
     // alone can't tell "the buyer gave up" from "the payment went through"
     #completed = false;
 
-    // the layout re-emits Paddle.js' single global callback as `paddle:event`
+    // fetching Paddle.js is a round trip, so the element can go away before the
+    // overlay would have opened
+    #disconnected = false;
+
+    // loadPaddle re-emits Paddle.js' single global callback as `paddle:event`
     #onPaddleEvent = (event) => {
         switch (event.detail?.name) {
             case "checkout.completed":
@@ -75,13 +85,31 @@ export default class extends Controller {
     }
 
     connect() {
+        this.#disconnected = false;
         window.addEventListener("paddle:event", this.#onPaddleEvent);
+        this.#open();
+    }
 
-        // ad blockers and privacy extensions routinely block cdn.paddle.com, which
-        // used to fail silently: the booking saved, the toast said "reserved", and
-        // no checkout ever appeared
-        if (typeof Paddle === "undefined") {
-            console.warn("[paddle] Paddle.js has not loaded yet");
+    disconnect() {
+        this.#disconnected = true;
+        window.removeEventListener("paddle:event", this.#onPaddleEvent);
+    }
+
+    // Not awaited by connect(): Stimulus ignores the promise either way, and
+    // everything after the fetch has to re-check that the element is still here.
+    async #open() {
+        let paddle;
+
+        try {
+            paddle = await loadPaddle({
+                token: this.tokenValue,
+                environment: this.environmentValue
+            });
+        } catch (error) {
+            // ad blockers and privacy extensions routinely block cdn.paddle.com,
+            // which used to fail silently: the booking saved, the toast said
+            // "reserved", and no checkout ever appeared
+            console.warn("[paddle] Paddle.js did not load", error);
             this.#reportFailure(this.blockedMessageValue);
             // no overlay means no `checkout.closed` either, so nothing else would
             // ever release what the pending record is holding
@@ -89,8 +117,14 @@ export default class extends Controller {
             return;
         }
 
+        // the buyer navigated away while the script was in flight — deliberately
+        // not abandoned here, because Turbo also disconnects on the way into its
+        // page cache and the record would still be wanted on the way back.
+        // ReleaseAbandonedBookingsJob is the backstop if they really are gone.
+        if (this.#disconnected) return;
+
         try {
-            Paddle.Checkout.open({
+            paddle.Checkout.open({
                 items: this.itemsValue,
                 customer: { id: this.customerIdValue },
                 customData: this.customDataValue,
@@ -102,10 +136,6 @@ export default class extends Controller {
             this.#reportFailure(this.retryMessageValue);
             this.#abandon();
         }
-    }
-
-    disconnect() {
-        window.removeEventListener("paddle:event", this.#onPaddleEvent);
     }
 
     // The record is already saved by the time the overlay opens — a booking holding
