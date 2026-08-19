@@ -4,6 +4,15 @@
      data-cally-no-slots-label-value="<%= t("bookings.available_slots", count: 0) %>"
      data-cally-locale-value="<%= I18n.locale %>"
      data-action="paddle:completed@window->cally#lock pageshow@window->cally#unlock">
+  <%# spans the grid rather than sitting in a column: it explains both halves at
+      once, and without it a calendar with every slot disabled just reads as
+      "fully booked for two months" %>
+  <% if unavailable %>
+    <div role="status" class="md:col-span-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-t6 font-normal leading-relaxed text-amber-200">
+      <%= t("bookings.calendar.unavailable") %>
+    </div>
+  <% end %>
+
   <%= render Card::Component.new(classes: "self-start") do %>
     <calendar-date data-cally-target="calendarDate" data-action="change->cally#dateChanged focusday->cally#monthChanged" class="w-full" format-weekday="short">
       <%# cally renders the year between the arrows and the month above the grid; we collapse

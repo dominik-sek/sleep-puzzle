@@ -24,7 +24,13 @@ class Integrations::GoogleCalendarController < ApplicationController
   end
 
   def destroy
-    authorizer.revoke_authorization(Integration::GOOGLE_CALENDAR)
+    revoke_remote_grant
+    # Not left to revoke_authorization: it deletes through the token store only
+    # after successfully building credentials, so the one case where the row most
+    # needs to go — a grant Google has already dropped — is the case where it
+    # never got that far.
+    Integration.find_by(service_name: Integration::GOOGLE_CALENDAR)&.destroy
+
     redirect_to integrations_google_calendar_path, notice: "Kalendarz Google został odłączony."
   end
 
@@ -38,6 +44,20 @@ class Integrations::GoogleCalendarController < ApplicationController
     return if current_user&.admin?
 
     redirect_to root_path, alert: "Brak dostępu."
+  end
+
+  # Best-effort, and deliberately not allowed to fail the disconnect.
+  #
+  # Both ways this blows up mean the grant on Google's side is already gone, which
+  # is the state the button is trying to reach: revoking a token Google has
+  # already expired answers 400, and refreshing a dead refresh token raises before
+  # revoke_authorization reaches the revoke at all. Unrescued, the second one left
+  # the panel permanently stuck — the row survived, the page kept saying
+  # "Połączono", and pressing the button just 500'd again.
+  def revoke_remote_grant
+    authorizer.revoke_authorization(Integration::GOOGLE_CALENDAR)
+  rescue Signet::AuthorizationError, Signet::UnexpectedStatusError => e
+    Rails.logger.warn("Google Calendar revoke failed, disconnecting locally anyway: #{e.message}")
   end
 
   def authorizer

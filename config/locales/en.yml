@@ -57,6 +57,7 @@ en:
       processing_hint: "We will take you to the confirmation in a moment."
       available_hours: "Available times"
       pick_a_day: "Pick a day in the calendar to see the times available."
+      unavailable: "Online booking is temporarily unavailable — we can't check which times are free right now. Please try again later, or get in touch and we'll arrange a time directly."
       previous_month: "Previous month"
       next_month: "Next month"
     summary:

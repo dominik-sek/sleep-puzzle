@@ -453,6 +453,48 @@ render the sidebar link's destination with the public navbar and footer. Both ar
 pinned by specs, along with the sidebar icons resolving — `icon` raises on an
 unknown name, so a typo there is a 500 rather than a missing glyph.
 
+### When there is no usable calendar
+
+Two states look identical from the app's side — nobody has ever connected a
+calendar, and the grant that was connected has since been revoked or expired —
+and `GoogleCalendarService::NotConnected` is raised for both. It is deliberately
+**not** a `Google::Apis::Error`: that one means a single call failed and is worth
+retrying, while this one is only fixed by a person opening the panel and pressing
+connect.
+
+The two nothings arrive differently, which is why the check sits in one place.
+`get_credentials` returns `nil` when the token store is empty, and *raises* when
+what is stored no longer works — Google answers 400 "Token has been expired or
+revoked" the moment the gem tries to mint an access token from a dead refresh
+token. Left as they come, the first produced a service with a `nil` authorization
+that looked fine until its first API call, and the second escaped as a `Signet`
+error nothing up the stack caught.
+
+Callers handle it in the way that suits them:
+
+- **`BookingCalendarService`** swallows it alongside `Google::Apis::Error`, on the
+  existing principle that the calendar is a side effect of the booking and must
+  never roll back a payment already taken.
+- **`BookingsController#load_availability`** renders the page with *no* slots
+  available and an explanatory banner (`bookings.calendar.unavailable`), rather
+  than the 500 it used to raise. Every slot is shown taken rather than free on
+  purpose: with no calendar to check against, "free" is a guess, and a wrong guess
+  sells a time the owner is already busy in. The banner lives inside the
+  `#availability` div so the `create` turbo stream carries it too.
+
+### Disconnecting always works
+
+`revoke_authorization` deletes through the token store only *after* it has
+successfully built credentials, so the case where the row most needs to go — a
+grant Google has already dropped — was the one case where it never got that far.
+The button 500'd, the row survived, and the panel kept reporting "Połączono" with
+no way back.
+
+`destroy` now revokes best-effort and deletes the row itself regardless. Both
+failure modes (`400` to the revoke, and a refresh that raises before the revoke)
+mean the grant on Google's side is already gone, which is the state the button is
+trying to reach anyway.
+
 ## Two languages, two addresses
 
 Polish keeps the bare paths it always had; English is the same page under `/en`:

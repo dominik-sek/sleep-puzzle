@@ -96,6 +96,7 @@ pl:
       processing_hint: "Za chwilę przeniesiemy Cię do potwierdzenia."
       available_hours: "Dostępne godziny"
       pick_a_day: "Wybierz dzień w kalendarzu, aby zobaczyć dostępne godziny."
+      unavailable: "Rezerwacja online jest chwilowo niedostępna — nie możemy w tej chwili sprawdzić wolnych terminów. Spróbuj ponownie za jakiś czas albo napisz do nas, a ustalimy termin bezpośrednio."
       previous_month: "Poprzedni miesiąc"
       next_month: "Następny miesiąc"
     summary:

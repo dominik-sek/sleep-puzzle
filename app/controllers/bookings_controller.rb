@@ -164,6 +164,18 @@ class BookingsController < ApplicationController
     @available_dates = @availability[:dates].filter_map { |date|
       date[:date] if date[:hours].any? { |hour| hour[:available] }
     }.to_json
+  rescue GoogleCalendarService::NotConnected, Google::Apis::Error => e
+    # No calendar means no way to know what the owner is already busy with, and
+    # this page used to 500 outright rather than say so. Every slot is rendered
+    # taken rather than free, because free would be a guess and a wrong guess
+    # sells a time she is already sitting in someone else's consultation for.
+    # `build_availability([])` is the honest version of that: the same grid the
+    # page always draws, with nothing in it selectable.
+    Rails.logger.error("Booking availability could not be read: #{e.message}")
+
+    @calendar_unavailable = true
+    @availability = build_availability([])
+    @available_dates = [].to_json
   end
 
   def combined_starts_at

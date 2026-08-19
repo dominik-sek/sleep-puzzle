@@ -1,8 +1,10 @@
 # Keeps the Google Calendar event in step with a booking's payment status, so the
 # calendar itself shows whether a slot is paid for or still waiting.
 #
-# Every method swallows Google::Apis::Error: the calendar is a side effect of the
-# booking, and a calendar outage must not roll back a payment we've already taken.
+# Every method swallows Google::Apis::Error and GoogleCalendarService::NotConnected:
+# the calendar is a side effect of the booking, and neither a calendar outage nor a
+# calendar nobody has connected yet may roll back a payment we've already taken.
+# The booking is the record that matters; the event is a convenience on top of it.
 class BookingCalendarService < ApplicationService
   def initialize(booking:)
     @booking = booking
@@ -21,7 +23,7 @@ class BookingCalendarService < ApplicationService
       ends_at: @booking.starts_at + SlotComparatorService::SLOT_DURATION
     )
     @booking.update!(calendar_event_id: event.id)
-  rescue Google::Apis::Error => e
+  rescue Google::Apis::Error, GoogleCalendarService::NotConnected => e
     log(e, "create")
   end
 
@@ -33,7 +35,7 @@ class BookingCalendarService < ApplicationService
     return create if @booking.calendar_event_id.blank?
 
     calendar.patch_event(event_id: @booking.calendar_event_id, summary: summary, description: description)
-  rescue Google::Apis::Error => e
+  rescue Google::Apis::Error, GoogleCalendarService::NotConnected => e
     log(e, "update")
   end
 
@@ -51,7 +53,7 @@ class BookingCalendarService < ApplicationService
     end
 
     @booking.update!(calendar_event_id: nil)
-  rescue Google::Apis::Error => e
+  rescue Google::Apis::Error, GoogleCalendarService::NotConnected => e
     log(e, "delete")
   end
 
