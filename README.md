@@ -709,22 +709,58 @@ Puma port Thruster proxies *to*.
 
 **Secrets come from ENV, not encrypted credentials.** Every secret this app reads —
 database, Google, Paddle, Brevo, Bunny, SMTP — comes from environment variables, and
-`secret_key_base` is no exception: it lives in `.env` as `SECRET_KEY_BASE`, and
-`config/credentials.yml.enc` is unused (there is no `config/master.key`). Rails checks
-`ENV["SECRET_KEY_BASE"]` before it tries to decrypt credentials, so setting it is all
-that's needed. Note that `dotenv-rails` is a development/test gem and `BUNDLE_WITHOUT`
-drops it from the image, so the container never reads `.env` itself — the variables have
-to arrive as real environment variables:
+`secret_key_base` is no exception, and `config/credentials.yml.enc` is unused (there is
+no `config/master.key`). Rails checks `ENV["SECRET_KEY_BASE"]` before it tries to decrypt
+credentials, so setting it is all that's needed.
 
-- plain Docker: `docker run --env-file .env …`
-- Kamal: `.kamal/secrets` reads `SECRET_KEY_BASE` out of `.env` and `config/deploy.yml`
-  lists it under `env.secret`, so `kamal deploy` carries it to the server.
+There are two dotenv files, both gitignored. `.env` is development: `dotenv-rails` loads
+it automatically. `.env.production` holds the deployed values, and nothing loads it
+automatically — `dotenv-rails` is a development/test gem that `BUNDLE_WITHOUT` drops from
+the image, so the container reads no dotenv file at all. Production values reach it as
+real environment variables instead:
+
+- Kamal: `.kamal/secrets` greps them out of `.env.production`, and `config/deploy.yml`
+  lists each name under `env.secret`. A secret that isn't in both files doesn't ship.
+- plain Docker: `docker run --env-file .env.production …`, which is also why the
+  non-secret settings in `env.clear` have to be passed by hand in that case.
 
 Asset precompilation in the build stage doesn't need the real value — `SECRET_KEY_BASE_DUMMY=1`
 makes Rails invent a throwaway one — which is why a missing secret only shows up at
 container start, as `db:prepare` aborting with ``Missing `secret_key_base` for 'production'``.
 `bin/rails secret` generates a replacement; changing it invalidates every existing session
 and signed cookie.
+
+**Postgres runs on the same host, as a Kamal accessory.** `config/deploy.yml` boots
+`postgres:17` next to the app rather than pointing at a managed database elsewhere. The
+reason is `config/database.yml`: production has four databases, and three of them are
+Solid Cache, Solid Queue and Solid Cable. Every cache read and every job poll is a SQL
+round trip, so the distance to the database sets the floor on request latency — trivial
+over the local docker network, expensive to another datacentre.
+
+The app never crosses the public interface to reach it. Kamal puts both containers on
+its own docker network, where the accessory answers to `sleep_puzzle-db`, which is what
+`DATABASE_HOST` is set to. The `127.0.0.1:5432:5432` mapping exists only so `psql` and
+`pg_dump` work over an SSH session on the host; it is not reachable from outside.
+
+`directories: data:/var/lib/postgresql/data` bind-mounts the cluster onto the host, so
+rebooting the accessory or moving to a newer Postgres image doesn't take the data with
+it. Note that a major-version bump still needs a dump and restore — the on-disk format
+isn't compatible across majors, and the container will refuse to start on a data
+directory it doesn't recognise.
+
+Order matters once, on a fresh server: `kamal accessory boot db` before `kamal deploy`,
+or `db:prepare` in the entrypoint has nothing to connect to. It creates all four
+databases by itself — `db:prepare` walks every configuration for the environment, not
+just the primary — provided the role can create databases, which the accessory's
+`POSTGRES_USER` can.
+
+**Backups are the part the single-server setup doesn't give you.** Losing the VPS loses
+the database with it, so a nightly `pg_dump` of all four databases pushed off the server
+is not optional. Run it from the accessory rather than the app container: the image ships
+the bookworm `postgresql-client` (15), and `pg_dump` refuses to dump a newer server, so a
+dump from inside the app container will fail against Postgres 17. OVH's VPS backup option
+is worth having as well, but a snapshot of a live cluster is crash-consistent at best and
+is not a substitute for a dump you have actually restored once.
 
 **Migrations on boot.** `bin/docker-entrypoint` still runs `db:prepare`, but only
 when the command is `./bin/rails server` and `SKIP_DB_PREPARE` is unset. Set that
@@ -734,6 +770,62 @@ one container owns the schema change instead of all of them racing.
 `.dockerignore` additionally drops `public/vite*` (stale local bundles that the build
 regenerates anyway), `spec/`, `coverage/` and editor config, purely to keep the build
 context small.
+
+## Staging on Render
+
+`render.yaml` describes a staging environment: one Docker web service and one
+Postgres instance, both in `frankfurt`. Production is Kamal on a VPS; this is the
+disposable twin, and it deliberately reuses the same `Dockerfile`, the same four
+databases and the same Thruster-in-front-of-Puma arrangement, so what passes here
+means something for the real deploy.
+
+**The four databases need four URLs.** This is the part that doesn't work by
+accident. Rails resolves `DATABASE_URL` for the configuration named `primary` and
+nothing else — `DatabaseConfigurations#environment_value_for` looks for
+`<NAME>_DATABASE_URL` per config and only falls back to `DATABASE_URL` when the
+name is `primary`. Left alone, the cache, queue and cable configurations in
+`config/database.yml` would fall through to their `DATABASE_HOST`/`DATABASE_NAME`
+defaults, which point at nothing on Render, and boot would fail on the first cache
+read. So the blueprint declares `CACHE_DATABASE_URL`, `QUEUE_DATABASE_URL` and
+`CABLE_DATABASE_URL` as prompted values. A Render Postgres instance can hold more
+than one database, so all three are the primary connection string with a different
+database name on the end. Create them once, before the first deploy, with `psql`
+against the instance's external URL:
+
+```sql
+CREATE DATABASE sleep_puzzle_staging_cache;
+CREATE DATABASE sleep_puzzle_staging_queue;
+CREATE DATABASE sleep_puzzle_staging_cable;
+```
+
+`db:prepare` in `bin/docker-entrypoint` then migrates all four on boot. It creates
+missing ones too, when the role is allowed to — `prepare_all` walks every
+configuration for the environment — which is exactly what happens under Kamal, where
+the accessory's `POSTGRES_USER` is a superuser. On Render the documented route is to
+create them yourself in a `psql` session, so do that rather than finding out on the
+first deploy which kind of role you were given.
+
+**Two ports, on purpose.** Thruster listens on `HTTP_PORT` and proxies to Puma on
+`PORT`. Render probes whatever port the container binds and injects its own `PORT`,
+which Puma would take — leaving Thruster on 80, where nothing is looking. The
+blueprint pins `HTTP_PORT: 10000` (the port Render expects) and moves Puma to 3000
+behind it.
+
+**Encrypted columns don't travel.** `AR_ENCRYPTION_PRIMARY_KEY` and its two
+companions are prompted values, not generated ones. Generating fresh keys gives you
+an environment that boots and then fails to read any encrypted column in a dump
+restored from production; restoring such a dump means bringing production's keys
+with it. `SECRET_KEY_BASE` is the opposite case — `generateValue: true`, because
+staging has no sessions worth preserving.
+
+Point the rest at sandbox tenants. `PADDLE_BILLING_ENVIRONMENT` is pinned to
+`sandbox` in the blueprint; SMTP and Brevo are not, and staging will send real mail
+to real people if handed production credentials.
+
+Render builds with BuildKit, so the `--mount=type=cache` lines in the Dockerfile are
+understood; whether those caches survive between builds is not something Render
+documents, so expect apt and npm to be fetched cold and the build to be slower than
+it is locally.
 
 ## Roadmap
 

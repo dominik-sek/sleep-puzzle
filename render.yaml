@@ -1,0 +1,116 @@
+# Staging on Render. Production is Kamal on a single VPS (config/deploy.yml);
+# this blueprint is the throwaway twin of it, so the shapes are kept the same:
+# same Dockerfile, same four databases, Thruster still in front of Puma.
+#
+# Create it with Render's Blueprint flow, which prompts once for every var
+# marked `sync: false`. See the README for the manual step in the middle.
+
+databases:
+  - name: sleep-puzzle-staging-db
+    databaseName: sleep_puzzle_staging
+    user: sleep_puzzle
+    # `free` also works, but Render expires free instances after 30 days.
+    plan: free
+    region: frankfurt
+
+services:
+  - type: web
+    name: sleep-puzzle-staging
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: frankfurt
+    # 512MB. Puma is also running Solid Queue in-process, so watch for OOM
+    # restarts before blaming the app.
+    plan: free
+    healthCheckPath: /up
+    envVars:
+      # Thruster listens on HTTP_PORT and proxies to Puma on PORT. Render probes
+      # the port the container binds, so Thruster takes 10000 (Render's default)
+      # and Puma moves off it, or the two fight over the same socket.
+      - key: HTTP_PORT
+        value: 10000
+      - key: PORT
+        value: 3000
+
+      # Rails resolves DATABASE_URL for the `primary` config only: every other
+      # entry in config/database.yml reads <NAME>_DATABASE_URL. The cache, queue
+      # and cable databases live in the same Render instance and are created by
+      # hand once (README), so their URLs are the primary one with a different
+      # database name on the end.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sleep-puzzle-staging-db
+          property: connectionString
+      - key: CACHE_DATABASE_URL
+        sync: false
+      - key: QUEUE_DATABASE_URL
+        sync: false
+      - key: CABLE_DATABASE_URL
+        sync: false
+
+      # Staging signs its own cookies; nothing here is shared with production.
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: SOLID_QUEUE_IN_PUMA
+        value: true
+
+      # Fill these in at Blueprint creation. Point them at sandbox/test tenants:
+      # this environment sends real mail and takes real webhooks otherwise.
+      - key: APP_HOST
+        sync: false
+      - key: OWNER_EMAIL
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: MAIL_REPLY_TO
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CALENDAR_ID
+        sync: false
+      # Encrypted columns are unreadable without the same three keys, so a dump
+      # restored from production needs production's values here.
+      - key: AR_ENCRYPTION_PRIMARY_KEY
+        sync: false
+      - key: AR_ENCRYPTION_DETERMINISTIC_KEY
+        sync: false
+      - key: AR_ENCRYPTION_KEY_DERIVATION_SALT
+        sync: false
+      - key: PADDLE_BILLING_ENVIRONMENT
+        value: sandbox
+      - key: PADDLE_BILLING_API_KEY
+        sync: false
+      - key: PADDLE_BILLING_CLIENT_TOKEN
+        sync: false
+      - key: PADDLE_BILLING_SIGNING_SECRET
+        sync: false
+      - key: SMTP_ADDRESS
+        sync: false
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER_NAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_LIST_ID
+        sync: false
+      - key: BREVO_DOI_TEMPLATE_ID
+        sync: false
+      - key: TURNSTILE_SITE_KEY
+        sync: false
+      - key: TURNSTILE_SECRET
+        sync: false
+      - key: BUNNY_CDN_HOST
+        sync: false
+      - key: BUNNY_CDN_TOKEN
+        sync: false
+      - key: BUNNY_STORAGE_ZONE
+        sync: false
+      - key: BUNNY_STORAGE_PASSWORD
+        sync: false
+      - key: BUNNY_STORAGE_HOST
+        sync: false

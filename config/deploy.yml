@@ -40,7 +40,14 @@ registry:
 env:
   secret:
     - SECRET_KEY_BASE
+    - DATABASE_PASSWORD
   clear:
+    # Postgres runs as the `db` accessory below, on the same host. Kamal puts both
+    # containers on its own docker network, where the accessory answers to
+    # <service>-<accessory>, so nothing crosses the public interface.
+    DATABASE_HOST: sleep_puzzle-db
+    DATABASE_USERNAME: sleep_puzzle
+    DATABASE_NAME: sleep_puzzle_production
     # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
     # When you start using multiple servers, you should split out job processing to a dedicated machine.
     SOLID_QUEUE_IN_PUMA: true
@@ -95,25 +102,26 @@ builder:
 #   user: app
 
 # Use accessory services (secrets come from .kamal/secrets).
-# accessories:
-#   db:
-#     image: mysql:8.0
-#     host: 192.168.0.2
-#     # Change to 3306 to expose port to the world instead of just local network.
-#     port: "127.0.0.1:3306:3306"
-#     env:
-#       clear:
-#         MYSQL_ROOT_HOST: '%'
-#       secret:
-#         - MYSQL_ROOT_PASSWORD
-#     files:
-#       - config/mysql/production.cnf:/etc/mysql/my.cnf
-#       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
-#     directories:
-#       - data:/var/lib/mysql
-#   redis:
-#     image: valkey/valkey:8
-#     host: 192.168.0.2
-#     port: 6379
-#     directories:
-#       - data:/data
+#
+# Postgres lives on the same host as the app. The solid_cache/solid_queue/solid_cable
+# databases make every cache read and job poll a SQL round trip, which is cheap over
+# the local docker network and expensive to a managed database elsewhere.
+accessories:
+  db:
+    image: postgres:17
+    # Same machine as the web server above.
+    host: 192.168.0.1
+    # Bound to loopback, so 5432 is reachable for psql and pg_dump over SSH but
+    # never from the internet. The app container doesn't use this mapping at all;
+    # it reaches Postgres by container name on the kamal network.
+    port: "127.0.0.1:5432:5432"
+    env:
+      clear:
+        POSTGRES_USER: sleep_puzzle
+        POSTGRES_DB: sleep_puzzle_production
+      secret:
+        - POSTGRES_PASSWORD
+    # Bind mount on the host, so `kamal accessory reboot db` and image upgrades
+    # don't take the data with them. Back this up off-server; see the README.
+    directories:
+      - data:/var/lib/postgresql/data

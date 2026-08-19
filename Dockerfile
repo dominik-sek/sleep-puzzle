@@ -3,7 +3,7 @@
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t sleep_puzzle .
-# docker run -d -p 80:80 --env-file .env --name sleep_puzzle sleep_puzzle
+# docker run -d -p 80:80 --env-file .env.production --name sleep_puzzle sleep_puzzle
 #
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
