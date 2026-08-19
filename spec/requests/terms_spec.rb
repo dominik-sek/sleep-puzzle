@@ -32,6 +32,25 @@ RSpec.describe "Terms", type: :request do
       expect(response.body).to include("nie zastępują konsultacji medycznej")
     end
 
+    # The RODO art. 13 notice and the cookie statement. Asserted by clause rather
+    # than by wording so a reworded paragraph does not fail the suite, but the
+    # page is never allowed to ship without them: they are the only place the site
+    # tells a visitor who the controller is and what is stored in their browser.
+    it "carries the personal data and cookie clauses" do
+      get terms_path
+
+      expect(response.body).to include("7. Dane osobowe")
+      expect(response.body).to include("8. Pliki cookies")
+      expect(response.body).to include("Prezesa Urzędu Ochrony Danych Osobowych")
+    end
+
+    it "carries them in English too" do
+      get terms_path(locale: :en)
+
+      expect(response.body).to include("7. Personal data")
+      expect(response.body).to include("8. Cookies")
+    end
+
     # white-space: pre-line keeps newlines, so any gap the template leaves
     # between the tag and the value shows up as a blank first line of the clause
     it "leaves no whitespace between a clause body and its tag" do

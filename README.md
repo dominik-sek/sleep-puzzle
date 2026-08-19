@@ -582,6 +582,59 @@ serialises `I18n.locale` with the job and restores it around `perform`, so the
 language survives the queue either way. Covered by
 `spec/mailers/devise_mailer_spec.rb`.
 
+## What the browser loads from elsewhere
+
+The short version: **a visitor who only reads the site makes no third-party
+request at all**, and the only cookie set is our own session. That is a
+deliberate position, not an accident, and it is what keeps the site out of
+cookie-banner territory — an ePrivacy consent gate is required for storage that
+is not strictly necessary, and there isn't any.
+
+| Thing | When it loads | Consent needed |
+| --- | --- | --- |
+| Rails session cookie | Always | No — strictly necessary (sign-in, basket, CSRF) |
+| Typefaces | Always, from our own server | No — no third party involved |
+| Paddle.js | Only when a checkout opens | No — the buyer asked for the payment |
+| Google OAuth | Only when "sign in with Google" is clicked | No — cookies are Google's own, set on Google's domain |
+
+There is deliberately **no analytics, no tag manager and no advertising pixel**.
+Adding any of them changes the answer in that last column and brings a consent
+banner with it, so it is not a small decision.
+
+### Typefaces are self-hosted
+
+Quicksand and Baloo 2 are served out of `app/frontend/fonts` and declared in
+`application.css`, not pulled from `fonts.googleapis.com`. The CDN version set no
+cookies, so no banner would have covered it, but it did hand Google every
+visitor's IP on every page load — which is the transfer the Munich court awarded
+damages over in 2022 (LG München I, 3 O 17493/20) and the reason for the German
+warning letters that followed.
+
+They are **variable** fonts, so one file covers each family's whole weight range
+(Quicksand 300–700, Baloo 2 400–800) rather than one file per weight. Kept from
+Google's own subsetting is the latin / latin-ext split, because the
+`unicode-range` on each `@font-face` means the English site never downloads the
+subset holding ą/ć/ę/ł/ń/ś/ź/ż while the Polish one does. Four files, ~115 KB,
+fingerprinted by Vite like any other asset.
+
+Both families are SIL Open Font License 1.1 and the licences ship beside them in
+`app/frontend/fonts`. Replacing a family means dropping in the new `.woff2`,
+updating the `@font-face` blocks and `--font-sans` / `--font-display` in
+`@theme`, and keeping its licence file alongside.
+
+### The one exception: Google avatars
+
+`users.avatar_url` stores whatever `image` the Google OAuth response carried,
+which is a `lh3.googleusercontent.com` URL, and `shared/_navbar` renders it
+straight into an `<img>`. So a user who signed in with Google does fetch one
+image from Google on every page — the same IP transfer the fonts were moved for,
+narrowed to people who already chose to involve Google in their sign-in.
+
+It is defensible where it stands and nothing depends on changing it. If it should
+go, the fix is to copy the image into Active Storage once at
+`User.from_omniauth` rather than to hotlink it, which also survives Google
+rotating the URL.
+
 ## The production image
 
 `Dockerfile` builds the image Kamal deploys. It is the stock Rails 8 file with the
