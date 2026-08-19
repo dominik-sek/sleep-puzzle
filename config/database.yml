@@ -5,7 +5,8 @@
 # only the database names, which are not secrets.
 #
 # If DATABASE_URL is set it wins: Rails merges it on top of whatever is here,
-# which is how CI points the suite at its own postgres service.
+# which is how CI points the suite at its own postgres service and how the Render
+# staging environment is configured.
 #
 default: &default
   adapter: postgresql
@@ -32,18 +33,5 @@ test:
   database: <%= ENV.fetch("TEST_DATABASE_NAME", "sleep_puzzle_test") %>
 
 production:
-  primary: &primary_production
-    <<: *default
-    database: <%= ENV.fetch("DATABASE_NAME", "sleep_puzzle_production") %>
-  cache:
-    <<: *primary_production
-    database: <%= ENV.fetch("DATABASE_NAME", "sleep_puzzle_production") %>_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: <%= ENV.fetch("DATABASE_NAME", "sleep_puzzle_production") %>_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: <%= ENV.fetch("DATABASE_NAME", "sleep_puzzle_production") %>_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  database: <%= ENV.fetch("DATABASE_NAME", "sleep_puzzle_production") %>

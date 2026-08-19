@@ -36,7 +36,7 @@ production:
 | `DATABASE_PORT` | `5432` | |
 | `DATABASE_USERNAME` | blank | Blank means peer auth as the OS user |
 | `DATABASE_PASSWORD` | blank | |
-| `DATABASE_NAME` | `sleep_puzzle_development` / `sleep_puzzle_production` | Production derives `_cache`, `_queue` and `_cable` from it |
+| `DATABASE_NAME` | `sleep_puzzle_development` / `sleep_puzzle_production` | One database per environment; the solid_* tables live in it too |
 | `TEST_DATABASE_NAME` | `sleep_puzzle_test` | Separate key so dev and test never collide when `DATABASE_NAME` is set |
 
 Only the database names have defaults, and those are not secrets. `DATABASE_URL`
@@ -732,10 +732,10 @@ and signed cookie.
 
 **Postgres runs on the same host, as a Kamal accessory.** `config/deploy.yml` boots
 `postgres:17` next to the app rather than pointing at a managed database elsewhere. The
-reason is `config/database.yml`: production has four databases, and three of them are
-Solid Cache, Solid Queue and Solid Cable. Every cache read and every job poll is a SQL
-round trip, so the distance to the database sets the floor on request latency — trivial
-over the local docker network, expensive to another datacentre.
+reason is Solid Cache, Solid Queue and Solid Cable: they all sit in the same Postgres
+as the app data, so every cache read and every job poll is a SQL round trip. The distance
+to the database sets the floor on request latency — trivial over the local docker
+network, expensive to another datacentre.
 
 The app never crosses the public interface to reach it. Kamal puts both containers on
 its own docker network, where the accessory answers to `sleep_puzzle-db`, which is what
@@ -749,14 +749,10 @@ isn't compatible across majors, and the container will refuse to start on a data
 directory it doesn't recognise.
 
 Order matters once, on a fresh server: `kamal accessory boot db` before `kamal deploy`,
-or `db:prepare` in the entrypoint has nothing to connect to. It creates all four
-databases by itself — `db:prepare` walks every configuration for the environment, not
-just the primary — provided the role can create databases, which the accessory's
-`POSTGRES_USER` can.
+or `db:prepare` in the entrypoint has nothing to connect to.
 
 **Backups are the part the single-server setup doesn't give you.** Losing the VPS loses
-the database with it, so a nightly `pg_dump` of all four databases pushed off the server
-is not optional. Run it from the accessory rather than the app container: the image ships
+the database with it, so a nightly `pg_dump` pushed off the server is not optional. Run it from the accessory rather than the app container: the image ships
 the bookworm `postgresql-client` (15), and `pg_dump` refuses to dump a newer server, so a
 dump from inside the app container will fail against Postgres 17. OVH's VPS backup option
 is worth having as well, but a snapshot of a live cluster is crash-consistent at best and
@@ -775,35 +771,20 @@ context small.
 
 `render.yaml` describes a staging environment: one Docker web service and one
 Postgres instance, both in `frankfurt`. Production is Kamal on a VPS; this is the
-disposable twin, and it deliberately reuses the same `Dockerfile`, the same four
-databases and the same Thruster-in-front-of-Puma arrangement, so what passes here
-means something for the real deploy.
+disposable twin, and it deliberately reuses the same `Dockerfile`, the same database
+layout and the same Thruster-in-front-of-Puma arrangement, so what passes here means
+something for the real deploy.
 
-**The four databases need four URLs.** This is the part that doesn't work by
-accident. Rails resolves `DATABASE_URL` for the configuration named `primary` and
-nothing else — `DatabaseConfigurations#environment_value_for` looks for
-`<NAME>_DATABASE_URL` per config and only falls back to `DATABASE_URL` when the
-name is `primary`. Left alone, the cache, queue and cable configurations in
-`config/database.yml` would fall through to their `DATABASE_HOST`/`DATABASE_NAME`
-defaults, which point at nothing on Render, and boot would fail on the first cache
-read. So the blueprint declares `CACHE_DATABASE_URL`, `QUEUE_DATABASE_URL` and
-`CABLE_DATABASE_URL` as prompted values. A Render Postgres instance can hold more
-than one database, so all three are the primary connection string with a different
-database name on the end. Create them once, before the first deploy, with `psql`
-against the instance's external URL:
+**One database, one `DATABASE_URL`.** Solid Cache, Solid Queue and Solid Cable keep
+their tables in the primary database rather than in three of their own, so the
+connection string Render generates is the whole of the database configuration. This is
+why `config/database.yml` has a single `production` entry, why `config/cache.yml` and
+`config/cable.yml` name no database, and why the solid_* tables arrive through
+`db/migrate` like any others instead of through `db/*_schema.rb` files.
 
-```sql
-CREATE DATABASE sleep_puzzle_staging_cache;
-CREATE DATABASE sleep_puzzle_staging_queue;
-CREATE DATABASE sleep_puzzle_staging_cable;
-```
-
-`db:prepare` in `bin/docker-entrypoint` then migrates all four on boot. It creates
-missing ones too, when the role is allowed to — `prepare_all` walks every
-configuration for the environment — which is exactly what happens under Kamal, where
-the accessory's `POSTGRES_USER` is a superuser. On Render the documented route is to
-create them yourself in a `psql` session, so do that rather than finding out on the
-first deploy which kind of role you were given.
+The cost is that cache writes and job polling share a database with application data,
+which at this size is noise. The gain is that a free Postgres instance — one database,
+no `CREATE DATABASE` — is enough to run staging.
 
 **Two ports, on purpose.** Thruster listens on `HTTP_PORT` and proxies to Puma on
 `PORT`. Render probes whatever port the container binds and injects its own `PORT`,

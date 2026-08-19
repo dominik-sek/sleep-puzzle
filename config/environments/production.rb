@@ -51,7 +51,6 @@ Rails.application.configure do
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Booking mail is transactional — a silent failure means a customer who paid
   # never hears back, so surface it and let the job retry.

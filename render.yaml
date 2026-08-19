@@ -32,21 +32,12 @@ services:
       - key: PORT
         value: 3000
 
-      # Rails resolves DATABASE_URL for the `primary` config only: every other
-      # entry in config/database.yml reads <NAME>_DATABASE_URL. The cache, queue
-      # and cable databases live in the same Render instance and are created by
-      # hand once (README), so their URLs are the primary one with a different
-      # database name on the end.
+      # The whole database configuration. Solid Cache, Queue and Cable share the
+      # primary database, so there is nothing else to point anywhere.
       - key: DATABASE_URL
         fromDatabase:
           name: sleep-puzzle-staging-db
           property: connectionString
-      - key: CACHE_DATABASE_URL
-        sync: false
-      - key: QUEUE_DATABASE_URL
-        sync: false
-      - key: CABLE_DATABASE_URL
-        sync: false
 
       # Staging signs its own cookies; nothing here is shared with production.
       - key: SECRET_KEY_BASE
