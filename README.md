@@ -769,44 +769,43 @@ context small.
 
 ## Staging on Render
 
-`render.yaml` describes a staging environment: one Docker web service and one
-Postgres instance, both in `frankfurt`. Production is Kamal on a VPS; this is the
-disposable twin, and it deliberately reuses the same `Dockerfile`, the same database
-layout and the same Thruster-in-front-of-Puma arrangement, so what passes here means
-something for the real deploy.
+Staging is a Docker web service on Render with Postgres on Supabase, set up in the
+dashboard rather than from a blueprint in this repo — the app is one image and a
+handful of environment variables, and a `render.yaml` that only takes effect through
+Render's Blueprint flow was one more thing to keep in sync. What isn't obvious from
+the dashboard, though, is below.
 
-**One database, one `DATABASE_URL`.** Solid Cache, Solid Queue and Solid Cable keep
-their tables in the primary database rather than in three of their own, so the
-connection string Render generates is the whole of the database configuration. This is
-why `config/database.yml` has a single `production` entry, why `config/cache.yml` and
-`config/cable.yml` name no database, and why the solid_* tables arrive through
-`db/migrate` like any others instead of through `db/*_schema.rb` files.
+**`DATABASE_URL` is the whole database configuration.** Solid Cache, Solid Queue and
+Solid Cable keep their tables in the primary database rather than in three of their
+own, which is why `config/database.yml` has a single `production` entry, why
+`config/cache.yml` and `config/cable.yml` name no database, and why the solid_* tables
+arrive through `db/migrate` like any others. Cache writes and job polling therefore
+share a database with application data — noise at this size, and it means any free
+Postgres with a single database is enough to run staging.
 
-The cost is that cache writes and job polling share a database with application data,
-which at this size is noise. The gain is that a free Postgres instance — one database,
-no `CREATE DATABASE` — is enough to run staging.
+Use Supabase's **session pooler** string: port 5432, `aws-<region>.pooler.supabase.com`,
+user `postgres.<project-ref>`. The direct `db.<ref>.supabase.co` connection is IPv6-only
+without the paid IPv4 add-on, and the transaction pooler on 6543 doesn't support
+prepared statements, which Rails uses by default. On 6543 you would also need
+`prepared_statements: false` and `advisory_locks: false` in `config/database.yml`, the
+latter because migrations take a session-level lock that pooler can't hold.
 
-**Two ports, on purpose.** Thruster listens on `HTTP_PORT` and proxies to Puma on
-`PORT`. Render probes whatever port the container binds and injects its own `PORT`,
-which Puma would take — leaving Thruster on 80, where nothing is looking. The
-blueprint pins `HTTP_PORT: 10000` (the port Render expects) and moves Puma to 3000
-behind it.
+**Set `HTTP_PORT=10000` and `PORT=3000`.** Thruster listens on `HTTP_PORT` and proxies
+to Puma on `PORT`. Render injects its own `PORT`, which Puma would take, leaving
+Thruster on 80 where nothing is probing. Splitting them explicitly is what makes the
+health check pass.
 
-**Encrypted columns don't travel.** `AR_ENCRYPTION_PRIMARY_KEY` and its two
-companions are prompted values, not generated ones. Generating fresh keys gives you
-an environment that boots and then fails to read any encrypted column in a dump
-restored from production; restoring such a dump means bringing production's keys
-with it. `SECRET_KEY_BASE` is the opposite case — `generateValue: true`, because
-staging has no sessions worth preserving.
+**Don't generate fresh `AR_ENCRYPTION_*` keys.** All three have to match whatever
+produced the data. Fresh ones give you an environment that boots and then can't read a
+single encrypted column out of a production dump. `SECRET_KEY_BASE` is the opposite —
+generate one, staging has no sessions worth keeping.
 
-Point the rest at sandbox tenants. `PADDLE_BILLING_ENVIRONMENT` is pinned to
-`sandbox` in the blueprint; SMTP and Brevo are not, and staging will send real mail
-to real people if handed production credentials.
+Keep `PADDLE_BILLING_ENVIRONMENT=sandbox`, and point SMTP and Brevo at test accounts:
+staging sends real mail to real people if handed production credentials.
 
-Render builds with BuildKit, so the `--mount=type=cache` lines in the Dockerfile are
-understood; whether those caches survive between builds is not something Render
-documents, so expect apt and npm to be fetched cold and the build to be slower than
-it is locally.
+Migrations need nothing special. `bin/docker-entrypoint` runs `db:prepare` whenever the
+command ends in `./bin/rails server`, which the image's `CMD` does, Thruster in front
+included.
 
 ## Roadmap
 
