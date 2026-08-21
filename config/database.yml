@@ -13,7 +13,16 @@ default: &default
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  #
+  # Puma's threads, plus Solid Queue's when it runs inside Puma. In :fork mode
+  # each of its processes gets a pool of its own and this would only need to
+  # cover Puma; in :async mode its worker, dispatcher and scheduler threads
+  # check out of *this* pool, and sized for Puma alone they and the web threads
+  # starve each other. The +3 is the dispatcher, the scheduler and the
+  # supervisor's maintenance thread; JOB_THREADS is the worker, and is read by
+  # config/queue.yml too so the two cannot drift.
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS", 5).to_i +
+                       (ENV["SOLID_QUEUE_IN_PUMA"] ? ENV.fetch("JOB_THREADS", 3).to_i + 3 : 0) %>
   host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
   port: <%= ENV.fetch("DATABASE_PORT", 5432) %>
   # Left blank, PostgreSQL falls back to the OS user running Rails and to no

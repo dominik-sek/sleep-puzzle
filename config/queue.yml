@@ -4,7 +4,11 @@ default: &default
       batch_size: 500
   workers:
     - queues: "*"
-      threads: 3
+      # Also feeds the connection pool in database.yml, because in :async mode
+      # these threads check out of the same pool as Puma's. Change it here.
+      threads: <%= ENV.fetch("JOB_THREADS", 3) %>
+      # Ignored in :async mode, which is what runs on Render — the supervisor
+      # forces a single worker there. It still applies under `bin/jobs`.
       processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
       polling_interval: 0.1
 
