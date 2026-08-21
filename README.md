@@ -830,8 +830,70 @@ worker, the webhook still arrives and validates and the `Pay::Webhook` row is st
 written; the job that acts on it just never runs, so Paddle shows the transaction
 paid while the booking sits at "pending". Nothing errors — a queue with no worker
 looks exactly like a queue with nothing to do, which is what `/admin/jobs` is mounted
-for. The supervisor forks a worker, a dispatcher and a scheduler, so expect a few more
-Postgres connections than Puma alone.
+for.
+
+**And `solid_queue_mode :async`, which is why it fits in 512MB.** Solid Queue's default
+`:fork` mode gives the supervisor, worker, dispatcher and scheduler a process each —
+four full app boots at ~110–145MB apiece, beside Puma. That does not fit on Render's
+free instance, and the failure is an OOM kill rather than anything that points at the
+queue. `:async` runs all of them as threads inside Puma instead: measured at one
+process and ~154MB for the lot. The trade is that jobs now share the GVL with web
+requests, which is fine at staging traffic and is the thing to revisit on a box
+serving real load.
+
+That mode is also why `config/database.yml` sizes `max_connections` the way it does.
+Forked processes each get a pool of their own, so the pool only had to cover Puma;
+threads check out of *Puma's* pool, and left at `RAILS_MAX_THREADS` the job threads and
+the web threads starve each other on checkout. It adds `JOB_THREADS` plus three — the
+dispatcher, the scheduler, and the supervisor's maintenance thread — but only when
+`SOLID_QUEUE_IN_PUMA` is set, so nothing changes for `bin/jobs` or for CI. `JOB_THREADS`
+is read by `config/queue.yml` too, so the pool cannot drift from the worker it is
+sized for.
+
+One caveat that is not a config problem: a free Render service spins down after
+inactivity, and a spun-down service runs no jobs. The recurring tasks in
+`config/recurring.yml` fire late rather than on schedule, and mail queued just before a
+spin-down waits for the next request to wake the instance.
+
+**Mail goes out over Brevo's HTTP API, not SMTP.** Render drops outbound SMTP: the
+connection is neither refused nor unresolvable, it just hangs until
+`Net::OpenTimeout — execution expired`, several frames deep in `net-smtp` inside a
+job. No port or credential fixes that. `BrevoApiDelivery` posts to
+`api.brevo.com/v3/smtp/email` over 443 instead — the same host and port
+`BrevoSubscriptionService` already reaches from that instance, which is what proves
+egress itself is fine.
+
+`production.rb` picks it whenever `BREVO_API_KEY` is present and falls back to `:smtp`
+otherwise, so Kamal deploys are unchanged and any other provider still works by env
+var alone. It reads the variable rather than asking `BrevoApiDelivery.configured?`,
+because environment files are evaluated before autoloading and naming the class there
+fails at boot. Registration lives in `config/initializers/brevo_api_delivery.rb` under
+`to_prepare`, so a reload in development does not leave Action Mailer holding a stale
+class.
+
+The one sharp edge is the body. These mails are all multipart HTML+text, but a part
+carrying no `Content-Type` is `text/plain` by RFC 2045 and Mail reports that as a nil
+`mime_type` rather than filling in the default — read literally, a single-part mail
+goes out with no content at all. `spec/mailers/brevo_api_delivery_spec.rb` pins that
+case along with display names, `reply_to`, and raising rather than hanging when Brevo
+refuses or cannot be reached.
+
+**SMTP fails at connect, not at boot.** `config/environments/production.rb` reads
+`address: ENV["SMTP_ADDRESS"]`, and an unset or empty value is nil rather than an
+error. Ruby resolves a nil host to localhost, so the first delivery dies in
+`TCPSocket#initialize` with a connection refused — inside a job, several frames deep
+in `net-smtp`, naming no variable and looking nothing like missing configuration.
+Note that `.env.example` ships those keys *present and empty*, which copies into a
+dashboard as four blank variables that behave exactly like unset ones.
+
+`bin/rails mail:check` is the short way to tell the cases apart. It prints the
+settings in effect (the password as `(set)`/`(unset)`, since this runs on a deployed
+box) and then opens a socket, translating each failure: `Socket::ResolutionError` is a
+typo in the hostname, a refused connection means nothing is listening on that port,
+and a timeout rather than a refusal is what an outbound firewall looks like — some
+hosts block SMTP ports, in which case try 587 or 465. Production also logs a warning
+at boot when `SMTP_ADDRESS` is blank; it deliberately does not raise, since a site
+that cannot send mail should still serve pages.
 
 Keep `PADDLE_BILLING_ENVIRONMENT=sandbox`, and point SMTP and Brevo at test accounts:
 staging sends real mail to real people if handed production credentials.

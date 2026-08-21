@@ -59,9 +59,18 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "example.com") }
 
-  # Plain SMTP, so any provider (Resend, Postmark, SendGrid, Mailgun) works by
-  # env var alone. See .env.example for the variables to set.
-  config.action_mailer.delivery_method = :smtp
+  # Brevo's HTTP API when there is a key for it, plain SMTP otherwise.
+  #
+  # Not a preference — Render drops outbound SMTP, so the socket hangs until
+  # Net::OpenTimeout and no port or credential fixes it. The API goes out over
+  # 443, which is the same way BrevoSubscriptionService already reaches Brevo
+  # from that instance. SMTP stays the fallback because it is provider-agnostic
+  # and works fine under Kamal, where nothing is blocked.
+  #
+  # Reads the variable rather than asking BrevoApiDelivery.configured?, because
+  # this file is evaluated before autoloading is available and naming the class
+  # here would fail at boot.
+  config.action_mailer.delivery_method = ENV["BREVO_API_KEY"].present? ? :brevo_api : :smtp
   config.action_mailer.smtp_settings = {
     address: ENV["SMTP_ADDRESS"],
     port: ENV.fetch("SMTP_PORT", 587).to_i,
@@ -70,6 +79,17 @@ Rails.application.configure do
     authentication: :plain,
     enable_starttls_auto: true
   }
+
+  # An unset SMTP_ADDRESS is not an error until the first delivery, and by then
+  # it reads as a refused connection rather than as missing configuration —
+  # Ruby resolves a nil host to localhost. This does not raise, because a site
+  # that cannot send mail should still serve pages, but it does say so once at
+  # boot. `bin/rails mail:check` is the same check with a connection attempt.
+  config.after_initialize do
+    if ENV["BREVO_API_KEY"].blank? && ENV["SMTP_ADDRESS"].blank?
+      Rails.logger.warn("[mail] neither BREVO_API_KEY nor SMTP_ADDRESS is set — mail will fail at delivery.")
+    end
+  end
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
