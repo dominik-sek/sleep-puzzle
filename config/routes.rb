@@ -87,6 +87,10 @@ Rails.application.routes.draw do
     resource :paddle_prices, only: [ :update ]
     resources :packages, except: [ :show ]
     resources :products, except: [ :show ]
+
+    # Solid Queue dashboard. Inside the admin namespace so it is gated by the
+    # same admin flag as everything else here — see the initializer.
+    mount MissionControl::Jobs::Engine, at: "/jobs"
   end
 
   namespace :integrations do

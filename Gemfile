@@ -24,6 +24,11 @@ gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 
+# Web UI for the Solid Queue tables, mounted at /admin/jobs. A queue with no
+# worker looks exactly like a queue with nothing to do, which is how a mail
+# outage and a stuck Paddle webhook both went unnoticed once.
+gem "mission_control-jobs"
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 

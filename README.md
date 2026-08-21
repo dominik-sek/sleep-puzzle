@@ -495,6 +495,27 @@ failure modes (`400` to the revoke, and a refresh that raises before the revoke)
 mean the grant on Google's side is already gone, which is the state the button is
 trying to reach anyway.
 
+### The jobs dashboard
+
+Mission Control – Jobs is mounted at `/admin/jobs`, inside the `admin` namespace so
+`Admin::BaseController` gates it on the same `admin` flag as every other panel screen.
+The engine turns HTTP basic auth on by default and returns `401` until it is either
+configured or disabled, which would mean a second password on top of the flag, so
+`config/initializers/mission_control_jobs.rb` switches it off and points
+`base_controller_class` at `Admin::BaseController` instead.
+
+It renders in the engine's own layout rather than the panel's, so the sidebar is not
+on screen once you are there. Its entry in `AdminHelper#admin_sidebar_items` is
+therefore the one with no reachable `active` state — it is in the nav to be reachable
+at all, not to highlight.
+
+It exists because a Solid Queue backlog is invisible from the app: nothing raises,
+nothing is logged, and both a mail outage and a Paddle webhook that never got acted
+on look like an ordinary quiet queue. Failed and stuck jobs, the recurring tasks in
+`config/recurring.yml`, and whether a worker is running at all are all on that screen.
+If it shows jobs ready and no workers, see `SOLID_QUEUE_IN_PUMA` under
+[Staging on Render](#staging-on-render).
+
 ## Two languages, two addresses
 
 Polish keeps the bare paths it always had; English is the same page under `/en`:
@@ -799,6 +820,18 @@ health check pass.
 produced the data. Fresh ones give you an environment that boots and then can't read a
 single encrypted column out of a production dump. `SECRET_KEY_BASE` is the opposite —
 generate one, staging has no sessions worth keeping.
+
+**Set `SOLID_QUEUE_IN_PUMA=true`.** `config/puma.rb` only starts the Solid Queue
+supervisor when this is set, and Kamal sets it in `config/deploy.yml` — so on Render
+it is easy to miss, and missing it breaks two things that look unrelated. Contact and
+booking mail goes out through `deliver_later`, and Paddle's webhooks are handled by
+`Pay::Webhooks::ProcessJob`, which is what runs `BookingConfirmationService`. With no
+worker, the webhook still arrives and validates and the `Pay::Webhook` row is still
+written; the job that acts on it just never runs, so Paddle shows the transaction
+paid while the booking sits at "pending". Nothing errors — a queue with no worker
+looks exactly like a queue with nothing to do, which is what `/admin/jobs` is mounted
+for. The supervisor forks a worker, a dispatcher and a scheduler, so expect a few more
+Postgres connections than Puma alone.
 
 Keep `PADDLE_BILLING_ENVIRONMENT=sandbox`, and point SMTP and Brevo at test accounts:
 staging sends real mail to real people if handed production credentials.
