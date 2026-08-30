@@ -17,7 +17,10 @@ RSpec.describe "Admin::ContentItems", type: :request do
   end
 
   describe "POST /admin/content_items" do
-    before { sign_in admin }
+    before do
+      sign_in admin
+      ContentItem.sync!
+    end
 
     it "appends an empty item to the collection" do
       expect {
@@ -29,9 +32,35 @@ RSpec.describe "Admin::ContentItems", type: :request do
     end
 
     it "positions each new item after the last" do
+      # 1..3 are home.process's declared defaults, materialised by sync!
       3.times { post admin_content_items_path, params: { collection_key: "home.process" } }
 
-      expect(ContentItem.for_collection("home.process").pluck(:position)).to eq([ 1, 2, 3 ])
+      expect(ContentItem.for_collection("home.process").pluck(:position)).to eq([ 1, 2, 3, 4, 5, 6 ])
+    end
+
+    # An empty collection renders from its declared defaults, so appending the
+    # first row used to swap the whole list for that one blank row — the owner
+    # clicked "add" and the live page lost every entry it had been showing.
+    context "when the collection has never been synced" do
+      before { ContentItem.for_collection("terms.clauses").delete_all }
+
+      it "materialises the declared defaults instead of replacing them" do
+        declared = ContentBlock::Registry.collection("terms.clauses").defaults.size
+
+        expect {
+          post admin_content_items_path, params: { collection_key: "terms.clauses" }
+        }.to change(ContentItem, :count).by(declared + 1)
+      end
+
+      it "leaves the public page showing the clauses it showed before" do
+        get terms_path
+        before_count = response.body.scan(/<dt/).size
+
+        post admin_content_items_path, params: { collection_key: "terms.clauses" }
+
+        get terms_path
+        expect(response.body.scan(/<dt/).size).to eq(before_count + 1)
+      end
     end
 
     it "404s for a section that has no collection" do

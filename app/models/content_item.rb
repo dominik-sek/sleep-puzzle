@@ -41,18 +41,25 @@ class ContentItem < ApplicationRecord
   # already has items — the owner's list is theirs, defaults never overwrite it.
   def self.sync!
     ContentBlock::Registry.sections.select(&:collection?).each do |section|
-      collection = section.collection
-      next if for_collection(collection.full_key).exists?
+      materialise_defaults!(section.collection)
+    end
+  end
 
-      collection.defaults.each_with_index do |values, index|
-        item = new(collection_key: collection.full_key, position: index + 1)
+  # One collection's half of sync!. Anything that appends to a list has to call
+  # this first: a collection with no rows renders from its declared defaults, so
+  # creating the first row would replace the whole list with that one row rather
+  # than adding to it.
+  def self.materialise_defaults!(collection)
+    return if for_collection(collection.full_key).exists?
 
-        collection.fields.each do |field|
-          (values[field.key] || {}).each { |locale, value| item.assign_value(field.key, locale, value) }
-        end
+    collection.defaults.each_with_index do |values, index|
+      item = new(collection_key: collection.full_key, position: index + 1)
 
-        item.save!
+      collection.fields.each do |field|
+        (values[field.key] || {}).each { |locale, value| item.assign_value(field.key, locale, value) }
       end
+
+      item.save!
     end
   end
 

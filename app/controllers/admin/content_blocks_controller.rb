@@ -43,6 +43,15 @@ module Admin
 
     private
 
+    # A declared field may have no row yet: nothing runs content_blocks:sync on
+    # deploy, and the panel builds its tree from the registry rather than from
+    # rows, so the owner can reach a field that was never synced. find_by! turned
+    # that into a 404 that rolled back every other edit in the section. The key
+    # comes from the registry here, and ContentBlock validates that on create.
+    def block_for(field)
+      ContentBlock.find_or_create_by!(key: field.full_key)
+    end
+
     def save_section(section)
       values = field_params(section)
 
@@ -50,7 +59,7 @@ module Admin
         submitted = values[field.key]
         next if submitted.nil?
 
-        block = ContentBlock.find_by!(key: field.full_key)
+        block = block_for(field)
 
         if field.rich?
           block.update!(body_pl: submitted[:pl], body_en: submitted[:en])
@@ -97,7 +106,7 @@ module Admin
         attributes = submitted[field.key]
         next if attributes.blank?
 
-        block = ContentBlock.find_by!(key: field.full_key)
+        block = block_for(field)
 
         if attributes[:remove] == "1"
           block.image.purge_later

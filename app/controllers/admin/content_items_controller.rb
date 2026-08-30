@@ -8,6 +8,11 @@ module Admin
       collection = ContentBlock::Registry.collection(params[:collection_key])
       return head :not_found if collection.nil?
 
+      # An unsynced collection renders from its declared defaults, so appending to
+      # an empty table would swap the whole list for one blank row. Materialise
+      # first, then add to what is now actually there.
+      ContentItem.materialise_defaults!(collection)
+
       next_position = (ContentItem.for_collection(collection.full_key).maximum(:position) || 0) + 1
       ContentItem.create!(collection_key: collection.full_key, position: next_position)
 

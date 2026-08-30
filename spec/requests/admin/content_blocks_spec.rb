@@ -153,6 +153,31 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
       expect(block.value_pl).to eq("Tytuł")
       expect(block.translated?(:en)).to be false
     end
+    # The panel builds its tree from the registry, so a field added to the YAML is
+    # editable before anyone runs content_blocks:sync. It used to 404 on save.
+    context "when the section has never been synced" do
+      it "saves a field that has no row yet" do
+        ContentBlock.where(key: "home.hero.title").delete_all
+
+        patch admin_content_blocks_path,
+              params: { section: "home.hero", fields: { title: { pl: "Tytuł", en: "Title" } } }
+
+        expect(response).to redirect_to(admin_content_blocks_path(open: "home.hero"))
+        expect(ContentBlock.find_by(key: "home.hero.title").value_pl).to eq("Tytuł")
+      end
+
+      it "keeps the rest of the section's edits when one field is missing its row" do
+        ContentBlock.where(key: "home.hero.subtitle").delete_all
+
+        patch admin_content_blocks_path, params: {
+          section: "home.hero",
+          fields: { title: { pl: "Nowy tytuł" }, subtitle: { pl: "Nowy podtytuł" } }
+        }
+
+        expect(ContentBlock.find_by(key: "home.hero.title").value_pl).to eq("Nowy tytuł")
+        expect(ContentBlock.find_by(key: "home.hero.subtitle").value_pl).to eq("Nowy podtytuł")
+      end
+    end
   end
 
   describe "image blocks" do
@@ -239,6 +264,17 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
 
       expect(ContentBlock.find_by(key: "home.about.title").value_pl).to eq("Nowy tytuł")
       expect(flash[:alert]).to be_present
+    end
+
+    context "when the field has never been synced" do
+      it "attaches an image to a field that has no row yet" do
+        ContentBlock.where(key: "home.about.photo").delete_all
+
+        patch admin_content_blocks_path,
+              params: { section: "home.about", images: { "photo" => { "file" => photo } } }
+
+        expect(ContentBlock.find_by(key: "home.about.photo").image).to be_attached
+      end
     end
 
     it "ignores an image posted for a section that does not declare it" do
