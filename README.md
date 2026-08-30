@@ -183,7 +183,12 @@ cart into something Paddle's webhook can name:
 2. `shared/_paddle_checkout` mounts the Stimulus controller, which opens the
    overlay with every line and `customData: { order_id }`.
 3. Paddle redirects to `orders#show`, which says "still confirming" until the
-   webhook lands rather than claiming success on its own.
+   webhook lands rather than claiming success on its own. Under that it draws
+   the receipt: one row per bought file, in the same shape the cart and the
+   library use, each row linking to its product. The design has no screen for
+   this — "Płatność" is the one it draws, and Paddle's overlay replaces it — so
+   the rows borrow the row that is already drawn elsewhere rather than inventing
+   a third one.
 4. `paddle_billing.transaction.completed` reaches `OrderConfirmationService`,
    which flips the order to `paid`.
 

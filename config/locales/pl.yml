@@ -217,6 +217,13 @@ pl:
     go_to_shop: "Przejdź do sklepu"
     copyright: "© %{year} Sleep Puzzle. Wszelkie prawa zastrzeżone."
   orders:
+    summary:
+      items_title: "Twoje zamówienie"
+      item_count:
+        one: "%{count} pozycja"
+        few: "%{count} pozycje"
+        many: "%{count} pozycji"
+        other: "%{count} pozycji"
     statuses:
       pending: "Oczekuje na płatność"
       paid: "Opłacone"

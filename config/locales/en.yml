@@ -237,6 +237,11 @@ en:
     go_to_shop: "Go to the shop"
     copyright: "© %{year} Sleep Puzzle. All rights reserved."
   orders:
+    summary:
+      items_title: "Your order"
+      item_count:
+        one: "%{count} item"
+        other: "%{count} items"
     statuses:
       pending: "Awaiting payment"
       paid: "Paid"

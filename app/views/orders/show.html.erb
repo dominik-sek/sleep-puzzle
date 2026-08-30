@@ -14,18 +14,48 @@
         <%= content_block("cart.done.title") %>
       </h1>
 
-      <p class="text-t5 text-cream mb-6.5">
+      <p class="text-t5 text-cream mb-8">
         <%= @order.paid? ? content_block("cart.done.body") : content_block("cart.done.pending") %>
       </p>
 
-      <ul class="mb-8 flex flex-col gap-2 list-none p-0 m-0 text-left">
-        <% @order.order_items.each do |item| %>
-          <li class="flex items-center gap-3 text-t6 text-tan">
-            <span aria-hidden="true"><%= item.product.display_icon %></span>
-            <span><%= item.product.name %></span>
-          </li>
-        <% end %>
-      </ul>
+      <%# The receipt. Sunk into ink-soft rather than drawn as more cards, because
+          the confirmation panel is already `bg-surface` and surface on surface
+          reads as one flat block. Same row shape as the cart and the library, so
+          what the buyer just paid for looks like what they will find on their
+          account. %>
+      <div class="mb-8 rounded-2xl border border-border-input bg-ink-soft p-4 sm:p-5 text-left">
+        <div class="mb-3.5 flex items-baseline justify-between gap-4">
+          <h2 class="text-t6 text-taupe m-0"><%= t("orders.summary.items_title") %></h2>
+          <span class="text-t6 text-taupe tabular-nums">
+            <%= t("orders.summary.item_count", count: @order.order_items.size) %>
+          </span>
+        </div>
+
+        <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
+          <% @order.order_items.each do |item| %>
+            <li>
+              <%# linked, so the confirmation is also the way into what was bought %>
+              <%= link_to product_path(item.product),
+                    class: "group flex items-center gap-4 rounded-xl border border-border-strong bg-surface px-4 py-3.5 no-underline" do %>
+                <%# a fixed tile, not a bare emoji: glyph widths differ enough that
+                    unboxed icons leave the names on a ragged left edge %>
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ink text-[22px] leading-none" aria-hidden="true">
+                  <%= item.product.display_icon %>
+                </span>
+
+                <span class="flex-1 min-w-0">
+                  <span class="block text-[15px] font-bold text-cream truncate group-hover:text-accent">
+                    <%= item.product.name %>
+                  </span>
+                  <span class="block text-[12px] text-taupe">
+                    <%= [ item.product.kind_label, item.product.length_label ].compact_blank.join(" · ") %>
+                  </span>
+                </span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
 
       <%= render Buttons::Component.new(
         text: content_block("cart.done.cta"),
