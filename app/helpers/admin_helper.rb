@@ -15,14 +15,11 @@ module AdminHelper
         active: controller_name == "products" },
       { label: "Treści", href: admin_content_blocks_path, icon: "file-text",
         active: controller_name.in?(%w[content_blocks content_items]) },
-      # Outside the Admin:: namespace — it hangs off /integrations — but it is a
-      # panel screen in every other respect, so it belongs in the panel's nav.
       { label: "Kalendarz", href: integrations_google_calendar_path, icon: "calendar-cog",
         active: controller_name == "google_calendar" },
-      # Mission Control renders inside its own layout rather than the panel's, so
-      # the sidebar is not on screen once you are there and there is no active
-      # state to reach. It is in the nav to be reachable at all.
       { label: "Zadania", href: admin_mission_control_jobs_path, icon: "list-checks",
+        active: false },
+      { label: "Baza danych", href: admin_pg_hero_path, icon: "database",
         active: false }
     ]
   end

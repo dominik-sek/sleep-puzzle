@@ -27,6 +27,14 @@ RSpec.describe AdminHelper, type: :helper do
       expect(active.map { |i| i[:label] }).to eq([ "Rezerwacje" ])
     end
 
+    # Both mounted engines render in their own layout, so once you are on either
+    # screen the panel's sidebar is gone. The nav entry is the only way in.
+    it "offers the two mounted dashboards" do
+      hrefs = helper.admin_sidebar_items.map { |i| i[:href] }
+
+      expect(hrefs).to include(admin_mission_control_jobs_path, admin_pg_hero_path)
+    end
+
     it "points every item at an icon that exists" do
       expect { helper.admin_sidebar_items.each { |i| helper.icon(i[:icon]) } }.not_to raise_error
     end

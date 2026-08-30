@@ -970,6 +970,11 @@ mount one line higher — outside the `authenticate` block, or outside the
 namespace — would serve the query stats to anyone who guessed the path, and
 nothing else would notice.
 
+It sits in the panel's sidebar as "Baza danych", next to "Zadania" and with the
+same `active: false` — both engines bring their own layout, so the sidebar is
+off screen the moment you arrive and there is no active state to reach. The nav
+entry is the only way in; neither dashboard is linked from anywhere else.
+
 **Query stats need `pg_stat_statements`, and only that panel does.** Index usage,
 unused and duplicate indexes, bloat, live queries, space and vacuum status all
 work without it. The extension has to be in `shared_preload_libraries` and
