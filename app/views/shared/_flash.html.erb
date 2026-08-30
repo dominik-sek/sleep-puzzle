@@ -14,4 +14,4 @@
   end
 %>
 
-<div id="flash" class="hidden" data-controller="flash" data-flash-messages-value="<%= toasts.to_json %>"></div>
+<%= render "shared/toasts", toasts: toasts %>

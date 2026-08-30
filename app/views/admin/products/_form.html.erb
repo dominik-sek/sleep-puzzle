@@ -1,6 +1,24 @@
 <%# multipart because the audio file is uploaded through this form; form_with only
     infers that from a builder-based file field, and this form uses tag helpers %>
-<%= form_with model: [ :admin, product ], scope: :record, multipart: true, class: "flex flex-col gap-6" do %>
+<%= turbo_stream_from Product::ADMIN_STREAM %>
+
+<%# on the form rather than the field: the progress bar holds the submit button,
+    and direct-upload events bubble up here from the input %>
+<% upload_data =
+     if BunnyStorageService.configured?
+       { controller: "audio-upload",
+         audio_upload_max_bytes_value: BunnyStorageService::MAX_BYTES,
+         audio_upload_extensions_value: BunnyStorageService::ALLOWED_EXTENSIONS.to_json,
+         action: "direct-upload:start->audio-upload#start " \
+                 "direct-upload:progress->audio-upload#progress " \
+                 "direct-upload:error->audio-upload#error " \
+                 "direct-upload:end->audio-upload#end" }
+     else
+       {}
+     end %>
+
+<%= form_with model: [ :admin, product ], scope: :record, multipart: true,
+              data: upload_data, class: "flex flex-col gap-6" do %>
   <%= render "admin/shared/form_errors", record: product %>
 
   <%= render "admin/shared/translated_input", record: product, field: "name",
@@ -46,24 +64,35 @@
   <div class="flex flex-col gap-1.5">
     <span class="text-t6 uppercase text-taupe">Plik audio (Bunny)</span>
 
-    <%# what is on the CDN right now, shown whichever way it got there. Read-only:
-        the path is where the file actually is, not a preference — it changes by
-        uploading a different file. %>
-    <% if product.cdn_path.present? %>
-      <p class="text-t6 text-cream m-0">
-        Wgrany plik:
-        <code class="rounded bg-white/5 px-1.5 py-0.5"><%= product.cdn_path %></code>
-      </p>
-    <% end %>
+    <%= render "admin/products/audio_status", product: product %>
 
     <% if BunnyStorageService.configured? %>
+      <%# direct_upload_url is what makes @rails/activestorage take the file before
+          the form is submitted, which is where the percentage comes from %>
       <%= file_field_tag "record[audio]", accept: "audio/*", id: "record-audio",
+                         data: { direct_upload_url: rails_direct_uploads_path,
+                                 audio_upload_target: "input",
+                                 action: "change->audio-upload#validate" },
                          class: "form-control file:mr-3 file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-cream file:cursor-pointer" %>
+
+      <div data-audio-upload-target="progress" class="hidden flex-col gap-1.5">
+        <div class="flex items-baseline justify-between gap-3 text-t6">
+          <span data-audio-upload-target="label" class="truncate text-tan"></span>
+          <span data-audio-upload-target="percent" class="tabular-nums text-cream">0%</span>
+        </div>
+
+        <div class="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+          <div data-audio-upload-target="bar"
+               class="h-full w-0 rounded-full bg-accent transition-[width] duration-150 ease-out"></div>
+        </div>
+      </div>
+
+      <p data-audio-upload-target="error" class="hidden text-t6 text-orange-400 m-0"></p>
+
       <span class="text-t6 text-taupe">
         <%= product.cdn_path.present? ? "Wgranie nowego pliku zastąpi obecny." : "Wgraj nagranie — trafi prosto do Bunny Storage." %>
         Formaty: <%= BunnyStorageService::ALLOWED_EXTENSIONS.join(", ") %>, do
-        <%= BunnyStorageService::MAX_BYTES / 1.megabyte %> MB. Bez pliku produkt nadal
-        się sprzedaje — po prostu nie ma odtwarzacza w „Moim koncie”.
+        <%= BunnyStorageService::MAX_BYTES / 1.megabyte %> MB.
       </span>
     <% else %>
       <%# no storage credentials — local development, or a deploy that lost them.
@@ -82,6 +111,7 @@
 
   <div class="flex items-center gap-3">
     <%= submit_tag product.persisted? ? "Zapisz produkt" : "Dodaj produkt",
+                   data: { audio_upload_target: "submit" },
                    class: "inline-flex items-center justify-center rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink shadow-sm cursor-pointer hover:bg-accent-hover" %>
 
     <%= link_to "Anuluj", admin_products_path,

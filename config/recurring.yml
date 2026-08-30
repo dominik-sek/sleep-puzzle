@@ -16,3 +16,9 @@ production:
   release_abandoned_bookings:
     class: ReleaseAbandonedBookingsJob
     schedule: every 15 minutes
+  # Direct uploads create the blob before the form is submitted, so an admin who
+  # picks a file and then closes the tab leaves a full-size recording on disk
+  # attached to nothing. Two days, so a form left open overnight still saves.
+  purge_unattached_blobs:
+    command: "ActiveStorage::Blob.unattached.where(created_at: ..2.days.ago).find_each(&:purge_later)"
+    schedule: at 4am every day

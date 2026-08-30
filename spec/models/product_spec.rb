@@ -4,18 +4,19 @@ require 'rails_helper'
 #
 # Table name: products
 #
-#  id              :bigint           not null, primary key
-#  category        :integer
-#  cdn_path        :string
-#  icon            :string
-#  kind            :integer
-#  length_minutes  :integer
-#  position        :integer          default(0), not null
-#  published       :boolean          default(FALSE), not null
-#  translations    :jsonb            not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  paddle_price_id :string
+#  id                 :bigint           not null, primary key
+#  audio_upload_error :string
+#  category           :integer
+#  cdn_path           :string
+#  icon               :string
+#  kind               :integer
+#  length_minutes     :integer
+#  position           :integer          default(0), not null
+#  published          :boolean          default(FALSE), not null
+#  translations       :jsonb            not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  paddle_price_id    :string
 #
 RSpec.describe Product, type: :model do
   describe "translated fields" do
@@ -70,6 +71,47 @@ RSpec.describe Product, type: :model do
     it "is required to publish" do
       expect(build_product(cdn_path: nil, published: true)).not_to be_valid
       expect(build_product(cdn_path: "", published: true)).not_to be_valid
+    end
+
+    it "counts a recording still uploading as a file" do
+      product = build_product(cdn_path: nil, published: true)
+      product.audio_upload.attach(io: StringIO.new("audio"), filename: "a.mp3", content_type: "audio/mpeg")
+
+      expect(product).to be_valid
+    end
+
+    it "keeps a product whose recording is still uploading out of the shop" do
+      product = create_product(cdn_path: nil, published: false)
+      product.audio_upload.attach(io: StringIO.new("audio"), filename: "a.mp3", content_type: "audio/mpeg")
+      product.update!(published: true)
+
+      expect(Product.published).not_to include(product)
+    end
+  end
+
+  describe "how an upload in progress is told from one that failed" do
+    let(:product) { create_product(cdn_path: nil, published: false) }
+
+    it "is pending while the file is staged" do
+      product.audio_upload.attach(io: StringIO.new("audio"), filename: "a.mp3", content_type: "audio/mpeg")
+
+      expect(product).to be_audio_upload_pending
+      expect(product).not_to be_audio_upload_failed
+    end
+
+    it "is failed when a reason is left behind and no file is staged" do
+      product.update!(audio_upload_error: "Bunny odrzucił klucz dostępu.")
+
+      expect(product).to be_audio_upload_failed
+      expect(product).not_to be_audio_upload_pending
+    end
+
+    it "counts a re-upload as pending even with an old error still recorded" do
+      product.update!(audio_upload_error: "Bunny odrzucił klucz dostępu.")
+      product.audio_upload.attach(io: StringIO.new("audio"), filename: "a.mp3", content_type: "audio/mpeg")
+
+      expect(product).to be_audio_upload_pending
+      expect(product).not_to be_audio_upload_failed
     end
 
     # Bunny's file browser shows paths both ways, and the owner pastes what they see

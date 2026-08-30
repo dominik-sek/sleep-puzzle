@@ -35,7 +35,7 @@ module Admin
     end
 
     def index
-      @pagy, @records = pagy(managed_model.ordered)
+      @pagy, @records = pagy(index_scope)
     end
 
     def new
@@ -46,7 +46,7 @@ module Admin
       @record = managed_model.new
 
       if save_record
-        redirect_to index_path, notice: "Dodano #{record_label} „#{@record.name}”."
+        redirect_to index_path, notice: create_notice
       else
         render :new, status: :unprocessable_entity
       end
@@ -57,7 +57,7 @@ module Admin
 
     def update
       if save_record
-        redirect_to index_path, notice: "Zapisano zmiany w „#{@record.name}”."
+        redirect_to index_path, notice: update_notice
       else
         render :edit, status: :unprocessable_entity
       end
@@ -75,6 +75,11 @@ module Admin
 
     private
 
+    # a hook because a catalogue may need more preloaded per row than `ordered`
+    def index_scope
+      managed_model.ordered
+    end
+
     def load_record
       @record = managed_model.find(params[:id])
     end
@@ -87,6 +92,15 @@ module Admin
     # page listing twenty packages makes one Paddle call rather than twenty.
     def load_prices
       @prices = PaddlePriceCatalogService.call
+    end
+
+    # hooks, because a save can leave background work the flash should mention
+    def create_notice
+      "Dodano #{record_label} „#{@record.name}”."
+    end
+
+    def update_notice
+      "Zapisano zmiany w „#{@record.name}”."
     end
 
     def save_record

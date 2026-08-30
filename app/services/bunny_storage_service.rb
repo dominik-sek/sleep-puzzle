@@ -11,6 +11,9 @@
 # it to the page would put it in the HTML of any admin screen and in the network log
 # of any machine that has ever opened one. Rack has already buffered the upload to a
 # tempfile by the time this runs, so proxying costs a streamed copy, not memory.
+#
+# Called from ProductAudioUploadJob rather than a request; the admin form runs
+# .rejection, which is every check that needs no network.
 class BunnyStorageService < ApplicationService
   # Bunny's storage endpoints are region-specific and the zone's own region is not
   # discoverable from here — a PUT to the wrong one 404s — so it is configuration.
@@ -69,13 +72,42 @@ class BunnyStorageService < ApplicationService
     def host
       ENV["BUNNY_STORAGE_HOST"].presence&.sub(%r{\Ahttps?://}i, "")&.delete_suffix("/").presence || DEFAULT_HOST
     end
+
+    # Every refusal that needs only a name and a byte count, so a direct upload
+    # can be judged from its blob without being read back off disk.
+    #
+    # @return [String, nil] the reason to refuse, in the admin's language
+    def rejection_for(kind:, filename:, size:)
+      return "Wgrywanie plików nie jest skonfigurowane (BUNNY_STORAGE_ZONE, BUNNY_STORAGE_PASSWORD)." unless configured?
+      return "Nie wybrano pliku." if filename.blank?
+      return "Najpierw wybierz rodzaj produktu — od niego zależy folder w Bunny." if FOLDERS[kind.to_s].blank?
+      return "Dozwolone formaty: #{ALLOWED_EXTENSIONS.join(', ')}." unless ALLOWED_EXTENSIONS.include?(extension_of(filename))
+      return "Plik jest za duży (maksymalnie #{MAX_BYTES / 1.megabyte} MB)." if size > MAX_BYTES
+
+      "Plik jest pusty." if size.zero?
+    end
+
+    def extension_of(filename)
+      File.extname(filename.to_s).delete_prefix(".").downcase
+    end
   end
 
-  # @param upload [ActionDispatch::Http::UploadedFile] the file field's value
+  # @param upload [ActionDispatch::Http::UploadedFile, File] the file itself
   # @param kind [String, Symbol] the product's Product#kind, which decides the folder
-  def initialize(upload, kind:)
+  # @param filename [String, nil] the stored path's basename, for callers whose
+  #   file has no original_filename — the job's tempfile has none
+  def initialize(upload, kind:, filename: nil)
     @upload = upload
     @kind = kind
+    @filename = filename.presence
+  end
+
+  # Everything decidable without opening a socket, so the admin form can refuse a
+  # bad file in the request. `store` runs it too.
+  #
+  # @return [String, nil] the reason to refuse, in the admin's language
+  def self.rejection(upload, kind:, filename: nil)
+    new(upload, kind: kind, filename: filename).rejection
   end
 
   # mirrors BookingPaymentCheckService: .call does the work, then you ask.
@@ -89,6 +121,12 @@ class BunnyStorageService < ApplicationService
     @stored == true
   end
 
+  # Whether sending the same file again could plausibly land it. A refused key or
+  # an unknown zone fails identically every time; a dropped connection does not.
+  def retryable?
+    @retryable == true
+  end
+
   # The path to write to Product#cdn_path — set only on success, so a caller that
   # forgets to check gets nil rather than a path to a file that is not there.
   attr_reader :path
@@ -98,15 +136,17 @@ class BunnyStorageService < ApplicationService
   # value of it: only one of them is fixable by trying a different file.
   attr_reader :error
 
+  def rejection
+    return self.class.rejection_for(kind: @kind, filename: nil, size: 0) if @upload.blank?
+
+    self.class.rejection_for(kind: @kind, filename: filename, size: size)
+  end
+
   private
 
   def store
-    return fail_with("Wgrywanie plików nie jest skonfigurowane (BUNNY_STORAGE_ZONE, BUNNY_STORAGE_PASSWORD).") unless self.class.configured?
-    return fail_with("Nie wybrano pliku.") if @upload.blank?
-    return fail_with("Najpierw wybierz rodzaj produktu — od niego zależy folder w Bunny.") if folder.blank?
-    return fail_with("Dozwolone formaty: #{ALLOWED_EXTENSIONS.join(', ')}.") unless ALLOWED_EXTENSIONS.include?(extension)
-    return fail_with("Plik jest za duży (maksymalnie #{MAX_BYTES / 1.megabyte} MB).") if size > MAX_BYTES
-    return fail_with("Plik jest pusty.") if size.zero?
+    reason = rejection
+    return fail_with(reason) if reason
 
     upload_to_bunny
   end
@@ -126,9 +166,11 @@ class BunnyStorageService < ApplicationService
     end
 
     Rails.logger.error("Bunny storage refused an upload of #{storage_path}: #{response.code} #{response.body}")
+    @retryable = response.code.to_i >= 500
     fail_with(refusal_message(response.code.to_i))
   rescue *NETWORK_ERRORS => e
     Rails.logger.error("Bunny storage upload of #{storage_path} could not be completed: #{e.class}: #{e.message}")
+    @retryable = true
     fail_with("Nie udało się połączyć z Bunny. Spróbuj ponownie.")
   end
 
@@ -200,11 +242,11 @@ class BunnyStorageService < ApplicationService
   end
 
   def extension
-    @extension ||= File.extname(filename).delete_prefix(".").downcase
+    @extension ||= self.class.extension_of(filename)
   end
 
   def filename
-    @upload.try(:original_filename).to_s
+    @filename ||= @upload.try(:original_filename).to_s
   end
 
   def size

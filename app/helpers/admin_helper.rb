@@ -105,6 +105,16 @@ module AdminHelper
     tag.span("Nieznana cena w Paddle", class: "text-orange-400", title: record.paddle_price_id)
   end
 
+  # A recording on its way to Bunny, or one that never got there — neither shows
+  # up anywhere else on the row. Same two hues as a pending or failed payment.
+  def admin_audio_upload_badge(product)
+    if product.audio_upload_pending?
+      admin_status_badge(:pending, "Wgrywanie…", classes: "text-t6")
+    elsif product.audio_upload_failed?
+      admin_status_badge(:payment_failed, "Błąd pliku", classes: "text-t6")
+    end
+  end
+
   def admin_published_badge(record)
     if record.published?
       tag.span("Widoczny", class: "inline-block rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 text-emerald-300 whitespace-nowrap")

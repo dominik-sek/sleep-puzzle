@@ -2,18 +2,19 @@
 #
 # Table name: products
 #
-#  id              :bigint           not null, primary key
-#  category        :integer
-#  cdn_path        :string
-#  icon            :string
-#  kind            :integer
-#  length_minutes  :integer
-#  position        :integer          default(0), not null
-#  published       :boolean          default(FALSE), not null
-#  translations    :jsonb            not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  paddle_price_id :string
+#  id                 :bigint           not null, primary key
+#  audio_upload_error :string
+#  category           :integer
+#  cdn_path           :string
+#  icon               :string
+#  kind               :integer
+#  length_minutes     :integer
+#  position           :integer          default(0), not null
+#  published          :boolean          default(FALSE), not null
+#  translations       :jsonb            not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  paddle_price_id    :string
 #
 class Product < ApplicationRecord
   include Purchasable
@@ -22,6 +23,16 @@ class Product < ApplicationRecord
   # paid for, so deleting a bought product would rewrite their history. The panel
   # unpublishes instead.
   has_many :order_items, dependent: :restrict_with_error
+
+  # Where a recording waits between the admin pressing save and Bunny having it.
+  # Nothing streams from here; ProductAudioUploadJob purges it once `cdn_path` is
+  # set.
+  has_one_attached :audio_upload
+
+  # One stream for the whole catalogue rather than one per product: the index
+  # would otherwise open a subscription per row, and an upload result has to
+  # reach whichever product page the owner happens to be on.
+  ADMIN_STREAM = "admin_products"
 
   # The two things the shop sells, named after how the site talks about them:
   # guided audio for the parent, bedtime stories for the child.
@@ -62,7 +73,10 @@ class Product < ApplicationRecord
   # Two layers, because a validation alone only covers rows saved from now on:
   # this refuses the publish, and the scope below keeps anything already marked
   # published — or published straight through SQL — out of the shop.
-  validates :cdn_path, presence: true, if: :published?
+  #
+  # A recording on its way counts as having one, so a product can be published in
+  # the same save as its upload; the scope below still waits for `cdn_path`.
+  validates :cdn_path, presence: true, if: -> { published? && !audio_upload_pending? }
 
   # Overrides Purchasable's, which Package still uses unchanged: a consultation
   # has no file to deliver, so `published` means exactly what it says there.
@@ -108,6 +122,17 @@ class Product < ApplicationRecord
   # they did before the CDN existed rather than a control that 404s.
   def streamable?
     cdn_path.present? && BunnySignedUrlService.configured?
+  end
+
+  # The attachment is the whole state — purged on success and on final failure
+  # alike, so no status column can be left stale by a worker that died.
+  def audio_upload_pending?
+    audio_upload.attached?
+  end
+
+  # `audio_upload_error` outlives the attachment: it is all that is left to show.
+  def audio_upload_failed?
+    audio_upload_error.present? && !audio_upload_pending?
   end
 
   private

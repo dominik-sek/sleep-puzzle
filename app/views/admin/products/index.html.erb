@@ -1,5 +1,8 @@
 <% content_for :title, "Produkty — Panel" %>
 
+<%# an upload finishing in the background updates the row and pops a toast %>
+<%= turbo_stream_from Product::ADMIN_STREAM %>
+
 <div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[1100px]">
   <div class="flex flex-wrap items-start justify-between gap-4">
     <div class="flex flex-col gap-1">
@@ -54,7 +57,10 @@
           <% end %>
 
           <% row.with_cell do %>
-            <%= admin_published_badge(product) %>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <%= admin_published_badge(product) %>
+              <%= render "admin/products/audio_badge", product: product %>
+            </div>
           <% end %>
 
           <% row.with_cell(align: :right, classes: "whitespace-nowrap") do %>

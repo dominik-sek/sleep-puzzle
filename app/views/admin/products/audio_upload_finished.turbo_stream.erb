@@ -1,0 +1,8 @@
+<%= turbo_stream.replace dom_id(product, :audio_badge),
+                         partial: "admin/products/audio_badge", locals: { product: product } %>
+
+<%= turbo_stream.replace dom_id(product, :audio_status),
+                         partial: "admin/products/audio_status", locals: { product: product } %>
+
+<%# replacing #flash reconnects its Stimulus controller, which is what pops the toast %>
+<%= turbo_stream.replace "flash", partial: "shared/toasts", locals: { toasts: [ toast ] } %>

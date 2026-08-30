@@ -126,6 +126,17 @@ RSpec.describe BunnyStorageService do
       end
     end
 
+    it "takes the stored name from an explicitly given filename" do
+      stub_bunny_upload
+      file = Tempfile.new([ "a1b2c3d4e5", ".bin" ], binmode: true)
+      file.write("ID3 fake audio bytes")
+      file.flush
+
+      path = described_class.call(file, kind: "bedtime_story", filename: "Kołysanka.mp3").path
+
+      expect(path).to match(%r{\A/bajki/kolysanka-[0-9a-f]{8}\.mp3\z})
+    end
+
     describe "when Bunny refuses" do
       # The two misconfigurations are worth separating: from a bare "upload
       # failed" there is no telling which credential was pasted wrong.
@@ -150,6 +161,18 @@ RSpec.describe BunnyStorageService do
         expect(result.path).to be_nil
         expect(result.error).to include("507")
       end
+
+      it "marks a server error worth another attempt and a refusal not" do
+        stub_bunny_upload(code: 503, body: "unavailable")
+        expect(upload).to be_retryable
+
+        stub_bunny_upload(code: 401, body: "unauthorized")
+        expect(upload).not_to be_retryable
+      end
+
+      it "never marks a file it refused itself as worth retrying" do
+        expect(upload(kind: nil)).not_to be_retryable
+      end
     end
 
     it "reports a connection that never got there as something to retry" do
@@ -159,6 +182,69 @@ RSpec.describe BunnyStorageService do
 
       expect(result).not_to be_stored
       expect(result.error).to include("Spróbuj ponownie")
+      expect(result).to be_retryable
+    end
+  end
+
+  describe ".rejection" do
+    def rejection(file = audio_upload, kind: "bedtime_story")
+      described_class.rejection(file, kind: kind)
+    end
+
+    context "with the storage zone configured" do
+      before do
+        with_bunny_storage
+        expect_any_instance_of(Net::HTTP).not_to receive(:request)
+      end
+
+      it "passes a file there is nothing wrong with" do
+        expect(rejection).to be_nil
+      end
+
+      it "names what is wrong with anything else" do
+        expect(rejection(kind: nil)).to include("rodzaj produktu")
+        expect(rejection(audio_upload(filename: "okladka.png"))).to include("mp3")
+        expect(rejection(audio_upload(content: ""))).to include("pusty")
+        expect(rejection(nil)).to include("Nie wybrano pliku")
+      end
+
+      it "refuses a file past the size cap" do
+        file = audio_upload
+        allow(file.tempfile).to receive(:size).and_return(described_class::MAX_BYTES + 1)
+
+        expect(rejection(file)).to include("za duży")
+      end
+    end
+
+    it "refuses everything when the storage zone is not configured" do
+      expect(rejection).to include("BUNNY_STORAGE_ZONE")
+    end
+  end
+
+  # The same refusals from a name and a byte count, so a direct upload can be
+  # judged from its blob without being read back off disk.
+  describe ".rejection_for" do
+    before { with_bunny_storage }
+
+    def rejection_for(filename: "nagranie.mp3", size: 1.megabyte, kind: "bedtime_story")
+      described_class.rejection_for(kind: kind, filename: filename, size: size)
+    end
+
+    it "passes a file there is nothing wrong with" do
+      expect(rejection_for).to be_nil
+    end
+
+    it "names what is wrong with anything else" do
+      expect(rejection_for(filename: nil)).to include("Nie wybrano pliku")
+      expect(rejection_for(kind: nil)).to include("rodzaj produktu")
+      expect(rejection_for(filename: "okladka.png")).to include("mp3")
+      expect(rejection_for(size: described_class::MAX_BYTES + 1)).to include("za duży")
+      expect(rejection_for(size: 0)).to include("pusty")
+    end
+
+    it "agrees with the check the same file gets as an upload" do
+      expect(rejection_for(filename: "okladka.png"))
+        .to eq(described_class.rejection(audio_upload(filename: "okladka.png"), kind: "bedtime_story"))
     end
   end
 
