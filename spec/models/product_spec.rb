@@ -60,9 +60,16 @@ RSpec.describe Product, type: :model do
       expect(build_product(cdn_path: "/bajki/o-sowie.mp3")).to be_valid
     end
 
-    it "is optional — a product with no audio yet is still a shop listing" do
-      expect(build_product(cdn_path: nil)).to be_valid
-      expect(build_product(cdn_path: "")).to be_valid
+    # The file is what a product sells, so it is only optional while the product
+    # is still hidden — a draft the owner is filling in.
+    it "is optional while the product is unpublished" do
+      expect(build_product(cdn_path: nil, published: false)).to be_valid
+      expect(build_product(cdn_path: "", published: false)).to be_valid
+    end
+
+    it "is required to publish" do
+      expect(build_product(cdn_path: nil, published: true)).not_to be_valid
+      expect(build_product(cdn_path: "", published: true)).not_to be_valid
     end
 
     # Bunny's file browser shows paths both ways, and the owner pastes what they see
@@ -115,6 +122,19 @@ RSpec.describe Product, type: :model do
       create_product(name: "Ukryta", published: false)
 
       expect(Product.published.ordered).to eq([ first, second ])
+    end
+
+    # The validation only covers rows saved from now on. This is the layer that
+    # keeps a product published before the rule existed — or flipped straight
+    # through SQL — out of the shop, the home teaser and the cart.
+    it "leaves out a published product whose file is missing" do
+      missing = create_product(name: "Bez pliku")
+      missing.update_column(:cdn_path, nil)
+
+      blank = create_product(name: "Pusta ścieżka", paddle_price_id: "pri_999")
+      blank.update_column(:cdn_path, "")
+
+      expect(Product.published).not_to include(missing, blank)
     end
   end
 end

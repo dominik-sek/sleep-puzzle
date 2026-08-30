@@ -58,6 +58,18 @@ class Product < ApplicationRecord
   # package's `core`, so the admin's one-bullet-per-line editor already handles it.
   translates :name, :description, :long_description, lists: %i[includes]
 
+  # The file is the thing being sold, so a product with none cannot go on sale.
+  # Two layers, because a validation alone only covers rows saved from now on:
+  # this refuses the publish, and the scope below keeps anything already marked
+  # published — or published straight through SQL — out of the shop.
+  validates :cdn_path, presence: true, if: :published?
+
+  # Overrides Purchasable's, which Package still uses unchanged: a consultation
+  # has no file to deliver, so `published` means exactly what it says there.
+  # [nil, ""] because the admin form posts an empty string for an untouched
+  # field, and normalize_cdn_path leaves a blank one alone.
+  scope :published, -> { where(published: true).where.not(cdn_path: [ nil, "" ]) }
+
   validates :kind, presence: true
   validates :length_minutes, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
 

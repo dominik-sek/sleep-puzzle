@@ -54,7 +54,9 @@ still set up, so it can come back once a system spec exists.
   `Product#cdn_path` stores the path, never a URL. `/products/:id/stream` checks
   ownership and redirects to a URL signed for six hours. Uploads go through the
   admin form, proxied by the app so the zone's write key never reaches the
-  browser.
+  browser. **A product cannot be published without a file** — the validation
+  refuses it, and `Product.published` excludes any row that was published without
+  one anyway, so the shop never offers something there is nothing to deliver for.
 * **Accounts** — Devise, plus Google OAuth. A Google sign-up has no password, and
   `User#password_set?` is what keeps `/users/edit` from demanding one.
 * **Admin** — one boolean, `users.admin`. `bin/rails 'admin:promote[you@example.com]'`
@@ -163,8 +165,8 @@ who signed in with Google.
 Left to do:
 
 - [ ] Media / podcast strip on the home page
-- [ ] Per-product: upload each audio file and fill in its `cdn_path`. A product
-      without one still sells, it just has no player.
+- [ ] Per-product: upload each audio file. A product cannot be published without
+      one, so anything still missing its file is a draft rather than a listing.
 
 Decided against, so they don't get re-litigated:
 

@@ -18,7 +18,6 @@
 #
 # Indexes
 #
-#  index_order_items_on_order_id                 (order_id)
 #  index_order_items_on_order_id_and_product_id  (order_id,product_id) UNIQUE
 #  index_order_items_on_product_id               (product_id)
 #

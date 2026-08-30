@@ -102,7 +102,7 @@ RSpec.describe "Dashboard", type: :request do
         # library had no player at all before the CDN existed
         it "leaves out the player when no file has been uploaded" do
           with_bunny_cdn
-          paid_order_for(create_product(name: "Bez pliku"))
+          paid_order_for(create_product(name: "Bez pliku", published: false, cdn_path: nil))
 
           get dashboard_index_path
 

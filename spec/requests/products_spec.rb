@@ -320,8 +320,12 @@ RSpec.describe "Products", type: :request do
       expect(response).to have_http_status(:not_found)
     end
 
+    # The panel cannot produce this any more — publishing requires a file — so
+    # this is the defence-in-depth case: a row that lost its path some other way
+    # must still not hand out a signed URL.
     it "404s when the product has no file uploaded yet" do
       fileless = create_product(name: "Bez pliku", paddle_price_id: "pri_888")
+      fileless.update_column(:cdn_path, nil)
       buy(fileless)
       sign_in user
 

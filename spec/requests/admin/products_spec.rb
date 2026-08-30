@@ -11,6 +11,7 @@ RSpec.describe "Admin::Products", type: :request do
         kind: "bedtime_story",
         position: "1",
         published: "1",
+        cdn_path: "/bajki/o-sowie.mp3",
         translations: {
           "name" => { "pl" => "Bajka o sowie", "en" => "The owl story" },
           "description" => { "pl" => "Kojąca bajka na dobranoc", "en" => "" }
@@ -217,10 +218,20 @@ RSpec.describe "Admin::Products", type: :request do
       it "saves the rest of the product when no file was chosen" do
         expect_any_instance_of(Net::HTTP).not_to receive(:request)
 
-        expect { post admin_products_path, params: product_params(audio: "") }
-          .to change(Product, :count).by(1)
+        params = product_params(audio: "", cdn_path: "", published: "0")
 
-        expect(Product.last.cdn_path).to be_nil
+        expect { post admin_products_path, params: params }.to change(Product, :count).by(1)
+
+        expect(Product.last.cdn_path).to be_blank
+      end
+
+      # The shop cannot offer something there is no file to deliver, so the
+      # publish is refused rather than saved as a listing with no player.
+      it "refuses to publish a product with no file" do
+        params = product_params(audio: "", cdn_path: "", published: "1")
+
+        expect { post admin_products_path, params: params }.not_to change(Product, :count)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
