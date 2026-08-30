@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   around_action :switch_locale
 
   before_action :set_pagy_locale
+  before_action :set_sentry_user
 
   def after_sign_in_path_for(resource)
     dashboard_index_path
@@ -84,6 +85,15 @@ class ApplicationController < ActionController::Base
   rescue StandardError
     # no matched route to ask (a 404 rendering through here, say)
     @locale_scoped_route = false
+  end
+
+  # Who was signed in when it broke. The id alone, never the email — Sentry runs
+  # with send_default_pii off and putting the address back here by hand would
+  # undo that. An id is enough to find the row.
+  def set_sentry_user
+    return unless Sentry.initialized?
+
+    Sentry.set_user(id: current_user&.id)
   end
 
   # Pagy keeps its locale in a thread local, so it has to be set on every

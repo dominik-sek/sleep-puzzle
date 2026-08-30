@@ -114,3 +114,13 @@ gem "rails_semantic_logger"
 gem "pay", "~> 11.5"
 
 gem "paddle", "~> 2.9"
+
+# Error tracking and request tracing. Inert without SENTRY_DSN, so development
+# and CI never phone home; see config/initializers/sentry.rb.
+gem "sentry-ruby"
+gem "sentry-rails"
+
+# Postgres dashboard at /admin/db — slow queries, index suggestions, bloat.
+# Reads the database that is already there, so it needs no Redis and no second
+# service, which is the whole reason it is here rather than an APM agent.
+gem "pghero"

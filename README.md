@@ -907,6 +907,90 @@ Migrations need nothing special. `bin/docker-entrypoint` runs `db:prepare` whene
 command ends in `./bin/rails server`, which the image's `CMD` does, Thruster in front
 included.
 
+## Knowing when it breaks, and why it is slow
+
+Two questions, two tools, neither of them an APM agent: Sentry for errors and
+request tracing, PgHero at `/admin/db` for the database. `/admin/jobs` already
+covers the queue, and `rails_semantic_logger` already writes structured JSON to
+STDOUT, which Render indexes and makes searchable.
+
+`rails_performance` was the obvious candidate and is the wrong shape for this
+app. It stores everything in Redis, and there is no Redis here — Solid Cache,
+Solid Queue and Solid Cable all live in Postgres precisely so that staging fits
+on one free instance. Its default retention is four hours, which on a service
+that spins down when idle means the window you go looking in is the window with
+nothing in it. It instruments Sidekiq and Delayed Job, not Solid Queue, so the
+failures this app has actually had — mail sitting undelivered, a Paddle webhook
+whose job never ran — would not appear in it. And its error view is a list of
+500s you have to remember to open, with no grouping and nothing that tells you
+an error happened.
+
+### Sentry is production-only, deliberately
+
+`config/initializers/sentry.rb` returns early unless `Rails.env.production?`,
+before it checks for a DSN at all. That is not caution, it is two concrete
+problems.
+
+`dotenv-rails` loads `.env` on every boot path here, so a `SENTRY_DSN` sitting
+in a developer's `.env` would otherwise initialise the SDK in development *and*
+in test — every local exception filed against the production project, and a red
+suite. Sentry collects HTTP breadcrumbs by prepending a module to `Net::HTTP`,
+and rspec-mocks refuses to stub a method defined on a prepended module:
+`allow_any_instance_of(Net::HTTP).to receive(:request)`, which is how
+`spec/services/turnstile_verification_service_spec.rb` and the Brevo specs stand
+in for the network, fails outright with "not supported". `enabled_environments`
+does not help — `Sentry.init` applies its patches before it consults that list,
+so the prepend happens either way. Only not calling `init` avoids it.
+
+**Set `SENTRY_ENVIRONMENT` per instance.** Staging and production both boot with
+`RAILS_ENV=production`, so `Rails.env` cannot tell them apart and every event
+would land in one stream, where a staging crash pages you about a real one.
+`SENTRY_TRACES_SAMPLE_RATE` defaults to `0.1`: a tenth of requests carry a full
+span tree — controller, every query, every partial — which is what turns "the
+page feels slow" into a named N+1. `/up` is sampled at zero, since the health
+check runs constantly and has nothing to say about performance.
+
+`send_default_pii` is off, so no cookies, no IP, no request body. What is left
+still identifies the request: the path, params filtered through
+`config.filter_parameters` (where `:email` already is), and the signed-in user's
+**id only**, attached by `set_sentry_user` in `ApplicationController` — putting
+the address back by hand would undo the setting above. The release is read from
+`RENDER_GIT_COMMIT` or `KAMAL_VERSION`, whichever the host provides, which is
+what links a backtrace to the commit that caused it.
+
+### PgHero is gated on the route, not a controller
+
+Mission Control takes a `base_controller_class` and inherits `Admin::BaseController`.
+PgHero has no such setting, so `config/routes.rb` wraps the mount in Devise's
+`authenticate :user, ->(user) { user.admin? }` instead. The difference shows in
+the failure: a signed-out visitor is redirected to sign in, but a signed-in
+non-admin matches no route at all and gets a 404 rather than the redirect every
+other admin screen gives. `spec/requests/admin/db_spec.rb` pins both, because a
+mount one line higher — outside the `authenticate` block, or outside the
+namespace — would serve the query stats to anyone who guessed the path, and
+nothing else would notice.
+
+**Query stats need `pg_stat_statements`, and only that panel does.** Index usage,
+unused and duplicate indexes, bloat, live queries, space and vacuum status all
+work without it. The extension has to be in `shared_preload_libraries` and
+enabled per database; Supabase preloads it, a stock local Postgres does not, and
+no migration can fix that since it needs a server restart. PgHero degrades on its
+own when it is missing — it probes with a `SELECT` and rescues the failure.
+
+That rescue is why the rendering example in `db_spec.rb` sets
+`self.use_transactional_tests = false`. The probe is harmless on a connection of
+its own and fatal inside a transaction: the failed statement aborts the
+enclosing one, and every query the page makes afterwards dies with
+`PG::InFailedSqlTransaction`. It is an artefact of transactional tests against a
+database without the extension, not anything the dashboard does to a real
+request.
+
+Historical query stats — the graphs over time — need a migration and a recurring
+`pghero:capture_query_stats`, and suggested indexes need the `pg_query` gem and
+its C extension. Neither is here. Live stats answer "what is slow right now",
+which is the question this app has, without another table to grow or another
+build dependency in the image.
+
 ## Roadmap
 
 Measured against the design, which is a Claude Design project rather than a file

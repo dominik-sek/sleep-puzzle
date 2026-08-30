@@ -136,6 +136,7 @@
     <orderEntry type="library" scope="PROVIDED" name="parser (v3.3.12.0, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="pay (v11.7.1, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="pg (v1.6.3, rbenv: 4.0.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="pghero (v4.0.1, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="pp (v0.6.4, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="prettyprint (v0.2.0, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="prism (v1.9.0, rbenv: 4.0.5) [gem]" level="application" />
@@ -183,6 +184,8 @@
     <orderEntry type="library" scope="PROVIDED" name="securerandom (v0.4.1, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="TEST" name="selenium-webdriver (v4.47.0, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="semantic_logger (v5.1.0, rbenv: 4.0.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="sentry-rails (v6.7.0, rbenv: 4.0.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="sentry-ruby (v6.7.0, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="signet (v0.22.0, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="TEST" name="simplecov (v1.1.1, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="snaky_hash (v2.0.7, rbenv: 4.0.5) [gem]" level="application" />

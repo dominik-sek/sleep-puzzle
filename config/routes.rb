@@ -91,6 +91,15 @@ Rails.application.routes.draw do
     # Solid Queue dashboard. Inside the admin namespace so it is gated by the
     # same admin flag as everything else here — see the initializer.
     mount MissionControl::Jobs::Engine, at: "/jobs"
+
+    # Postgres dashboard. PgHero's engine takes no base controller class the way
+    # Mission Control does, so the admin flag is enforced on the route itself —
+    # anyone else matches no route at all, which is a 404 in production rather
+    # than a redirect. Its own HTTP basic auth stays off for the same reason it
+    # is off for /admin/jobs: one password, and it is the one you signed in with.
+    authenticate :user, ->(user) { user.admin? } do
+      mount PgHero::Engine, at: "/db"
+    end
   end
 
   namespace :integrations do
