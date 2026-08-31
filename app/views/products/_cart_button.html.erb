@@ -26,9 +26,12 @@
       it actually is rather than offering to sell it again. The server refuses the
       add too; this is the half the buyer can see. %>
   <% label = content_block("shop.card.owned") %>
+  <%# href is anchored to the row: the label promises "listen in your account",
+      and landing at the top of a library with no highlight left the buyer to
+      find it themselves — worst at the moment they have just paid %>
   <%= render Buttons::Component.new(
     text: label,
-    href: dashboard_index_path,
+    href: dashboard_index_path(anchor: dom_id(product)),
     pill: true,
     variant: :outline,
     aria_label: "#{label} — #{product.name}",

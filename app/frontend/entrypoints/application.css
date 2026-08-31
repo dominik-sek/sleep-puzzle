@@ -138,6 +138,16 @@
 }
 
 @layer base {
+  /* The browser paints its own controls — the <audio> transport in the dashboard
+     library and the shop's preview player, form focus rings, scrollbars, the
+     date picker — and without this it paints them in its light skin. Three white
+     capsules were the brightest thing on a page whose reader is holding a
+     sleeping child in a dark room. This is the one declaration that tells the UA
+     which set to use, and it belongs at the root because it inherits. */
+  :root {
+    color-scheme: dark;
+  }
+
   body {
     margin: 0;
     background-color: var(--color-ink);
@@ -169,6 +179,25 @@
   }
 }
 
+
+/* The row the shop's "Posłuchaj w koncie" button just sent someone to. Without
+   it a buyer lands in a list of identical rows with nothing saying which one they
+   came for. Fades rather than holds, so it marks the arrival and then gets out of
+   the way; reduced-motion keeps the mark and drops the animation. */
+.library-row:target {
+  border-color: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .library-row:target {
+    animation: library-row-arrive 2.4s ease-out 1;
+  }
+}
+
+@keyframes library-row-arrive {
+  from { border-color: var(--color-accent); background-color: color-mix(in oklab, var(--color-accent) 12%, var(--color-surface)); }
+  to   { border-color: var(--color-accent); background-color: var(--color-surface); }
+}
 
 /* Forms */
 

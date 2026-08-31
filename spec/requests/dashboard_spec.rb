@@ -202,4 +202,56 @@ RSpec.describe "Dashboard", type: :request do
       expect(response.body).to include(destroy_user_session_path)
     end
   end
+
+  # The four behaviours added after the dashboard critique. The spec file was
+  # strong on what the page lists and silent on what it says, which is how the
+  # Google-user copy and the unplayable state went unnoticed.
+  describe "after the critique" do
+    before { sign_in user }
+
+    it "explains a purchased recording it cannot play, and offers a way to ask" do
+      product = create_product(name: "Bajka", cdn_path: nil, published: false)
+      paid_order_for(product)
+
+      get dashboard_index_path
+
+      expect(response.body).not_to include("<audio")
+      expect(response.body).to include("Tego nagrania chwilowo nie da się odtworzyć")
+      expect(response.body).to include(contact_path)
+    end
+
+    it "anchors each library row so the shop can link straight to one" do
+      product = create_product(name: "Bajka")
+      paid_order_for(product)
+
+      get dashboard_index_path
+
+      expect(response.body).to include(%(id="#{ActionView::RecordIdentifier.dom_id(product)}"))
+      expect(response.body).to include("library-row")
+    end
+
+    it "offers to change a password when the account has one" do
+      get dashboard_index_path
+
+      expect(response.body).to include("Zmień adres e-mail, hasło i dane konta")
+    end
+
+    # a Google sign-up has never had one, and the Devise screen it links to
+    # offers to *set* a password rather than change it
+    it "offers to set one when the account has none" do
+      user.update_columns(encrypted_password: "")
+
+      get dashboard_index_path
+
+      expect(response.body).to include("Możesz też ustawić hasło")
+      expect(response.body).not_to include("Zmień adres e-mail, hasło i dane konta")
+    end
+
+    it "gives the empty library a real call to action rather than a bare sentence" do
+      get dashboard_index_path
+
+      expect(response.body).to include("Nie masz jeszcze żadnych audio")
+      expect(response.body).to include(products_path)
+    end
+  end
 end

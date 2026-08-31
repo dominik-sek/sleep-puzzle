@@ -711,6 +711,18 @@ dashboard:
           default:
             pl: "Moje audio"
             en: "My audio"
+        unplayable:
+          label: Gdy kupionego nagrania nie da się odtworzyć
+          type: plain
+          default:
+            pl: "Tego nagrania chwilowo nie da się odtworzyć. Napisz do mnie, a się tym zajmę."
+            en: "This recording cannot be played right now. Write to me and I will sort it out."
+        unplayable_link:
+          label: Odnośnik przy nieodtwarzalnym nagraniu
+          type: plain
+          default:
+            pl: "Napisz do mnie"
+            en: "Write to me"
         empty:
           label: Gdy nic nie kupiono
           type: plain
@@ -754,11 +766,17 @@ dashboard:
             pl: "Ustawienia"
             en: "Settings"
         body:
-          label: Treść
+          label: Treść (konto z hasłem)
           type: plain
           default:
             pl: "Zmień adres e-mail, hasło i dane konta."
             en: "Change your email address, password and account details."
+        body_no_password:
+          label: Treść (logowanie przez Google — konto bez hasła)
+          type: plain
+          default:
+            pl: "Zmień adres e-mail i dane konta. Możesz też ustawić hasło."
+            en: "Change your email address and account details. You can also set a password."
         cta:
           label: Przycisk
           type: plain

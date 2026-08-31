@@ -13,7 +13,7 @@
     <div class="max-w-[1000px] mx-auto w-full">
       <div class="mb-10 flex flex-wrap items-center justify-between gap-3.5">
         <div>
-          <h1 class="font-display font-bold text-t2 text-cream m-0">
+          <h1 class="font-display font-bold text-t1 text-cream m-0">
             <%= content_block("dashboard.hero.title") %>
           </h1>
           <p class="mt-1.5 text-t6 text-tan m-0">
@@ -21,9 +21,12 @@
           </p>
         </div>
 
+        <%# through the component so it carries the pill radius, the amber focus
+            ring and a 44px target — hand-rolled it had a 22px radius that is
+            neither pill nor piece, and fell back to the browser's blue ring %>
         <%= button_to t("nav.sign_out"), destroy_user_session_path, method: :delete,
               form_class: "contents",
-              class: "cursor-pointer rounded-[22px] border border-border-input bg-transparent px-4.5 py-2.5 text-t6 font-bold text-tan hover:border-accent hover:text-accent" %>
+              class: "inline-flex items-center justify-center cursor-pointer whitespace-nowrap rounded-full border border-border-input bg-transparent px-6 py-4 text-t6 font-bold text-tan transition-colors duration-100 hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
       </div>
 
       <%= render "dashboard/section_heading", title: content_block("dashboard.library.title") %>
@@ -31,16 +34,29 @@
       <% if @products.any? %>
         <div class="mb-11 flex flex-col gap-3">
           <% @products.each do |product| %>
-            <%# the row is no longer one big link: a player nested inside an anchor
-                would navigate away the moment someone reached for the scrubber %>
-            <div class="rounded-2xl border border-border-strong bg-surface px-5 py-4">
-              <%= link_to product_path(product), class: "group flex items-center gap-4 no-underline" do %>
-                <span class="text-[26px] leading-none" aria-hidden="true"><%= product.display_icon %></span>
+            <%# id + scroll-mt: the shop's "Posłuchaj w koncie" button links straight
+                to this row, and scroll-mt keeps it clear of the sticky navbar.
+                library-row is what the :target rule in application.css hangs off,
+                so an arriving buyer sees which one they just came for.
+
+                The link is on the name only. It used to wrap the whole row, which
+                made the biggest target on the page a route back to the product's
+                sales page — for something the reader already owns. %>
+            <div id="<%= dom_id(product) %>"
+                 class="library-row scroll-mt-24 rounded-2xl border border-border-strong bg-surface px-5 py-4">
+              <div class="flex items-center gap-4">
+                <span class="text-t3 leading-none" aria-hidden="true"><%= product.display_icon %></span>
                 <span class="flex-1 min-w-0">
-                  <span class="block text-[15px] font-bold text-cream truncate group-hover:text-accent"><%= product.name %></span>
-                  <span class="block text-[12px] text-taupe"><%= product.kind_label %></span>
+                  <%# inline-block + py-2: narrowing this from the whole row fixed
+                      where it points but left a 19px target. Display-For-Names
+                      covers a product's name, so Baloo rather than Quicksand. %>
+                  <span class="block truncate">
+                    <%= link_to product.name, product_path(product),
+                                class: "inline-block py-2.5 font-display font-bold text-t5 text-cream no-underline hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+                  </span>
+                  <span class="block text-t6 text-taupe"><%= product.kind_label %></span>
                 </span>
-              <% end %>
+              </div>
 
               <%# preload="none" so nothing is fetched and no token is minted until
                   play is actually pressed. Products with no file uploaded keep the
@@ -49,6 +65,16 @@
                 <audio controls preload="none" class="mt-3.5 w-full"
                        src="<%= stream_product_path(product) %>"
                        aria-label="<%= t('products.player.label', name: product.name) %>"></audio>
+              <% else %>
+                <%# Still no control — one with nothing behind it would be a lie —
+                    but silence was worse: a buyer saw something they had paid for,
+                    no player, and no reason. Says so, and gives them the one route
+                    that works. The panel flags the same row for the owner. %>
+                <p class="mt-3.5 text-t6 text-taupe m-0">
+                  <%= content_block("dashboard.library.unplayable") %>
+                  <%= link_to content_block("dashboard.library.unplayable_link"), contact_path,
+                              class: "font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+                </p>
               <% end %>
             </div>
           <% end %>
@@ -57,7 +83,8 @@
         <%= render "dashboard/empty_state",
                    body: content_block("dashboard.library.empty"),
                    label: content_block("dashboard.library.empty_link"),
-                   href: products_path %>
+                   href: products_path,
+                   icon: "🌙" %>
       <% end %>
 
       <%= render "dashboard/section_heading", title: content_block("dashboard.bookings.title") %>
@@ -66,18 +93,19 @@
         <div class="mb-11 flex flex-col gap-3">
           <% @bookings.each do |booking| %>
             <div class="flex items-center gap-4 rounded-2xl border border-border-strong bg-surface px-5.5 py-4.5">
-              <span class="text-[26px] leading-none" aria-hidden="true">📅</span>
+              <span class="text-t3 leading-none" aria-hidden="true">📅</span>
               <div class="flex-1 min-w-0">
-                <div class="text-[15px] font-bold text-cream">
+                <%# Baloo: Display-For-Names covers durations and dates %>
+                <div class="font-display font-bold text-t5 text-cream">
                   <%= l(booking.starts_at, format: :long) %>
                 </div>
-                <div class="text-[12px] text-taupe"><%= booking.package.name %></div>
+                <div class="text-t6 text-taupe"><%= booking.package.name %></div>
               </div>
 
               <%# only when it is not simply confirmed: a booking still waiting on
                   a payment has to say so, or the buyer reads it as settled %>
               <% unless booking.confirmed? %>
-                <span class="shrink-0 rounded-full border border-border-input px-3 py-1 text-[12px] font-bold text-taupe">
+                <span class="shrink-0 rounded-full border border-border-input px-3 py-1.5 text-t6 font-bold text-cream">
                   <%= booking.status_label %>
                 </span>
               <% end %>
@@ -88,7 +116,8 @@
         <%= render "dashboard/empty_state",
                    body: content_block("dashboard.bookings.empty"),
                    label: content_block("dashboard.bookings.empty_link"),
-                   href: bookings_path %>
+                   href: bookings_path,
+                   icon: "📅" %>
       <% end %>
 
       <%= render "dashboard/section_heading", title: content_block("dashboard.settings.title") %>
@@ -97,12 +126,23 @@
           this points at it rather than growing a second one %>
       <div class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border-strong bg-surface p-5.5">
         <div>
-          <p class="text-t6 text-tan m-0"><%= content_block("dashboard.settings.body") %></p>
+          <%# a Google sign-up has never had a password, so promising to change one
+              is a promise the next screen contradicts — it offers to *set* one.
+              The controller and the Devise view already branch on this; only the
+              summary here did not. %>
+          <p class="text-t6 text-tan m-0">
+            <%= content_block(current_user.password_set? ? "dashboard.settings.body" : "dashboard.settings.body_no_password") %>
+          </p>
           <p class="mt-1 text-t6 text-taupe m-0"><%= current_user.email %></p>
         </div>
 
-        <%= link_to content_block("dashboard.settings.cta"), edit_user_registration_path,
-              class: "rounded-[22px] border border-border-input px-4.5 py-2.5 text-t6 font-bold text-cream no-underline hover:border-accent hover:text-accent" %>
+        <%= render Buttons::Component.new(
+          text: content_block("dashboard.settings.cta"),
+          href: edit_user_registration_path,
+          pill: true,
+          variant: :outline,
+          classes: "hover:cursor-pointer text-t6! font-bold! py-4 px-6"
+        ) %>
       </div>
     </div>
   <% end %>

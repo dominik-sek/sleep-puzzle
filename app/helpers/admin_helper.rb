@@ -112,6 +112,12 @@ module AdminHelper
       admin_status_badge(:pending, "Wgrywanie…", classes: "text-t6")
     elsif product.audio_upload_failed?
       admin_status_badge(:payment_failed, "Błąd pliku", classes: "text-t6")
+    elsif product.published? && !product.streamable?
+      # Sold and unplayable: a buyer who already paid sees a row they cannot
+      # play. Nothing else on the panel says so, because the upload itself did
+      # not fail — the file is gone, or the CDN is unconfigured for this
+      # environment, and either way only the owner can act on it.
+      admin_status_badge(:payment_failed, "Nie do odtworzenia", classes: "text-t6")
     end
   end
 

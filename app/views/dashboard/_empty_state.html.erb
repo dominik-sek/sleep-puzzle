@@ -3,9 +3,24 @@
   carries the link that fills it — an empty section that only says "nothing here"
   leaves the buyer to go and find the shop themselves.
 
-  locals: body, label, href
+  Given the same card as the filled state, because this is not an error: every
+  sign-in lands on this page, so for a new account this IS the dashboard, and a
+  bare grey sentence read as a page that had failed to load. The CTA is a real
+  pill at py-4 rather than the 19px inline link it used to be — this page's
+  reader is meant to hit it one-handed, in the dark.
+
+  locals: body, label, href, icon
 %>
-<p class="mb-11 text-[15px] text-taupe m-0">
-  <%= body %>
-  <%= link_to label, href, class: "font-bold text-accent no-underline hover:text-accent-hover" %>
-</p>
+<div class="mb-11 flex flex-col items-start gap-4 rounded-2xl border border-border-strong bg-surface px-5.5 py-6">
+  <span class="text-t3 leading-none" aria-hidden="true"><%= icon %></span>
+
+  <p class="text-t5 text-tan m-0"><%= body %></p>
+
+  <%= render Buttons::Component.new(
+    text: label,
+    href: href,
+    pill: true,
+    variant: :secondary,
+    classes: "hover:cursor-pointer text-t6! font-bold! py-4 px-6"
+  ) %>
+</div>
