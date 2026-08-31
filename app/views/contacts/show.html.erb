@@ -11,7 +11,7 @@
     align: :center
   ) do |section| %>
     <div class="flex flex-col gap-3 items-center">
-      <h1 class="text-t2 font-display font-bold text-cream">
+      <h1 class="text-t1 font-display font-bold text-cream">
         <%= content_block("contact.hero.title") %>
       </h1>
       <p class="text-t5 text-tan max-w-2xl">
@@ -22,7 +22,20 @@
     <%# one column until there is room for two, matching the design's
         auto-fit/minmax(280px) grid %>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-4xl text-left">
-      <%= render "contacts/form", contact_message: @contact_message %>
+      <div class="flex flex-col gap-4">
+        <%= render "contacts/form", contact_message: @contact_message %>
+
+        <%# permanently visible, not an error fallback. If Cloudflare is blocked
+            by a network, an extension or JS being off, the form cannot be
+            submitted at all — and this page is where every "not ready to buy"
+            link on the site points, so it must not have a total-failure mode. %>
+        <p class="text-t6 text-taupe m-0">
+          <%= content_block("contact.fallback.body") %>
+          <%= link_to content_block("contact.fallback.label"),
+                      content_link_url("contact.fallback.url"),
+                      class: "font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+        </p>
+      </div>
 
       <div class="flex flex-col gap-4">
         <% content_items("contact.links").each do |link| %>
@@ -33,7 +46,7 @@
           <%= link_to url,
                       target: external ? "_blank" : nil,
                       rel: external ? "noopener" : nil,
-                      class: "flex items-center gap-3 no-underline rounded-2xl border border-border-strong bg-surface px-5.5 py-4.5 text-t5 font-bold text-cream hover:text-accent hover:border-border-input" do %>
+                      class: "flex items-center gap-3 no-underline rounded-2xl border border-border-strong bg-surface px-5.5 py-4.5 text-t5 font-bold text-cream hover:text-accent hover:border-border-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
             <%# decoration, so it is hidden from a screen reader rather than read
                 out as "camera" before the name of the link %>
             <span aria-hidden="true"><%= link["icon"] %></span>

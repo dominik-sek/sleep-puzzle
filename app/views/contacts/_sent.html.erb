@@ -1,7 +1,35 @@
-<%# Replaces the form in place once the message is away, so the confirmation
-    lands where the sender was looking rather than as a toast above the fold. %>
+<%#
+  Replaces the form in place once the message is away, so the confirmation lands
+  where the sender was looking rather than as a toast above the fold.
+
+  This is the one moment on the site where someone has done something
+  irreversible and vulnerable — described their family's worst weeks to a
+  stranger. It used to be a single sentence with nowhere to go. It now names what
+  happened, says when a reply comes, and offers the cheaper rung of the ladder
+  for the wait, the same way the home, packages and about closings do.
+
+  role="status": the frame swap moves no focus, so without it a screen reader
+  gets no signal that the form it was filling in has become a confirmation.
+%>
 <%= turbo_frame_tag "contact_form" do %>
-  <div class="rounded-2xl border border-border-strong bg-surface p-8 text-center text-accent font-bold">
-    <%= content_block("contact.form.thanks") %>
+  <div class="flex flex-col gap-4 rounded-2xl border border-border-strong bg-surface p-8 text-center"
+       role="status">
+    <h2 class="font-display font-bold text-t3 text-accent m-0">
+      <%= content_block("contact.form.sent_title") %>
+    </h2>
+
+    <p class="text-t5 text-cream m-0">
+      <%= content_block("contact.form.thanks") %>
+    </p>
+
+    <p class="text-t6 text-taupe m-0">
+      <%= content_block("contact.form.reply_time") %>
+    </p>
+
+    <p class="text-t6 text-taupe m-0">
+      <%= content_block("contact.form.sent_next") %>
+      <%= link_to content_block("contact.form.sent_link"), products_path,
+                  class: "font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+    </p>
   </div>
 <% end %>

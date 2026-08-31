@@ -145,6 +145,7 @@ en:
   contacts:
     rate_limited: "Too many messages sent. Please try again in a moment."
     turnstile_failed: "We could not confirm you are not a robot. Please try again."
+    turnstile_unavailable: "The security check could not load. Check your connection, or write to me directly — the address is below the form."
   newsletter:
     rate_limited: "Too many sign-up attempts. Please try again in a moment."
     failed: "We could not sign you up just now. Please try again in a moment."

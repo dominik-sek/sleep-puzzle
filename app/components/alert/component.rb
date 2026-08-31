@@ -1,9 +1,12 @@
 class Alert::Component < ViewComponent::Base
+  # Colour only. The tone used to be a thick coloured tab down the left edge,
+  # which is the callout pattern the design system rules out; it now reads from
+  # the title's colour, and the card keeps the same hairline as every other piece.
   TONES = {
-    info: "border-l-accent text-accent",
-    success: "border-l-accent-gold text-accent-gold",
-    warning: "border-l-accent-terracotta text-accent-terracotta",
-    error: "border-l-accent-coral text-accent-coral"
+    info: "text-accent",
+    success: "text-accent-gold",
+    warning: "text-accent-terracotta",
+    error: "text-accent-coral"
   }.freeze
 
   def initialize(title:, tone: :info)

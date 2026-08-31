@@ -1,6 +1,10 @@
 <%# Swapped for "contacts/sent" by contacts#create, so the frame wraps the form
     rather than sitting inside it. %>
-<%= turbo_frame_tag "contact_form" do %>
+<%# aria-live: every failure — validation, Turnstile, rate limit — comes back by
+    replacing this frame, and nothing moves focus. Without it a screen reader, and
+    a phone user whose keyboard covers the message, get no signal at all. The
+    newsletter form carries the same treatment for the same reason. %>
+<%= turbo_frame_tag "contact_form", aria: { live: "polite" } do %>
   <% if local_assigns[:alert].present? %>
     <div class="mb-4">
       <%= render Alert::Component.new(title: alert, tone: :warning) %>
@@ -19,9 +23,12 @@
     ) do |field| %>
       <% field.with_input do %>
         <%= f.text_field :name,
-                         class: "form-control",
+                         class: "form-control h-12 #{'error' if contact_message.errors[:name].any?}",
                          placeholder: content_block("contact.form.name_label"),
-                         autocomplete: "name" %>
+                         autocomplete: "name",
+                         required: true,
+                         aria: contact_message.errors[:name].any? ?
+                                 { describedby: field.error_id, invalid: "true" } : {} %>
       <% end %>
     <% end %>
 
@@ -34,9 +41,12 @@
     ) do |field| %>
       <% field.with_input do %>
         <%= f.email_field :email,
-                          class: "form-control",
+                          class: "form-control h-12 #{'error' if contact_message.errors[:email].any?}",
                           placeholder: content_block("contact.form.email_label"),
-                          autocomplete: "email" %>
+                          autocomplete: "email",
+                          required: true,
+                          aria: contact_message.errors[:email].any? ?
+                                  { describedby: field.error_id, invalid: "true" } : {} %>
       <% end %>
     <% end %>
 
@@ -51,8 +61,11 @@
         <%= f.text_area :body,
                         rows: 5,
                         maxlength: ContactMessage::BODY_LIMIT,
-                        class: "form-control resize-y",
-                        placeholder: content_block("contact.form.body_label") %>
+                        class: "form-control resize-y #{'error' if contact_message.errors[:body].any?}",
+                        placeholder: content_block("contact.form.body_label"),
+                        required: true,
+                        aria: contact_message.errors[:body].any? ?
+                                { describedby: field.error_id, invalid: "true" } : {} %>
       <% end %>
     <% end %>
 
@@ -62,11 +75,18 @@
       <%# theme pinned rather than "auto": the widget would otherwise follow the
           visitor's OS setting and render a light card on a page that is only
           ever dark. Language follows the page, not the browser. %>
+      <%# eager only on a form that has come back from a rejected submit: that
+          visitor is mid-task and their token is spent, so the widget has to be
+          there without waiting for another focus. On a first view it loads on the
+          first focus or keystroke, so someone who only reads the page never
+          reaches Cloudflare. %>
       <div data-controller="turnstile"
            data-turnstile-site-key-value="<%= TurnstileVerificationService.site_key %>"
            data-turnstile-action-value="<%= ContactsController::TURNSTILE_ACTION %>"
            data-turnstile-theme-value="dark"
            data-turnstile-language-value="<%= I18n.locale %>"
+           data-turnstile-eager-value="<%= local_assigns[:alert].present? %>"
+           data-turnstile-unavailable-value="<%= t("contacts.turnstile_unavailable") %>"
            class="mt-1.5"></div>
     <% end %>
 
@@ -76,7 +96,14 @@
       pill: true,
       variant: :primary,
       full_width: true,
+      data: { turbo_submits_with: t("forms.submitting") },
       classes: "hover:cursor-pointer bg-accent! text-ink! py-3.5 font-bold! mt-1.5"
     ) %>
+
+    <%# "how long until she replies" is the question every sender has and the page
+        never answered. A content block so Karola sets a promise she can keep. %>
+    <p class="text-t6 text-taupe text-center m-0">
+      <%= content_block("contact.form.reply_time") %>
+    </p>
   <% end %>
 <% end %>

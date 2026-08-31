@@ -111,12 +111,10 @@ module Forms
       [ size_class, color_class, "mt-1" ].join(" ")
     end
 
+    # On the type ramp rather than 11/12px: this is the line a visitor most needs
+    # to read, and t6 (14px) is the system's floor.
     def error_classes
-      size_class = case @size
-      when :sm then "text-[11px]"
-      when :lg then "text-sm"
-      else "text-xs"
-      end
+      size_class = @size == :lg ? "text-t5" : "text-t6"
 
       [ size_class, "text-red-400 mt-1" ].join(" ")
     end

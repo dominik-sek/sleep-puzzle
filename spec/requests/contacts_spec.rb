@@ -36,7 +36,9 @@ RSpec.describe "Contacts", type: :request do
     it "gives each tile the emoji the design puts in front of its name" do
       get contact_path
 
-      instagram = response.body[/<a[^>]*instagram\.com[^>]*>.*?<\/a>/m]
+      # scoped to the tile: the fallback link under the form points at the same
+      # Instagram URL, so a body-wide match finds the wrong anchor
+      instagram = response.body[/<a[^>]*bg-surface[^>]*instagram\.com[^>]*>.*?<\/a>/m]
       # decoration, so it is announced to nobody
       expect(instagram).to include(%(<span aria-hidden="true">📷</span>))
     end
@@ -44,11 +46,13 @@ RSpec.describe "Contacts", type: :request do
     it "opens an external tile in a new tab and leaves an internal one in place" do
       get contact_path
 
-      instagram = response.body[/<a[^>]*instagram\.com[^>]*>.*?<\/a>/m]
+      instagram = response.body[/<a[^>]*bg-surface[^>]*instagram\.com[^>]*>.*?<\/a>/m]
       expect(instagram).to include('target="_blank"', 'rel="noopener"')
 
-      unset = response.body[/<a[^>]*href="#"[^>]*>.*?<\/a>/m]
-      expect(unset).not_to include("target=")
+      # the internal tile, now that the placeholder "#" tiles are gone
+      internal = response.body[/<a[^>]*bg-surface[^>]*href="\/terms"[^>]*>.*?<\/a>/m]
+      expect(internal).to be_present
+      expect(internal).not_to include("target=")
     end
 
     it "sends a link the owner has not pointed anywhere to a safe target" do

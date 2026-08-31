@@ -924,12 +924,56 @@ contact:
           default:
             pl: "Wyślij wiadomość"
             en: "Send message"
+        reply_time:
+          label: Kiedy odpowiadasz (pod przyciskiem)
+          type: plain
+          default:
+            pl: "Odpowiadam zwykle w ciągu 1–2 dni roboczych."
+            en: "I usually reply within 1–2 working days."
+        sent_title:
+          label: Nagłówek po wysłaniu
+          type: plain
+          default:
+            pl: "Wiadomość poszła."
+            en: "Your message is on its way."
+        sent_next:
+          label: Co dalej — tekst przed odnośnikiem
+          type: plain
+          default:
+            pl: "W międzyczasie możesz zacząć po swojemu:"
+            en: "In the meantime you can start on your own:"
+        sent_link:
+          label: Co dalej — odnośnik
+          type: plain
+          default:
+            pl: "Posłuchaj audioprocesów i bajek"
+            en: "Listen to the audio and bedtime stories"
         thanks:
           label: Podziękowanie po wysłaniu
           type: plain
           default:
             pl: "Dziękuję za wiadomość! Odezwę się najszybciej, jak mogę."
             en: "Thanks for your message! I'll get back to you as soon as I can."
+    fallback:
+      label: Gdy formularz nie działa
+      fields:
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Formularz nie działa? Napisz do mnie bezpośrednio:"
+            en: "Form not working? Write to me directly:"
+        label:
+          label: Odnośnik — tekst
+          type: plain
+          default:
+            pl: "Napisz na Instagramie"
+            en: "Message me on Instagram"
+        url:
+          label: "Odnośnik — adres (możesz wpisać mailto:twoj@adres.pl)"
+          type: plain
+          default:
+            pl: "https://www.instagram.com/sleep.puzzle"
     links:
       label: Odnośniki obok formularza
       collection:
@@ -954,27 +998,6 @@ contact:
               pl: "Instagram @sleep.puzzle"
             url:
               pl: "https://www.instagram.com/sleep.puzzle"
-          - icon:
-              pl: "🎙️"
-            label:
-              pl: "Podcast o rodzicielstwie"
-              en: "Parenting podcast"
-            url:
-              pl: "#"
-          - icon:
-              pl: "🎙️"
-            label:
-              pl: "Podcast o zdrowiu dziecka"
-              en: "Child health podcast"
-            url:
-              pl: "#"
-          - icon:
-              pl: "🎙️"
-            label:
-              pl: "Rozmowy o śnie"
-              en: "Sleep talks"
-            url:
-              pl: "#"
           - icon:
               pl: "📄"
             label:

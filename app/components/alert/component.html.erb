@@ -1,4 +1,8 @@
-<div class="bg-surface border border-border-strong border-l-4 <%= tone_classes %> rounded-lg p-4">
-  <p class="font-display text-t3 <%= tone_classes.split.last %> mb-1"><%= @title %></p>
+<%# A thick coloured tab down one edge is the callout pattern the design system
+    rules out, so the tone reads from the title's colour and the card keeps the
+    same hairline as every other piece. Title in Quicksand, not Baloo: an alert
+    title is a sentence, and Display-For-Names reserves Baloo for named things. %>
+<div class="bg-surface border border-border-strong <%= tone_classes %> rounded-2xl p-4">
+  <p class="text-t5 font-bold <%= tone_classes.split.last %> mb-1"><%= @title %></p>
   <div class="text-tan text-t5"><%= content %></div>
 </div>
