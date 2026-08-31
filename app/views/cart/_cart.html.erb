@@ -12,7 +12,7 @@
       kept out of the lines below rather than charged for twice, so say where it
       went instead of appearing to have lost it. %>
   <% if cart.already_owned.any? %>
-    <div class="mb-5 rounded-2xl border border-border-input bg-ink-soft p-4.5">
+    <div class="mb-5 rounded-2xl border border-border-strong bg-ink-soft p-4.5">
       <p class="text-t6 text-tan m-0"><%= content_block("cart.owned.body") %></p>
       <ul class="mt-2 flex flex-col gap-1 list-none p-0">
         <% cart.already_owned.each do |product| %>

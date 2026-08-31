@@ -178,6 +178,27 @@ home:
           default:
             pl: "Dzięki! Sprawdź skrzynkę, żeby potwierdzić zapis."
             en: "Thanks! Check your inbox to confirm."
+    closing:
+      label: Zakonczenie
+      fields:
+        quote:
+          label: Cytat
+          type: plain
+          default:
+            pl: "\u201EPiasek jest fajny \u2014 na pla\u017Cy. Nie pod powiekami\u201D :)"
+            en: "\"Sand is fun \u2014 at the beach. Not under your eyelids\" :)"
+        lead:
+          label: Zaproszenie
+          type: plain
+          default:
+            pl: "Nie wiesz, od czego zacz\u0105\u0107? Napisz \u2014 odpowiem."
+            en: "Not sure where to start? Write to me and I will answer."
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Napisz do mnie"
+            en: "Write to me"
 packages:
   label: Pakiety
   sections:

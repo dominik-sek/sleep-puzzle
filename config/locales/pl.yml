@@ -199,7 +199,10 @@ pl:
       email_changed:
         heading: "Adres e-mail został zmieniony"
         intro: "Potwierdzamy zmianę adresu e-mail przypisanego do konta."
+  forms:
+    submitting: "Wysyłanie…"
   nav:
+    menu: "Menu"
     packages: "Pakiety"
     about: "O mnie"
     blog: "Blog"

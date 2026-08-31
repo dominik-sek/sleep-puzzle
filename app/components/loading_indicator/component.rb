@@ -181,7 +181,7 @@ module LoadingIndicator
 
     def color_classes
       case @color
-      when :neutral then "text-neutral-800 dark:text-neutral-200"
+      when :neutral then "text-cream"
       when :accent then "text-accent"
       when :cream then "text-cream"
       when :tan then "text-tan"
@@ -193,13 +193,13 @@ module LoadingIndicator
       when :blue then "text-blue-600 dark:text-blue-500"
       when :purple then "text-purple-600 dark:text-purple-500"
       when :pink then "text-pink-600 dark:text-pink-500"
-      else "text-neutral-800 dark:text-neutral-200"
+      else "text-cream"
       end
     end
 
     def dot_color_classes
       case @color
-      when :neutral then "bg-neutral-800 dark:bg-neutral-200"
+      when :neutral then "bg-cream"
       when :accent then "bg-accent"
       when :cream then "bg-cream"
       when :tan then "bg-tan"
@@ -211,7 +211,7 @@ module LoadingIndicator
       when :blue then "bg-blue-600 dark:bg-blue-500"
       when :purple then "bg-purple-600 dark:bg-purple-500"
       when :pink then "bg-pink-600 dark:bg-pink-500"
-      else "bg-neutral-800 dark:bg-neutral-200"
+      else "bg-cream"
       end
     end
 
@@ -221,7 +221,7 @@ module LoadingIndicator
 
     def progress_bg_classes
       case @color
-      when :neutral then "bg-neutral-200 dark:bg-neutral-700"
+      when :neutral then "bg-ink-soft"
       when :accent, :cream, :tan then "bg-border"
       when :primary then "bg-red-100 dark:bg-red-900/30"
       when :red then "bg-red-100 dark:bg-red-900/30"
@@ -231,13 +231,13 @@ module LoadingIndicator
       when :blue then "bg-blue-100 dark:bg-blue-900/30"
       when :purple then "bg-purple-100 dark:bg-purple-900/30"
       when :pink then "bg-pink-100 dark:bg-pink-900/30"
-      else "bg-neutral-200 dark:bg-neutral-700"
+      else "bg-ink-soft"
       end
     end
 
     def progress_fill_classes
       case @color
-      when :neutral then "bg-neutral-800 dark:bg-neutral-200"
+      when :neutral then "bg-cream"
       when :accent then "bg-accent"
       when :cream then "bg-cream"
       when :tan then "bg-tan"
@@ -249,13 +249,13 @@ module LoadingIndicator
       when :blue then "bg-blue-600 dark:bg-blue-500"
       when :purple then "bg-purple-600 dark:bg-purple-500"
       when :pink then "bg-pink-600 dark:bg-pink-500"
-      else "bg-neutral-800 dark:bg-neutral-200"
+      else "bg-cream"
       end
     end
 
     def text_color_classes
       case @color
-      when :neutral then "text-neutral-700 dark:text-neutral-300"
+      when :neutral then "text-tan"
       when :accent then "text-accent"
       when :cream then "text-cream"
       when :tan then "text-tan"
@@ -267,7 +267,7 @@ module LoadingIndicator
       when :blue then "text-blue-700 dark:text-blue-400"
       when :purple then "text-purple-700 dark:text-purple-400"
       when :pink then "text-pink-700 dark:text-pink-400"
-      else "text-neutral-700 dark:text-neutral-300"
+      else "text-tan"
       end
     end
 

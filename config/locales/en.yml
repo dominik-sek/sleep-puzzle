@@ -219,7 +219,10 @@ en:
       email_changed:
         heading: "Your email address has changed"
         intro: "This confirms the email address on your account has been changed."
+  forms:
+    submitting: "Sending…"
   nav:
+    menu: "Menu"
     packages: "Packages"
     about: "About me"
     blog: "Blog"

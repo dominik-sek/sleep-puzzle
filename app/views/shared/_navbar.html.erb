@@ -60,10 +60,10 @@
         <%= render Buttons::Component.new(
           text: t("nav.book"),
           pill: true,
-          variant: :secondary,
+          variant: :primary,
           href: bookings_path,
           full_width: true,
-          classes: "hover:cursor-pointer bg-accent! font-bold! text-ink!"
+          classes: "hover:cursor-pointer font-bold!"
         ) %>
       </div>
     </div>
@@ -151,15 +151,15 @@
           href: "/users/sign_in",
           pill: true,
           variant: :secondary,
-          classes: "hover:cursor-pointer bg-accent! font-bold! text-ink!"
+          classes: "hover:cursor-pointer font-bold!"
         ) %>
       <% end %>
       <%= render Buttons::Component.new(
         text: t("nav.book"),
         pill: true,
-        variant: :secondary,
+        variant: :primary,
         href: bookings_path,
-        classes: "hover:cursor-pointer bg-accent! font-bold! text-ink!"
+        classes: "hover:cursor-pointer font-bold!"
       ) %>
     </li>
   <% end %>

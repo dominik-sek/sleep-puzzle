@@ -89,7 +89,7 @@ module Card
     def variant_classes
       case @variant
       when :well
-        "bg-neutral-50 dark:bg-neutral-900/50"
+        "bg-ink-soft"
       else # :default (elevated)
         "bg-surface"
       end
@@ -136,9 +136,9 @@ module Card
       return "" unless @border
 
       if @full_width_mobile
-        "border-y sm:border border-black/10 dark:border-white/10"
+        "border-y sm:border border-border-strong"
       else
-        "border border-black/10 dark:border-white/10"
+        "border border-border-strong"
       end
     end
 
@@ -147,15 +147,15 @@ module Card
 
       classes = []
       classes << "transition-all duration-200"
-      classes << "hover:shadow-md dark:hover:shadow-neutral-900/50" if @hoverable
-      classes << "cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700/50" if @clickable
+      classes << "hover:border-border-input" if @hoverable
+      classes << "cursor-pointer hover:bg-ink-soft" if @clickable
       classes.join(" ")
     end
 
     def divide_classes
       return "" unless @divide
 
-      "divide-y divide-black/10 dark:divide-white/10"
+      "divide-y divide-border"
     end
 
     def header_padding_classes
@@ -170,7 +170,7 @@ module Card
     def header_background_classes
       return "" unless @divide
 
-      "bg-neutral-50 dark:bg-neutral-900/50 border-b border-black/10 dark:border-white/10"
+      "bg-ink-soft border-b border-border-strong"
     end
 
     def body_padding_classes
@@ -192,7 +192,7 @@ module Card
     end
 
     def footer_background_classes
-      "bg-neutral-50 dark:bg-neutral-900/50"
+      "bg-ink-soft"
     end
 
     attr_reader :variant, :padding, :shadow, :rounded, :border, :hoverable, :clickable, :divide, :full_width_mobile
@@ -215,7 +215,7 @@ module Card
       def wrapper_classes
         [
           aspect_classes,
-          "bg-neutral-200 dark:bg-neutral-700",
+          "bg-ink-soft",
           @classes
         ].compact.reject(&:empty?).join(" ")
       end

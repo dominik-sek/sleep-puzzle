@@ -53,6 +53,12 @@ module Forms
       @input_wrapper_classes = input_wrapper_classes
     end
 
+    # the input needs to point at the error with aria-describedby, which means the
+    # message has to have an id the caller can reach.
+    def error_id
+      "#{@id}_error"
+    end
+
     def wrapper_classes
       base = case @variant
       when :inline then "flex items-center gap-4"

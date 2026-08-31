@@ -5,11 +5,11 @@
 
   locals: package
 %>
-<%= render Card::Component.new(classes: "h-full border-border-strong!") do |card| %>
+<%= render Card::Component.new(classes: "h-full") do |card| %>
   <% card.with_body do %>
     <div class="flex flex-col h-full gap-6 text-left">
       <div class="flex flex-col gap-2">
-        <h2 class="text-accent! font-display text-t3! dark:text-cream"><%= package.name %></h2>
+        <h2 class="text-accent! font-display text-t3!"><%= package.name %></h2>
 
         <% if package.duration %>
           <span class="text-t6 font-display text-taupe">

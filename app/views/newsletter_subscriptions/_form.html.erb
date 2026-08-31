@@ -1,7 +1,11 @@
 <%# Swapped for "newsletter_subscriptions/subscribed" by
     newsletter_subscriptions#create, so the frame wraps the form rather than
     sitting inside it — the same shape as the contact form. %>
-<%= turbo_frame_tag "newsletter_form" do %>
+<%# aria-live: the frame swaps in either the rejection alert or the thank-you,
+    and neither moves focus. Without a live region a screen reader — and a
+    visitor whose keyboard is covering the message on a phone — gets no signal
+    that anything happened at all. %>
+<%= turbo_frame_tag "newsletter_form", aria: { live: "polite" } do %>
   <% if local_assigns[:alert].present? %>
     <div class="mx-auto mb-4 max-w-lg">
       <%= render Alert::Component.new(title: alert, tone: :warning) %>
@@ -29,10 +33,14 @@
               .form-control drops to 14px type above 640px while the button does
               not, which would move the gap again at that breakpoint. A fixed
               height is the only thing that holds at every size. %>
+          <%# aria-describedby/invalid only once there is an error: pointing at an
+              element that is not rendered is worse than not pointing at all. %>
           <%= f.email_field :email,
                             class: "form-control h-12 rounded-full!",
                             placeholder: content_block("home.newsletter.placeholder"),
-                            autocomplete: "email" %>
+                            autocomplete: "email",
+                            aria: signup.errors[:email].any? ?
+                                    { describedby: field.error_id, invalid: "true" } : {} %>
         <% end %>
       <% end %>
     </div>
@@ -42,6 +50,7 @@
       type: "submit",
       pill: true,
       variant: :primary,
+      data: { turbo_submits_with: t("forms.submitting") },
       classes: "hover:cursor-pointer bg-accent! text-ink! h-12 px-6 font-bold!"
     ) %>
   <% end %>

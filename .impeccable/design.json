@@ -1,0 +1,504 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-31T00:00:00Z",
+  "title": "Design System: Sleep Puzzle",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#211e1c",
+        "tonalRamp": [
+          "#0d0c0b",
+          "#151312",
+          "#1a1817",
+          "#211e1c",
+          "#2b2724",
+          "#453f39",
+          "#787066",
+          "#b5aca0"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink Soft",
+        "canonical": "#26221f",
+        "tonalRamp": [
+          "#0f0d0c",
+          "#171513",
+          "#1e1b19",
+          "#26221f",
+          "#312c28",
+          "#4c443d",
+          "#82786d",
+          "#bdb3a6"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#2b2724",
+        "tonalRamp": [
+          "#110f0e",
+          "#1a1816",
+          "#22201d",
+          "#2b2724",
+          "#38332f",
+          "#554d46",
+          "#8d8377",
+          "#c6bcaf"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Surface Dark",
+        "canonical": "#1a1817",
+        "tonalRamp": [
+          "#0a0909",
+          "#100f0e",
+          "#151413",
+          "#1a1817",
+          "#241f1d",
+          "#3b3531",
+          "#6d655d",
+          "#a99f95"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#35302c",
+        "tonalRamp": [
+          "#141210",
+          "#1e1b19",
+          "#292521",
+          "#35302c",
+          "#443e38",
+          "#635b52",
+          "#978d81",
+          "#cdc3b6"
+        ]
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "Piece Edge",
+        "canonical": "#3d3833",
+        "tonalRamp": [
+          "#171513",
+          "#22201d",
+          "#302c27",
+          "#3d3833",
+          "#4e4741",
+          "#6f665c",
+          "#a0968a",
+          "#d3c9bc"
+        ]
+      },
+      "border-input": {
+        "role": "neutral",
+        "displayName": "Field Edge",
+        "canonical": "#80756b",
+        "tonalRamp": [
+          "#211e1c",
+          "#332f2a",
+          "#47413b",
+          "#5d554d",
+          "#80756b",
+          "#9b948a",
+          "#c0b7ab",
+          "#e0d9cf"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Cream",
+        "canonical": "#f5f0e8",
+        "tonalRamp": [
+          "#2e2a24",
+          "#4a443b",
+          "#6b6357",
+          "#8f8678",
+          "#b3a99a",
+          "#d2c9bb",
+          "#e7e0d5",
+          "#f5f0e8"
+        ]
+      },
+      "tan": {
+        "role": "neutral",
+        "displayName": "Tan",
+        "canonical": "#cfc7bc",
+        "tonalRamp": [
+          "#26231f",
+          "#3d3833",
+          "#585149",
+          "#776e64",
+          "#968c80",
+          "#b4aa9e",
+          "#cfc7bc",
+          "#e8e2da"
+        ]
+      },
+      "taupe": {
+        "role": "neutral",
+        "displayName": "Taupe",
+        "canonical": "#9b948a",
+        "tonalRamp": [
+          "#1d1b19",
+          "#2f2c28",
+          "#45413b",
+          "#5e584f",
+          "#7a7267",
+          "#9b948a",
+          "#bcb5ab",
+          "#dcd7cf"
+        ]
+      },
+      "taupe-dark": {
+        "role": "neutral",
+        "displayName": "Taupe Dark",
+        "canonical": "#57504a",
+        "tonalRamp": [
+          "#100f0e",
+          "#1e1c1a",
+          "#302c28",
+          "#433d38",
+          "#57504a",
+          "#787067",
+          "#a49b90",
+          "#d0c8bd"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Lamp Amber",
+        "canonical": "#e2933e",
+        "tonalRamp": [
+          "#3a2109",
+          "#5b3512",
+          "#7d4a1a",
+          "#a06024",
+          "#c47a30",
+          "#e2933e",
+          "#f0b673",
+          "#f9dcb8"
+        ]
+      },
+      "accent-hover": {
+        "role": "primary",
+        "displayName": "Lamp Amber Bright",
+        "canonical": "#ffb35e",
+        "tonalRamp": [
+          "#432706",
+          "#673d0f",
+          "#8c541a",
+          "#b26c26",
+          "#d88a35",
+          "#ffb35e",
+          "#ffcd94",
+          "#ffe7ca"
+        ]
+      },
+      "accent-terracotta": {
+        "role": "primary",
+        "displayName": "Terracotta",
+        "canonical": "#c97a2e",
+        "tonalRamp": [
+          "#331c07",
+          "#502d0f",
+          "#6f4017",
+          "#8f5420",
+          "#af6926",
+          "#c97a2e",
+          "#e3a469",
+          "#f4d3ac"
+        ]
+      },
+      "accent-coral": {
+        "role": "secondary",
+        "displayName": "Coral",
+        "canonical": "#e3987a",
+        "tonalRamp": [
+          "#3c1f13",
+          "#5d3320",
+          "#80482e",
+          "#a35f3e",
+          "#c3784f",
+          "#e3987a",
+          "#efbca6",
+          "#f9dfd3"
+        ]
+      },
+      "accent-gold": {
+        "role": "secondary",
+        "displayName": "Gold",
+        "canonical": "#d9a441",
+        "tonalRamp": [
+          "#372709",
+          "#573e12",
+          "#78561b",
+          "#9a6f26",
+          "#bc8a32",
+          "#d9a441",
+          "#ebc57e",
+          "#f7e5bd"
+        ]
+      },
+      "gradient-hero": {
+        "role": "primary",
+        "displayName": "Hero Glow",
+        "canonical": "#c97a2e33",
+        "tonalRamp": [
+          "#c97a2e0a",
+          "#c97a2e14",
+          "#c97a2e1f",
+          "#c97a2e33",
+          "#c97a2e4d",
+          "#c97a2e66",
+          "#c97a2e99",
+          "#c97a2ecc"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headlines and page H1s only. Baloo 2, one per page."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings. The most common large type on the site."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card and subsection titles, plus the sleep.puzzle wordmark."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "The paragraph under a Display or Headline. Read at a glance, not studied."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All reading copy. Weight 500, because 400 Quicksand goes thin on ink."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Micro-labels, button text, footer links, uppercase card eyebrows."
+      }
+    },
+    "shadows": [
+      {
+        "name": "overlay",
+        "value": "0 10px 30px rgba(0, 0, 0, 0.45)",
+        "purpose": "The only shadow in the system. Dropdowns, mobile menu, toasts, dialogs — things that genuinely float above the page. Never on an in-page card or button."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-fast",
+        "value": "100ms ease-in-out",
+        "purpose": "Button hover and active. Feedback, not animation."
+      },
+      {
+        "name": "state-standard",
+        "value": "200ms ease-out",
+        "purpose": "Card and surface state changes, menu open/close."
+      },
+      {
+        "name": "state-slow",
+        "value": "300ms ease-in-out",
+        "purpose": "Larger reveals — panels, accordions, image transitions."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "container",
+        "value": "1240px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Pill Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one 'do the thing' action per screen — book, buy, submit.",
+      "html": "<button class=\"ds-btn-primary\">Umów konsultację</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--color-accent, #e2933e); color: var(--color-ink, #211e1c); border: 1px solid rgba(201, 122, 46, 0.3); border-radius: 9999px; padding: 12px 24px; font-family: Quicksand, sans-serif; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.02em; line-height: 1.4; white-space: nowrap; cursor: pointer; transition: background 100ms ease-in-out; } .ds-btn-primary:hover { background: var(--color-accent-hover, #ffb35e); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-accent, #e2933e); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Secondary Pill Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Sits beside a primary without competing for the one lamp.",
+      "html": "<button class=\"ds-btn-secondary\">Zobacz pakiety</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--color-ink-soft, #26221f); color: var(--color-cream, #f5f0e8); border: 1px solid var(--color-taupe-dark, #57504a); border-radius: 9999px; padding: 12px 24px; font-family: Quicksand, sans-serif; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.02em; line-height: 1.4; white-space: nowrap; cursor: pointer; transition: background 100ms ease-in-out; } .ds-btn-secondary:hover { background: var(--color-surface, #2b2724); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--color-accent, #e2933e); outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Tertiary and in-card actions. No border, fills to ink-soft on hover.",
+      "html": "<button class=\"ds-btn-ghost\">Anuluj</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: transparent; color: var(--color-cream, #f5f0e8); border: none; border-radius: 8px; padding: 8px 14px; font-family: Quicksand, sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 100ms ease-in-out; } .ds-btn-ghost:hover { background: var(--color-ink-soft, #26221f); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--color-accent, #e2933e); outline-offset: 2px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The system's signature piece: 16px radius, surface fill, one hairline edge, no shadow.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Pakiet Podstawowy</h3><span class=\"ds-card-meta\">60 minut</span><p class=\"ds-card-body\">Dla rodzin, które potrzebują szybkiej ulgi i jasnego pierwszego kroku.</p></div>",
+      "css": ".ds-card { display: flex; flex-direction: column; gap: 12px; background: var(--color-surface, #2b2724); border: 1px solid var(--color-border-strong, #3d3833); border-radius: 16px; padding: 20px 16px; overflow: hidden; } .ds-card-title { margin: 0; font-family: 'Baloo 2', sans-serif; font-size: 1.625rem; font-weight: 700; line-height: 1.2; color: var(--color-accent, #e2933e); } .ds-card-meta { font-family: 'Baloo 2', sans-serif; font-size: 0.875rem; color: var(--color-taupe, #9b948a); } .ds-card-body { margin: 0; font-family: Quicksand, sans-serif; font-size: 1rem; font-weight: 500; line-height: 1.6; color: var(--color-tan, #cfc7bc); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Ink-soft fill with an inset ring rather than a border; the ring thickens to amber on focus.",
+      "html": "<input class=\"ds-input\" type=\"email\" placeholder=\"Twój adres e-mail\">",
+      "css": ".ds-input { display: block; width: 100%; background: var(--color-ink-soft, #26221f); color: var(--color-cream, #f5f0e8); border: 0; border-radius: 8px; padding: 8px 12px; font-family: Quicksand, sans-serif; font-size: 1rem; line-height: 1.5; box-shadow: inset 0 0 0 1px var(--color-border-input, #47413b); outline: none; } .ds-input::placeholder { color: var(--color-taupe, #9b948a); } .ds-input:focus { box-shadow: inset 0 0 0 2px var(--color-accent, #e2933e); } @media (min-width: 640px) { .ds-input { font-size: 0.875rem; } }"
+    },
+    {
+      "name": "Navigation Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Bar and menu items. 6px radius, fills to ink-soft and goes amber on hover.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\">Pakiety</a><a class=\"ds-nav-link\" href=\"#\">Sklep</a><a class=\"ds-nav-link\" href=\"#\">O mnie</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 4px; background: var(--color-surface-dark, #1a1817); border-bottom: 1px solid var(--color-border-strong, #3d3833); padding: 8px 12px; } .ds-nav-link { color: var(--color-cream, #f5f0e8); font-family: Quicksand, sans-serif; font-size: 1rem; font-weight: 500; text-decoration: none; border-radius: 6px; padding: 8px; transition: background 100ms ease-in-out, color 100ms ease-in-out; } .ds-nav-link:hover { background: var(--color-ink-soft, #26221f); color: var(--color-accent, #e2933e); } .ds-nav-link:focus-visible { outline: 2px solid var(--color-accent, #e2933e); outline-offset: 2px; }"
+    },
+    {
+      "name": "Astroid Bullet List",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "The system's punctuation. Amber four-point mark for primary items, coral for secondary ones.",
+      "html": "<ul class=\"ds-astroid-list\"><li><svg class=\"ds-astroid ds-astroid-primary\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203\"></path></svg><span>20+ lat doświadczenia</span></li><li><svg class=\"ds-astroid ds-astroid-secondary\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203\"></path></svg><span>Nagranie z konsultacji</span></li></ul>",
+      "css": ".ds-astroid-list { display: flex; flex-direction: column; gap: 8px; list-style: none; padding: 0; margin: 0; } .ds-astroid-list li { display: flex; align-items: flex-start; gap: 8px; font-family: Quicksand, sans-serif; font-size: 1rem; font-weight: 500; line-height: 1.6; color: var(--color-cream, #f5f0e8); } .ds-astroid { width: 16px; height: 16px; flex-shrink: 0; margin-top: 4px; } .ds-astroid-primary { color: var(--color-accent, #e2933e); } .ds-astroid-secondary { color: var(--color-accent-coral, #e3987a); }"
+    },
+    {
+      "name": "Step Numeral",
+      "kind": "custom",
+      "refersTo": "step-numeral",
+      "description": "A 64px lamp-amber disc numbering the process steps. Numbering follows display order, never stored.",
+      "html": "<div class=\"ds-step\"><div class=\"ds-step-numeral\">1</div><span class=\"ds-step-title\">Krok pierwszy</span><span class=\"ds-step-body\">Rozmawiamy o Waszej sytuacji.</span></div>",
+      "css": ".ds-step { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; } .ds-step-numeral { display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; flex-shrink: 0; border-radius: 9999px; background: var(--color-accent, #e2933e); color: var(--color-ink, #211e1c); font-family: 'Baloo 2', sans-serif; font-size: 1.625rem; font-weight: 700; line-height: 1.2; } .ds-step-title { font-family: 'Baloo 2', sans-serif; font-size: 1.1875rem; font-weight: 700; color: var(--color-cream, #f5f0e8); } .ds-step-body { font-family: Quicksand, sans-serif; font-size: 1rem; font-weight: 500; line-height: 1.6; color: var(--color-taupe, #9b948a); }"
+    },
+    {
+      "name": "Section Band",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "The page's rhythm unit: full-bleed tonal band, content capped at 1240px. Consecutive bands alternate ink and ink-soft.",
+      "html": "<section class=\"ds-band ds-band-soft\"><div class=\"ds-band-inner\"><h2 class=\"ds-band-title\">Jak wygląda współpraca</h2><p class=\"ds-band-lead\">Każdy pakiet zaczyna się od rozmowy o Waszej sytuacji.</p></div></section>",
+      "css": ".ds-band { width: 100%; background: var(--color-ink, #211e1c); } .ds-band-soft { background: var(--color-ink-soft, #26221f); border-top: 1px solid var(--color-border-strong, #3d3833); border-bottom: 1px solid var(--color-border-strong, #3d3833); } .ds-band-inner { display: flex; flex-direction: column; gap: 16px; max-width: 1240px; margin: 0 auto; padding: clamp(50px, 8vw, 90px) clamp(20px, 4vw, 28px); } .ds-band-title { margin: 0; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.75rem, 5vw, 2.5rem); font-weight: 700; line-height: 1.2; color: var(--color-cream, #f5f0e8); } .ds-band-lead { margin: 0; max-width: 65ch; font-family: Quicksand, sans-serif; font-size: 1.1875rem; font-weight: 400; line-height: 1.7; color: var(--color-tan, #cfc7bc); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Piece That Fits",
+    "overview": "The product's name is not decoration — it is the design brief. Karola describes her work as assembling a family's sleep like a puzzle, piece by piece, and the interface is built the same way: from discrete, self-contained, softly-cornered pieces that tessellate into something whole. A package is a piece. A product is a piece. A step in the process is a piece. Nothing floats, nothing is loose, nothing is missing — and when a piece has nothing to say, it is absent rather than empty.\n\nThe material is soft, tactile, generous and playful. The ground is a warm near-black (ink, #211e1c) — brown-leaning, never blue-leaning, never a true black — and every surface above it is another warm neutral a few points lighter. Corners are large (16px on containers) and actions are fully round. Baloo 2's rounded terminals and the mascot's presence set a register that is closer to a well-made soft toy than to a clinical app. The whole thing is lit by exactly one warm light: accent, a lamp amber, which is the only saturated colour in the system.\n\nThis restraint is not minimalism, it is care. The visitor is an exhausted parent reading on a phone in a dark room, and the design's first job is to be legible and calm at that hour. Softness is how competence is expressed here: generous padding, thumb-sized targets, a palette that does not glare, and a single point of light per screen telling them where to go next.",
+    "keyCharacteristics": [
+      "Warm near-black ground; brown-neutral throughout, no cool greys, no true black.",
+      "One saturated colour in the entire system: lamp amber. Everything else is a neutral.",
+      "Depth by tonal layering and hairlines, not by shadow.",
+      "Large radii: 16px pieces, fully-round actions.",
+      "Two typefaces, both rounded: Baloo 2 for display, Quicksand for everything read.",
+      "Self-hosted fonts and zero third-party assets — a design constraint, not just an ops one.",
+      "Built phone-first for a tired one-handed reader."
+    ],
+    "rules": [
+      {
+        "name": "The One Lamp Rule",
+        "body": "There is one light source per screen. Lamp Amber marks the single most important action in a view and the small marks that guide the eye to it — nothing else. Two amber buttons competing in one viewport means one of them is wrong.",
+        "section": "colors"
+      },
+      {
+        "name": "The Warm Neutral Rule",
+        "body": "Every neutral in this system leans brown. A cool grey (neutral-*, zinc-*, slate-*) or a pure #fff / #000 anywhere in the public site is drift, not a choice.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Dark Mode Rule",
+        "body": "There is no light mode to toggle away from. The system is dark by construction, so dark: variants are meaningless here — a dark: prefix in this codebase is a leftover from the component scaffold, not a feature.",
+        "section": "colors"
+      },
+      {
+        "name": "The Display-For-Names Rule",
+        "body": "Baloo 2 is for things that are named — headings, titles, wordmarks, durations, step titles. Anything the visitor reads as a sentence is Quicksand. Never set a paragraph in Baloo 2.",
+        "section": "typography"
+      },
+      {
+        "name": "The Uppercase Ceiling Rule",
+        "body": "Uppercase is only ever applied at Label size, in Taupe, as a category eyebrow. There is no uppercase heading anywhere in this system, and there should not be — Baloo 2's roundness turns hostile at scale in caps.",
+        "section": "typography"
+      },
+      {
+        "name": "The Two-Language Rule",
+        "body": "Every type decision must survive Polish. Polish words run noticeably longer than their English equivalents, so headline sizes are set in clamp() and no label is allowed to depend on fitting a fixed-width box.",
+        "section": "typography"
+      },
+      {
+        "name": "The Alternating Band Rule",
+        "body": "Consecutive sections alternate ink and ink-soft. Two adjacent sections on the same background is a seam that disappears, and a long page then reads as one undifferentiated scroll.",
+        "section": "layout"
+      },
+      {
+        "name": "The Full-Bleed Band, Capped Content Rule",
+        "body": "Backgrounds always span the viewport; content never exceeds 1240px. A section that constrains its own background is wrong.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat Page Rule",
+        "body": "In-page surfaces are flat. If a piece needs to feel lifted, raise its tone (ink → surface) or firm up its border — never add a shadow.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Glow Is Not A Shadow Rule",
+        "body": "The hero's radial gradient-hero wash is light emitted by the mascot, not depth cast by it. Radial warmth is available as an atmospheric device; it never doubles as an elevation cue.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Pill-For-Action Rule",
+        "body": "If it is the thing you want the visitor to press, it is a pill. Radius signals affordance in this system: round means do, 16px means read.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do keep every neutral warm and brown-leaning. ink (#211e1c) is the floor of the system; cream (#f5f0e8) is the ceiling.",
+      "Do give each screen exactly one Lamp Amber primary action. Its rarity is what makes it work.",
+      "Do alternate section backgrounds ink / ink-soft down a long page.",
+      "Do reach for the astroid mark instead of a generic bullet — it is the fastest signature in the system.",
+      "Do keep body text at 16px minimum on mobile, and inputs at 16px, so iOS Safari does not zoom on focus.",
+      "Do set headline sizes in clamp() and let labels wrap. Polish runs long.",
+      "Do pin card CTAs with mt-auto so a row of pieces aligns at the bottom.",
+      "Do preserve a visible focus-visible outline in Lamp Amber on every interactive element. WCAG 2.1 AA is binding on this project.",
+      "Do keep fonts and every other asset self-hosted. The site's no-consent-banner position depends on making zero third-party requests.",
+      "Do let Card::Component supply its own edge. Every variant resolves to system tokens (border-strong edge, ink-soft well and footer, border dividers), so a call site writing border-border-strong! is re-stating the default. hoverable: lifts the border rather than casting a shadow, per the Flat Page Rule."
+    ],
+    "donts": [
+      "Don't use Tailwind's cool neutrals (neutral-*, zinc-*, slate-*, gray-*), bg-white, or pure black anywhere on the public site.",
+      "Don't write dark: variants. This system has no light mode; a dark: prefix here is dead code that will never apply.",
+      "Don't use Buttons::Component's style: :fancy variants. They are unconverted scaffold — grey-and-white gradient buttons from a generic component library that bear no relationship to this design system. The :basic variants are the real ones.",
+      "Don't use the bare select, [type=\"checkbox\"] or [type=\"radio\"] styles from application.css on a public page without converting them first. They are still white-on-neutral-300 scaffold and will punch a hole in the warm-dark world.",
+      "Don't add drop shadows to in-page elements. Raise the tone or firm the border.",
+      "Don't set a paragraph in Baloo 2, and don't set an uppercase heading in it at all.",
+      "Don't introduce a second saturated colour. Coral and gold are tints of the one lamp, not new accents.",
+      "Don't use Taupe Dark for anything the visitor needs to read.",
+      "Don't tighten the spacing to fit more above the fold. The low density is the accommodation for the exhausted reader, not slack to be reclaimed.",
+      "Don't add urgency, scarcity, countdowns or red badges to commerce surfaces. The visitor is already frightened; this system never trades on that."
+    ]
+  }
+}

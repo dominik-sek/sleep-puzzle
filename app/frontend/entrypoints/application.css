@@ -120,7 +120,7 @@
   /* Borders */
   --color-border: #35302c;        /* hairline / section dividers */
   --color-border-strong: #3d3833; /* card borders */
-  --color-border-input: #47413b;  /* pill / input borders */
+  --color-border-input: #80756b;  /* pill / input borders */
 
   /* Text */
   --color-cream: #f5f0e8;    /* primary text */
@@ -460,7 +460,7 @@ calendar-month{
     @apply text-t2
   }
   &::part(disallowed){
-    @apply bg-transparent text-border-input
+    @apply bg-transparent text-taupe-dark
   }
   &::part(selected){
     @apply text-ink bg-accent

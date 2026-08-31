@@ -2,7 +2,13 @@
 
 module Section
   class Component < ViewComponent::Base
-    attr_reader :title, :subtitle
+    attr_reader :title, :subtitle, :heading_level
+
+    # The title is a real heading, not a styled span: `text-t1` is the largest
+    # type on any page it appears on, and markup that says otherwise fails
+    # WCAG 1.3.1. Defaults to h2 because most sections sit under a page title;
+    # the one section that *is* the page title passes `heading_level: :h1`.
+    HEADING_LEVELS = %i[h1 h2 h3].freeze
 
     renders_one :actions
 
@@ -13,6 +19,7 @@ module Section
                    subtitle: nil,
                    align: :center,
                    padding: :default,
+                   heading_level: :h2,
                    classes: []
                    )
       @background = background
@@ -22,6 +29,7 @@ module Section
       @subtitle = subtitle
       @align = align
       @padding = padding
+      @heading_level = HEADING_LEVELS.include?(heading_level) ? heading_level : :h2
       @classes = classes
     end
 

@@ -93,10 +93,29 @@ module ApplicationHelper
   def safe_link_url(value, fallback: "#")
     value = value.to_s.strip
     return fallback if value.blank?
-    return value if value.start_with?("/", "#")
+    return value if value.start_with?("#")
+    return localized_path(value) if value.start_with?("/")
     return value if value.match?(%r{\A(https?://|mailto:)}i)
 
     fallback
+  end
+
+  # The owner types a bare path like "/about", which is the Polish address. Left
+  # alone it drops the locale, so the CTA on an English page lands back on the
+  # Polish version — the same bug the navbar logo has a comment about. Only paths
+  # that actually resolve under the prefix are rewritten: the locale scope holds
+  # the public pages only, so "/users/sign_in" and "/admin" must stay bare.
+  def localized_path(path)
+    return path if I18n.locale.to_s == I18n.default_locale.to_s
+
+    prefix = "/#{I18n.locale}"
+    return path if path == prefix || path.start_with?("#{prefix}/")
+
+    candidate = "#{prefix}#{path}"
+    Rails.application.routes.recognize_path(candidate.split(/[?#]/).first)
+    candidate
+  rescue ActionController::RoutingError
+    path
   end
 
   # The owner-managed list for a section, e.g. content_items("home.process").

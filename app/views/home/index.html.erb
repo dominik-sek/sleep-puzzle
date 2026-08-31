@@ -8,16 +8,21 @@
     This wrapper is full width, so the only thing clipped is already off-screen,
     and unlike overflow-hidden this does not create a scroll container. %>
 <div class="min-h-screen flex flex-col items-center justify-center overflow-x-clip">
+  <%# heading_level: this section carries the page title, so its heading is the
+      h1. Every other heading on the page is an h2, which is the component's
+      default. %>
   <%= render Section::Component.new(
     title: content_block("home.hero.title"),
     subtitle: content_block("home.hero.subtitle"),
+    heading_level: :h1,
     align: :left,
     background: :ink,
     bordered: false,
     classes: "flex justify-center! items-center!"
   ) do |section| %>
     <div class="w-80 max-w-[70%] relative flex items-center justify-center">
-      <%= image_tag "mascot-grey.png", class: "z-10" %>
+      <%# decorative: the wordmark it carries is already real text in the navbar %>
+      <%= image_tag "mascot-grey.png", alt: "", class: "z-10" %>
       <div class="absolute block w-96 h-96 rounded-full bg-radial from-gradient-hero to-transparent to-70%"></div>
     </div>
 
@@ -37,7 +42,7 @@
           pill: true,
           variant: :secondary,
           href: packages_path,
-          classes: "hover:cursor-pointer text-t6! py-3 px-6 font-semibold! bg-ink-soft! border-taupe-dark!"
+          classes: "hover:cursor-pointer text-t6! py-3 px-6 font-semibold! bg-ink-soft! border-taupe!"
         ) %>
       </div>
     <% end %>
@@ -87,11 +92,13 @@
         </div>
 
         <%# label and target both editable; the arrow is chrome, so it is not
-            part of the copy the owner types %>
-        <%= link_to content_link_url("home.about.cta_url") do %>
-          <span class="font-bold text-t6! text-accent">
-            <%= content_block("home.about.cta_label") %>
-          </span>
+            part of the copy the owner types. Sized at t5 with vertical padding
+            rather than t6: this is the door to the person being sold, and at the
+            smallest size on the page with no tap padding it read as body text. %>
+        <%= link_to content_link_url("home.about.cta_url"),
+                    class: "group inline-flex items-center gap-1.5 self-start py-2 font-bold text-t5 text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+          <%= content_block("home.about.cta_label") %>
+          <%= icon "arrow-right", class: "size-4 shrink-0 transition-transform duration-100 group-hover:translate-x-0.5" %>
         <% end %>
       </div>
     </div>
@@ -111,10 +118,10 @@
       <%# same steps as the catalogue page, so the two read alike %>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <% @packages.each do |package| %>
-          <%= render Card::Component.new(classes: "w-auto min-h-64 border-border-strong!") do |card| %>
+          <%= render Card::Component.new(classes: "w-auto min-h-64") do |card| %>
             <% card.with_body do %>
               <div class="flex flex-col justify-start items-start gap-6">
-                <h3 class="text-accent! font-display text-t3! dark:text-cream"><%= package.name %></h3>
+                <h3 class="text-accent! font-display text-t3!"><%= package.name %></h3>
 
                 <% if package.duration %>
                   <span class="text-t5 font-display text-taupe">
@@ -128,10 +135,10 @@
                     Label is CMS copy, the arrow is chrome — the same split as the
                     about section's CTA, so the owner rewording this does not have
                     to retype an arrow or risk losing it. %>
-                <%= link_to packages_path(anchor: dom_id(package)) do %>
-                  <span class="text-t6 text-cream hover:text-accent">
-                    <%= content_block("home.packages.details") %> -&gt;
-                  </span>
+                <%= link_to packages_path(anchor: dom_id(package)),
+                            class: "group inline-flex items-center gap-1.5 py-2 text-t5 font-bold text-cream no-underline hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+                  <%= content_block("home.packages.details") %>
+                  <%= icon "arrow-right", class: "size-4 shrink-0 transition-transform duration-100 group-hover:translate-x-0.5" %>
                 <% end %>
               </div>
             <% end %>
@@ -188,15 +195,21 @@
           keeps them their natural height instead of stretching to fill the half. %>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full md:w-1/2 content-start">
         <% @products.each do |product| %>
-          <%= render Card::Component.new(padding: :sm, classes: "h-full border-border-strong!") do |card| %>
-            <% card.with_body do %>
-              <div class="flex flex-col items-start gap-1.5">
-                <span class="text-t6 uppercase text-taupe"><%= product.kind_label %></span>
-                <h3 class="text-accent! font-display text-t5! dark:text-cream"><%= product.name %></h3>
-                <%# clamped, not truncated server-side: the full description still
-                    belongs on the product itself %>
-                <p class="text-t6 text-tan text-start line-clamp-2"><%= product.description %></p>
-              </div>
+          <%# the whole tile is the link. These sit beside package cards that are
+              navigable and carry the same radius, border and amber title, so a
+              tile that did nothing read as a dead affordance four times over. %>
+          <%= link_to product_path(product),
+                      class: "group block h-full rounded-2xl no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+            <%= render Card::Component.new(padding: :sm, classes: "h-full transition-colors duration-100 group-hover:border-accent!") do |card| %>
+              <% card.with_body do %>
+                <div class="flex flex-col items-start gap-1.5">
+                  <span class="text-t6 uppercase text-taupe"><%= product.kind_label %></span>
+                  <h3 class="text-accent! font-display text-t5! group-hover:text-accent-hover!"><%= product.name %></h3>
+                  <%# clamped, not truncated server-side: the full description still
+                      belongs on the product itself %>
+                  <p class="text-t6 text-tan text-start line-clamp-2"><%= product.description %></p>
+                </div>
+              <% end %>
             <% end %>
           <% end %>
         <% end %>
@@ -225,5 +238,32 @@
     <span class="text-tan max-w-xl"><%= content_block("home.newsletter.subtitle") %></span>
 
     <%= render "newsletter_subscriptions/form", signup: NewsletterSignup.new %>
+  <% end %>
+
+  <%# The page used to end on the newsletter, so the last thing it did was ask
+      for something — from a visitor who arrived exhausted and has already been
+      asked to book twice. This closes on the person instead: her own line, and
+      the cheapest thing she can do if she is not ready to book. Secondary rather
+      than accent on purpose — it is an invitation, not another push, and the
+      shop CTA one section up already holds the lamp. %>
+  <%= render Section::Component.new(
+    align: :center,
+    background: :ink_soft,
+    bordered: false
+  ) do |section| %>
+    <blockquote class="font-display font-bold text-t2 text-accent max-w-2xl m-0">
+      <%= content_block("home.closing.quote") %>
+    </blockquote>
+    <p class="text-t4 text-tan max-w-xl m-0"><%= content_block("home.closing.lead") %></p>
+
+    <% section.with_actions do %>
+      <%= render Buttons::Component.new(
+        text: content_block("home.closing.cta"),
+        pill: true,
+        variant: :secondary,
+        href: contact_path,
+        classes: "hover:cursor-pointer text-t6! py-3 px-6 font-bold!"
+      ) %>
+    <% end %>
   <% end %>
 </div>

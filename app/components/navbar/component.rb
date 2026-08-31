@@ -90,6 +90,13 @@ module Navbar
       helpers.icon("menu", size: 18)
     end
 
+    # The trigger's only child is an SVG, and every icon carries aria-hidden, so
+    # without this the button has no accessible name at all — and below lg it is
+    # the only route to the nav, the cart and the booking CTA.
+    def mobile_menu_label
+      I18n.t("nav.menu")
+    end
+
     def show_mobile_menu?
       @show_mobile_menu
     end

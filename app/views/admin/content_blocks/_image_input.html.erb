@@ -21,9 +21,9 @@
     <% if attached %>
       <%# a thumbnail, so it is obvious which picture is about to be replaced %>
       <%= image_tag block.image.variant(resize_to_limit: [ 240, 240 ]),
-                    class: "w-28 h-28 rounded-lg border border-border-input object-cover" %>
+                    class: "w-28 h-28 rounded-lg border border-border-strong object-cover" %>
     <% else %>
-      <div class="w-28 h-28 rounded-lg border border-dashed border-border-input flex items-center justify-center text-t6 text-taupe-dark text-center px-2">
+      <div class="w-28 h-28 rounded-lg border border-dashed border-border-strong flex items-center justify-center text-t6 text-taupe-dark text-center px-2">
         Brak zdjęcia
       </div>
     <% end %>
