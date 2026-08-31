@@ -1,11 +1,11 @@
+<% content_for :title, page_title(t("nav.terms")) %>
 <%# Copy comes from the CMS (config/content_blocks.yml + /admin/content_blocks).
     Narrower than the prose pages: this is a single column of legal text, so it
     follows the design's 800px rather than the 1000px "O mnie" uses. %>
 <div class="flex flex-col items-center w-full">
   <%= render Section::Component.new(
     background: :ink,
-    align: :left,
-    bordered: false
+    align: :left
   ) do |section| %>
     <div class="max-w-[800px] mx-auto w-full">
       <h1 class="font-display font-bold text-t2 text-cream text-center mb-8">

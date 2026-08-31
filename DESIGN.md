@@ -258,7 +258,8 @@ is meant to look technical.
   Headline. Lighter than body on purpose; it is read at a glance, not studied.
 - **Body** (Quicksand, 500, 16px / 1.6): All reading copy. Medium rather than regular,
   because 400-weight Quicksand on a dark ground goes thin. Constrain long-form measure
-  to roughly 65–75ch — the about page uses 1.75 line-height for exactly this.
+  to roughly 65–75ch. Long-form prose (the about page) applies `--leading-copy`
+  (1.75) through the `trix-lead` / `trix-copy` modifiers on a rich-text container.
 - **Label** (Quicksand, 700, 14px / 1.4, +0.02em): Micro-labels, footer links, button
   text, and the uppercase eyebrows on cards ("Dla kogo", "Co otrzymujecie").
 

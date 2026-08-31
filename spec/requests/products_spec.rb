@@ -207,7 +207,12 @@ RSpec.describe "Products", type: :request do
 
         get product_path(product)
 
-        expect(response.body.scan("Główny").size).to eq(1)
+        # scoped to the section rather than counting the name across the whole
+        # page: the product legitimately names itself in the heading and again in
+        # <title>, so a body-wide count measures the wrong thing
+        also = response.body[/Inne materiały.*/m]
+        expect(also).to include("Inny")
+        expect(also).not_to include("Główny")
       end
 
       it "leaves the section out when there is nothing else to show" do

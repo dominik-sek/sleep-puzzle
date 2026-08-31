@@ -1,3 +1,4 @@
+<% content_for :title, page_title(t("nav.contact")) %>
 <%# Copy comes from the CMS (config/content_blocks.yml + /admin/content_blocks),
     including the link tiles, so the owner can retire a podcast or point the
     terms tile somewhere real without a deploy. %>
@@ -7,8 +8,7 @@
 <div class="flex flex-col items-center w-full">
   <%= render Section::Component.new(
     background: :ink,
-    align: :center,
-    bordered: false
+    align: :center
   ) do |section| %>
     <div class="flex flex-col gap-3 items-center">
       <h1 class="text-t2 font-display font-bold text-cream">

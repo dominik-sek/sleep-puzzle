@@ -37,12 +37,15 @@ RSpec.describe "About", type: :request do
       expect(response.body).to include(bookings_path)
     end
 
-    # nothing uploaded yet is the normal state on a fresh deploy, and an empty
-    # frame beats a broken <img>
-    it "leaves an empty frame where the photo will go" do
+    # nothing uploaded yet is the normal state on a fresh deploy, and on a phone
+    # this slot is the first thing on the page. A dashed frame read as an
+    # invisible empty square, so the mascot stands in until there is a portrait.
+    it "stands the mascot in where the photo will go" do
       get about_path
 
-      expect(response.body).to include("border-dashed")
+      # the footer renders the same mascot, so match the portrait slot itself
+      expect(response.body).to include("aspect-square object-contain rounded-2xl")
+      expect(response.body).not_to include("border-dashed")
     end
 
     it "renders the uploaded photo once there is one" do
@@ -52,7 +55,7 @@ RSpec.describe "About", type: :request do
 
       get about_path
 
-      expect(response.body).not_to include("border-dashed")
+      expect(response.body).not_to include("aspect-square object-contain rounded-2xl")
     end
 
     it "renders the English copy under the English locale" do

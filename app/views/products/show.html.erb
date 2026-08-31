@@ -1,3 +1,4 @@
+<% content_for :title, page_title(@product.name) %>
 <%# The design's Produkt screen: a big icon panel beside the buy column, then the
     prose and the "co dostajesz" bullets, then three other products.
 
@@ -7,8 +8,7 @@
 <div class="min-h-screen flex flex-col items-center">
   <%= render Section::Component.new(
     background: :ink,
-    align: :left,
-    bordered: false
+    align: :left
   ) do |section| %>
     <div class="max-w-[1080px] mx-auto w-full">
       <%= link_to products_path, class: "text-t6 font-bold text-accent no-underline hover:text-accent-hover" do %>
@@ -78,7 +78,9 @@
               <ul class="flex flex-col gap-3 list-none p-0 m-0">
                 <% @product.includes.each do |item| %>
                   <li class="flex items-start gap-3">
-                    <span class="text-[15px] font-extrabold leading-[1.5] text-accent shrink-0" aria-hidden="true">✦</span>
+                    <%# the system's own mark, not a font glyph: U+2726 sits outside both
+                        self-hosted subsets and renders from the OS fallback %>
+                    <%= icon "astroid", class: "size-4 shrink-0 mt-1 text-accent" %>
                     <span class="text-[15.5px] leading-[1.55] text-cream"><%= item %></span>
                   </li>
                 <% end %>

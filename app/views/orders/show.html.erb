@@ -1,11 +1,11 @@
+<% content_for :title, page_title(t("nav.cart")) %>
 <%# Where Paddle sends the buyer once payment goes through. The order is still
     pending at this point more often than not — the webhook is what flips it — so
     the page says which of the two it is rather than claiming success outright. %>
 <div class="min-h-screen flex flex-col items-center">
   <%= render Section::Component.new(
     background: :ink,
-    align: :center,
-    bordered: false
+    align: :center
   ) do |section| %>
     <div class="max-w-[640px] mx-auto w-full rounded-3xl border border-border-strong bg-surface p-8 sm:p-14 text-center">
       <div class="text-5xl mb-5" aria-hidden="true">🎉</div>

@@ -60,7 +60,7 @@ home:
           label: Treść
           type: rich
           default:
-            pl: "<div>„Piasek jest fajny — na plaży. Nie pod powiekami” :) Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą.</div>"
+            pl: "<div>Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą.</div>"
         cta_label:
           label: Przycisk — tekst
           type: plain
@@ -356,6 +356,12 @@ about:
           default:
             pl: "Certyfikaty i kwalifikacje"
             en: "Certifications & qualifications"
+        lead:
+          label: Zdanie nad listą (doświadczenie)
+          type: plain
+          default:
+            pl: "Ponad 20 lat wspierania dzieci i rodziców"
+            en: "Over 20 years supporting children and parents"
       collection:
         item_label: Certyfikat
         fields:
@@ -381,6 +387,45 @@ about:
           default:
             pl: "Umów konsultację"
             en: "Book a consultation"
+        reassurance:
+          label: Uspokojenie pod przyciskiem
+          type: plain
+          default:
+            pl: "Najpierw logowanie, potem wybór terminu — wrócisz dokładnie tutaj."
+            en: "Sign in first, then pick a time — you will come back to exactly this point."
+    closing:
+      label: Zakończenie
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Jeszcze nie teraz?"
+            en: "Not just yet?"
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Napisz do mnie, kiedy zechcesz — albo zacznij po swojemu, w swoim tempie."
+            en: "Write to me whenever you like — or start on your own, at your own pace."
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Napisz do mnie"
+            en: "Write to me"
+        shop_lead:
+          label: Tekst przed odnośnikiem do sklepu
+          type: plain
+          default:
+            pl: "Wolisz zacząć sama?"
+            en: "Prefer to start on your own?"
+        shop_link:
+          label: Odnośnik do sklepu
+          type: plain
+          default:
+            pl: "Posłuchaj audioprocesów i bajek"
+            en: "Listen to the audio and bedtime stories"
 bookings:
   label: Kalendarz konsultacji
   sections:

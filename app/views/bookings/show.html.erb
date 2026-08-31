@@ -1,3 +1,4 @@
+<% content_for :title, page_title(@booking.package.name) %>
 <%= render Container::Component.new(classes: "flex flex-col gap-6 items-center justify-center") do %>
   <%# the webhook usually lands a moment after Paddle redirects here, so the status
       partial is swapped in over a stream instead of making the buyer refresh %>

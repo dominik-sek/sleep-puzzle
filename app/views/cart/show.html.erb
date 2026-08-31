@@ -1,9 +1,9 @@
+<% content_for :title, page_title(t("nav.cart")) %>
 <%# The design's Koszyk: one narrow column, 800px, centred title. %>
 <div class="min-h-screen flex flex-col items-center">
   <%= render Section::Component.new(
     background: :ink,
-    align: :left,
-    bordered: false
+    align: :left
   ) do |section| %>
     <div class="max-w-[800px] mx-auto w-full">
       <h1 class="text-t2 font-display font-bold text-cream text-center mb-9">

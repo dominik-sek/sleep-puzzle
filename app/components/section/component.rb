@@ -13,24 +13,20 @@ module Section
     renders_one :actions
 
     def initialize(background: :ink,
-                   bordered: true,
                    width: :wide,
                    title: nil,
                    subtitle: nil,
                    align: :center,
                    padding: :default,
-                   heading_level: :h2,
-                   classes: []
+                   heading_level: :h2
                    )
       @background = background
-      @bordered = bordered
       @width = width
       @title = title
       @subtitle = subtitle
       @align = align
       @padding = padding
       @heading_level = HEADING_LEVELS.include?(heading_level) ? heading_level : :h2
-      @classes = classes
     end
 
     def wrapper_classes
@@ -50,6 +46,9 @@ module Section
       end
     end
 
+    # Derived from the background rather than passed in: only the alternating
+    # ink_soft band is edged, and it always is. There is no call site that wants
+    # an ink band with rules or a soft band without them.
     def border_classes
       case @background
       when :ink_soft then "border border-x-0 border-border-strong"

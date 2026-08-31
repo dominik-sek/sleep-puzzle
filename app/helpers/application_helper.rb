@@ -22,6 +22,13 @@ module ApplicationHelper
     content_tag(:svg, icon_markup(name), ICON_ATTRS.merge(options))
   end
 
+  # Every public page sets its own <title>; the layout's bare "Sleep Puzzle"
+  # fallback made every tab, bookmark and share preview identical. The suffix
+  # lives here so it is written once rather than in a dozen views.
+  def page_title(label)
+    "#{label} — Sleep Puzzle"
+  end
+
   # Renders an editable block from the CMS by its key. Blocks are loaded once per
   # request and memoised, so a page using several of them still costs one query
   # rather than one each.

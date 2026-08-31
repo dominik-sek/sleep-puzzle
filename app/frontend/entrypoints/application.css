@@ -607,6 +607,21 @@ trix-editor:empty:not(:focus)::before {
   @apply text-t5 text-tan;
 }
 
+/* A rich block renders its own .trix-content wrapper, and that wrapper's own
+   colour beats anything set on the parent — so `text-cream` on the container
+   around a lead paragraph was silently doing nothing, and lead and body came out
+   identical. These modifiers go on the container; the child is what they style.
+   --leading-copy (1.75) finally has a caller: it was declared for long-form
+   about-page prose and applied nowhere. */
+.trix-lead .trix-content {
+  @apply text-t4 text-cream;
+  line-height: var(--leading-copy);
+}
+
+.trix-copy .trix-content {
+  line-height: var(--leading-copy);
+}
+
 .trix-content h1 {
   @apply mb-4 font-display text-t2 text-cream;
 }

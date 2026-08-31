@@ -1,3 +1,4 @@
+<% content_for :title, page_title(t("nav.my_account")) %>
 <%# The design's Moje konto: the library, the upcoming consultation and account
     settings, each with an empty state.
 
@@ -7,8 +8,7 @@
 <div class="min-h-screen flex flex-col items-center">
   <%= render Section::Component.new(
     background: :ink,
-    align: :left,
-    bordered: false
+    align: :left
   ) do |section| %>
     <div class="max-w-[1000px] mx-auto w-full">
       <div class="mb-10 flex flex-wrap items-center justify-between gap-3.5">

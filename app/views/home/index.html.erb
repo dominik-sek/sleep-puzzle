@@ -1,10 +1,11 @@
+<% content_for :title, page_title(content_block("home.hero.title")) %>
 <%# Copy comes from the CMS (config/content_blocks.yml + /admin/content_blocks).
     Each block falls back to its declared default, so this page renders complete
     even against an empty database. %>
 <%# overflow-x-clip: the hero's radial glow is a fixed 24rem circle centred on a
     mascot in a much narrower box, so on a small phone it reaches past the
     viewport and drags a horizontal scrollbar with it. Clipped here rather than on
-    the section because Section::Component ignores its own `classes:` argument.
+    the section because Section::Component takes no class argument of its own.
     This wrapper is full width, so the only thing clipped is already off-screen,
     and unlike overflow-hidden this does not create a scroll container. %>
 <div class="min-h-screen flex flex-col items-center justify-center overflow-x-clip">
@@ -16,9 +17,7 @@
     subtitle: content_block("home.hero.subtitle"),
     heading_level: :h1,
     align: :left,
-    background: :ink,
-    bordered: false,
-    classes: "flex justify-center! items-center!"
+    background: :ink
   ) do |section| %>
     <div class="w-80 max-w-[70%] relative flex items-center justify-center">
       <%# decorative: the wordmark it carries is already real text in the navbar %>
@@ -65,8 +64,7 @@
 
   <%= render Section::Component.new(
     background: :ink,
-    align: :left,
-    bordered: false
+    align: :left
   ) do |section| %>
     <div class="flex flex-col md:flex-row w-full gap-6 md:items-center">
       <%# full width stacked, the same treatment as the about page — at w-1/4 on a
@@ -84,7 +82,10 @@
         <h2 class="text-accent font-display text-t2"><%= content_block("home.about.title") %></h2>
 
         <%# divs, not spans: rich text renders a block-level trix-content wrapper %>
-        <div class="text-cream md:max-w-3/4">
+        <%# trix-lead, not text-cream: the rich block renders its own
+            .trix-content wrapper whose colour beats the parent's, so text-cream
+            here was doing nothing and the lead read as body %>
+        <div class="trix-lead md:max-w-3/4">
           <%= content_block("home.about.lead") %>
         </div>
         <div class="text-tan md:max-w-3/4">
@@ -106,8 +107,7 @@
 
   <%= render Section::Component.new(
     align: :center,
-    background: :ink_soft,
-    bordered: false
+    background: :ink_soft
   ) do |section| %>
     <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.packages.title") %></h2>
     <span class="text-tan md:max-w-3/4"><%= content_block("home.packages.subtitle") %></span>
@@ -150,8 +150,7 @@
 
   <%= render Section::Component.new(
     align: :center,
-    background: :ink,
-    bordered: false
+    background: :ink
   ) do |section| %>
     <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.process.title") %></h2>
 
@@ -173,8 +172,7 @@
 
   <%= render Section::Component.new(
     align: :left,
-    background: :ink_soft,
-    bordered: false
+    background: :ink_soft
   ) do |section| %>
     <div class="flex flex-col md:flex-row gap-6">
       <div class="flex flex-col gap-6 w-full md:w-1/2">
@@ -229,8 +227,7 @@
       sections above. %>
   <%= render Section::Component.new(
     align: :center,
-    background: :ink,
-    bordered: false
+    background: :ink
   ) do |section| %>
     <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.newsletter.title") %></h2>
     <%# narrower than the section so the line breaks near the middle rather than
@@ -248,8 +245,7 @@
       shop CTA one section up already holds the lamp. %>
   <%= render Section::Component.new(
     align: :center,
-    background: :ink_soft,
-    bordered: false
+    background: :ink_soft
   ) do |section| %>
     <blockquote class="font-display font-bold text-t2 text-accent max-w-2xl m-0">
       <%= content_block("home.closing.quote") %>
