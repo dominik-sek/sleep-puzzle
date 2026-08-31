@@ -3,12 +3,36 @@
      data-cally-available-dates-value="<%= available_dates %>"
      data-cally-no-slots-label-value="<%= t("bookings.available_slots", count: 0) %>"
      data-cally-locale-value="<%= I18n.locale %>"
+     data-cally-slot-length-value="<%= t("bookings.slot_length") %>"
      data-action="paddle:completed@window->cally#lock pageshow@window->cally#unlock">
   <%# spans the grid rather than sitting in a column: it explains both halves at
       once, and without it a calendar with every slot disabled just reads as
       "fully booked for two months" %>
-  <% if unavailable %>
-    <div role="status" class="md:col-span-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-t6 font-normal leading-relaxed text-amber-200">
+  <%# Where the abandon verdict lands. It used to be delivered only as an
+      auto-dismissing toast — and "nothing was charged" is the one sentence a
+      frightened person most needs to be able to re-read. Empty on a normal load. %>
+  <div id="booking_notice" class="md:col-span-2 empty:hidden"></div>
+
+  <%# Two different nothings. `unavailable` is "we could not read the calendar, so
+      we are refusing to guess"; this one is "we read it fine and she is genuinely
+      booked out for the next two months". Only the first had a state — the second
+      rendered a fully-ghosted grid and a "pick a day" prompt that could never be
+      satisfied, with no explanation and nowhere to go. %>
+  <% if !local_assigns[:unavailable] && local_assigns[:no_slots] %>
+    <div role="status" class="md:col-span-2 flex flex-col items-start gap-4 rounded-2xl border border-border-input bg-surface px-5 py-4">
+      <p class="text-t5 text-tan m-0"><%= t("bookings.calendar.no_slots") %></p>
+      <%= render Buttons::Component.new(
+        text: t("bookings.calendar.no_slots_cta"),
+        href: contact_path,
+        pill: true,
+        variant: :secondary,
+        classes: "hover:cursor-pointer text-t6! font-bold! py-4 px-6"
+      ) %>
+    </div>
+  <% end %>
+
+  <% if local_assigns[:unavailable] %>
+    <div role="status" class="md:col-span-2 rounded-2xl border border-border-input bg-surface px-4 py-3 text-t6 leading-relaxed text-cream">
       <%= t("bookings.calendar.unavailable") %>
     </div>
   <% end %>
@@ -57,7 +81,12 @@
         <%# starts hidden — cally_controller reveals it once a day is picked %>
         <%# stacked until lg: the card is half the grid from md up, so a row only
             has room for both the date and the count on a real desktop %>
-        <div data-cally-target="hoursHeader" hidden class="flex flex-col gap-1 mb-4 lg:flex-row lg:items-baseline lg:justify-between lg:gap-4">
+        <%# tabindex="-1" so the controller can move focus here after a day is
+            picked; role=status so the same move speaks the date and the count to
+            a screen reader, which previously got nothing at all %>
+        <div data-cally-target="hoursHeader" hidden tabindex="-1"
+             role="status" aria-live="polite"
+             class="flex flex-col gap-1 mb-4 scroll-mt-24 focus:outline-none lg:flex-row lg:items-baseline lg:justify-between lg:gap-4">
           <h2 class="font-display text-t4"><%= t("bookings.calendar.available_hours") %> - <span data-cally-target="heading"></span></h2>
           <span class="text-t6 text-taupe whitespace-nowrap" data-cally-target="availableCount"></span>
         </div>
@@ -68,7 +97,7 @@
 
         <% availability[:dates].each do |date| %>
           <% available_count = date[:hours].count { |hour| hour[:available] } %>
-          <div data-cally-target="hoursPanel" data-date="<%= date[:date] %>" data-available-label="<%= t("bookings.available_slots", count: available_count) %>" hidden class="grid grid-cols-3 gap-4">
+          <div data-cally-target="hoursPanel" data-date="<%= date[:date] %>" data-timezone="<%= date[:zone] %>" data-available-label="<%= t("bookings.available_slots", count: available_count) %>" hidden class="grid grid-cols-3 gap-4">
             <% date[:hours].each do |hour| %>
               <%= render Buttons::Component.new(
                 text: hour[:hour],

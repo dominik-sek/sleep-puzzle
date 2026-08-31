@@ -34,19 +34,37 @@ class BookingsController < ApplicationController
       status: :pending,
     )
 
+    # Priceable first, and before anything is written. A package Paddle cannot
+    # price is a package we cannot sell — the shop and the packages page both
+    # enforce that by withholding the buy control, and this surface used to be
+    # the one place the rule was dropped.
+    if @booking.package && !package_priceable?(@booking.package)
+      @booking.errors.add(:package_id, :unpriceable)
+      return render partial: "form",
+                    locals: { booking: @booking, package_options: @package_options,
+                              submitted_date: booking_params[:date], submitted_hour: booking_params[:hour] },
+                    status: :unprocessable_entity
+    end
+
     if @booking.save
-      BookingCalendarService.call(booking: @booking).create
-      # held as pending until paddle_billing.transaction.completed arrives; see config/initializers/pay.rb
+      # The checkout payload needs the persisted id and the booking's own URL, so
+      # it cannot be prepared before the save. What it can do is come before the
+      # calendar hold: a slot is only taken off the public calendar once there is
+      # something to pay with. If Paddle fails here the row is removed again, so
+      # no orphan pending booking sits in the buyer's dashboard for an hour.
       @checkout = checkout_for(@booking)
+
+      if @checkout
+        BookingCalendarService.call(booking: @booking).create
+        flash.now[:notice] = booking_message("reserved")
+      else
+        @booking.destroy!
+        flash.now[:alert] = booking_message("checkout_failed")
+      end
+
       load_availability
       # reset to a blank form so the refreshed calendar is ready for another booking
       @booking = Booking.new(name: current_user.full_name, email: current_user.email)
-
-      if @checkout
-        flash.now[:notice] = "Termin wstępnie zarezerwowany. Dokończ płatność, aby go potwierdzić."
-      else
-        flash.now[:alert] = "Nie udało się otworzyć płatności. Spróbuj ponownie za chwilę."
-      end
 
       respond_to do |format|
         format.turbo_stream
@@ -110,13 +128,13 @@ class BookingsController < ApplicationController
   # "released" are not the same thing.
   def abandon_notice(cleared:, payment:)
     if payment.paid?
-      [ :notice, "Płatność została zaksięgowana. Za chwilę pokażemy potwierdzenie rezerwacji." ]
+      [ :notice, booking_message("paid") ]
     elsif payment.declined?
-      [ :alert, "Płatność nie powiodła się. Termin nie został zarezerwowany - możesz spróbować ponownie." ]
+      [ :alert, booking_message("declined") ]
     elsif cleared
-      [ :warning, "Rezerwacja została anulowana. Termin jest znów dostępny." ]
+      [ :warning, booking_message("released") ]
     else
-      [ :warning, "Rezerwacja nie została anulowana. Termin zwolni się automatycznie, jeśli płatność nie zostanie pomyślnie przetworzona." ]
+      [ :warning, booking_message("not_released") ]
     end
   end
 
@@ -124,6 +142,19 @@ class BookingsController < ApplicationController
   # incoming webhook to a Pay::Customer by processor_id, and if checkout mints its
   # own anonymous customer instead there is nothing to match and the charge is
   # dropped. Calling api_record creates the Paddle customer and stores its id.
+  # Paddle owns the money, so "can this be sold" is a question only the price
+  # catalogue can answer. nil means archived in Paddle, or Paddle unreachable.
+  def package_priceable?(package)
+    PaddlePriceCatalogService.find(package.paddle_price_id).present?
+  end
+
+  # These are the sentences a buyer reads at the moment money moves, so they
+  # belong to the owner like every other public word — Principle 4. helpers.
+  # reaches the same content_block the views use, defaults and all.
+  def booking_message(key)
+    helpers.content_block("bookings.messages.#{key}")
+  end
+
   def checkout_for(booking)
     {
       items: [ { priceId: booking.package.paddle_price_id, quantity: 1 } ],
@@ -148,9 +179,21 @@ class BookingsController < ApplicationController
     Package.published.where(id: params[:package_id]).pick(:id)
   end
 
+  # data-price carries the already-formatted amount so the summary can update
+  # without a round trip, while PaddlePriceCatalogService stays the only thing
+  # that formats money. data-duration likewise: the buyer was never told a
+  # consultation is 90 minutes.
   def load_package_options
     @package_options = Package.published.ordered.map do |package|
-      [ package.name, package.id, { data: { price_id: package.paddle_price_id } } ]
+      price = PaddlePriceCatalogService.find(package.paddle_price_id)&.formatted_amount
+
+      [ package.name, package.id, {
+        data: {
+          price_id: package.paddle_price_id,
+          price: price,
+          duration: package.duration ? t("packages.duration", count: package.duration) : nil
+        }
+      } ]
     end
   end
 
@@ -161,9 +204,15 @@ class BookingsController < ApplicationController
     @availability = build_availability(available_blocks)
 
     # get the dates that have at least one available slot
-    @available_dates = @availability[:dates].filter_map { |date|
+    open_dates = @availability[:dates].filter_map { |date|
       date[:date] if date[:hours].any? { |hour| hour[:available] }
-    }.to_json
+    }
+
+    # the view needs the boolean as well as the payload: @available_dates is JSON
+    # for the calendar element, and "[]" is not blank, so the empty case cannot be
+    # read off it without parsing it back
+    @no_slots = open_dates.empty?
+    @available_dates = open_dates.to_json
   rescue GoogleCalendarService::NotConnected, Google::Apis::Error => e
     # No calendar means no way to know what the owner is already busy with, and
     # this page used to 500 outright rather than say so. Every slot is rendered
@@ -175,6 +224,7 @@ class BookingsController < ApplicationController
 
     @calendar_unavailable = true
     @availability = build_availability([])
+    @no_slots = false # unreadable is a different nothing; that banner owns it
     @available_dates = [].to_json
   end
 
@@ -197,12 +247,14 @@ class BookingsController < ApplicationController
       windows = SlotComparatorService::WEEKLY_SCHEDULE[date.wday]
       next if windows.blank?
 
-      hours = windows.map do |starts_at, _ends_at|
-        slot_start = Time.zone.parse("#{date} #{starts_at}")
+      slot_starts = windows.map { |starts_at, _ends_at| Time.zone.parse("#{date} #{starts_at}") }
+
+      hours = windows.zip(slot_starts).map do |(starts_at, _ends_at), slot_start|
         { hour: starts_at, available: available_starts.include?(slot_start) }
       end
 
-      { date: date.iso8601, hours: hours }
+      # the offset is this date's own, not the page's — see BookingsHelper
+      { date: date.iso8601, hours: hours, zone: helpers.booking_timezone_label(slot_starts.first) }
     end
 
     { from: schedule_dates.first.iso8601, to: schedule_dates.last.iso8601, dates: dates }

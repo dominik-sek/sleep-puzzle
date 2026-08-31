@@ -429,6 +429,45 @@ about:
 bookings:
   label: Kalendarz konsultacji
   sections:
+    messages:
+      label: Komunikaty przy płatności
+      fields:
+        reserved:
+          label: Po wysłaniu formularza
+          type: plain
+          default:
+            pl: "Termin wstępnie zarezerwowany. Dokończ płatność, aby go potwierdzić."
+            en: "The slot is held. Finish the payment to confirm it."
+        checkout_failed:
+          label: Gdy nie da się otworzyć płatności
+          type: plain
+          default:
+            pl: "Nie udało się otworzyć płatności. Spróbuj ponownie za chwilę."
+            en: "The payment could not be opened. Please try again in a moment."
+        paid:
+          label: Płatność się powiodła
+          type: plain
+          default:
+            pl: "Płatność została zaksięgowana. Za chwilę pokażemy potwierdzenie rezerwacji."
+            en: "The payment went through. We will show your confirmation in a moment."
+        declined:
+          label: Płatność odrzucona
+          type: plain
+          default:
+            pl: "Płatność nie powiodła się. Termin nie został zarezerwowany — możesz spróbować ponownie."
+            en: "The payment did not go through. The slot was not booked — you can try again."
+        released:
+          label: Rezerwacja anulowana, termin zwolniony
+          type: plain
+          default:
+            pl: "Rezerwacja została anulowana. Nie pobraliśmy żadnej opłaty, a termin jest znów dostępny."
+            en: "The booking was cancelled. Nothing was charged, and the slot is free again."
+        not_released:
+          label: Rezerwacja nieanulowana
+          type: plain
+          default:
+            pl: "Rezerwacja nie została anulowana. Termin zwolni się automatycznie, jeśli płatność nie zostanie dokończona."
+            en: "The booking was not cancelled. The slot frees itself automatically if the payment is not completed."
     hero:
       label: Sekcja główna
       fields:

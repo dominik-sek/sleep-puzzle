@@ -3,7 +3,7 @@
 <% end %>
 
 <%= turbo_stream.replace "availability" do %>
-  <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking, package_options: @package_options, unavailable: @calendar_unavailable %>
+  <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking, package_options: @package_options, no_slots: @no_slots, unavailable: @calendar_unavailable %>
 <% end %>
 
 <%# replacing the div reconnects the stimulus controller, which opens the checkout overlay %>

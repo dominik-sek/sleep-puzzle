@@ -10,8 +10,10 @@ import "dayjs/locale/en";
 // server renders onto the element.
 
 export default class extends Controller {
-    static targets = ["calendarDate", "calendarMonth", "heading", "monthHeading", "hoursHeader", "emptyState", "hoursPanel", "availableCount", "slotForm", "dateField", "timeField", "bookingFrame", "overlay"]
+    static targets = ["calendarDate", "calendarMonth", "heading", "monthHeading", "hoursHeader", "emptyState", "hoursPanel", "availableCount", "slotForm", "dateField", "timeField", "bookingFrame", "overlay",
+                      "summary", "summaryPackage", "summarySlot", "summaryPrice", "summaryDuration"]
     static values = {
+        slotLength: String,
         availableDates: Array,
         noSlotsLabel: String,
         // rendered by the server with the page, so it is right on a Turbo
@@ -20,20 +22,22 @@ export default class extends Controller {
     }
 
     connect() {
+        // first, before anything that touches the calendar element: this is the
+        // only copy of the buy form and resetForm() writes it back on every slot
+        // change, so a throw above it used to blank the form on the first click.
+        this.pristineFormHTML = this.bookingFrameTarget.innerHTML
         this.setCalendarDefaults()
         this.setDisallowedDates()
         this.selectedDate = this.calendarDateTarget.value || null
         this.selectedTime = null
         this.showHoursFor(this.selectedDate)
         this.updateHeading()
-        this.updateMonthHeading(this.calendarDateTarget.focusedDate || this.selectedDate || this.today)
-        this.pristineFormHTML = this.bookingFrameTarget.innerHTML
+        this.updateMonthHeading(this.selectedDate || this.initialFocusedDate)
     }
     // All dates are expected in ISO-8601 format (YYYY-MM-DD).
     setCalendarDefaults(){
         const now = dayjs();
         let todayFormatted = now.format('YYYY-MM-DD')
-        //todo: change the value to actually take the earliest available date from the API instead of simply TODAY
         let twoMonthsFromNow = now.add(2, 'month')
         let twoMonthsFromNowFormatted = twoMonthsFromNow.format('YYYY-MM-DD')
 
@@ -42,6 +46,16 @@ export default class extends Controller {
         // panel shows a prompt instead of today's slots
         this.calendarDateTarget.min = todayFormatted // earliest date to be selected
         this.calendarDateTarget.max = twoMonthsFromNowFormatted // latest ^
+
+        // Open on the first month that actually has something in it, so the last
+        // days of a month don't render as a wall of ghosts with one live day and
+        // read as fully booked. focusedDate only moves the view; nothing is
+        // selected, so the hours panel still waits for a real choice.
+        //
+        // It is a String prop ("YYYY-MM-DD") and atomico throws on a type
+        // mismatch rather than coercing, so a Date here kills the whole connect().
+        this.initialFocusedDate = this.availableDatesValue[0] || this.today
+        this.calendarDateTarget.focusedDate = this.initialFocusedDate
         // both the month heading we format ourselves and cally's own month and
         // weekday names, so the widget agrees with the page it is on
         dayjs.locale(this.localeValue)
@@ -53,7 +67,7 @@ export default class extends Controller {
         this.selectedDate = event.target.value
         this.selectedTime = null
         this.clearSelectedTimeButton()
-        this.showHoursFor(this.selectedDate)
+        this.showHoursFor(this.selectedDate, { reveal: true })
         this.updateHeading()
         this.slotFormTarget.hidden = true
     }
@@ -71,24 +85,50 @@ export default class extends Controller {
         })
     }
 
-    showHoursFor(date) {
+    showHoursFor(date, { reveal = false } = {}) {
         this.emptyStateTarget.hidden = Boolean(date)
         this.hoursHeaderTarget.hidden = !date
 
         let label = this.noSlotsLabelValue
+        // the offset comes off the day, not the page: a two-month window can
+        // straddle the DST change, so the two halves of it are on different ones
+        this.selectedTimezone = null
         this.hoursPanelTargets.forEach((panel) => {
             const isSelected = Boolean(date) && panel.dataset.date === date
             panel.hidden = !isSelected
-            if (isSelected) label = panel.dataset.availableLabel
+            if (isSelected) {
+                label = panel.dataset.availableLabel
+                this.selectedTimezone = panel.dataset.timezone
+            }
         })
         this.availableCountTarget.textContent = label
+
+        if (reveal && date) this.revealHours()
+    }
+
+    // Below md the hours sit under a full month grid — measured at ~560px, the
+    // calendar's bottom is 240px past the fold. Picking a day changed nothing the
+    // visitor could see and announced nothing, so the pivot of the whole task read
+    // as "the page ignored me". The header is a live region (see _calendar), so
+    // moving focus to it also speaks the date and the count.
+    revealHours() {
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+        this.hoursHeaderTarget.scrollIntoView({
+            block: "nearest",
+            behavior: reduced ? "auto" : "smooth"
+        })
+        this.hoursHeaderTarget.focus({ preventScroll: true })
     }
 
     updateHeading() {
         // the whole header is hidden while nothing is selected, so there's nothing to format
         if (!this.selectedDate) return
 
-        this.headingTarget.textContent = dayjs(this.selectedDate).format('D MMMM YYYY')
+        // .locale() on the instance, not the global set in setCalendarDefaults:
+        // the global was not sticking and this rendered "31 August 2026" on the
+        // Polish page. The summary formats the same way for the same reason.
+        this.headingTarget.textContent = this.formatSlotDate(this.selectedDate)
     }
 
     // cally fires `focusday` whenever the visible page changes (arrows, keyboard, selection),
@@ -115,7 +155,10 @@ export default class extends Controller {
             ? dayjs(new Date(date.getUTCFullYear(), date.getUTCMonth(), 1))
             : dayjs(date)
 
-        const label = day.format('MMMM YYYY')
+        // same instance-locale fix as the hours header: the global dayjs.locale()
+        // set in setCalendarDefaults was not sticking, so the month above a
+        // Polish calendar rendered in English
+        const label = day.locale(this.localeValue).format('MMMM YYYY')
         // dayjs' Polish month names are lowercase and this reads as a title. English
         // ones are already capitalised, so this is a no-op there.
         this.monthHeadingTarget.textContent = label.charAt(0).toUpperCase() + label.slice(1)
@@ -135,9 +178,80 @@ export default class extends Controller {
         this.dateFieldTarget.value = this.selectedDate
         this.timeFieldTarget.value = this.selectedTime
         this.slotFormTarget.hidden = false
+        this.bindPackageSelect()
+        this.updateSummary()
+    }
+
+    // The form is re-rendered from pristine HTML on every slot change, so the
+    // listener has to be attached each time rather than once on connect.
+    bindPackageSelect() {
+        const select = this.packageSelect
+        if (!select) return
+
+        select.addEventListener("change", () => this.updateSummary())
+    }
+
+    get packageSelect() {
+        return this.element.querySelector("select[name='booking[package_id]']")
+    }
+
+    // Restates what is being bought at the moment of commitment: the package, the
+    // slot already chosen above, and the price. The amount is read from the
+    // option's own data-price, which the server formatted — no round trip, and
+    // PaddlePriceCatalogService stays the only thing that formats money.
+    //
+    // A package the catalogue could not price carries no data-price. That is the
+    // same signal the server guards on, so the submit is disabled here rather
+    // than letting the buyer discover it after a booking row exists.
+    updateSummary() {
+        if (!this.hasSummaryTarget) return
+
+        const select = this.packageSelect
+        const option = select?.selectedOptions?.[0]
+        const price = option?.dataset?.price
+        const chosen = Boolean(option?.value)
+
+        this.summaryTarget.hidden = !chosen
+        if (!chosen) return this.setSubmitDisabled(false)
+
+        this.summaryPackageTarget.textContent = option.textContent.trim()
+
+        // the appointment: a human date, the time, and which clock it is on. The
+        // page never stated a timezone, which for an /en visitor booking against
+        // a real person's calendar is a missed consultation waiting to happen.
+        this.summarySlotTarget.textContent = [
+            this.formatSlotDate(this.selectedDate),
+            this.selectedTime,
+            this.selectedTimezone
+        ].filter(Boolean).join(" · ")
+
+        // the package's support window is a different fact from the length of
+        // the call, so it gets its own line rather than sitting in the slot
+        this.summaryDurationTarget.textContent = [ this.slotLengthValue, option.dataset.duration ]
+            .filter(Boolean).join(" · ")
+
+        this.summaryPriceTarget.textContent = price || ""
+
+        // no readable price means nothing can be charged for it
+        this.setSubmitDisabled(!price)
+    }
+
+    formatSlotDate(iso) {
+        if (!iso) return ""
+
+        return dayjs(iso).locale(this.localeValue).format("D MMMM YYYY")
+    }
+
+    setSubmitDisabled(disabled) {
+        const submit = this.element.querySelector("#booking_form button[type='submit']")
+        if (submit) submit.disabled = disabled
     }
 
     resetForm() {
+        // never blank the form over a missing snapshot — an empty buy form at the
+        // point of payment is worse than a stale one
+        if (typeof this.pristineFormHTML !== "string") return
+
         this.bookingFrameTarget.innerHTML = this.pristineFormHTML
     }
 

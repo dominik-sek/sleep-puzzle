@@ -3,10 +3,18 @@
 <% end %>
 
 <%= turbo_stream.replace "availability" do %>
-  <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking, package_options: @package_options %>
+  <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking, package_options: @package_options, unavailable: @calendar_unavailable, no_slots: @no_slots %>
 <% end %>
 
 <%# drops the spent controller, so the next booking's stream connects a fresh one %>
 <%= turbo_stream.replace "paddle_checkout" do %>
   <%= render "shared/paddle_checkout", checkout: nil %>
+<% end %>
+
+<%# the verdict, kept on the page rather than only in a toast that self-destructs %>
+<%= turbo_stream.replace "booking_notice" do %>
+  <div id="booking_notice" class="md:col-span-2" role="status">
+    <%= render Alert::Component.new(title: flash.now[:warning] || flash.now[:alert] || flash.now[:notice],
+                                    tone: flash.now[:alert] ? :error : :warning) %>
+  </div>
 <% end %>

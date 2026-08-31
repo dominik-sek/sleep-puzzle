@@ -488,8 +488,18 @@ calendar-month{
   &::part(week){
     @apply text-t2
   }
+  /* Was taupe-dark — 2.09:1 on ink, and forty of these carry the page's primary
+     information: which days exist at all. Inactive controls are exempt from
+     1.4.3, but PRODUCT.md makes contrast a correctness requirement here, so this
+     is lifted to a legible step rather than left at the legal minimum. */
   &::part(disallowed){
-    @apply bg-transparent text-taupe-dark
+    @apply bg-transparent text-taupe
+  }
+  /* Today had no rule at all, so it rendered identically to any bookable day. A
+     hairline names it without spending the accent, which belongs to the
+     selected day. */
+  &::part(today){
+    @apply ring-1 ring-inset ring-border-input
   }
   &::part(selected){
     @apply text-ink bg-accent
@@ -522,11 +532,13 @@ calendar-month::part(button):hover:not(:disabled) {
   background-color: color-mix(in oklab, var(--color-accent) 20%, transparent);
 }
 
-/* ::part(disallowed) is how cally marks isDateDisallowed days — no native
-   disabled attribute is set, so :not(:disabled) above never excludes them.
-   :hover:not(:disabled) here matches the generic rule's specificity so this,
-   coming after it in source order, wins the tie and keeps disallowed days
-   transparent on hover instead of picking up the accent tint. */
+/* ::part(disallowed) is how cally marks isDateDisallowed days. NOTE: the
+   original comment here said cally sets no native disabled attribute — that is
+   wrong. Inspected live, every disallowed cell carries disabled="" and
+   aria-disabled="true", so :not(:disabled) above already excludes them and this
+   tie-breaker is probably redundant. Kept rather than deleted because removing
+   it is a hover-state change nobody has verified in a browser; delete it in a
+   pass that can check. */
 calendar-month::part(disallowed):hover:not(:disabled) {
   @apply bg-transparent;
 }

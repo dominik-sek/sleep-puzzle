@@ -21,25 +21,51 @@
     <% end %>
   <% end %>
 
-  <%= render Forms::Component.new(label: t("bookings.form.package"), name: "booking[package]", required: true, error: booking.errors[:package].first) do |c| %>
+  <%# belongs_to :required adds its error to :package, the priceability guard adds
+      to :package_id — the field has to surface either %>
+  <%= render Forms::Component.new(label: t("bookings.form.package"), name: "booking[package_id]", required: true,
+    error: booking.errors[:package].first || booking.errors[:package_id].first) do |c| %>
     <% c.with_input do %>
-      <%= f.select :package_id, package_options, { prompt: true }, { class: "form-control" } %>
+      <%= f.select :package_id, package_options,
+                   { prompt: t("bookings.form.package_prompt") },
+                   { class: "form-control" } %>
     <% end %>
   <% end %>
 </div>
 
   <% if booking.errors[:starts_at].present? %>
-    <p class="text-red-400 text-xs mt-1">Wybierz ponownie termin w kalendarzu.</p>
+    <p class="text-red-400 text-t6 mt-1"><%= t("bookings.form.reselect_slot") %></p>
   <% end %>
 
 
     <%# submits the booking first; bookings#create responds with the stream that opens checkout %>
+    <%# What is actually being bought, restated at the moment of commitment. The
+        buyer used to reach this button having seen no price, no duration and no
+        echo of the slot they picked — four separate visual blocks to reassemble
+        in their head, at 3am, before paying. Filled in by cally_controller from
+        the option's own data and from the slot already chosen above. %>
+    <div data-cally-target="summary" hidden
+         class="mt-5 flex flex-col gap-1.5 rounded-2xl border border-border-input bg-surface px-5 py-4">
+      <span class="text-t6 uppercase text-taupe"><%= t("bookings.form.summary") %></span>
+      <span class="font-display font-bold text-t5 text-cream" data-cally-target="summaryPackage"></span>
+      <%# the appointment itself: date, time, how long it runs, and which clock.
+          Package#duration is the support window in weeks — a different fact, and
+          putting it on this line read as if the consultation lasted a fortnight. %>
+      <span class="text-t6 text-tan" data-cally-target="summarySlot"></span>
+      <span class="text-t6 text-taupe" data-cally-target="summaryDuration"></span>
+      <span class="font-display font-bold text-t3 text-cream tabular-nums" data-cally-target="summaryPrice"></span>
+    </div>
+
+    <%# pill + py-4: every other submit on the site is a pill, and Pill-For-Action
+        makes radius the affordance — the one control the whole site funnels
+        toward was rendered as "read" at 38px %>
     <%= render Buttons::Component.new(
       text: t("bookings.form.submit"),
       type: "submit",
+      pill: true,
       variant: :primary,
       full_width: true,
-      classes: "hover:cursor-pointer mt-4")
+      classes: "hover:cursor-pointer mt-4 py-4 text-t6! font-bold!")
     %>
 
 <% end %>

@@ -43,6 +43,8 @@ pl:
               blank: "nie może być pusta"
         booking:
           attributes:
+            package_id:
+              unpriceable: "Tego pakietu nie da się teraz opłacić. Wybierz inny albo napisz do mnie."
             name:
               blank: "Podaj imię i nazwisko"
             email:
@@ -98,6 +100,8 @@ pl:
       available_hours: "Dostępne godziny"
       pick_a_day: "Wybierz dzień w kalendarzu, aby zobaczyć dostępne godziny."
       unavailable: "Rezerwacja online jest chwilowo niedostępna — nie możemy w tej chwili sprawdzić wolnych terminów. Spróbuj ponownie za jakiś czas albo napisz do nas, a ustalimy termin bezpośrednio."
+      no_slots: "W najbliższych dwóch miesiącach nie ma wolnych terminów. Napisz do mnie — poszukamy czegoś razem."
+      no_slots_cta: "Napisz do mnie"
       previous_month: "Poprzedni miesiąc"
       next_month: "Następny miesiąc"
     summary:
@@ -110,6 +114,10 @@ pl:
       package: "Pakiet"
       starts_at: "Termin"
       payment_status: "Status płatności"
+    slot_length: "Konsultacja trwa 1,5 godziny"
+    timezone: "%{zone} UTC%{offset}"
+    time_zones:
+      warsaw: "Warszawa"
     available_slots:
       one: "%{count} termin dostępny"
       few: "%{count} terminy dostępne"
@@ -124,6 +132,9 @@ pl:
       email_hint: "Adres e-mail z Twojego konta"
       choose_slot: "Wybierz dzień i godzinę"
       submit: "Zapłać i potwierdź rezerwację"
+      summary: "Podsumowanie"
+      package_prompt: "Wybierz pakiet"
+      reselect_slot: "Wybierz ponownie termin w kalendarzu."
     status:
       awaiting: "Czekamy na potwierdzenie od operatora płatności…"
       back: "Wróć do panelu"

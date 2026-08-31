@@ -1,16 +1,16 @@
 <div id="booking_status" class="w-full max-w-xl flex flex-col gap-6 text-center">
   <% if booking.confirmed? %>
-    <h1 class="text-t2 text-cream font-display"><%= t("bookings.summary.confirmed_title") %></h1>
+    <h1 class="text-t1 text-cream font-display"><%= t("bookings.summary.confirmed_title") %></h1>
     <span class="text-tan text-t5">
       <%= t("bookings.summary.confirmed_body") %>
     </span>
   <% elsif booking.payment_failed? || booking.canceled? %>
-    <h1 class="text-t2 text-cream font-display"><%= t("bookings.summary.failed_title") %></h1>
+    <h1 class="text-t1 text-cream font-display"><%= t("bookings.summary.failed_title") %></h1>
     <span class="text-tan text-t5">
       <%= t("bookings.summary.failed_body") %>
     </span>
   <% else %>
-    <h1 class="text-t2 text-cream font-display"><%= t("bookings.summary.processing_title") %></h1>
+    <h1 class="text-t1 text-cream font-display"><%= t("bookings.summary.processing_title") %></h1>
     <span class="text-tan text-t5">
       <%= t("bookings.summary.processing_body") %>
     </span>
