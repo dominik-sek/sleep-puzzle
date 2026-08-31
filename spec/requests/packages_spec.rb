@@ -56,11 +56,44 @@ RSpec.describe "Packages", type: :request do
     end
 
     it "points each call to action at the booking form for that package" do
+      allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
       package = create_package(name: "Szybka ulga")
 
       get packages_path
 
       expect(response.body).to include("#{bookings_path}?package_id=#{package.id}")
+    end
+
+    it "shows the amount Paddle holds for the package" do
+      allow(PaddlePriceCatalogService).to receive(:call)
+        .and_return([ paddle_price(amount: "24900", currency: "PLN") ])
+      create_package(name: "Szybka ulga")
+
+      get packages_path
+
+      expect(response.body).to include("249,00 PLN")
+    end
+
+    # A package Paddle cannot price is a package we cannot sell, so the card must
+    # not send anyone into a login wall, a calendar and a form for a checkout that
+    # cannot complete. Same rule the shop follows.
+    it "withholds the booking button when the price cannot be read" do
+      package = create_package(name: "Szybka ulga")
+
+      get packages_path
+
+      expect(response.body).to include("Cena chwilowo niedostępna")
+      expect(response.body).not_to include("#{bookings_path}?package_id=#{package.id}")
+      expect(response.body).to include(contact_path)
+    end
+
+    it "names the package in each call to action for assistive tech" do
+      allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
+      create_package(name: "Szybka ulga")
+
+      get packages_path
+
+      expect(response.body).to include('aria-label="Umów konsultację — Szybka ulga"')
     end
 
     it "anchors each card so the home page can link straight to it" do

@@ -3,19 +3,36 @@
   arrays and each section simply disappears when the owner has not filled it in —
   a package with no add-ons should not render an empty "Dodatkowo" heading.
 
+  The price comes from Paddle rather than from us (see Purchasable), so it can be
+  missing — archived in Paddle, or Paddle unreachable. The card still renders,
+  without the amount and without a booking button: sending someone into a login
+  wall, a calendar and a form for something that cannot be checked out is worse
+  than showing it as unavailable here. Same rule the shop already follows in
+  products/_card.
+
   locals: package
 %>
+<% price_label = package_price_label(package) %>
+
 <%= render Card::Component.new(classes: "h-full") do |card| %>
   <% card.with_body do %>
     <div class="flex flex-col h-full gap-6 text-left">
       <div class="flex flex-col gap-2">
-        <h2 class="text-accent! font-display text-t3!"><%= package.name %></h2>
+        <%# break-words: a long Polish compound in a ~370px column would otherwise
+            clip against the card's overflow-hidden wrapper rather than wrap %>
+        <h2 class="text-accent! font-display text-t3! break-words"><%= package.name %></h2>
 
         <% if package.duration %>
           <span class="text-t6 font-display text-taupe">
             <%= t("packages.duration", count: package.duration) %>
           </span>
         <% end %>
+
+        <%# the number a parent actually came for. tabular-nums so amounts line up
+            down a row of cards %>
+        <p class="text-t3 font-display font-bold text-cream tabular-nums m-0">
+          <%= price_label || content_block("packages.card.unavailable") %>
+        </p>
       </div>
 
       <% if package.for_whom.present? %>
@@ -57,14 +74,39 @@
 
       <%# mt-auto pins the button to the bottom, so the CTAs line up across a row
           of cards whose lists are different lengths %>
-      <div class="mt-auto pt-2">
-        <%= render Buttons::Component.new(
-          text: content_block("packages.card.cta"),
-          pill: true,
-          variant: :primary,
-          href: bookings_path(package_id: package.id),
-          classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold! w-full justify-center"
-        ) %>
+      <div class="mt-auto pt-2 flex flex-col gap-2">
+        <% if price_label %>
+          <%# aria_label carries the package name. The visible label is the owner's
+              copy and is the same words on every card, so a screen reader tabbing
+              this page would otherwise hear the identical link N times with no way
+              to tell which package it is on. py-4 rather than py-3 to clear a 44px
+              thumb target; the type stays at Label size, which is what DESIGN.md
+              assigns to button text. %>
+          <%= render Buttons::Component.new(
+            text: content_block("packages.card.cta"),
+            pill: true,
+            variant: :primary,
+            href: bookings_path(package_id: package.id),
+            aria_label: "#{content_block('packages.card.cta')} — #{package.name}",
+            classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold! w-full justify-center"
+          ) %>
+          <%# the tap is not the commitment it looks like: the booking form carries
+              a package select, so the choice really is changeable afterwards %>
+          <p class="text-t6 text-taupe text-center m-0">
+            <%= content_block("packages.card.reassurance") %>
+          </p>
+        <% else %>
+          <%# nothing sellable here: offer the one route that still works rather
+              than a button into a checkout that cannot complete %>
+          <%= render Buttons::Component.new(
+            text: content_block("packages.card.unavailable_cta"),
+            pill: true,
+            variant: :secondary,
+            href: contact_path,
+            aria_label: "#{content_block('packages.card.unavailable_cta')} — #{package.name}",
+            classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold! w-full justify-center"
+          ) %>
+        <% end %>
       </div>
     </div>
   <% end %>

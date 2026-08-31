@@ -19,6 +19,9 @@ module Buttons
     # @param full_width [Boolean] Whether buttons should take full width
     # @param href [String] If provided, renders as an anchor tag instead of buttons
     # @param type [String] Button type attribute: "buttons" (default), "submit", "reset"
+    # @param aria_label [String] Accessible name. Needed when the visible label
+    #   repeats across a list (several cards whose CTAs read the same words) or
+    #   when the control is icon-only, since every icon carries aria-hidden.
     # @param classes [String] Additional CSS classes for the wrapper
     # @param data [Hash] Data attributes for the buttons
     def initialize(
@@ -35,6 +38,7 @@ module Buttons
       full_width: false,
       href: nil,
       type: "buttons",
+      aria_label: nil,
       classes: nil,
       data: {}
     )
@@ -52,6 +56,7 @@ module Buttons
       @full_width = full_width
       @href = href
       @type = type
+      @aria_label = aria_label
       @classes = classes
       @data = data
     end
@@ -77,9 +82,14 @@ module Buttons
         data: @data
       }
 
+      attrs[:'aria-label'] = @aria_label if @aria_label.present?
+
       if @href.present?
         attrs[:href] = @href
-        attrs[:role] = "buttons"
+        # no role: this is an anchor that navigates, and it should be announced as
+        # a link. The value here was "buttons", which is not a valid ARIA token and
+        # was silently ignored — but "correcting" it to "button" would be worse,
+        # since it would tell assistive tech the link does not navigate.
         attrs[:'aria-disabled'] = @disabled if @disabled
       else
         attrs[:type] = @type
@@ -141,15 +151,15 @@ module Buttons
     def basic_variant_base_classes
       case @variant
       when :primary
-        "border border-accent-terracotta/30 bg-accent text-ink shadow-sm focus-visible:outline-accent"
+        "border border-accent-terracotta/30 bg-accent text-ink focus-visible:outline-accent"
       when :secondary
-        "border border-border-input bg-ink text-cream shadow-xs focus-visible:outline-accent"
+        "border border-border-input bg-ink text-cream focus-visible:outline-accent"
       when :outline
         "border border-border-input bg-transparent text-cream focus-visible:outline-accent"
       when :ghost
         "bg-transparent text-cream focus-visible:outline-accent"
       when :destructive
-        "border border-red-300/30 bg-red-600 text-cream shadow-sm focus-visible:outline-accent"
+        "border border-red-300/30 bg-red-600 text-cream focus-visible:outline-accent"
       end
     end
 

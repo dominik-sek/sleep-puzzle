@@ -15,7 +15,7 @@ pl:
       last_attempt: "Masz jeszcze jedną próbę, zanim konto zostanie zablokowane."
       not_found_in_database: "Nieprawidłowy %{authentication_keys} lub hasło."
       timeout: "Sesja wygasła. Zaloguj się ponownie, aby kontynuować."
-      unauthenticated: "Zaloguj się lub załóż konto, aby kontynuować."
+      unauthenticated: "Zaloguj się lub załóż konto, aby kontynuować — wrócisz do tego samego miejsca."
       unconfirmed: "Potwierdź swój adres e-mail, aby kontynuować."
     mailer:
       confirmation_instructions:

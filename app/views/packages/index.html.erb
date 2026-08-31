@@ -14,8 +14,15 @@
     </div>
 
     <% if @packages.any? %>
-      <%# items-stretch so cards in a row match height regardless of list length %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch w-full">
+      <%# auto-fit rather than fixed breakpoints, the same way the shop grid does
+          it: the package list is owner-managed, so a fourth package added in the
+          panel has to divide the row rather than orphan on one of its own. The
+          380px ceiling stops a single package stretching to the full 1240px, and
+          justify-center keeps one or two cards under the centred hero instead of
+          hanging off its left edge. min(100%,280px) is the floor so a narrow
+          phone gets one full-width column rather than a horizontal scrollbar.
+          items-stretch so cards in a row match height regardless of list length. %>
+      <div class="grid gap-6 items-stretch w-full justify-center [grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),380px))]">
         <% @packages.each do |package| %>
           <%# anchor for the home page's "Zobacz szczegóły"; scroll-mt keeps the
               card clear of the navbar when it is jumped to %>
@@ -28,6 +35,45 @@
       <p class="text-t4 text-tan max-w-2xl">
         <%= content_block("packages.empty.body") %>
       </p>
+    <% end %>
+  <% end %>
+
+  <%# The page used to end on N identical requests for money and nothing else.
+      This closes on the two things it never offered: a way to ask a question,
+      and the cheaper rung of the ladder for a family that cannot reach 1:1 yet.
+      Secondary rather than accent — it is an alternative to buying, not another
+      push, and the cards above already hold the lamp. Renders in the empty state
+      too, where it is the only exit the page has. %>
+  <%= render Section::Component.new(
+    background: :ink_soft,
+    align: :center,
+    bordered: false
+  ) do |section| %>
+    <div class="flex flex-col gap-4 items-center">
+      <h2 class="text-t2 font-display font-bold text-cream">
+        <%= content_block("packages.closing.title") %>
+      </h2>
+      <p class="text-t4 text-tan max-w-xl m-0">
+        <%= content_block("packages.closing.body") %>
+      </p>
+    </div>
+
+    <% section.with_actions do %>
+      <div class="flex flex-col items-center gap-5">
+        <%= render Buttons::Component.new(
+          text: content_block("packages.closing.cta"),
+          pill: true,
+          variant: :secondary,
+          href: contact_path,
+          classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold!"
+        ) %>
+
+        <p class="text-t6 text-taupe m-0">
+          <%= content_block("packages.closing.shop_lead") %>
+          <%= link_to content_block("packages.closing.shop_link"), products_path,
+                      class: "text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+        </p>
+      </div>
     <% end %>
   <% end %>
 </div>

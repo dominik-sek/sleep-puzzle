@@ -214,4 +214,29 @@ RSpec.describe "Auth screens", type: :request do
       expect(response.body).to include("Zaloguj się lub załóż konto")
     end
   end
+
+  # The packages page hands the chosen package to /bookings as a query param, and
+  # /bookings is gated. Before this, after_sign_in_path_for returned the dashboard
+  # unconditionally, so signing in at that wall threw the choice away and left the
+  # visitor on an empty dashboard with no route back.
+  describe "returning to the blocked page after signing in" do
+    it "sends the visitor back to the package they picked" do
+      get bookings_path(package_id: 42)
+      expect(response).to redirect_to(new_user_session_path)
+
+      post user_session_path, params: {
+        user: { email: user.email, password: "password123" }
+      }
+
+      expect(response).to redirect_to(bookings_path(package_id: 42))
+    end
+
+    it "still lands on the dashboard when nothing was blocked" do
+      post user_session_path, params: {
+        user: { email: user.email, password: "password123" }
+      }
+
+      expect(response).to redirect_to(dashboard_index_path)
+    end
+  end
 end

@@ -16,7 +16,10 @@ module Card
 
     # @param variant [Symbol] Style variant: :default, :elevated, :well
     # @param padding [Symbol] Content padding: :none, :sm, :md, :lg
-    # @param shadow [Symbol] Shadow size: :none, :xs, :sm, :md, :lg, :xl
+    # @param shadow [Symbol] Shadow size: :none (default), :xs, :sm, :md, :lg, :xl.
+    #   Flat by default: DESIGN.md's Flat Page Rule reserves shadow for things that
+    #   genuinely float above the page (the payment overlay on the booking
+    #   calendar). An in-page card raises its tone or firms its border instead.
     # @param rounded [Symbol] Border radius: :none, :sm, :md, :lg, :xl, :"2xl", :full
     # @param border [Boolean] Show border
     # @param hoverable [Boolean] Add hover effects
@@ -27,7 +30,7 @@ module Card
     def initialize(
       variant: :default,
       padding: :md,
-      shadow: :xs,
+      shadow: :none,
       rounded: :"2xl",
       border: true,
       hoverable: false,
@@ -39,7 +42,7 @@ module Card
       super()
       @variant = VARIANTS.include?(variant) ? variant : :default
       @padding = PADDINGS.include?(padding) ? padding : :md
-      @shadow = SHADOWS.include?(shadow) ? shadow : :xs
+      @shadow = SHADOWS.include?(shadow) ? shadow : :none
       @rounded = ROUNDED.include?(rounded) ? rounded : :"2xl"
       @border = border
       @hoverable = hoverable
@@ -104,7 +107,8 @@ module Card
       when :md then "shadow-md"
       when :lg then "shadow-lg"
       when :xl then "shadow-xl"
-      else "shadow-xs" # :xs
+      when :xs then "shadow-xs"
+      else "" # :none
       end
     end
 

@@ -12,8 +12,13 @@ class ApplicationController < ActionController::Base
   before_action :set_pagy_locale
   before_action :set_sentry_user
 
+  # Devise stores the blocked URL when `authenticate_user!` turns someone away, so
+  # honour it before falling back to the dashboard. Without this a visitor who
+  # picked a package on /pakiety and hit the sign-in wall landed on an empty
+  # dashboard with the package_id — and the decision the page existed to capture —
+  # thrown away, and no route back except finding the card again.
   def after_sign_in_path_for(resource)
-    dashboard_index_path
+    stored_location_for(resource) || dashboard_index_path
   end
 
   # The session survives sign-in, so a cart filled while signed out is still

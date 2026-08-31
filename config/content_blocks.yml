@@ -179,7 +179,7 @@ home:
             pl: "Dzięki! Sprawdź skrzynkę, żeby potwierdzić zapis."
             en: "Thanks! Check your inbox to confirm."
     closing:
-      label: Zakonczenie
+      label: Zakończenie
       fields:
         quote:
           label: Cytat
@@ -243,6 +243,24 @@ packages:
           default:
             pl: "Umów konsultację"
             en: "Book a consultation"
+        reassurance:
+          label: Uspokojenie pod przyciskiem
+          type: plain
+          default:
+            pl: "Termin i pakiet wybierzesz w następnym kroku — możesz je jeszcze zmienić."
+            en: "You pick the time and the package in the next step — both can still be changed."
+        unavailable:
+          label: Zamiast ceny, gdy nie da się jej pobrać
+          type: plain
+          default:
+            pl: "Cena chwilowo niedostępna"
+            en: "Price temporarily unavailable"
+        unavailable_cta:
+          label: Przycisk, gdy ceny nie da się pobrać
+          type: plain
+          default:
+            pl: "Zapytaj o ten pakiet"
+            en: "Ask about this package"
     empty:
       label: Gdy nie ma pakietów
       fields:
@@ -252,6 +270,39 @@ packages:
           default:
             pl: "Pakiety pojawią się tutaj wkrótce. Napisz do mnie, a ustalimy wsparcie skrojone na Waszą sytuację."
             en: "Packages are coming soon. Write to me and we will work out support that fits your situation."
+    closing:
+      label: Zakończenie
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Nie wiesz, który pakiet wybrać?"
+            en: "Not sure which package to pick?"
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Napisz kilka zdań o Waszej sytuacji — odpowiem i podpowiem, co ma sens."
+            en: "Write a few sentences about your situation and I will tell you what makes sense."
+        cta:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Napisz do mnie"
+            en: "Write to me"
+        shop_lead:
+          label: Tekst przed odnośnikiem do sklepu
+          type: plain
+          default:
+            pl: "Wolisz zacząć po swojemu?"
+            en: "Prefer to start on your own?"
+        shop_link:
+          label: Odnośnik do sklepu
+          type: plain
+          default:
+            pl: "Posłuchaj audioprocesów i bajek"
+            en: "Listen to the audio and bedtime stories"
 about:
   label: O mnie
   sections:
