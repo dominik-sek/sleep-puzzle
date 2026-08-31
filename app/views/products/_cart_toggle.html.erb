@@ -8,6 +8,16 @@
 
   locals: product
 %>
-<%= tag.span id: dom_id(product, :cart_toggle), class: "contents" do %>
+<%= tag.span id: dom_id(product, :cart_toggle), class: "flex flex-col items-stretch gap-1.5" do %>
   <%= render "products/cart_button", product: product %>
+
+  <%# the grid used to confirm an add only by flipping the button to "Usuń" —
+      a destructive verb in the same pixels the thumb just left. Saying "Dodano"
+      as well makes the confirmation an addition, not a substitution. %>
+  <% if current_cart.include?(product) %>
+    <span class="flex items-center justify-center gap-1 text-t6 font-bold text-accent" aria-live="polite">
+      <%= icon "circle-check", class: "size-3.5 shrink-0" %>
+      <%= content_block("shop.card.added") %>
+    </span>
+  <% end %>
 <% end %>

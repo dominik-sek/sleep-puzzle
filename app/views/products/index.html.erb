@@ -9,12 +9,23 @@
     <div class="max-w-[1240px] mx-auto w-full">
       <div class="flex flex-wrap items-end justify-between gap-4 mb-11">
         <div>
-          <h1 class="text-t2 font-display font-bold text-cream mb-2.5">
+          <h1 class="text-t1 font-display font-bold text-cream mb-2.5">
             <%= content_block("shop.hero.title") %>
           </h1>
           <p class="text-t5 text-tan max-w-[520px] m-0">
             <%= content_block("shop.hero.subtitle") %>
           </p>
+
+          <%# signed out, nothing here can tell that a visitor already owns a
+              recording — Cart#owned? needs an owner — so a returning buyer would
+              otherwise add and pay for a file they have. Ask them to sign in. %>
+          <% unless user_signed_in? %>
+            <p class="mt-3 text-t6 text-taupe m-0">
+              <%= content_block("shop.hero.returning") %>
+              <%= link_to t("nav.sign_in"), new_user_session_path,
+                          class: "font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+            </p>
+          <% end %>
         </div>
 
         <%= render "shared/cart_pill" %>
@@ -29,9 +40,20 @@
           <% end %>
         </div>
       <% else %>
-        <p class="text-t4 text-tan max-w-2xl">
-          <%= content_block("shop.empty.body") %>
-        </p>
+        <%# an empty shop used to be one sentence with nowhere to go. The rung
+            above the catalogue is the consultations, so that is the way out. %>
+        <div class="flex flex-col items-start gap-5">
+          <p class="text-t4 text-tan max-w-2xl m-0">
+            <%= content_block("shop.empty.body") %>
+          </p>
+          <%= render Buttons::Component.new(
+            text: content_block("shop.empty.cta"),
+            href: packages_path,
+            pill: true,
+            variant: :secondary,
+            classes: "hover:cursor-pointer text-t6! font-bold! py-4 px-6"
+          ) %>
+        </div>
       <% end %>
     </div>
   <% end %>

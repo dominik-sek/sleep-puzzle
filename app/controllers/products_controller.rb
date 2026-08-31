@@ -2,6 +2,10 @@ class ProductsController < ApplicationController
   # How many "Inne materiały" tiles sit under a product, matching the design's row.
   ALSO_LIMIT = 3
 
+  # Long enough to start playing and seek within a 30-second clip, short enough
+  # that a copied URL is not a durable way to hand the sample around.
+  PREVIEW_TTL = 15.minutes
+
   before_action :authenticate_user!, only: :stream
 
   def index
@@ -34,6 +38,24 @@ class ProductsController < ApplicationController
     # Nothing uploaded, or a deploy that lost the CDN credentials. The dashboard
     # only draws a player when Product#streamable?, so reaching this is either a
     # stale page or a hand-typed URL.
+    head :not_found and return if url.nil?
+
+    redirect_to url, allow_other_host: true
+  end
+
+  # The shop's 30-second sample. No ownership check and no sign-in: this exists to
+  # be heard by someone who has bought nothing. It signs `preview_cdn_path`, which
+  # is a separate object in the storage zone — the full recording's path is never
+  # reachable from here, so there is nothing to leak by leaving it open.
+  #
+  # A short TTL because a preview is pressed and heard in one sitting, unlike the
+  # full stream, which is signed for six hours so a parent can pause and come back.
+  def preview
+    product = Product.published.find(params[:id])
+
+    head :not_found and return unless product.previewable?
+
+    url = BunnySignedUrlService.call(product.preview_cdn_path, expires_in: PREVIEW_TTL)
     head :not_found and return if url.nil?
 
     redirect_to url, allow_other_host: true

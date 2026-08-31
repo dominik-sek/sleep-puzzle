@@ -4,43 +4,57 @@
   either in the cart or it is not — there is no quantity to nudge, so a second
   press should undo the first.
 
-  Both branches are real forms, not links: they change state, and a GET that
-  mutates gets fired by every link prefetcher going.
+  Both mutating branches are real forms, not links: they change state, and a GET
+  that mutates gets fired by every link prefetcher going.
+
+  Routed through Buttons::Component rather than hand-rolled classes. That is what
+  supplies the pill radius the system reserves for actions, a border token that
+  clears 3:1, the focus ring, and — via aria_label — a name that distinguishes
+  this card's button from the eleven identical ones beside it.
 
   locals: product, size (:sm on a shop card, :lg on the product page)
 %>
 <% size = local_assigns.fetch(:size, :sm) %>
-<%
-  shape = size == :lg ? "rounded-[26px] px-6.5 py-3.5 text-[15px]" : "rounded-[20px] px-4 py-2.5 text-[13px]"
-%>
+<%# py-4 on both: the grid button was ~36px, under the 44px thumb target this
+    site's primary user needs one-handed in the dark %>
+<%# w-full on the grid: the card stacks price over button, so the button
+    fills the card rather than sitting beside a price it cannot fit next to %>
+<% shape = size == :lg ? "py-4 px-6.5" : "py-4 px-5 w-full" %>
 
 <% if current_user&.purchased?(product) %>
   <%# bought already, and a digital file is bought once — so this leads to where
       it actually is rather than offering to sell it again. The server refuses the
       add too; this is the half the buyer can see. %>
-  <%= link_to content_block("shop.card.owned"), dashboard_index_path,
-        class: class_names(
-          "whitespace-nowrap border-[1.5px] border-accent bg-transparent font-bold text-accent no-underline hover:bg-accent hover:text-ink",
-          shape
-        ) %>
+  <% label = content_block("shop.card.owned") %>
+  <%= render Buttons::Component.new(
+    text: label,
+    href: dashboard_index_path,
+    pill: true,
+    variant: :outline,
+    aria_label: "#{label} — #{product.name}",
+    classes: "hover:cursor-pointer text-t6! font-bold! border-accent! text-accent! hover:bg-accent! hover:text-ink! #{shape}"
+  ) %>
 <% elsif current_cart.include?(product) %>
+  <% label = content_block("shop.card.remove") %>
   <%= button_to cart_item_path(product_id: product.id), method: :delete,
         form_class: "contents",
-        class: class_names(
-          "cursor-pointer whitespace-nowrap border-[1.5px] border-taupe-dark bg-transparent font-bold text-cream hover:border-accent hover:text-accent",
-          shape
-        ) do %>
-    <%= content_block("shop.card.remove") %>
+        aria: { label: "#{label} — #{product.name}" },
+        data: { turbo_submits_with: t("forms.removing") },
+        class: "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-border-input bg-ink text-cream font-bold text-t6 cursor-pointer transition-all duration-100 ease-in-out select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent #{shape}" do %>
+    <%= label %>
   <% end %>
 <% else %>
+  <% label = content_block("shop.card.add") %>
   <%= form_with url: cart_items_path, class: "contents" do |form| %>
     <%= form.hidden_field :product_id, value: product.id %>
+    <%# turbo_submits_with: the tap used to produce nothing until the stream
+        landed, so on bad signal it read as a miss and invited a second tap —
+        which, by then, removed the item %>
     <%= form.button type: :submit,
-          class: class_names(
-            "cursor-pointer whitespace-nowrap border-0 bg-accent font-bold text-ink hover:bg-accent-hover",
-            shape
-          ) do %>
-      <%= content_block("shop.card.add") %>
+          aria: { label: "#{label} — #{product.name}" },
+          data: { turbo_submits_with: t("forms.adding") },
+          class: "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-accent-terracotta/30 bg-accent text-ink font-bold text-t6 cursor-pointer transition-all duration-100 ease-in-out select-none hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent #{shape}" do %>
+      <%= label %>
     <% end %>
   <% end %>
 <% end %>

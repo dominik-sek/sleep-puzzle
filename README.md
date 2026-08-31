@@ -6,10 +6,13 @@ edit the copy herself.
 
 ## Setup
 
-You need Ruby 4.0.5 (see `.ruby-version`), PostgreSQL, and **libvips**
+You need Ruby 4.0.5 (see `.ruby-version`), PostgreSQL, **libvips**
 (`brew install vips`, or `apt-get install libvips`) — Active Storage resizes CMS
-images with it, and without it uploads succeed but every image URL 500s. The
-Dockerfile installs it, so this is a local step only.
+images with it, and without it uploads succeed but every image URL 500s — and
+**ffmpeg** (`brew install ffmpeg`), which cuts the shop's 30-second previews.
+Without ffmpeg an audio upload still succeeds and the product still sells; it
+just gets no preview, and the reason is in the log. The Dockerfile installs
+both, so these are local steps only.
 
 ```sh
 cp .env.example .env    # every variable is documented in there

@@ -11,8 +11,9 @@
     align: :left
   ) do |section| %>
     <div class="max-w-[1080px] mx-auto w-full">
-      <%= link_to products_path, class: "text-t6 font-bold text-accent no-underline hover:text-accent-hover" do %>
-        ← <%= content_block("shop.product.back") %>
+      <%= link_to products_path, class: "group inline-flex items-center gap-1.5 py-2 text-t6 font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+        <%= icon "arrow-left", class: "size-3.5 shrink-0 transition-transform duration-100 group-hover:-translate-x-0.5" %>
+        <%= content_block("shop.product.back") %>
       <% end %>
 
       <div class="mt-6.5 grid items-start gap-7 md:gap-12 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
@@ -22,28 +23,46 @@
         </div>
 
         <div class="flex flex-col gap-4">
-          <span class="text-[12px] font-extrabold uppercase tracking-[0.6px] text-accent">
+          <span class="text-t6 uppercase text-taupe">
             <%= @product.kind_label %>
           </span>
 
-          <h1 class="font-display font-bold text-[clamp(28px,4.5vw,40px)] leading-[1.15] text-cream text-pretty m-0">
+          <h1 class="font-display font-bold text-t1 text-cream text-pretty m-0">
             <%= @product.name %>
           </h1>
 
           <% if @product.description.present? %>
-            <p class="text-[17px] leading-[1.65] text-tan text-pretty m-0"><%= @product.description %></p>
+            <p class="text-t4 text-tan text-pretty m-0"><%= @product.description %></p>
           <% end %>
 
           <% price_label = product_price_label(@product) %>
 
           <div class="mt-1 flex items-baseline gap-3.5">
-            <span class="font-display font-bold text-[34px] text-cream tabular-nums">
+            <span class="font-display font-bold text-t2 text-cream tabular-nums">
               <%= price_label || content_block("shop.card.unavailable") %>
             </span>
             <% if @product.length_label %>
               <span class="text-t6 font-semibold text-taupe"><%= @product.length_label %></span>
             <% end %>
           </div>
+
+          <%# Between the price and the ask: after the reason to want it, before
+              the commitment. Skipped for someone who already owns the recording —
+              they get the full player in the dashboard, and offering an owner a
+              sample of their own file is a smaller offer than they already have.
+              preload="none" so a page view costs no bandwidth, and the native
+              control rather than a custom transport so keyboard and screen-reader
+              behaviour come for free. %>
+          <% if @product.previewable? && !current_user&.purchased?(@product) %>
+            <div class="flex flex-col gap-2">
+              <span class="text-t6 uppercase text-taupe">
+                <%= content_block("shop.product.preview") %>
+              </span>
+              <audio controls preload="none" class="w-full"
+                     src="<%= preview_product_path(@product) %>"
+                     aria-label="<%= t('products.player.preview_label', name: @product.name) %>"></audio>
+            </div>
+          <% end %>
 
           <%= render "products/cart_actions", product: @product %>
 
@@ -63,7 +82,7 @@
         <div class="mt-11 md:mt-16 grid gap-7 md:gap-12 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
           <% if @product.long_description.present? %>
             <div>
-              <h2 class="mb-3.5 text-[13px] font-extrabold uppercase tracking-[0.6px] text-accent">
+              <h2 class="mb-3.5 font-display font-bold text-t3 text-cream">
                 <%= content_block("shop.product.about") %>
               </h2>
               <p class="text-t5 leading-[1.75] text-tan text-pretty m-0"><%= @product.long_description %></p>
@@ -72,7 +91,7 @@
 
           <% if @product.includes.any? %>
             <div>
-              <h2 class="mb-3.5 text-[13px] font-extrabold uppercase tracking-[0.6px] text-accent">
+              <h2 class="mb-3.5 font-display font-bold text-t3 text-cream">
                 <%= content_block("shop.product.includes") %>
               </h2>
               <ul class="flex flex-col gap-3 list-none p-0 m-0">
@@ -81,7 +100,7 @@
                     <%# the system's own mark, not a font glyph: U+2726 sits outside both
                         self-hosted subsets and renders from the OS fallback %>
                     <%= icon "astroid", class: "size-4 shrink-0 mt-1 text-accent" %>
-                    <span class="text-[15.5px] leading-[1.55] text-cream"><%= item %></span>
+                    <span class="text-t5 text-cream"><%= item %></span>
                   </li>
                 <% end %>
               </ul>

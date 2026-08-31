@@ -137,7 +137,7 @@ RSpec.describe "Cart", type: :request do
     end
   end
 
-  # the button already says "W Twoim koncie", but this POST is reachable without
+  # the button already says "Posłuchaj w koncie", but this POST is reachable without
   # it — a stale page, a direct request — and a file bought twice is money taken
   # for nothing
   describe "adding something already owned" do

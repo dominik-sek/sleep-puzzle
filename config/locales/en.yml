@@ -158,6 +158,7 @@ en:
       bedtime_story: "Bedtime story"
     player:
       label: "Play: %{name}"
+      preview_label: "Sample of: %{name}"
     length_minutes:
       one: "%{count} min"
       other: "%{count} min"
@@ -221,6 +222,8 @@ en:
         intro: "This confirms the email address on your account has been changed."
   forms:
     submitting: "Sending…"
+    adding: "Adding…"
+    removing: "Removing…"
   nav:
     menu: "Menu"
     packages: "Packages"

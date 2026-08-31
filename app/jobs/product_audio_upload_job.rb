@@ -23,6 +23,10 @@ class ProductAudioUploadJob < ApplicationJob
 
     if result.stored?
       store_path(product, result.path)
+      # after the real file is safely stored, never before: a preview is worth
+      # nothing if the thing it previews did not land, and a failure here must
+      # not cost the upload its retry budget
+      store_preview(product, attachment)
       attachment.purge
       notify(product, type: "success", title: "Wgrano plik audio do „#{product.name}”.")
     else
@@ -72,5 +76,36 @@ class ProductAudioUploadJob < ApplicationJob
   def store_path(product, path)
     product.update_columns(cdn_path: path, audio_upload_error: nil)
     Rails.logger.info("Audio for product #{product.id} landed at #{path}")
+  end
+
+  # The shop's 30-second sample. Deliberately best-effort: everything in here is
+  # rescued, because a product that cannot be previewed is still a product that
+  # can be sold, and the owner should not see an upload fail over a sample.
+  def store_preview(product, attachment)
+    preview = nil
+
+    attachment.blob.open do |file|
+      preview = AudioPreviewService.call(file.path)
+    end
+    return if preview.nil?
+
+    result = BunnyStorageService.call(preview, kind: product.kind,
+                                               filename: preview_filename(attachment))
+    if result.stored?
+      product.update_columns(preview_cdn_path: result.path)
+      Rails.logger.info("Preview for product #{product.id} landed at #{result.path}")
+    else
+      Rails.logger.warn("Preview upload for product #{product.id} failed: #{result.error}")
+    end
+  rescue StandardError => e
+    Rails.logger.warn("Preview for product #{product.id} could not be made: #{e.class}: #{e.message}")
+  ensure
+    preview&.close!
+  end
+
+  # Distinct from the full file's name so the two never collide in the zone, and
+  # .mp3 because the cut is always transcoded to it whatever went in.
+  def preview_filename(attachment)
+    "#{File.basename(attachment.filename.to_s, '.*')}-preview.mp3"
   end
 end

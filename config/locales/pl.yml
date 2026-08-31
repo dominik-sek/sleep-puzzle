@@ -138,6 +138,7 @@ pl:
       bedtime_story: "Bajka na dobranoc"
     player:
       label: "Odtwórz: %{name}"
+      preview_label: "Próbka nagrania: %{name}"
     length_minutes:
       one: "%{count} min"
       other: "%{count} min"
@@ -201,6 +202,8 @@ pl:
         intro: "Potwierdzamy zmianę adresu e-mail przypisanego do konta."
   forms:
     submitting: "Wysyłanie…"
+    adding: "Dodawanie…"
+    removing: "Usuwanie…"
   nav:
     menu: "Menu"
     packages: "Pakiety"

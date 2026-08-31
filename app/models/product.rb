@@ -10,6 +10,7 @@
 #  kind               :integer
 #  length_minutes     :integer
 #  position           :integer          default(0), not null
+#  preview_cdn_path   :string
 #  published          :boolean          default(FALSE), not null
 #  translations       :jsonb            not null
 #  created_at         :datetime         not null
@@ -122,6 +123,14 @@ class Product < ApplicationRecord
   # they did before the CDN existed rather than a control that 404s.
   def streamable?
     cdn_path.present? && BunnySignedUrlService.configured?
+  end
+
+  # Whether the shop can let someone hear thirty seconds before paying. Same two
+  # conditions as streamable?, against the preview's own path: older products
+  # uploaded before previews existed have none, and the page simply omits the
+  # player rather than offering a control that 404s.
+  def previewable?
+    preview_cdn_path.present? && BunnySignedUrlService.configured?
   end
 
   # The attachment is the whole state — purged on success and on final failure

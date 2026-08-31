@@ -19,15 +19,26 @@
       <%# only once it is actually in there, so the second button never points at
           an empty cart %>
       <% if current_cart.include?(product) %>
-        <%= link_to cart_path,
-              class: "rounded-[26px] border-[1.5px] border-taupe-dark px-6 py-3.25 text-[15px] font-bold text-cream no-underline hover:border-accent hover:text-accent" do %>
-          <%= content_block("shop.product.go_to_cart") %>
-        <% end %>
+        <%# border-input, not taupe-dark: a control boundary has to clear 3:1, and
+            taupe-dark measures 2.09 against ink %>
+        <%= render Buttons::Component.new(
+          text: content_block("shop.product.go_to_cart"),
+          href: cart_path,
+          pill: true,
+          variant: :secondary,
+          classes: "hover:cursor-pointer text-t6! font-bold! py-4 px-6"
+        ) %>
       <% end %>
     </div>
 
     <% if current_cart.include?(product) %>
-      <p class="text-[13px] font-bold text-accent m-0">✓ <%= content_block("shop.product.added_note") %></p>
+      <%# aria-live: this note is swapped in by a turbo stream and nothing moves
+          focus, so without it the confirmation is silent to a screen reader.
+          A drawn mark, not a ✓ glyph — the glyph renders from the OS fallback. %>
+      <p class="flex items-center gap-1.5 text-t6 font-bold text-accent m-0" aria-live="polite">
+        <%= icon "circle-check", class: "size-4 shrink-0" %>
+        <%= content_block("shop.product.added_note") %>
+      </p>
     <% end %>
   <% end %>
 <% end %>

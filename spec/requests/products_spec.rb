@@ -95,7 +95,7 @@ RSpec.describe "Products", type: :request do
 
       get products_path
 
-      expect(response.body).to include("W Twoim koncie")
+      expect(response.body).to include("Posłuchaj w koncie")
       expect(response.body).to include(%(href="#{dashboard_index_path}"))
       expect(response.body).not_to include("Dodaj do koszyka")
     end
@@ -125,7 +125,7 @@ RSpec.describe "Products", type: :request do
       expect(response.body).to include("129,00 PLN")
       expect(response.body).to include("🐻")
       expect(response.body).to include("42 min")
-      expect(response.body).to include("MP3 do pobrania")
+      expect(response.body).to include("Odsłuch online, bez pobierania")
       expect(response.body).to include("Bezterminowy, w Twoim koncie")
     end
 
@@ -349,6 +349,85 @@ RSpec.describe "Products", type: :request do
       get stream_product_path(product)
 
       expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  # The sample exists so someone who has bought nothing can hear the voice they
+  # are being asked to pay for, so the route is deliberately open. What it must
+  # never do is sign the full recording's path.
+  describe "GET /products/:id/preview" do
+    let(:product) { create_product(name: "Bajka", cdn_path: "/bajki/pelne.mp3") }
+
+    it "404s when the product has no preview" do
+      get preview_product_path(product)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "404s when the CDN is unconfigured, rather than offering a broken player" do
+      product.update_column(:preview_cdn_path, "/bajki/probka.mp3")
+      allow(BunnySignedUrlService).to receive(:configured?).and_return(false)
+
+      get preview_product_path(product)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "redirects a signed-out visitor to a URL signed for the preview path only" do
+      product.update_column(:preview_cdn_path, "/bajki/probka.mp3")
+      allow(BunnySignedUrlService).to receive(:configured?).and_return(true)
+      allow(BunnySignedUrlService).to receive(:call)
+        .with("/bajki/probka.mp3", expires_in: ProductsController::PREVIEW_TTL)
+        .and_return("https://cdn.example/bajki/probka.mp3?token=abc")
+
+      get preview_product_path(product)
+
+      expect(response).to redirect_to("https://cdn.example/bajki/probka.mp3?token=abc")
+      expect(response.headers["Location"]).not_to include("pelne")
+    end
+
+    it "404s for an unpublished product" do
+      product.update_columns(preview_cdn_path: "/bajki/probka.mp3", published: false)
+
+      get preview_product_path(product)
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "the preview player on the product page" do
+    before { allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price(id: "pri_456") ]) }
+
+    it "is absent when the product has no preview" do
+      get product_path(create_product(name: "Bajka"))
+
+      expect(response.body).not_to include("Posłuchaj 30 sekund")
+    end
+
+    it "is offered when there is one" do
+      product = create_product(name: "Bajka")
+      product.update_column(:preview_cdn_path, "/bajki/probka.mp3")
+      allow(BunnySignedUrlService).to receive(:configured?).and_return(true)
+
+      get product_path(product)
+
+      expect(response.body).to include("Posłuchaj 30 sekund")
+      expect(response.body).to include(preview_product_path(product))
+    end
+
+    # an owner already has the whole recording in the dashboard; a sample of it
+    # is a smaller offer than the one they have already taken
+    it "is withheld from someone who already owns the recording" do
+      product = create_product(name: "Bajka")
+      product.update_column(:preview_cdn_path, "/bajki/probka.mp3")
+      allow(BunnySignedUrlService).to receive(:configured?).and_return(true)
+      user = User.create!(email: "buyer@example.com", password: "password123")
+      allow_any_instance_of(User).to receive(:purchased?).with(product).and_return(true)
+      sign_in user
+
+      get product_path(product)
+
+      expect(response.body).not_to include("Posłuchaj 30 sekund")
     end
   end
 end

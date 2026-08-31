@@ -42,6 +42,12 @@ Rails.application.routes.draw do
       # freshly signed CDN URL. A member route rather than a nested resource
       # because there is only ever one file per product
       get :stream, on: :member
+
+      # deliberately outside the authenticate_user! that guards :stream — the
+      # whole point of a sample is that someone who has not bought anything, and
+      # may not have an account, can hear it. It signs the preview's own path,
+      # never the full recording's.
+      get :preview, on: :member
     end
     # singular: one cart per visitor, kept in the session, so there is no id to
     # carry. Its lines are addressed by product id — there are no cart item rows.

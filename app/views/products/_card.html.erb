@@ -21,26 +21,55 @@
   </div>
 
   <div class="flex flex-1 flex-col gap-2.5 p-5.5">
-    <span class="text-[12px] font-extrabold uppercase tracking-[0.5px] text-accent">
+    <span class="text-t6 uppercase text-taupe">
       <%= product.kind_label %>
     </span>
 
-    <h2 class="text-[18px] font-bold text-cream m-0">
-      <%= link_to product.name, product_path(product), class: "no-underline text-inherit hover:text-accent" %>
+    <%# Baloo: the Display-For-Names Rule covers a product's name, and the
+        product page and the packages card both already set it that way.
+        break-words so a long Polish compound wraps instead of clipping against
+        the card's overflow-hidden in a 240px column. %>
+    <h2 class="font-display font-bold text-t3 text-cream m-0 break-words">
+      <%= link_to product.name, product_path(product), class: "no-underline text-inherit hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
     </h2>
 
     <% if product.description.present? %>
-      <p class="flex-1 text-[14px] font-normal leading-[1.5] text-tan m-0"><%= product.description %></p>
+      <p class="text-t6 text-tan m-0"><%= product.description %></p>
     <% end %>
 
-    <div class="mt-2 flex items-center justify-between gap-3">
-      <span class="text-[17px] font-extrabold text-cream tabular-nums">
+    <%# mt-auto on the row rather than flex-1 on the paragraph above it: the
+        description is optional, so hanging the growth off it left a card without
+        one failing to bottom-align with its neighbours %>
+    <%# Stacked, not a justify-between row. The card is 240px wide and the button
+        is whitespace-nowrap, so side by side the two could not both fit: the
+        price wrapped and the button pushed out past the card's overflow-hidden.
+        Stacking also lets the button run full width, which is the better tap
+        target on the surface built for one-handed use.
+
+        Price at t4, not t3: the name above it is t3, and the piece a buyer scans
+        for first is the name. Two things at the same step is not a hierarchy. %>
+    <div class="mt-auto pt-2 flex flex-col gap-3">
+      <span class="text-t4 font-display font-bold text-cream tabular-nums">
         <%= price_label || content_block("shop.card.unavailable") %>
       </span>
 
       <% if price_label %>
         <%= render "products/cart_toggle", product: product %>
+      <% else %>
+        <%# not sellable, but still wanted by someone: offer the one route that
+            works rather than a dead end. Packages already does this. %>
+        <%= link_to content_block("shop.card.unavailable_cta"), contact_path,
+                    class: "text-t6 font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
       <% end %>
     </div>
+
+    <%# a real route into the product. This block has been declared and editable
+        in the panel since the shop was built and rendered nowhere, so the only
+        way in was the name link — 18px, no underline, no link colour. %>
+    <%= link_to product_path(product),
+                class: "group inline-flex items-center gap-1.5 self-start text-t6 font-bold text-tan no-underline hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+      <%= content_block("shop.card.details") %>
+      <%= icon "arrow-right", class: "size-3.5 shrink-0 transition-transform duration-100 group-hover:translate-x-0.5" %>
+    <% end %>
   </div>
 </div>

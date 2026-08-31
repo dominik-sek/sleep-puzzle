@@ -12,6 +12,7 @@ require 'rails_helper'
 #  kind               :integer
 #  length_minutes     :integer
 #  position           :integer          default(0), not null
+#  preview_cdn_path   :string
 #  published          :boolean          default(FALSE), not null
 #  translations       :jsonb            not null
 #  created_at         :datetime         not null

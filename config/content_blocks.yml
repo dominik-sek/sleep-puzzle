@@ -462,6 +462,12 @@ shop:
           default:
             pl: "Audioprocesy do samodzielnej pracy nad snem i kojące bajki audio dla najmłodszych."
             en: "Audio processes for working on sleep on your own, and soothing audio stories for the little ones."
+        returning:
+          label: Podpowiedź dla powracających kupujących
+          type: plain
+          default:
+            pl: "Kupowałaś już u mnie? Zaloguj się, żeby zobaczyć swoje nagrania."
+            en: "Bought here before? Sign in to see your recordings."
     card:
       label: Karta produktu
       fields:
@@ -475,8 +481,8 @@ shop:
           label: Przycisk, gdy produkt jest już kupiony
           type: plain
           default:
-            pl: "W Twoim koncie"
-            en: "In your account"
+            pl: "Posłuchaj w koncie"
+            en: "Listen in your account"
         remove:
           label: Przycisk „usuń z koszyka”
           type: plain
@@ -495,6 +501,18 @@ shop:
           default:
             pl: "Chwilowo niedostępne"
             en: "Temporarily unavailable"
+        unavailable_cta:
+          label: Odnośnik, gdy ceny nie da się pobrać
+          type: plain
+          default:
+            pl: "Zapytaj o to nagranie"
+            en: "Ask about this recording"
+        added:
+          label: Potwierdzenie po dodaniu (na kafelku)
+          type: plain
+          default:
+            pl: "Dodano"
+            en: "Added"
     product:
       label: Strona produktu
       fields:
@@ -520,8 +538,8 @@ shop:
           label: Format — wartość
           type: plain
           default:
-            pl: "MP3 do pobrania"
-            en: "Downloadable MP3"
+            pl: "Odsłuch online, bez pobierania"
+            en: "Online playback, no download"
         access:
           label: Etykieta „dostęp”
           type: plain
@@ -534,6 +552,12 @@ shop:
           default:
             pl: "Bezterminowy, w Twoim koncie"
             en: "Lifetime, in your account"
+        preview:
+          label: Nagłówek nad odtwarzaczem próbki
+          type: plain
+          default:
+            pl: "Posłuchaj 30 sekund"
+            en: "Listen to 30 seconds"
         about:
           label: Nagłówek opisu
           type: plain
@@ -573,6 +597,12 @@ shop:
           default:
             pl: "Nagrania pojawią się tu wkrótce. Zajrzyj za jakiś czas."
             en: "Recordings will appear here soon. Do check back."
+        cta:
+          label: Przycisk w pustym sklepie
+          type: plain
+          default:
+            pl: "Zobacz pakiety współpracy"
+            en: "See the consultation packages"
 cart:
   label: Koszyk
   sections:
