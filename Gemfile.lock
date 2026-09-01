@@ -304,7 +304,7 @@ GEM
       cgi
       faraday (>= 2.14.2, < 3)
       ostruct (~> 0.6.0)
-    pagy (43.6.1)
+    pagy (43.6.2)
       json
       uri
       yaml
@@ -716,7 +716,7 @@ CHECKSUMS
   os (1.1.4) sha256=57816d6a334e7bd6aed048f4b0308226c5fb027433b67d90a9ab435f35108d3f
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
   paddle (2.10) sha256=e75ad5eb8f3f40b462ca0cdb9bc56382d7285851e83c8bbdc2bb9e113d1ab952
-  pagy (43.6.1) sha256=59fb6a58ea956480094a167b43a86796638ceb3a3917a25ae67973b584ace2eb
+  pagy (43.6.2) sha256=b1d461b6bb43ce410ed2b9f09ce2a90430fa804265d167207a30337ea45c1dd3
   parallel (2.1.0) sha256=b35258865c2e31134c5ecb708beaaf6772adf9d5efae28e93e99260877b09356
   parser (3.3.12.0) sha256=21a6d7f755d5a24dfbdc6e6b772e4e879a52e7631a88bc5a3a134606052c9828
   pay (11.7.1) sha256=09ed25706cba98056177baba0c5968ca440d55b2515790dca20f292f51d1dcc6
