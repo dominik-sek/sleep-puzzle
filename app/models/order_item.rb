@@ -1,9 +1,9 @@
-# One product in an order — purely the join, with no quantity: everything sold
+# One product in an order - purely the join, with no quantity: everything sold
 # here is a digital file, so a second copy is the same copy, and the unique index
 # on [order_id, product_id] is what keeps it to one.
 #
 # The product is referenced rather than copied: these are digital goods the owner
-# edits in the panel, and the buyer's library has to follow those edits — a
+# edits in the panel, and the buyer's library has to follow those edits - a
 # renamed audio process is the same audio process. Nothing here snapshots the
 # price for the same reason Order does not (Paddle owns the money).
 # == Schema Information

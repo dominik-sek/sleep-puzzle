@@ -27,7 +27,7 @@ class Integrations::GoogleCalendarController < ApplicationController
     revoke_remote_grant
     # Not left to revoke_authorization: it deletes through the token store only
     # after successfully building credentials, so the one case where the row most
-    # needs to go — a grant Google has already dropped — is the case where it
+    # needs to go - a grant Google has already dropped - is the case where it
     # never got that far.
     Integration.find_by(service_name: Integration::GOOGLE_CALENDAR)&.destroy
 
@@ -52,7 +52,7 @@ class Integrations::GoogleCalendarController < ApplicationController
   # is the state the button is trying to reach: revoking a token Google has
   # already expired answers 400, and refreshing a dead refresh token raises before
   # revoke_authorization reaches the revoke at all. Unrescued, the second one left
-  # the panel permanently stuck — the row survived, the page kept saying
+  # the panel permanently stuck - the row survived, the page kept saying
   # "Połączono", and pressing the button just 500'd again.
   def revoke_remote_grant
     authorizer.revoke_authorization(Integration::GOOGLE_CALENDAR)

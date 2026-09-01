@@ -2,13 +2,13 @@ require 'rails_helper'
 
 # Written after several rounds of "it is translated now" that were not. Rather than
 # asserting a handful of phrases are gone, this scans the rendered page for Polish
-# — which catches copy nobody thought to look for, including strings coming out of
+# - which catches copy nobody thought to look for, including strings coming out of
 # Ruby constants rather than views.
 #
 # It is a net, not a proof. Diacritics alone miss plenty of Polish: "Twoje dane",
 # "Pakiet" and "Status" are all pure ASCII, and the first of those sat on the
 # booking page through two passes that this file called clean. Hence the word list
-# underneath — still not exhaustive, so a hit is a bug but silence is only weak
+# underneath - still not exhaustive, so a hit is a bug but silence is only weak
 # evidence.
 #
 # CMS copy is the deliberate exception: a block with no English version falls back
@@ -74,7 +74,7 @@ RSpec.describe "English pages", type: :request do
     end
 
     # The controller module is evaluated once per full page load, so a locale read
-    # at import survives every Turbo navigation — which is why switching language
+    # at import survives every Turbo navigation - which is why switching language
     # used to leave the date picker in the language you arrived in until you
     # pressed reload. The server states it on the element instead, and it comes
     # with the swapped body.
@@ -204,7 +204,7 @@ RSpec.describe "English pages", type: :request do
 
     # `errors.full_messages` prepends the attribute name, which comes from
     # activerecord.attributes.user rather than the auth.fields the inputs are
-    # labelled with — a separate set of keys, and one en.yml did not have.
+    # labelled with - a separate set of keys, and one en.yml did not have.
     # asserted on the whole message, not just the attribute name: "Email address"
     # is also what labels the input, so it is on the page either way
     it "names the attribute in English when a sign-up fails validation" do

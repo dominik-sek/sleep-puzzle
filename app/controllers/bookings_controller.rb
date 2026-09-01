@@ -35,7 +35,7 @@ class BookingsController < ApplicationController
     )
 
     # Priceable first, and before anything is written. A package Paddle cannot
-    # price is a package we cannot sell — the shop and the packages page both
+    # price is a package we cannot sell - the shop and the packages page both
     # enforce that by withholding the buy control, and this surface used to be
     # the one place the rule was dropped.
     if @booking.package && !package_priceable?(@booking.package)
@@ -77,8 +77,8 @@ class BookingsController < ApplicationController
     end
   end
 
-  # Closing the Paddle overlay fires no webhook — Paddle only reports transactions the
-  # buyer actually attempted — so the browser reports it instead.
+  # Closing the Paddle overlay fires no webhook - Paddle only reports transactions the
+  # buyer actually attempted - so the browser reports it instead.
   #
   # The row is deleted rather than kept as canceled: nothing was paid and nothing was
   # committed to, so there is no history worth keeping, and a discarded checkout
@@ -94,7 +94,7 @@ class BookingsController < ApplicationController
       # other way round would leave an orphaned event nothing knows how to find
       BookingCalendarService.call(booking: booking).release
       booking.destroy!
-      Rails.logger.info("Cleared abandoned booking #{booking.id} — checkout closed without payment")
+      Rails.logger.info("Cleared abandoned booking #{booking.id} - checkout closed without payment")
     end
 
     # always says something: the slot disappeared from the calendar when the booking was
@@ -117,7 +117,7 @@ class BookingsController < ApplicationController
   # Deleting the row is irreversible, so the browser's word alone isn't enough: it says
   # the overlay closed, not that nothing was paid, and checkout.closed also fires when
   # Paddle tears the overlay down after a payment. Our own columns can't settle it
-  # either — paddle_transaction_id is only written when the webhook lands — so the last
+  # either - paddle_transaction_id is only written when the webhook lands - so the last
   # word goes to Paddle itself.
   def clearable?(booking, payment)
     booking.pending? && booking.paddle_transaction_id.blank? && payment.unpaid?
@@ -149,7 +149,7 @@ class BookingsController < ApplicationController
   end
 
   # These are the sentences a buyer reads at the moment money moves, so they
-  # belong to the owner like every other public word — Principle 4. helpers.
+  # belong to the owner like every other public word - Principle 4. helpers.
   # reaches the same content_block the views use, defaults and all.
   def booking_message(key)
     helpers.content_block("bookings.messages.#{key}")
@@ -253,7 +253,7 @@ class BookingsController < ApplicationController
         { hour: starts_at, available: available_starts.include?(slot_start) }
       end
 
-      # the offset is this date's own, not the page's — see BookingsHelper
+      # the offset is this date's own, not the page's - see BookingsHelper
       { date: date.iso8601, hours: hours, zone: helpers.booking_timezone_label(slot_starts.first) }
     end
 

@@ -88,7 +88,7 @@ module Buttons
         attrs[:href] = @href
         # no role: this is an anchor that navigates, and it should be announced as
         # a link. The value here was "buttons", which is not a valid ARIA token and
-        # was silently ignored — but "correcting" it to "button" would be worse,
+        # was silently ignored - but "correcting" it to "button" would be worse,
         # since it would tell assistive tech the link does not navigate.
         attrs[:'aria-disabled'] = @disabled if @disabled
       else

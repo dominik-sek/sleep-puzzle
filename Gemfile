@@ -120,7 +120,7 @@ gem "paddle", "~> 2.9"
 gem "sentry-ruby"
 gem "sentry-rails"
 
-# Postgres dashboard at /admin/db — slow queries, index suggestions, bloat.
+# Postgres dashboard at /admin/db - slow queries, index suggestions, bloat.
 # Reads the database that is already there, so it needs no Redis and no second
 # service, which is the whole reason it is here rather than an APM agent.
 gem "pghero"

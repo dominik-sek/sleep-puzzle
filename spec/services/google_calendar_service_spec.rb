@@ -27,7 +27,7 @@ RSpec.describe GoogleCalendarService do
         .to raise_error(described_class::NotConnected, /no longer valid/)
     end
 
-    # the distinction the class exists to draw — callers treat a missing
+    # the distinction the class exists to draw - callers treat a missing
     # connection differently from a call that happened to fail
     it "is not mistaken for a Google::Apis::Error" do
       expect(described_class::NotConnected.new).not_to be_a(Google::Apis::Error)

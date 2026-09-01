@@ -22,7 +22,7 @@
         </div>
 
         <%# through the component so it carries the pill radius, the amber focus
-            ring and a 44px target — hand-rolled it had a 22px radius that is
+            ring and a 44px target - hand-rolled it had a 22px radius that is
             neither pill nor piece, and fell back to the browser's blue ring %>
         <%= button_to t("nav.sign_out"), destroy_user_session_path, method: :delete,
               form_class: "contents",
@@ -30,6 +30,58 @@
       </div>
 
       <%= render "dashboard/section_heading", title: content_block("dashboard.library.title") %>
+
+      <%# Paid for, waiting on Paddle. Above the settled rows, because it is the
+          only thing on this screen the buyer is actually anxious about - and the
+          reason they opened it. Same row shape as below so it reads as the same
+          library, one step earlier; the status pill is the one the bookings
+          section already uses, so "waiting on a payment" looks the same in both
+          halves of the account.
+
+          No player: the payment is not confirmed, so there is nothing this
+          account is entitled to stream yet. Saying so beats a control that 403s. %>
+      <% if @awaiting.any? %>
+        <%# said once for the group, not once per row. Two identical paragraphs
+            stacked is reading load on a screen built for someone who has none
+            to spare - the pill on each row carries the per-item state. %>
+        <p class="mb-3 flex items-start gap-2 text-t6 text-tan m-0">
+          <%= icon "clock", class: "mt-0.5 size-4 shrink-0" %>
+          <span><%= content_block("dashboard.library.awaiting") %></span>
+        </p>
+
+        <%# the settled rows follow directly when there are any, so the gap
+            between the two halves is the list's own gap rather than a break %>
+        <div class="<%= @products.any? ? "mb-3" : "mb-11" %> flex flex-col gap-3">
+          <% @awaiting.each do |product| %>
+            <div id="<%= dom_id(product) %>"
+                 class="library-row scroll-mt-24 rounded-2xl border border-border-input bg-surface px-5 py-4"
+                 role="status">
+              <%# stacked below sm: side by side, the pill is shrink-0 and the
+                  name loses, so a long Polish title was clipped to nothing on
+                  the 390px phone this site is built for %>
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <div class="flex min-w-0 flex-1 items-center gap-4">
+                  <span class="text-t3 leading-none opacity-60" aria-hidden="true"><%= product.display_icon %></span>
+                  <span class="min-w-0 flex-1">
+                    <span class="block">
+                      <%= link_to product.name, product_path(product),
+                                  class: "inline-block py-2.5 font-display font-bold text-t5 text-cream no-underline break-words hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+                    </span>
+                    <span class="block text-t6 text-taupe"><%= product.kind_label %></span>
+                  </span>
+                </div>
+
+                <%# the bookings section's pill, unchanged: one shape for "still
+                    waiting on a payment" across the whole account %>
+                <span class="self-start shrink-0 inline-flex items-center gap-1.5 rounded-full border border-border-input px-3 py-1.5 text-t6 font-bold text-cream sm:self-auto">
+                  <%= icon "clock", class: "size-3.5 shrink-0" %>
+                  <%= content_block("dashboard.library.awaiting_status") %>
+                </span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
 
       <% if @products.any? %>
         <div class="mb-11 flex flex-col gap-3">
@@ -41,7 +93,7 @@
 
                 The link is on the name only. It used to wrap the whole row, which
                 made the biggest target on the page a route back to the product's
-                sales page — for something the reader already owns. %>
+                sales page - for something the reader already owns. %>
             <div id="<%= dom_id(product) %>"
                  class="library-row scroll-mt-24 rounded-2xl border border-border-strong bg-surface px-5 py-4">
               <div class="flex items-center gap-4">
@@ -49,10 +101,12 @@
                 <span class="flex-1 min-w-0">
                   <%# inline-block + py-2: narrowing this from the whole row fixed
                       where it points but left a 19px target. Display-For-Names
-                      covers a product's name, so Baloo rather than Quicksand. %>
-                  <span class="block truncate">
+                      covers a product's name, so Baloo rather than Quicksand.
+                      Wraps rather than truncates - Polish runs long, and the one
+                      screen that confirms what you own must not clip its name. %>
+                  <span class="block">
                     <%= link_to product.name, product_path(product),
-                                class: "inline-block py-2.5 font-display font-bold text-t5 text-cream no-underline hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+                                class: "inline-block py-2.5 font-display font-bold text-t5 text-cream no-underline break-words hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
                   </span>
                   <span class="block text-t6 text-taupe"><%= product.kind_label %></span>
                 </span>
@@ -60,13 +114,13 @@
 
               <%# preload="none" so nothing is fetched and no token is minted until
                   play is actually pressed. Products with no file uploaded keep the
-                  plain row — a control with nothing behind it would be a lie. %>
+                  plain row - a control with nothing behind it would be a lie. %>
               <% if product.streamable? %>
                 <audio controls preload="none" class="mt-3.5 w-full"
                        src="<%= stream_product_path(product) %>"
                        aria-label="<%= t('products.player.label', name: product.name) %>"></audio>
               <% else %>
-                <%# Still no control — one with nothing behind it would be a lie —
+                <%# Still no control - one with nothing behind it would be a lie -
                     but silence was worse: a buyer saw something they had paid for,
                     no player, and no reason. Says so, and gives them the one route
                     that works. The panel flags the same row for the owner. %>
@@ -79,7 +133,9 @@
             </div>
           <% end %>
         </div>
-      <% else %>
+      <% elsif @awaiting.none? %>
+        <%# only when nothing is settled *and* nothing is on its way - "you don't
+            have any audio yet" is a lie to someone whose card was just charged %>
         <%= render "dashboard/empty_state",
                    body: content_block("dashboard.library.empty"),
                    label: content_block("dashboard.library.empty_link"),
@@ -127,7 +183,7 @@
       <div class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border-strong bg-surface p-5.5">
         <div>
           <%# a Google sign-up has never had a password, so promising to change one
-              is a promise the next screen contradicts — it offers to *set* one.
+              is a promise the next screen contradicts - it offers to *set* one.
               The controller and the Devise view already branch on this; only the
               summary here did not. %>
           <p class="text-t6 text-tan m-0">

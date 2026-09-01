@@ -4,12 +4,12 @@
 # transaction.completed arrives: in the gap between the buyer paying and that webhook
 # landing, the booking still looks untouched. The browser reporting "I closed the
 # overlay" is not enough to justify deleting it, and it can't be trusted to say why it
-# closed either — so the transaction is found the same way the webhook finds the
+# closed either - so the transaction is found the same way the webhook finds the
 # booking, through custom_data.booking_id on this buyer's Paddle customer.
 class BookingPaymentCheckService < ApplicationService
   # Paddle statuses that mean nobody has committed money: a checkout that was opened
   # (draft), had a card presented and turned down (ready), or was given up on
-  # (canceled). Deliberately a safe-list — a status Paddle adds later reads as paid, so
+  # (canceled). Deliberately a safe-list - a status Paddle adds later reads as paid, so
   # it can never become the reason a booking is deleted from under a real payment.
   UNCOMMITTED_STATUSES = %w[draft ready canceled].freeze
 
@@ -58,7 +58,7 @@ class BookingPaymentCheckService < ApplicationService
   end
 
   # nil when Paddle couldn't be asked at all; [] when it simply has nothing for this
-  # booking. The two must stay distinguishable — see #unpaid?.
+  # booking. The two must stay distinguishable - see #unpaid?.
   def transactions
     return @transactions if defined?(@transactions)
 

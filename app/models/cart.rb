@@ -2,7 +2,7 @@
 #
 # Not an ApplicationRecord: a cart before checkout is a scratch list, and the
 # audience browses before signing in. A table would mean a row per anonymous
-# visitor, a sweep job to expire them, and a merge on sign-in — for something the
+# visitor, a sweep job to expire them, and a merge on sign-in - for something the
 # buyer can rebuild in three clicks. The session already survives sign-in, so the
 # cart carries over on its own.
 #
@@ -22,7 +22,7 @@ class Cart
       PaddlePriceCatalogService.find(product.paddle_price_id)
     end
 
-    # nil when Paddle can't be reached or no longer knows the id — the view shows
+    # nil when Paddle can't be reached or no longer knows the id - the view shows
     # the line without a price rather than dropping a product the buyer chose
     def price_label
       price&.formatted_amount
@@ -34,9 +34,10 @@ class Cart
   end
 
   # `owner` is the signed-in buyer, or nil while browsing signed out. It is what
-  # keeps something already bought out of the cart: the session survives sign-in,
-  # so a file added before signing in can turn out to be one this account already
-  # owns, and nothing else would notice before checkout charged for it twice.
+  # keeps something already claimed out of the cart: the session survives
+  # sign-in, so a file added before signing in can turn out to be one this
+  # account already owns - or one it is mid-checkout for - and nothing else would
+  # notice before checkout charged for it twice.
   def initialize(session, owner: nil)
     @session = session
     @owner = owner
@@ -46,11 +47,11 @@ class Cart
     @lines ||= buyable.map { |product| Line.new(product: product) }
   end
 
-  # In the session, published, and not already owned — everything the buyer is
+  # In the session, published, and not already claimed - everything the buyer is
   # actually being asked to pay for. `count`, `total_label` and the order all
-  # read through this, so an owned file cannot be counted, totalled or charged.
+  # read through this, so a claimed file cannot be counted, totalled or charged.
   def buyable
-    @buyable ||= resolved.reject { |product| owned?(product) }
+    @buyable ||= resolved.reject { |product| claimed?(product) }
   end
 
   # In the session but already paid for. Surfaced rather than silently dropped, so
@@ -59,8 +60,25 @@ class Cart
     @already_owned ||= resolved.select { |product| owned?(product) }
   end
 
+  # In the session and mid-checkout on another order. Kept separate from
+  # #already_owned because the two need different words: one is in the account
+  # now, the other is money that has moved and a file that is not there yet.
+  def awaiting
+    @awaiting ||= resolved.select { |product| awaiting?(product) }
+  end
+
   def owned?(product)
     @owner.present? && owned_ids.include?(product.id)
+  end
+
+  def awaiting?(product)
+    @owner.present? && awaiting_ids.include?(product.id)
+  end
+
+  # Either kind of claim. This, not #owned?, is what decides whether a line can
+  # be charged for.
+  def claimed?(product)
+    owned?(product) || awaiting?(product)
   end
 
   # Idempotent: a file is either in the cart or it is not.
@@ -137,9 +155,19 @@ class Cart
     end
   end
 
-  # One query, not one per line
+  # One query each, not one per line
   def owned_ids
-    @owned_ids ||= @owner ? @owner.purchased_products.where(id: product_ids).pluck(:id).to_set : Set.new
+    @owned_ids ||= claim_ids(:purchased_products)
+  end
+
+  def awaiting_ids
+    @awaiting_ids ||= claim_ids(:awaiting_products)
+  end
+
+  def claim_ids(association)
+    return Set.new unless @owner
+
+    @owner.public_send(association).where(id: product_ids).pluck(:id).to_set
   end
 
   def write(ids)
@@ -151,8 +179,10 @@ class Cart
     @product_ids = nil
     @resolved = nil
     @owned_ids = nil
+    @awaiting_ids = nil
     @buyable = nil
     @already_owned = nil
+    @awaiting = nil
     @lines = nil
     self
   end

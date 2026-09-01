@@ -6,14 +6,14 @@
 
 /* Self-hosted, not fonts.googleapis.com. The CDN link set no cookies but handed
    Google every visitor's IP on every page load, which is a data transfer with no
-   consent behind it and nothing a cookie banner would cover — the same fact
+   consent behind it and nothing a cookie banner would cover - the same fact
    pattern the Munich court awarded damages over in 2022 (LG München I,
    3 O 17493/20). These files are byte-identical to what the CDN served; both
    families are SIL Open Font License 1.1 and the licences sit next to them in
    app/frontend/fonts.
 
    Variable fonts, so one file spans the whole weight range each family uses
-   (Quicksand 300–700, Baloo 2 400–800) instead of one per weight — four files
+   (Quicksand 300–700, Baloo 2 400–800) instead of one per weight - four files
    for what the CDN split into eight requests.
 
    The latin/latin-ext split is Google's own subsetting, kept because it is worth
@@ -71,7 +71,7 @@
 }
 
 @theme {
-  /* Fonts — Quicksand for body copy, Baloo 2 for display/headings */
+  /* Fonts - Quicksand for body copy, Baloo 2 for display/headings */
   --font-sans: "Quicksand", sans-serif;
   --font-display: "Baloo 2", sans-serif;
 
@@ -85,7 +85,7 @@
   --leading-copy: 1.75;      /* long-form (about page) paragraphs */
   --leading-loose: 1.8;
 
-  /* Text styles — size + line-height + weight bundled per level (font-family still separate: pair with font-display / font-sans) */
+  /* Text styles - size + line-height + weight bundled per level (font-family still separate: pair with font-display / font-sans) */
   --text-t1: clamp(2.25rem, 6vw, 4rem);   /* 36–64px, hero */
   --text-t1--line-height: 1.08;
   --text-t1--font-weight: 700;
@@ -128,7 +128,7 @@
   --color-taupe: #9b948a;    /* muted text */
   --color-taupe-dark: #57504a; /* faint / placeholder text */
 
-  /* Accent — configurable brand color, default warm amber */
+  /* Accent - configurable brand color, default warm amber */
   --color-accent: #e2933e;
   --color-accent-hover: #ffb35e;
   --color-accent-terracotta: #c97a2e;
@@ -138,9 +138,9 @@
 }
 
 @layer base {
-  /* The browser paints its own controls — the <audio> transport in the dashboard
+  /* The browser paints its own controls - the <audio> transport in the dashboard
      library and the shop's preview player, form focus rings, scrollbars, the
-     date picker — and without this it paints them in its light skin. Three white
+     date picker - and without this it paints them in its light skin. Three white
      capsules were the brightest thing on a page whose reader is holding a
      sleeping child in a dark room. This is the one declaration that tells the UA
      which set to use, and it belongs at the root because it inherits. */
@@ -481,14 +481,14 @@ calendar-month{
   &::part(th){
     @apply p-0
   }
-  /* Sizing lives in the flat rule below, not here — see the note there. */
+  /* Sizing lives in the flat rule below, not here - see the note there. */
   &::part(button){
     @apply rounded-md flex items-center justify-center text-center w-full box-border text-t6 font-sans transition-all duration-100 ease-in-out bg-ink
   }
   &::part(week){
     @apply text-t2
   }
-  /* Was taupe-dark — 2.09:1 on ink, and forty of these carry the page's primary
+  /* Was taupe-dark - 2.09:1 on ink, and forty of these carry the page's primary
      information: which days exist at all. Inactive controls are exempt from
      1.4.3, but PRODUCT.md makes contrast a correctness requirement here, so this
      is lifted to a legible step rather than left at the legal minimum. */
@@ -506,14 +506,14 @@ calendar-month{
   }
 }
 /* paging to another month re-renders every cell in place, so the button
-   transition above replays across the whole grid — the incoming days hold the
+   transition above replays across the whole grid - the incoming days hold the
    previous month's available background and visibly fade into disallowed.
    cally_controller sets data-paging for the frame that re-render lands in;
    the attribute also outranks the plain ::part(button) rule. */
 /* Day cells take their height from their width, so they stay square at every
    size instead of only at the one the padding was tuned for. Previously a flat
    p-6 set the height, which held cells at 68px tall even once the column had
-   narrowed to ~40px on a phone — adjacent available days then ran together into
+   narrowed to ~40px on a phone - adjacent available days then ran together into
    bars. Written flat and in plain CSS deliberately: inside the nested
    &::part(button) above, both Tailwind's aspect-square and responsive variants
    are silently dropped by this pipeline, the same quirk the hover rules hit. */
@@ -533,7 +533,7 @@ calendar-month::part(button):hover:not(:disabled) {
 }
 
 /* ::part(disallowed) is how cally marks isDateDisallowed days. NOTE: the
-   original comment here said cally sets no native disabled attribute — that is
+   original comment here said cally sets no native disabled attribute - that is
    wrong. Inspected live, every disallowed cell carries disabled="" and
    aria-disabled="true", so :not(:disabled) above already excludes them and this
    tie-breaker is probably redundant. Kept rather than deleted because removing
@@ -552,13 +552,13 @@ calendar-month::part(selected):hover:not(:disabled) {
 }
 
 /* hour-slot buttons (bookings/index) use aria-pressed as their "selected" state,
-   set by cally_controller#timeSelected — mirrors the calendar's selected-day styling */
+   set by cally_controller#timeSelected - mirrors the calendar's selected-day styling */
 [data-cally-target="hoursPanel"] [aria-pressed="true"] {
   @apply bg-accent text-ink;
 }
 
 
-/* Pagination — pagy generates the anchor markup inside Pagination::Component,
+/* Pagination - pagy generates the anchor markup inside Pagination::Component,
    so it's styled by selector here rather than in the component. Scoped to .pagy
    (not .pagy.series-nav) because the compact/minimal variants render bare
    prev/next anchors outside the series nav. Rule order matters: the current
@@ -587,7 +587,7 @@ calendar-month::part(selected):hover:not(:disabled) {
   @apply bg-accent text-ink border-accent-terracotta/30 cursor-default;
 }
 
-/* Action Text / Trix — trix.css (imported in application.js) ships a light
+/* Action Text / Trix - trix.css (imported in application.js) ships a light
    editor, so the chrome is restyled for the dark panel here. The toolbar icons
    are dark SVG data URIs baked into that stylesheet, so they get inverted
    rather than replaced. .trix-content styles both the editor body and the
@@ -649,7 +649,7 @@ trix-editor:empty:not(:focus)::before {
 }
 
 /* A rich block renders its own .trix-content wrapper, and that wrapper's own
-   colour beats anything set on the parent — so `text-cream` on the container
+   colour beats anything set on the parent - so `text-cream` on the container
    around a lead paragraph was silently doing nothing, and lead and body came out
    identical. These modifiers go on the container; the child is what they style.
    --leading-copy (1.75) finally has a caller: it was declared for long-form

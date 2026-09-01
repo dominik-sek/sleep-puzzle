@@ -1,4 +1,4 @@
-# Closing the Paddle overlay without paying fires no webhook at all — Paddle only
+# Closing the Paddle overlay without paying fires no webhook at all - Paddle only
 # reports transactions the buyer actually attempted. Without this sweep those
 # bookings stay pending forever and their calendar event keeps holding the slot.
 class ReleaseAbandonedBookingsJob < ApplicationJob

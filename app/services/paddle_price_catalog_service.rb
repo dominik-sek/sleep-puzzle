@@ -14,8 +14,8 @@
 class PaddlePriceCatalogService < ApplicationService
   CACHE_KEY = "paddle/price_catalog"
 
-  # Short on purpose. The cache is not here to save API calls — a request already
-  # fetches the list once and hands it to every row — it is here so a slow or
+  # Short on purpose. The cache is not here to save API calls - a request already
+  # fetches the list once and hands it to every row - it is here so a slow or
   # unreachable Paddle cannot make every admin page render wait on it. A minute
   # buys that without the panel showing a catalogue the owner has already changed.
   # Admin::PaddlePricesController#update clears it on demand.
@@ -25,9 +25,9 @@ class PaddlePriceCatalogService < ApplicationService
   ZERO_DECIMAL_CURRENCIES = %w[JPY KRW TWD].freeze
 
   Price = Struct.new(:id, :description, :product_name, :amount, :currency, keyword_init: true) do
-    # "Pakiet Szybka ulga — Jednorazowo — 249.00 PLN"
+    # "Pakiet Szybka ulga - Jednorazowo - 249.00 PLN"
     def label
-      [ product_name, description, formatted_amount ].compact_blank.join(" — ")
+      [ product_name, description, formatted_amount ].compact_blank.join(" - ")
     end
 
     # Paddle sends minor units as a string ("24900"). Currencies with no minor
@@ -39,7 +39,7 @@ class PaddlePriceCatalogService < ApplicationService
       precision = ZERO_DECIMAL_CURRENCIES.include?(currency) ? 0 : 2
       major = amount.to_d / (10**precision)
 
-      # strip_insignificant_zeros: false — the pl locale strips them, and "249,5 PLN"
+      # strip_insignificant_zeros: false - the pl locale strips them, and "249,5 PLN"
       # does not read as an amount of money
       ActiveSupport::NumberHelper.number_to_currency(
         major, unit: currency, format: "%n %u", precision: precision,
@@ -48,7 +48,7 @@ class PaddlePriceCatalogService < ApplicationService
     end
   end
 
-  # nil for an id Paddle no longer knows about — a price that was archived, or a
+  # nil for an id Paddle no longer knows about - a price that was archived, or a
   # typo from before the panel offered a list. The admin index shows that as a
   # warning rather than silently rendering a row that cannot be bought.
   def self.find(price_id)

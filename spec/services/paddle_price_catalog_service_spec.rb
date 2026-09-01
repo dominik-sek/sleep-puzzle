@@ -21,7 +21,7 @@ RSpec.describe PaddlePriceCatalogService do
 
       expect(price.id).to eq("pri_1")
       expect(price.product_name).to eq("Szybka ulga")
-      expect(price.label).to eq("Szybka ulga — Jednorazowo — 249,00 PLN")
+      expect(price.label).to eq("Szybka ulga - Jednorazowo - 249,00 PLN")
     end
 
     it "asks Paddle only for active prices, with the product attached" do

@@ -1,6 +1,6 @@
 # Asks Cloudflare whether a Turnstile token is genuine.
 #
-# The token the widget puts in the form proves nothing on its own — it has to be
+# The token the widget puts in the form proves nothing on its own - it has to be
 # redeemed against siteverify, from here rather than the browser, because only
 # this side holds the secret. Tokens are single use, so a replay of one that has
 # already been redeemed comes back as a failure.
@@ -15,8 +15,8 @@ class TurnstileVerificationService < ApplicationService
   NETWORK_ERRORS = [ Timeout::Error, Errno::ECONNREFUSED, Errno::ECONNRESET, SocketError, OpenSSL::SSL::SSLError, IOError ].freeze
 
   class << self
-    # The secret is what makes verification possible at all, so its absence — not
-    # the site key's — is what decides whether the check can run.
+    # The secret is what makes verification possible at all, so its absence - not
+    # the site key's - is what decides whether the check can run.
     def configured?
       secret.present?
     end
@@ -52,7 +52,7 @@ class TurnstileVerificationService < ApplicationService
     # Nothing to verify against. Loud, because a deploy that lost the secret has
     # quietly stopped checking anything.
     unless self.class.configured?
-      Rails.logger.warn("Turnstile is not configured (TURNSTILE_SECRET is unset) — skipping verification")
+      Rails.logger.warn("Turnstile is not configured (TURNSTILE_SECRET is unset) - skipping verification")
       return true
     end
 

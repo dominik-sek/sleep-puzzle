@@ -2,7 +2,7 @@
 
 module Admin
   # Shop purchases. The panel is where "I paid and cannot see my audio" gets
-  # answered, so the Paddle transaction id is carried through to the show page —
+  # answered, so the Paddle transaction id is carried through to the show page -
   # it is what a refund or a dispute is looked up by on Paddle's side.
   class OrdersController < BaseController
     def index

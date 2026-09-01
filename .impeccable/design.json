@@ -290,7 +290,7 @@
       {
         "name": "overlay",
         "value": "0 10px 30px rgba(0, 0, 0, 0.45)",
-        "purpose": "The only shadow in the system. Dropdowns, mobile menu, toasts, dialogs — things that genuinely float above the page. Never on an in-page card or button."
+        "purpose": "The only shadow in the system. Dropdowns, mobile menu, toasts, dialogs - things that genuinely float above the page. Never on an in-page card or button."
       }
     ],
     "motion": [
@@ -307,7 +307,7 @@
       {
         "name": "state-slow",
         "value": "300ms ease-in-out",
-        "purpose": "Larger reveals — panels, accordions, image transitions."
+        "purpose": "Larger reveals - panels, accordions, image transitions."
       }
     ],
     "breakpoints": [
@@ -338,7 +338,7 @@
       "name": "Primary Pill Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The one 'do the thing' action per screen — book, buy, submit.",
+      "description": "The one 'do the thing' action per screen - book, buy, submit.",
       "html": "<button class=\"ds-btn-primary\">Umów konsultację</button>",
       "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--color-accent, #e2933e); color: var(--color-ink, #211e1c); border: 1px solid rgba(201, 122, 46, 0.3); border-radius: 9999px; padding: 12px 24px; font-family: Quicksand, sans-serif; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.02em; line-height: 1.4; white-space: nowrap; cursor: pointer; transition: background 100ms ease-in-out; } .ds-btn-primary:hover { background: var(--color-accent-hover, #ffb35e); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-accent, #e2933e); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
     },
@@ -409,20 +409,20 @@
   ],
   "narrative": {
     "northStar": "The Piece That Fits",
-    "overview": "The product's name is not decoration — it is the design brief. Karola describes her work as assembling a family's sleep like a puzzle, piece by piece, and the interface is built the same way: from discrete, self-contained, softly-cornered pieces that tessellate into something whole. A package is a piece. A product is a piece. A step in the process is a piece. Nothing floats, nothing is loose, nothing is missing — and when a piece has nothing to say, it is absent rather than empty.\n\nThe material is soft, tactile, generous and playful. The ground is a warm near-black (ink, #211e1c) — brown-leaning, never blue-leaning, never a true black — and every surface above it is another warm neutral a few points lighter. Corners are large (16px on containers) and actions are fully round. Baloo 2's rounded terminals and the mascot's presence set a register that is closer to a well-made soft toy than to a clinical app. The whole thing is lit by exactly one warm light: accent, a lamp amber, which is the only saturated colour in the system.\n\nThis restraint is not minimalism, it is care. The visitor is an exhausted parent reading on a phone in a dark room, and the design's first job is to be legible and calm at that hour. Softness is how competence is expressed here: generous padding, thumb-sized targets, a palette that does not glare, and a single point of light per screen telling them where to go next.",
+    "overview": "The product's name is not decoration - it is the design brief. Karola describes her work as assembling a family's sleep like a puzzle, piece by piece, and the interface is built the same way: from discrete, self-contained, softly-cornered pieces that tessellate into something whole. A package is a piece. A product is a piece. A step in the process is a piece. Nothing floats, nothing is loose, nothing is missing - and when a piece has nothing to say, it is absent rather than empty.\n\nThe material is soft, tactile, generous and playful. The ground is a warm near-black (ink, #211e1c) - brown-leaning, never blue-leaning, never a true black - and every surface above it is another warm neutral a few points lighter. Corners are large (16px on containers) and actions are fully round. Baloo 2's rounded terminals and the mascot's presence set a register that is closer to a well-made soft toy than to a clinical app. The whole thing is lit by exactly one warm light: accent, a lamp amber, which is the only saturated colour in the system.\n\nThis restraint is not minimalism, it is care. The visitor is an exhausted parent reading on a phone in a dark room, and the design's first job is to be legible and calm at that hour. Softness is how competence is expressed here: generous padding, thumb-sized targets, a palette that does not glare, and a single point of light per screen telling them where to go next.",
     "keyCharacteristics": [
       "Warm near-black ground; brown-neutral throughout, no cool greys, no true black.",
       "One saturated colour in the entire system: lamp amber. Everything else is a neutral.",
       "Depth by tonal layering and hairlines, not by shadow.",
       "Large radii: 16px pieces, fully-round actions.",
       "Two typefaces, both rounded: Baloo 2 for display, Quicksand for everything read.",
-      "Self-hosted fonts and zero third-party assets — a design constraint, not just an ops one.",
+      "Self-hosted fonts and zero third-party assets - a design constraint, not just an ops one.",
       "Built phone-first for a tired one-handed reader."
     ],
     "rules": [
       {
         "name": "The One Lamp Rule",
-        "body": "There is one light source per screen. Lamp Amber marks the single most important action in a view and the small marks that guide the eye to it — nothing else. Two amber buttons competing in one viewport means one of them is wrong.",
+        "body": "There is one light source per screen. Lamp Amber marks the single most important action in a view and the small marks that guide the eye to it - nothing else. Two amber buttons competing in one viewport means one of them is wrong.",
         "section": "colors"
       },
       {
@@ -432,17 +432,17 @@
       },
       {
         "name": "The No Dark Mode Rule",
-        "body": "There is no light mode to toggle away from. The system is dark by construction, so dark: variants are meaningless here — a dark: prefix in this codebase is a leftover from the component scaffold, not a feature.",
+        "body": "There is no light mode to toggle away from. The system is dark by construction, so dark: variants are meaningless here - a dark: prefix in this codebase is a leftover from the component scaffold, not a feature.",
         "section": "colors"
       },
       {
         "name": "The Display-For-Names Rule",
-        "body": "Baloo 2 is for things that are named — headings, titles, wordmarks, durations, step titles. Anything the visitor reads as a sentence is Quicksand. Never set a paragraph in Baloo 2.",
+        "body": "Baloo 2 is for things that are named - headings, titles, wordmarks, durations, step titles. Anything the visitor reads as a sentence is Quicksand. Never set a paragraph in Baloo 2.",
         "section": "typography"
       },
       {
         "name": "The Uppercase Ceiling Rule",
-        "body": "Uppercase is only ever applied at Label size, in Taupe, as a category eyebrow. There is no uppercase heading anywhere in this system, and there should not be — Baloo 2's roundness turns hostile at scale in caps.",
+        "body": "Uppercase is only ever applied at Label size, in Taupe, as a category eyebrow. There is no uppercase heading anywhere in this system, and there should not be - Baloo 2's roundness turns hostile at scale in caps.",
         "section": "typography"
       },
       {
@@ -462,7 +462,7 @@
       },
       {
         "name": "The Flat Page Rule",
-        "body": "In-page surfaces are flat. If a piece needs to feel lifted, raise its tone (ink → surface) or firm up its border — never add a shadow.",
+        "body": "In-page surfaces are flat. If a piece needs to feel lifted, raise its tone (ink → surface) or firm up its border - never add a shadow.",
         "section": "elevation"
       },
       {
@@ -480,7 +480,7 @@
       "Do keep every neutral warm and brown-leaning. ink (#211e1c) is the floor of the system; cream (#f5f0e8) is the ceiling.",
       "Do give each screen exactly one Lamp Amber primary action. Its rarity is what makes it work.",
       "Do alternate section backgrounds ink / ink-soft down a long page.",
-      "Do reach for the astroid mark instead of a generic bullet — it is the fastest signature in the system.",
+      "Do reach for the astroid mark instead of a generic bullet - it is the fastest signature in the system.",
       "Do keep body text at 16px minimum on mobile, and inputs at 16px, so iOS Safari does not zoom on focus.",
       "Do set headline sizes in clamp() and let labels wrap. Polish runs long.",
       "Do pin card CTAs with mt-auto so a row of pieces aligns at the bottom.",
@@ -491,7 +491,7 @@
     "donts": [
       "Don't use Tailwind's cool neutrals (neutral-*, zinc-*, slate-*, gray-*), bg-white, or pure black anywhere on the public site.",
       "Don't write dark: variants. This system has no light mode; a dark: prefix here is dead code that will never apply.",
-      "Don't use Buttons::Component's style: :fancy variants. They are unconverted scaffold — grey-and-white gradient buttons from a generic component library that bear no relationship to this design system. The :basic variants are the real ones.",
+      "Don't use Buttons::Component's style: :fancy variants. They are unconverted scaffold - grey-and-white gradient buttons from a generic component library that bear no relationship to this design system. The :basic variants are the real ones.",
       "Don't use the bare select, [type=\"checkbox\"] or [type=\"radio\"] styles from application.css on a public page without converting them first. They are still white-on-neutral-300 scaffold and will punch a hole in the warm-dark world.",
       "Don't add drop shadows to in-page elements. Raise the tone or firm the border.",
       "Don't set a paragraph in Baloo 2, and don't set an uppercase heading in it at all.",

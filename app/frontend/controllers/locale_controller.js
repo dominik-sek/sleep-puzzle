@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 // Keeps <html lang> honest across Turbo navigations.
 //
 // Turbo Drive swaps the <body> and merges the <head>, but never touches the
-// attributes on <html> itself — so after switching language the document still
+// attributes on <html> itself - so after switching language the document still
 // claimed the old one. Nothing visible breaks, but a screen reader keeps reading
 // English copy with Polish pronunciation rules, and any script that trusts
 // document.documentElement.lang gets a stale answer.

@@ -3,7 +3,7 @@
 # `product_path(product)` binds the product to :locale and raises "missing
 # required keys: [:id]".
 #
-# Declaring the key here — nil, so Polish paths stay unprefixed — means the
+# Declaring the key here - nil, so Polish paths stay unprefixed - means the
 # segment is always considered supplied, and positional arguments land on the
 # segment they were written for. ApplicationController#default_url_options
 # overrides it per request for a non-default locale.

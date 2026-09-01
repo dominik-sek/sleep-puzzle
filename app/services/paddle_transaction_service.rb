@@ -1,12 +1,12 @@
 # Shared lookup for the paddle_billing.transaction.* webhooks that act on
-# something we saved before opening the checkout — a booking, an order.
+# something we saved before opening the checkout - a booking, an order.
 #
 # `event` is the `data` object of the webhook, rehydrated by
 # Pay::Webhook#rehydrated_event into a nested InheritableOptions.
 #
 # Subclasses say what the transaction was expected to pay for by declaring the
-# model and the custom_data key that names it. Everything else — the "is this
-# really the buyer" check especially — is the same either way and lives here, so
+# model and the custom_data key that names it. Everything else - the "is this
+# really the buyer" check especially - is the same either way and lives here, so
 # there is one place to get it right.
 class PaddleTransactionService < ApplicationService
   def initialize(event:)
@@ -40,7 +40,7 @@ class PaddleTransactionService < ApplicationService
     return log("#{label} #{id} not found") if found.nil?
 
     # custom_data is set in the browser, so a tampered checkout could name someone
-    # else's record — only the customer Paddle actually charged may act on it.
+    # else's record - only the customer Paddle actually charged may act on it.
     return log("#{label} #{found.id} does not belong to Paddle customer #{event.customer_id}") unless payer?(found)
 
     found

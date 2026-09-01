@@ -1,7 +1,7 @@
 # Mints a playable URL for a file on the Bunny CDN.
 #
-# The pull zone in front of the audio storage zone is public — anyone who guesses
-# a filename gets the recording — so the zone has Token Authentication switched
+# The pull zone in front of the audio storage zone is public - anyone who guesses
+# a filename gets the recording - so the zone has Token Authentication switched
 # on and refuses every request without a valid token. Signing one here is what
 # turns "this person owns the product", decided in ProductsController#stream,
 # into a URL Bunny will actually serve.
@@ -14,8 +14,8 @@
 class BunnySignedUrlService < ApplicationService
   # Long enough that someone who starts a recording, pauses to settle a child and
   # comes back can still seek. Seeking is a fresh Range request against the same
-  # signed URL, so a short window would expire mid-recording — the one moment
-  # this must not break — rather than at a page load, where it would at least be
+  # signed URL, so a short window would expire mid-recording - the one moment
+  # this must not break - rather than at a page load, where it would at least be
   # obvious what happened.
   DEFAULT_TTL = 6.hours
 

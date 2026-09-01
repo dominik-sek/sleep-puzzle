@@ -5,7 +5,7 @@ class BookingConfirmationService < PaddleTransactionService
     # transaction can arrive more than once
     return if Booking.exists?(paddle_transaction_id: transaction_id)
 
-    # money has changed hands and there is nothing to credit it to — a discarded
+    # money has changed hands and there is nothing to credit it to - a discarded
     # checkout deletes its booking, so a completion arriving after that needs a human
     if booking.nil?
       Rails.logger.error("[paddle] transaction #{transaction_id} completed but no booking could be matched")

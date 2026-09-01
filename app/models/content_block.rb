@@ -2,8 +2,8 @@
 # key declared in config/content_blocks.yml (see ContentBlock::Registry).
 #
 # One row per key holds both languages, rather than one row per key+locale. That
-# keeps the two versions on a single edit screen — which is how you actually
-# translate, against the source — and makes it impossible for a key to exist in
+# keeps the two versions on a single edit screen - which is how you actually
+# translate, against the source - and makes it impossible for a key to exist in
 # one language but not the other.
 #
 # Plain fields (titles) live in value_pl/value_en; rich fields use Action Text,

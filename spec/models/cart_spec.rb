@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Cart, type: :model do
   # the real thing is an ActionDispatch session, which is a hash as far as Cart
-  # is concerned — including the strings it hands back
+  # is concerned - including the strings it hands back
   let(:session) { {} }
   let(:cart) { described_class.from_session(session) }
   let(:product) { create_product(name: "Bajka o sowie") }
@@ -97,7 +97,7 @@ RSpec.describe Cart, type: :model do
 
     # A cookie is a live thing in someone's browser. Carts written before
     # quantities were dropped hold { id => qty }, and the navbar badge reads the
-    # cart on every page — so an unreadable one would 500 the whole site for that
+    # cart on every page - so an unreadable one would 500 the whole site for that
     # visitor until they cleared it.
     context "written by the version that still had quantities" do
       it "reads the products out of the old { id => quantity } shape" do
@@ -182,10 +182,29 @@ RSpec.describe Cart, type: :model do
       expect(cart.already_owned).to eq([ product ])
     end
 
-    it "counts an unpaid order for nothing" do
+    # the double-charge: between paying and the webhook landing the order is
+    # still pending, and charging that line again takes money for nothing
+    it "keeps a pending order's product out of the lines" do
       owner.orders.create!(status: :pending, order_items: [ OrderItem.new(product: other) ])
 
+      expect(cart.lines).to be_empty
+      expect(cart.awaiting).to eq([ other ])
+    end
+
+    it "keeps a pending order's product out of the total" do
+      owner.orders.create!(status: :pending, order_items: [ OrderItem.new(product: other) ])
+
+      expect(cart.total_label).to be_nil
+    end
+
+    # a released checkout has to put them back, or a buyer who walked away could
+    # never buy those files again
+    it "counts a released order's product again" do
+      order = owner.orders.create!(status: :pending, order_items: [ OrderItem.new(product: other) ])
+      order.fail_payment!(:canceled)
+
       expect(cart.lines.map(&:product)).to eq([ other ])
+      expect(cart.awaiting).to be_empty
     end
 
     it "does not apply to someone browsing signed out" do

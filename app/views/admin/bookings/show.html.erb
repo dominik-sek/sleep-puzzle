@@ -1,4 +1,4 @@
-<% content_for :title, "#{@booking.name} — Panel" %>
+<% content_for :title, "#{@booking.name} - Panel" %>
 
 <div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[800px]">
   <div class="flex flex-col gap-2">
@@ -14,12 +14,12 @@
 
   <dl class="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border-strong rounded-xl border border-border-strong overflow-hidden">
     <% [
-         [ "Termin", @booking.starts_at ? l(@booking.starts_at, format: :long) : "—" ],
+         [ "Termin", @booking.starts_at ? l(@booking.starts_at, format: :long) : "-" ],
          [ "Pakiet", @booking.package.name ],
          [ "Email", @booking.email ],
          [ "Konto", @booking.user.email ],
          [ "Utworzono", l(@booking.created_at, format: :long) ],
-         [ "Potwierdzono", @booking.confirmed_at ? l(@booking.confirmed_at, format: :long) : "—" ]
+         [ "Potwierdzono", @booking.confirmed_at ? l(@booking.confirmed_at, format: :long) : "-" ]
        ].each do |label, value| %>
       <div class="bg-surface px-4 py-3 flex flex-col gap-1">
         <dt class="text-t6 uppercase text-taupe"><%= label %></dt>
@@ -34,7 +34,7 @@
     <div class="bg-surface px-4 py-3 flex flex-col gap-1">
       <dt class="text-t6 uppercase text-taupe">Transakcja Paddle</dt>
       <dd class="text-t6 text-tan m-0 font-mono break-all">
-        <%= @booking.paddle_transaction_id.presence || "—" %>
+        <%= @booking.paddle_transaction_id.presence || "-" %>
       </dd>
     </div>
     <div class="bg-surface px-4 py-3 flex flex-col gap-1">
@@ -50,7 +50,7 @@
         <% elsif @booking.calendar_event_id.present? %>
           <%= @booking.calendar_event_id %>
         <% else %>
-          <span class="text-taupe font-sans">Brak — termin nie jest zablokowany w kalendarzu</span>
+          <span class="text-taupe font-sans">Brak - termin nie jest zablokowany w kalendarzu</span>
         <% end %>
       </dd>
     </div>

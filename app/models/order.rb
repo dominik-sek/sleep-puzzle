@@ -1,6 +1,6 @@
 # A shop purchase: the cart, frozen at the moment checkout opened.
 #
-# The same shape as Booking — saved as `pending` before the Paddle overlay opens,
+# The same shape as Booking - saved as `pending` before the Paddle overlay opens,
 # flipped by the paddle_billing.transaction.completed webhook, looked up by token
 # because the id ends up in a URL handed to Paddle.
 #
@@ -48,6 +48,13 @@ class Order < ApplicationRecord
 
   scope :recent_first, -> { order(created_at: :desc) }
 
+  # A checkout that was opened and never resolved either way. Paddle reports
+  # nothing when the buyer simply closes the tab, so without a sweep these sit
+  # pending forever - and a pending order now blocks its products from being
+  # bought again, which would turn a walked-away checkout into a file the buyer
+  # can never purchase.
+  scope :stale, ->(cutoff) { pending.where(paddle_transaction_id: nil).where(created_at: ..cutoff) }
+
   def to_param
     token
   end
@@ -56,7 +63,7 @@ class Order < ApplicationRecord
     self.class.status_label(status)
   end
 
-  # What Paddle's Checkout.open wants. Always quantity 1 — Paddle requires the
+  # What Paddle's Checkout.open wants. Always quantity 1 - Paddle requires the
   # key, and a digital file is only ever bought once per order.
   def paddle_items
     order_items.includes(:product).map do |item|
@@ -74,5 +81,30 @@ class Order < ApplicationRecord
     return true if paid?
 
     update!(status: :paid, paddle_transaction_id: transaction_id, paid_at: Time.current)
+    broadcast_status
+    true
+  end
+
+  # The other end of the same window. A pending order holds its products out of
+  # the shop, the cart and the next checkout, so something has to let go of them
+  # when the money never arrives - see FailPendingOrderJob and
+  # ReleaseAbandonedOrdersJob for who decides that and when.
+  def fail_payment!(status)
+    update!(status: status)
+    broadcast_status
+  end
+
+  # Paid, or paid and waiting on Paddle to say so. Both mean the buyer has
+  # already committed money for these files, which is what keeps them out of a
+  # second cart.
+  def open?
+    pending? || paid?
+  end
+
+  private
+
+  # the buyer is sitting on orders#show watching for exactly this
+  def broadcast_status
+    broadcast_replace_to self, target: "order_status", partial: "orders/status", locals: { order: self }
   end
 end

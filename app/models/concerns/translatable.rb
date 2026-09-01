@@ -1,12 +1,12 @@
 # Per-locale values kept in a single jsonb column, shaped field => locale => value.
 #
-# Used by records that carry copy but also have identity — a package a booking
+# Used by records that carry copy but also have identity - a package a booking
 # points at, a product someone bought. ContentBlock cannot serve them: its keys
 # are declared in config/content_blocks.yml and nothing can hold a foreign key to
 # a row addressed by string key.
 #
 # One column rather than name_pl/name_en pairs, so adding a translated field is a
-# model change and not a migration, and so the shape matches ContentItem — which
+# model change and not a migration, and so the shape matches ContentItem - which
 # was already storing owner-edited copy this way before this concern existed.
 module Translatable
   extend ActiveSupport::Concern
@@ -16,7 +16,7 @@ module Translatable
   class_methods do
     # Declares the jsonb column holding translations and the fields to generate
     # readers for. `translates :name` gives you `#name` returning the current
-    # locale's value, so call sites read like plain attributes — which is what
+    # locale's value, so call sites read like plain attributes - which is what
     # keeps `booking.package.name` working in the mailers unchanged.
     #
     # `lists:` fields hold an array per locale (a package's bullet points) and

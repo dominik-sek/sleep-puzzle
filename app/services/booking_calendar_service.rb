@@ -31,7 +31,7 @@ class BookingCalendarService < ApplicationService
   def sync_status
     # a payment that failed and then went through on a retry has already had its hold
     # deleted by #release, and patching nothing would leave a paid booking with no
-    # calendar entry at all — its slot silently back on sale
+    # calendar entry at all - its slot silently back on sale
     return create if @booking.calendar_event_id.blank?
 
     calendar.patch_event(event_id: @booking.calendar_event_id, summary: summary, description: description)
@@ -39,7 +39,7 @@ class BookingCalendarService < ApplicationService
     log(e, "update")
   end
 
-  # payment failed or was abandoned — drop the hold so the slot frees up again
+  # payment failed or was abandoned - drop the hold so the slot frees up again
   def release
     return if @booking.calendar_event_id.blank?
 

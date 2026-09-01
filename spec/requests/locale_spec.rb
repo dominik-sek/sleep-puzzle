@@ -68,14 +68,14 @@ RSpec.describe "Locale", type: :request do
       expect(response.body).to include(%(href="/about"))
       expect(response.body).to include(%(href="/packages"))
       # the only /en addresses on a Polish page point at the other language: the
-      # hreflang tag and the switcher, which renders twice — once in the desktop
+      # hreflang tag and the switcher, which renders twice - once in the desktop
       # dropdown and once in the hamburger panel, one of them hidden by CSS
       other_language_links = response.body.scan(%(href="/en/)).size
       expect(other_language_links).to eq(3)
     end
 
     # Devise is outside the locale scope, so the language rides along as a query
-    # string instead — someone who switched to English stays in English to sign in
+    # string instead - someone who switched to English stays in English to sign in
     it "carries the language onto routes that are not locale-scoped" do
       get products_path(locale: :en)
 
@@ -84,7 +84,7 @@ RSpec.describe "Locale", type: :request do
   end
 
   # The URL is the whole answer on the public site. The choice is remembered only
-  # for the pages whose path cannot state it — chiefly the Google handshake, which
+  # for the pages whose path cannot state it - chiefly the Google handshake, which
   # leaves the site and comes back with nothing to say which language was picked.
   describe "remembering the choice" do
     it "still serves Polish at a bare path after a visit to English" do
@@ -133,7 +133,7 @@ RSpec.describe "Locale", type: :request do
     end
 
     # Every example above visits a public page first, which is what writes
-    # session[:locale] — so together they show the session covering the ordinary
+    # session[:locale] - so together they show the session covering the ordinary
     # route in. They do not cover someone who arrives at a Devise page *directly*,
     # from a shared link or the reset mail, and switches language there. Nothing
     # writes the session on an unscoped route, so for them `?locale=en` on the
@@ -171,7 +171,7 @@ RSpec.describe "Locale", type: :request do
     end
 
     # the trigger is shown to everyone, and one whose content never rendered opens
-    # nothing — which is what happens if the panel is nested in the signed-in branch
+    # nothing - which is what happens if the panel is nested in the signed-in branch
     it "opens for a signed-out visitor too" do
       get about_path
 

@@ -16,6 +16,11 @@ production:
   release_abandoned_bookings:
     class: ReleaseAbandonedBookingsJob
     schedule: every 15 minutes
+  # The same sweep for the shop: a pending order holds its products out of the
+  # shop and the cart, so a checkout walked away from has to be let go of.
+  release_abandoned_orders:
+    class: ReleaseAbandonedOrdersJob
+    schedule: every 15 minutes
   # Direct uploads create the blob before the form is submitted, so an admin who
   # picks a file and then closes the tab leaves a full-size recording on disk
   # attached to nothing. Two days, so a form left open overnight still saves.

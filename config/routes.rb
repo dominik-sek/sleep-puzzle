@@ -43,18 +43,18 @@ Rails.application.routes.draw do
       # because there is only ever one file per product
       get :stream, on: :member
 
-      # deliberately outside the authenticate_user! that guards :stream — the
+      # deliberately outside the authenticate_user! that guards :stream - the
       # whole point of a sample is that someone who has not bought anything, and
       # may not have an account, can hear it. It signs the preview's own path,
       # never the full recording's.
       get :preview, on: :member
     end
     # singular: one cart per visitor, kept in the session, so there is no id to
-    # carry. Its lines are addressed by product id — there are no cart item rows.
+    # carry. Its lines are addressed by product id - there are no cart item rows.
     resource :cart, only: [ :show ], controller: "cart" do
       delete :clear, on: :collection
     end
-    # no :update — a digital file has no quantity to change, so a line is only ever
+    # no :update - a digital file has no quantity to change, so a line is only ever
     # added or removed
     resources :cart_items, only: [ :create, :destroy ], param: :product_id
     # by token for the same reason bookings are: the URL is handed to Paddle as the
@@ -65,7 +65,7 @@ Rails.application.routes.draw do
     # one page that both shows the form and takes it, so there is no id to carry
     resource :contact, only: [ :show, :create ]
     # create only: the form lives on the home page, and everything after the
-    # address is handed over — the confirmation, the list, the unsubscribe — is
+    # address is handed over - the confirmation, the list, the unsubscribe - is
     # Brevo's, so there is nothing here to show, edit or destroy
     resource :newsletter_subscription, only: [ :create ]
     # singular: there is one "about", so no id and no index. `controller:` keeps the
@@ -95,11 +95,11 @@ Rails.application.routes.draw do
     resources :products, except: [ :show ]
 
     # Solid Queue dashboard. Inside the admin namespace so it is gated by the
-    # same admin flag as everything else here — see the initializer.
+    # same admin flag as everything else here - see the initializer.
     mount MissionControl::Jobs::Engine, at: "/jobs"
 
     # Postgres dashboard. PgHero's engine takes no base controller class the way
-    # Mission Control does, so the admin flag is enforced on the route itself —
+    # Mission Control does, so the admin flag is enforced on the route itself -
     # anyone else matches no route at all, which is a 404 in production rather
     # than a redirect. Its own HTTP basic auth stays off for the same reason it
     # is off for /admin/jobs: one password, and it is the one you signed in with.

@@ -36,7 +36,7 @@ namespace :mail do
       Socket.tcp(address, port, connect_timeout: 10) { |socket| socket.close }
       puts "ok"
     rescue SocketError => e
-      abort "failed.\n#{e.class}: #{e.message}\nThe hostname does not resolve — check SMTP_ADDRESS for a typo."
+      abort "failed.\n#{e.class}: #{e.message}\nThe hostname does not resolve - check SMTP_ADDRESS for a typo."
     rescue Errno::ECONNREFUSED => e
       abort "failed.\n#{e.class}: #{e.message}\nNothing is listening there. Wrong port, or SMTP_ADDRESS is pointing at this container."
     rescue Errno::ETIMEDOUT, Errno::EHOSTUNREACH => e

@@ -3,9 +3,9 @@ class GoogleCalendarService < ApplicationService
   # in the panel, or the grant that was stored has since been revoked or expired.
   #
   # Deliberately not a Google::Apis::Error, which means one call failed while the
-  # connection itself is fine. The two want different answers — a failed call is
+  # connection itself is fine. The two want different answers - a failed call is
   # worth retrying, a missing connection is only fixed by someone opening
-  # /integrations/google_calendar and pressing connect — so callers that care can
+  # /integrations/google_calendar and pressing connect - so callers that care can
   # tell them apart, and callers that don't rescue both.
   class NotConnected < StandardError; end
 
@@ -52,7 +52,7 @@ class GoogleCalendarService < ApplicationService
   private
 
   # Two different nothings, one meaning. get_credentials returns nil when the
-  # token store is empty, and raises when what is stored no longer works —
+  # token store is empty, and raises when what is stored no longer works -
   # minting an access token from a revoked refresh token makes Google answer 400
   # "Token has been expired or revoked". Left as they come, the first silently
   # produces an unauthenticated service that only fails at the first API call,

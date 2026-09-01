@@ -48,7 +48,7 @@ class ProductAudioUploadJob < ApplicationJob
 
   private
 
-  # Updates the row and the form wherever the panel is open, and pops a toast —
+  # Updates the row and the form wherever the panel is open, and pops a toast -
   # the upload finishes long after the request that started it, so there is
   # otherwise nothing to tell the owner but a refresh.
   def notify(product, **toast)

@@ -1,4 +1,4 @@
-<% content_for :title, "Zamówienie #{@order.token} — Panel" %>
+<% content_for :title, "Zamówienie #{@order.token} - Panel" %>
 
 <div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[800px]">
   <div class="flex flex-col gap-2">
@@ -13,7 +13,7 @@
   <dl class="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border-strong rounded-xl border border-border-strong overflow-hidden">
     <% [
          [ "Złożono", l(@order.created_at, format: :long) ],
-         [ "Opłacono", @order.paid_at ? l(@order.paid_at, format: :long) : "—" ],
+         [ "Opłacono", @order.paid_at ? l(@order.paid_at, format: :long) : "-" ],
          [ "Konto", @order.user.email ],
          [ "Pozycji", @order.order_items.size ]
        ].each do |label, value| %>
@@ -24,7 +24,7 @@
     <% end %>
   </dl>
 
-  <%# what was actually bought, linked through to the catalogue row — the first
+  <%# what was actually bought, linked through to the catalogue row - the first
       thing to check when someone says a file is missing from their account %>
   <div class="rounded-xl border border-border-strong overflow-hidden">
     <h2 class="bg-surface px-4 py-3 text-t6 uppercase text-taupe m-0">Kupione pozycje</h2>
@@ -52,7 +52,7 @@
         <% if @order.paddle_transaction_id.present? %>
           <%= @order.paddle_transaction_id %>
         <% else %>
-          <span class="text-taupe font-sans">Brak — płatność nie została jeszcze potwierdzona</span>
+          <span class="text-taupe font-sans">Brak - płatność nie została jeszcze potwierdzona</span>
         <% end %>
       </dd>
     </div>

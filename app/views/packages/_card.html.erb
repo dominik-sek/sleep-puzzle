@@ -1,10 +1,10 @@
 <%#
   One package. `core` and `extra` are translated lists, so they read back as
-  arrays and each section simply disappears when the owner has not filled it in —
+  arrays and each section simply disappears when the owner has not filled it in -
   a package with no add-ons should not render an empty "Dodatkowo" heading.
 
   The price comes from Paddle rather than from us (see Purchasable), so it can be
-  missing — archived in Paddle, or Paddle unreachable. The card still renders,
+  missing - archived in Paddle, or Paddle unreachable. The card still renders,
   without the amount and without a booking button: sending someone into a login
   wall, a calendar and a form for something that cannot be checked out is worse
   than showing it as unavailable here. Same rule the shop already follows in
@@ -87,7 +87,7 @@
             pill: true,
             variant: :primary,
             href: bookings_path(package_id: package.id),
-            aria_label: "#{content_block('packages.card.cta')} — #{package.name}",
+            aria_label: "#{content_block('packages.card.cta')} - #{package.name}",
             classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold! w-full justify-center"
           ) %>
           <%# the tap is not the commitment it looks like: the booking form carries
@@ -103,7 +103,7 @@
             pill: true,
             variant: :secondary,
             href: contact_path,
-            aria_label: "#{content_block('packages.card.unavailable_cta')} — #{package.name}",
+            aria_label: "#{content_block('packages.card.unavailable_cta')} - #{package.name}",
             classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold! w-full justify-center"
           ) %>
         <% end %>

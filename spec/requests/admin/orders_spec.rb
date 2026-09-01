@@ -120,7 +120,7 @@ RSpec.describe "Admin::Orders", type: :request do
     end
 
     # unlike the customer-facing OrdersController#show, which is scoped to the
-    # signed-in buyer — the panel exists to look at other people's orders
+    # signed-in buyer - the panel exists to look at other people's orders
     it "is not scoped to the admin's own orders" do
       order = order_for(user: customer)
 

@@ -5,7 +5,7 @@
 # switch them on explicitly.
 #
 # Unconfigured is the meaningful default: Product#streamable? is false, and the
-# dashboard renders the library exactly as it did before the CDN existed — which
+# dashboard renders the library exactly as it did before the CDN existed - which
 # is also what a developer without the credentials sees.
 module BunnyHelpers
   # Bunny's own test-vector key, so a spec that hardcodes a signature is checking
@@ -42,7 +42,7 @@ module BunnyHelpers
   end
 
   # A real file on disk, because the service streams what it is given and computes
-  # a checksum over it — a double would only prove the doubles agree.
+  # a checksum over it - a double would only prove the doubles agree.
   #
   # Rack::Test's upload rather than ActionDispatch's, because that is the one a
   # request spec knows how to encode into a multipart body; an ActionDispatch

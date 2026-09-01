@@ -29,7 +29,7 @@
       <% end %>
 
       <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>
-        <%= order.paid_at ? l(order.paid_at, format: :short) : "—" %>
+        <%= order.paid_at ? l(order.paid_at, format: :short) : "-" %>
       <% end %>
     <% end %>
   <% end %>

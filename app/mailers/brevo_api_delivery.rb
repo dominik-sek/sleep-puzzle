@@ -3,7 +3,7 @@
 #
 # Render drops outbound SMTP: the connection neither resolves badly nor is
 # refused, it just hangs until Net::OpenTimeout. Nothing about that is fixable
-# from this side, and it is not specific to a port — so rather than hunting for
+# from this side, and it is not specific to a port - so rather than hunting for
 # one that is allowed, this goes out over HTTPS to the same api.brevo.com that
 # BrevoSubscriptionService already reaches from the same instance. 443 is not a
 # port anyone blocks.
@@ -16,7 +16,7 @@ class BrevoApiDelivery
   ENDPOINT = URI("https://api.brevo.com/v3/smtp/email").freeze
 
   # Generous next to BrevoSubscriptionService's 5s, because nobody is watching a
-  # spinner here — this runs in a job, and a slow send that succeeds beats a
+  # spinner here - this runs in a job, and a slow send that succeeds beats a
   # fast one that has to be retried.
   TIMEOUT = 15
 
@@ -86,7 +86,7 @@ class BrevoApiDelivery
 
   # These mails are all multipart html+text. A single-part mail has no
   # html_part/text_part at all, so fall back to the body when the mime type is
-  # the one being asked for — otherwise a plain-text-only mail would go out
+  # the one being asked for - otherwise a plain-text-only mail would go out
   # with no content whatsoever.
   def body_of(mail, mime_type)
     part = mail.multipart? ? mail.find_first_mime_type(mime_type) : mail

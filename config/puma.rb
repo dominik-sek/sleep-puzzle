@@ -38,7 +38,7 @@ plugin :tmp_restart
 #
 # :async runs the worker, dispatcher and scheduler as threads in this process.
 # The default, :fork, gives each one its own, which is four Rails processes
-# beside Puma — more than a 512MB instance has room for. Threads share one heap
+# beside Puma - more than a 512MB instance has room for. Threads share one heap
 # and one YJIT cache, at the cost of sharing the GVL with web requests too:
 # fine at staging traffic, worth revisiting on a box that serves real load.
 #

@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe BunnySignedUrlService do
   # Bunny publishes these alongside its own reference implementations, so this is
   # the one assertion that proves the signature is the shape a pull zone will
-  # accept. Everything else here is about this app's wrapper around it — a wrong
+  # accept. Everything else here is about this app's wrapper around it - a wrong
   # signature shows up as a 403 from someone else's server, which is why it is
   # pinned to a known-good value rather than to whatever this code produces.
   VECTOR_KEY = "SecurityKey"

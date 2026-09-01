@@ -12,7 +12,7 @@ import { Controller } from "@hotwired/stimulus";
 //   2. The target sits inside collapsed content, which the browser cannot
 //      scroll to; opening it means clicking the accordion's own trigger.
 //   3. This controller is on the outer element, so it connects before the
-//      accordion controllers nested inside it — and their connect() resets every
+//      accordion controllers nested inside it - and their connect() resets every
 //      item to closed, silently undoing an early open.
 export default class extends Controller {
     // Set when the server rendered a section expanded (after saving, or adding or

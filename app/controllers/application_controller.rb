@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
   # Devise stores the blocked URL when `authenticate_user!` turns someone away, so
   # honour it before falling back to the dashboard. Without this a visitor who
   # picked a package on /pakiety and hit the sign-in wall landed on an empty
-  # dashboard with the package_id — and the decision the page existed to capture —
+  # dashboard with the package_id - and the decision the page existed to capture -
   # thrown away, and no route back except finding the card again.
   def after_sign_in_path_for(resource)
     stored_location_for(resource) || dashboard_index_path
@@ -32,7 +32,7 @@ class ApplicationController < ActionController::Base
   #
   # Only a non-default locale is ever put in a URL, so Polish paths stay exactly
   # what they were and each page has one canonical address. On the routes that are
-  # not locale-scoped — Devise, the panel — this arrives as `?locale=en` instead,
+  # not locale-scoped - Devise, the panel - this arrives as `?locale=en` instead,
   # which is what keeps someone who switched to English in English when they sign in.
   def default_url_options
     { locale: (I18n.locale unless I18n.locale == I18n.default_locale) }
@@ -59,11 +59,11 @@ class ApplicationController < ActionController::Base
 
   # The URL first, and on the public site the URL is the whole answer: a scoped
   # route states the language in its path, so a path without one means Polish.
-  # That is what keeps one address per rendering — /about is always Polish, however
-  # long ago someone clicked EN — and it is what lets the switcher get back.
+  # That is what keeps one address per rendering - /about is always Polish, however
+  # long ago someone clicked EN - and it is what lets the switcher get back.
   #
-  # Only the routes that cannot carry a locale — Devise, the panel, the OAuth
-  # callback — fall back to what was last chosen.
+  # Only the routes that cannot carry a locale - Devise, the panel, the OAuth
+  # callback - fall back to what was last chosen.
   def requested_locale
     known = I18n.available_locales.map(&:to_s)
     from_url = params[:locale].presence_in(known)
@@ -76,12 +76,12 @@ class ApplicationController < ActionController::Base
 
   # Whether this route can say the language in its path.
   #
-  # Read off the matched route's own pattern — "(/:locale)/about(.:format)" for a
+  # Read off the matched route's own pattern - "(/:locale)/about(.:format)" for a
   # scoped route, "/users/sign_in(.:format)" for one outside the scope.
   #
   # Deliberately *not* done by generating a URL and looking at it: ActionController
-  # memoises `url_options` on first use, so calling url_for here — before
-  # with_locale has run — froze `locale: nil` into every link the page went on to
+  # memoises `url_options` on first use, so calling url_for here - before
+  # with_locale has run - froze `locale: nil` into every link the page went on to
   # generate. The page came out in English with Polish links.
   def locale_scoped_route?
     return @locale_scoped_route if defined?(@locale_scoped_route)
@@ -92,7 +92,7 @@ class ApplicationController < ActionController::Base
     @locale_scoped_route = false
   end
 
-  # Who was signed in when it broke. The id alone, never the email — Sentry runs
+  # Who was signed in when it broke. The id alone, never the email - Sentry runs
   # with send_default_pii off and putting the address back here by hand would
   # undo that. An id is enough to find the row.
   def set_sentry_user

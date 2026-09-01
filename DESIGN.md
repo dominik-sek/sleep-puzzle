@@ -125,15 +125,15 @@ components:
 
 **Creative North Star: "The Piece That Fits"**
 
-The product's name is not decoration — it is the design brief. Karola describes her
+The product's name is not decoration - it is the design brief. Karola describes her
 work as assembling a family's sleep like a puzzle, piece by piece, and the interface
 is built the same way: from discrete, self-contained, softly-cornered pieces that
 tessellate into something whole. A package is a piece. A product is a piece. A step
-in the process is a piece. Nothing floats, nothing is loose, nothing is missing —
+in the process is a piece. Nothing floats, nothing is loose, nothing is missing -
 and when a piece has nothing to say, it is absent rather than empty.
 
 The material is soft, tactile, generous and playful. The ground is a warm near-black
-(`ink`, #211e1c) — brown-leaning, never blue-leaning, never a true black — and every
+(`ink`, #211e1c) - brown-leaning, never blue-leaning, never a true black - and every
 surface above it is another warm neutral a few points lighter. Corners are large
 (16px on containers) and actions are fully round. Baloo 2's rounded terminals and the
 mascot's presence set a register that is closer to a well-made soft toy than to a
@@ -153,20 +153,20 @@ screen telling them where to go next.
 - Depth by tonal layering and hairlines, not by shadow.
 - Large radii: 16px pieces, fully-round actions.
 - Two typefaces, both rounded: Baloo 2 for display, Quicksand for everything read.
-- Self-hosted fonts and zero third-party assets — a design constraint, not just an ops one.
+- Self-hosted fonts and zero third-party assets - a design constraint, not just an ops one.
 - Built phone-first for a tired one-handed reader.
 
 ## Colors
 
 A single-accent system: sixteen warm neutrals arranged from near-black to cream,
-lit by one amber. There is no secondary or tertiary accent role — the coral and gold
+lit by one amber. There is no secondary or tertiary accent role - the coral and gold
 below are tints of the same light, not competing voices.
 
 ### Primary
 
 - **Lamp Amber** (`accent`): The system's one voice. Every primary action, every list
   marker, every focus ring, every link, and the numerals on the process steps. It is
-  a light source rather than a fill — it appears against ink, never against another
+  a light source rather than a fill - it appears against ink, never against another
   saturated colour.
 - **Lamp Amber Bright** (`accent-hover`): The hover and active state of Lamp Amber.
   Brighter and slightly pinker, so a hovered control reads as *turned up* rather than
@@ -174,7 +174,7 @@ below are tints of the same light, not competing voices.
 - **Terracotta** (`accent-terracotta`): The deeper, dustier amber used as the hairline
   border on primary buttons (at 30% alpha) and as the source colour of the hero glow.
   It bounds the light; it is not a fill colour on its own.
-- **Coral** (`accent-coral`): Reserved for the secondary tier of accent marks — the
+- **Coral** (`accent-coral`): Reserved for the secondary tier of accent marks - the
   astroid bullets on a package's "also included" list, which must read as subordinate
   to the amber check marks above them.
 - **Gold** (`accent-gold`): Declared and available for a warmer, less orange accent
@@ -182,16 +182,16 @@ below are tints of the same light, not competing voices.
 
 ### Neutral
 
-Surfaces, darkest to lightest — the whole depth model lives in this ladder:
+Surfaces, darkest to lightest - the whole depth model lives in this ladder:
 
 - **Ink** (`ink`): The page. A warm near-black with a brown cast. The default section
   background and the text colour that sits on amber.
 - **Ink Soft** (`ink-soft`): The alternating section band, and the resting fill of
-  inputs and secondary buttons. Barely a step up from Ink — the difference is felt
+  inputs and secondary buttons. Barely a step up from Ink - the difference is felt
   more than seen, which is the point.
 - **Surface** (`surface`): Cards and pieces. The one surface that reads as lifted
   off the page.
-- **Surface Dark** (`surface-dark`): The footer and the navbar — the chrome that
+- **Surface Dark** (`surface-dark`): The footer and the navbar - the chrome that
   bookends the page sits *below* it, not above.
 
 Borders, faint to firm:
@@ -204,23 +204,23 @@ Borders, faint to firm:
   secondary pills. The only border meant to be clearly visible, and the value is
   set by that job: it clears WCAG 1.4.11 (3:1) against all four surfaces, so it
   is the correct token for a **control boundary** and the wrong one for a
-  container edge or a text colour — those are `border-strong` and `taupe-dark`.
+  container edge or a text colour - those are `border-strong` and `taupe-dark`.
 
 Text, brightest to faintest:
 
 - **Cream** (`cream`): Primary reading colour and every heading on a dark ground.
-  Warm off-white — never `#ffffff`.
-- **Tan** (`tan`): Body copy in a supporting role — subtitles, descriptions, card
+  Warm off-white - never `#ffffff`.
+- **Tan** (`tan`): Body copy in a supporting role - subtitles, descriptions, card
   paragraphs, footer links.
 - **Taupe** (`taupe`): Muted metadata, uppercase micro-labels, durations, placeholders.
-- **Taupe Dark** (`taupe-dark`): Faint text only — the copyright line, the borders of
+- **Taupe Dark** (`taupe-dark`): Faint text only - the copyright line, the borders of
   de-emphasised pills. Below body-text contrast; never use it for anything a visitor
   must read.
 
 ### Named Rules
 
 **The One Lamp Rule.** There is one light source per screen. Lamp Amber marks the
-single most important action in a view and the small marks that guide the eye to it —
+single most important action in a view and the small marks that guide the eye to it -
 nothing else. Two amber buttons competing in one viewport means one of them is wrong.
 
 **The Warm Neutral Rule.** Every neutral in this system leans brown. A cool grey
@@ -228,7 +228,7 @@ nothing else. Two amber buttons competing in one viewport means one of them is w
 site is drift, not a choice.
 
 **The No Dark Mode Rule.** There is no light mode to toggle away from. The system is
-dark by construction, so `dark:` variants are meaningless here — a `dark:` prefix in
+dark by construction, so `dark:` variants are meaningless here - a `dark:` prefix in
 this codebase is a leftover from the component scaffold, not a feature.
 
 ## Typography
@@ -240,7 +240,7 @@ Both are self-hosted from `app/frontend/fonts` and subset into `latin` and
 `latin-ext`; the extended subset is mandatory, because Polish needs ą/ć/ę/ł/ń/ś/ź/ż.
 
 **Character:** Two rounded geometric sans faces, deliberately paired rather than
-contrasted. Baloo 2 is warm, heavy and slightly bouncy — it carries the personality
+contrasted. Baloo 2 is warm, heavy and slightly bouncy - it carries the personality
 and the humour. Quicksand is the same roundness at low contrast and light weight,
 which keeps long Polish sentences readable without the page ever turning severe.
 The pairing has no serif, no condensed face and no monospace: nothing in this system
@@ -252,7 +252,7 @@ is meant to look technical.
   Hero headlines and page H1s only.
 - **Headline** (Baloo 2, 700, `clamp(1.75rem, 5vw, 2.5rem)` / 1.2): Section headings.
   The most common large type on the site.
-- **Title** (Baloo 2, 700, 26px / 1.2): Card and subsection titles — a package's name,
+- **Title** (Baloo 2, 700, 26px / 1.2): Card and subsection titles - a package's name,
   a product's name, the wordmark in the navbar and footer.
 - **Lead** (Quicksand, 400, 19px / 1.7): The paragraph directly under a Display or
   Headline. Lighter than body on purpose; it is read at a glance, not studied.
@@ -265,13 +265,13 @@ is meant to look technical.
 
 ### Named Rules
 
-**The Display-For-Names Rule.** Baloo 2 is for things that are *named* — headings,
+**The Display-For-Names Rule.** Baloo 2 is for things that are *named* - headings,
 titles, wordmarks, durations, step titles. Anything the visitor reads as a sentence
 is Quicksand. Never set a paragraph in Baloo 2.
 
 **The Uppercase Ceiling Rule.** Uppercase is only ever applied at Label size, in
 Taupe, as a category eyebrow. There is no uppercase heading anywhere in this system,
-and there should not be — Baloo 2's roundness turns hostile at scale in caps.
+and there should not be - Baloo 2's roundness turns hostile at scale in caps.
 
 **The Two-Language Rule.** Every type decision must survive Polish. Polish words run
 noticeably longer than their English equivalents, so headline sizes are set in
@@ -316,14 +316,14 @@ content never exceeds 1240px. A section that constrains its own background is wr
 
 Depth is **tonal, not cast**. Four warm surfaces stack from `surface-dark` (chrome)
 through `ink` (page) and `ink-soft` (alternate band) to `surface` (pieces), and
-hairline borders — `border-strong` on cards, `border` on dividers — do the actual
+hairline borders - `border-strong` on cards, `border` on dividers - do the actual
 work of separating one thing from another. On a near-black ground a grey drop shadow
 is invisible, so the system does not rely on one.
 
 Shadows survive for exactly one job: **things that float above the page.** Dropdowns,
 the mobile menu panel, toasts and modals may cast, because they genuinely overlap
 content and need to be read as temporarily on top of it. Nothing that sits *in* the
-page — no card, no section, no button — earns a shadow.
+page - no card, no section, no button - earns a shadow.
 
 ### Shadow Vocabulary
 
@@ -333,7 +333,7 @@ page — no card, no section, no button — earns a shadow.
 ### Named Rules
 
 **The Flat Page Rule.** In-page surfaces are flat. If a piece needs to feel lifted,
-raise its tone (`ink` → `surface`) or firm up its border — never add a shadow.
+raise its tone (`ink` → `surface`) or firm up its border - never add a shadow.
 
 **The Glow Is Not A Shadow Rule.** The hero's radial `gradient-hero` wash is light
 emitted by the mascot, not depth cast by it. Radial warmth is available as an
@@ -341,7 +341,7 @@ atmospheric device; it never doubles as an elevation cue.
 
 ## Shapes
 
-The form language is **soft, generous and thumb-friendly** — the silhouette of every
+The form language is **soft, generous and thumb-friendly** - the silhouette of every
 element should suggest something safe to touch when you are not fully awake.
 
 - **Pieces** (cards, product tiles, package cards) carry a **16px** radius (`2xl`)
@@ -349,13 +349,13 @@ element should suggest something safe to touch when you are not fully awake.
   literal expression of the puzzle metaphor.
 - **Actions** are **fully round** (`rounded-full`). Every primary and secondary CTA
   on the public site is a pill; a square-cornered button is off-system.
-- **Fields and small chrome** use **8px** (`lg`) — inputs, images, the mobile menu's
+- **Fields and small chrome** use **8px** (`lg`) - inputs, images, the mobile menu's
   rows. Just enough softening not to read as a rectangle.
 - **Menu rows and nav triggers** use **6px** (`md`), the smallest radius in use.
 - **Marks are circles.** The process-step numerals are 64px amber discs; the mascot,
   the avatar and the hero glow are all circular.
 
-The one non-round form in the system is the **astroid** — a four-pointed concave
+The one non-round form in the system is the **astroid** - a four-pointed concave
 star used as the accent bullet on stat lists and package add-ons. It is the only
 piece of geometry with points, which is precisely what makes it work as a marker.
 
@@ -372,7 +372,7 @@ a pill. Radius signals affordance in this system: round means *do*, 16px means *
   (`rounded-lg`) for utility buttons inside dense UI.
 - **Primary:** Lamp Amber fill with Ink text and a Terracotta hairline at 30% alpha
   (`border border-accent-terracotta/30`), 12px × 24px padding, Label typography at
-  weight 700. This is the "do the thing" button — booking, buying, submitting.
+  weight 700. This is the "do the thing" button - booking, buying, submitting.
 - **Secondary:** Ink Soft fill, Cream text, Field Edge border. Sits beside a primary
   without competing with it.
 - **Outline / Ghost:** Transparent, Cream text; ghost drops the border. For tertiary
@@ -380,7 +380,7 @@ a pill. Radius signals affordance in this system: round means *do*, 16px means *
 - **Destructive:** Red fill, Cream text. Rare and staff-facing; it is the one place
   a non-warm hue is permitted, because a delete confirmation should not look cosy.
 - **Hover:** Primary brightens to `accent-hover`; every other variant fills to
-  `ink-soft`. Transitions are 100ms `ease-in-out` — fast, because a hover is feedback,
+  `ink-soft`. Transitions are 100ms `ease-in-out` - fast, because a hover is feedback,
   not an animation.
 - **Focus:** `outline-2 outline-offset-2` in Lamp Amber on `:focus-visible`. This is
   a WCAG requirement in this project, not a nicety; never remove it.
@@ -389,7 +389,7 @@ a pill. Radius signals affordance in this system: round means *do*, 16px means *
 ### Cards / Containers
 
 - **Corner Style:** 16px (`rounded-2xl`).
-- **Background:** `surface` — the only element that uses it.
+- **Background:** `surface` - the only element that uses it.
 - **Border:** A single `border-strong` hairline. Together with the tonal step, this
   is the entire depth treatment.
 - **Shadow Strategy:** None. See Elevation & Depth.
@@ -401,15 +401,15 @@ a pill. Radius signals affordance in this system: round means *do*, 16px means *
 
 ### Inputs / Fields
 
-- **Style:** Ink Soft fill, no border — an inset `ring-1` in Field Edge instead —
+- **Style:** Ink Soft fill, no border - an inset `ring-1` in Field Edge instead -
   8px radius, Cream text, Taupe placeholder, 8px × 12px padding.
 - **Focus:** The ring thickens to `ring-2` in Lamp Amber. The field lights up; it
   does not move or resize.
-- **Readonly:** Surface Dark fill with Tan text — visibly inert but still selectable,
+- **Readonly:** Surface Dark fill with Tan text - visibly inert but still selectable,
   for values that come from the account and cannot be edited.
 - **Error:** Red 400 border and ring. The only non-warm state colour in a form.
 - **Sizing:** 16px on mobile, dropping to 14px at `sm` and above. The mobile size is
-  deliberate — anything under 16px makes iOS Safari zoom the viewport on focus.
+  deliberate - anything under 16px makes iOS Safari zoom the viewport on focus.
 
 ### Navigation
 
@@ -447,7 +447,7 @@ anything.
 - **Do** give each screen exactly one Lamp Amber primary action. Its rarity is what
   makes it work.
 - **Do** alternate section backgrounds `ink` / `ink-soft` down a long page.
-- **Do** reach for the astroid mark instead of a generic bullet — it is the fastest
+- **Do** reach for the astroid mark instead of a generic bullet - it is the fastest
   signature in the system.
 - **Do** keep body text at 16px minimum on mobile, and inputs at 16px, so iOS Safari
   does not zoom on focus.
@@ -470,7 +470,7 @@ anything.
 - **Don't** write `dark:` variants. This system has no light mode; a `dark:` prefix
   here is dead code that will never apply.
 - **Don't** use `Buttons::Component`'s `style: :fancy` variants. They are unconverted
-  scaffold — grey-and-white gradient buttons from a generic component library that
+  scaffold - grey-and-white gradient buttons from a generic component library that
   bear no relationship to this design system. The `:basic` variants are the real ones.
 - **Don't** use the bare `select`, `[type="checkbox"]` or `[type="radio"]` styles from
   `application.css` on a public page without converting them first. They are still

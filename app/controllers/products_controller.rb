@@ -30,7 +30,7 @@ class ProductsController < ApplicationController
     product = Product.published.find(params[:id])
 
     # 403 rather than 404: the shop lists this product, so its existence is not
-    # the secret — the file behind it is
+    # the secret - the file behind it is
     head :forbidden and return unless current_user.purchased?(product)
 
     url = BunnySignedUrlService.call(product.cdn_path)
@@ -45,7 +45,7 @@ class ProductsController < ApplicationController
 
   # The shop's 30-second sample. No ownership check and no sign-in: this exists to
   # be heard by someone who has bought nothing. It signs `preview_cdn_path`, which
-  # is a separate object in the storage zone — the full recording's path is never
+  # is a separate object in the storage zone - the full recording's path is never
   # reachable from here, so there is nothing to leak by leaving it open.
   #
   # A short TTL because a preview is pressed and heard in one sitting, unlike the

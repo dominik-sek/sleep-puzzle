@@ -6,7 +6,7 @@ module Sidebar
     POSITIONS = %i[left right].freeze
 
     # Tailwind scans source text for complete class names, so "open:#{@width}"
-    # is never seen and the expanded width is never generated — the sidebar then
+    # is never seen and the expanded width is never generated - the sidebar then
     # stays at its collapsed width and clips the open content. These literals
     # give the scanner something to find. A width outside this map falls back to
     # w-64 rather than silently producing a class that does not exist.

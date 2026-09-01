@@ -40,13 +40,13 @@ class Booking < ApplicationRecord
   # What the dashboard lists. Pending is included on purpose: a booking waiting on
   # a payment is still a slot the buyer is holding, and hiding it would leave them
   # wondering whether the booking they just made registered at all. Canceled and
-  # failed are not — the slot is gone, and there is nothing to turn up to.
+  # failed are not - the slot is gone, and there is nothing to turn up to.
   scope :upcoming, -> {
     where(status: [ :pending, :confirmed ]).where(starts_at: Time.current..).order(:starts_at)
   }
 
   # Shown on the success page, in the dashboard, in the panel and in the mails, so
-  # it follows whatever language the reader is being served — which a frozen Hash
+  # it follows whatever language the reader is being served - which a frozen Hash
   # of Polish strings could not do. BookingCalendarService asks for Polish
   # explicitly, because that one writes into the owner's own calendar.
   def self.status_label(status, locale: I18n.locale)
@@ -57,7 +57,7 @@ class Booking < ApplicationRecord
   validates :starts_at, presence: true
   validates :email, presence: true
   # only when it's actually being set. A booking whose stored address predates a
-  # stricter regexp must still be able to change status — otherwise confirming a
+  # stricter regexp must still be able to change status - otherwise confirming a
   # real payment, or releasing the slot, raises on an unrelated legacy value.
   validates :email, format: { with: Devise.email_regexp }, if: :email_changed?
 

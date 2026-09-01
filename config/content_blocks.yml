@@ -13,7 +13,7 @@
 #
 # default:
 #   The copy the page ships with. Used whenever the database has nothing for a
-#   field — including a fresh deploy, before anything has been seeded or edited —
+#   field - including a fresh deploy, before anything has been seeded or edited -
 #   so the site never renders a blank section. Editing a block in the admin panel
 #   overrides it. `en` may be omitted: it falls back to `pl`.
 #
@@ -55,20 +55,20 @@ home:
           label: Wstęp
           type: rich
           default:
-            pl: "<div>Nazywam się Karola — ta, co układa sen rodzin jak puzzle. Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego.</div>"
+            pl: "<div>Nazywam się Karola - ta, co układa sen rodzin jak puzzle. Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego.</div>"
         body:
           label: Treść
           type: rich
           default:
             pl: "<div>Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą.</div>"
         cta_label:
-          label: Przycisk — tekst
+          label: Przycisk - tekst
           type: plain
           default:
             pl: "Poznaj mnie lepiej"
             en: "More about me"
         cta_url:
-          label: "Przycisk — adres (np. https://instagram.com/... lub /kontakt)"
+          label: "Przycisk - adres (np. https://instagram.com/... lub /kontakt)"
           type: plain
           default:
             pl: "/about"
@@ -125,7 +125,7 @@ home:
           label: Podtytuł
           type: plain
           default:
-            pl: "Od szybkiej ulgi po pełne poukładanie rodzinnego systemu — Ty wybierasz tempo."
+            pl: "Od szybkiej ulgi po pełne poukładanie rodzinnego systemu - Ty wybierasz tempo."
         details:
           label: Odnośnik do szczegółów na kafelku
           type: plain
@@ -144,7 +144,7 @@ home:
           label: Treść
           type: rich
           default:
-            pl: "<div>Nagrania do samodzielnej pracy nad rutyną oraz kojące bajki audio dla dzieci — dostępne po zalogowaniu na Twoim koncie.</div>"
+            pl: "<div>Nagrania do samodzielnej pracy nad rutyną oraz kojące bajki audio dla dzieci - dostępne po zalogowaniu na Twoim koncie.</div>"
     newsletter:
       label: Newsletter
       fields:
@@ -158,10 +158,10 @@ home:
           label: Podtytuł
           type: plain
           default:
-            pl: "Raz na jakiś czas — konkretna wiedza o śnie dziecka, bez spamu."
-            en: "Every now and then — real advice on child sleep, no spam."
+            pl: "Raz na jakiś czas - konkretna wiedza o śnie dziecka, bez spamu."
+            en: "Every now and then - real advice on child sleep, no spam."
         placeholder:
-          label: Pole adresu — podpowiedź
+          label: Pole adresu - podpowiedź
           type: plain
           default:
             pl: "Twój adres e-mail"
@@ -215,7 +215,7 @@ packages:
           label: Podtytuł
           type: rich
           default:
-            pl: "<div>Od szybkiej ulgi po pełne poukładanie rodzinnego systemu — Ty wybierasz tempo. Każdy pakiet zaczyna się od rozmowy o Waszej sytuacji.</div>"
+            pl: "<div>Od szybkiej ulgi po pełne poukładanie rodzinnego systemu - Ty wybierasz tempo. Każdy pakiet zaczyna się od rozmowy o Waszej sytuacji.</div>"
     card:
       label: Etykiety na kartach
       fields:
@@ -247,8 +247,8 @@ packages:
           label: Uspokojenie pod przyciskiem
           type: plain
           default:
-            pl: "Termin i pakiet wybierzesz w następnym kroku — możesz je jeszcze zmienić."
-            en: "You pick the time and the package in the next step — both can still be changed."
+            pl: "Termin i pakiet wybierzesz w następnym kroku - możesz je jeszcze zmienić."
+            en: "You pick the time and the package in the next step - both can still be changed."
         unavailable:
           label: Zamiast ceny, gdy nie da się jej pobrać
           type: plain
@@ -283,7 +283,7 @@ packages:
           label: Treść
           type: plain
           default:
-            pl: "Napisz kilka zdań o Waszej sytuacji — odpowiem i podpowiem, co ma sens."
+            pl: "Napisz kilka zdań o Waszej sytuacji - odpowiem i podpowiem, co ma sens."
             en: "Write a few sentences about your situation and I will tell you what makes sense."
         cta:
           label: Przycisk
@@ -321,32 +321,32 @@ about:
           label: Podtytuł
           type: plain
           default:
-            pl: "„Baba z internetów” — Konsultantka snu dziecięcego"
-            en: "The \"internet lady\" — Children's Sleep Consultant"
+            pl: "„Baba z internetów” - Konsultantka snu dziecięcego"
+            en: "The \"internet lady\" - Children's Sleep Consultant"
         lead:
           label: Wstęp
           type: rich
           default:
             pl: "<div>Nazywam się Karola – ta, co układa sen rodzin jak puzzle. Kawałek po kawałku pomagam odzyskać spokojne noce, równowagę i czas dla siebie, partnera i dziecka.</div>"
-            en: "<div>My name is Karola — the one who pieces family sleep together like a puzzle. Piece by piece, I help you get calm nights back — and time for yourself, your partner and your child.</div>"
+            en: "<div>My name is Karola - the one who pieces family sleep together like a puzzle. Piece by piece, I help you get calm nights back - and time for yourself, your partner and your child.</div>"
         body:
           label: Treść przed cytatem
           type: rich
           default:
-            pl: "<div>Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego. Dlatego nie działam szablonowo — każda rodzina to inna układanka, inne tempo i inna historia.</div>"
-            en: "<div>I believe healthy sleep starts with empathy, support, and an emotionally cared-for adult. That's why I never use a one-size-fits-all approach — every family is a different puzzle, a different pace, a different story.</div>"
+            pl: "<div>Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego. Dlatego nie działam szablonowo - każda rodzina to inna układanka, inne tempo i inna historia.</div>"
+            en: "<div>I believe healthy sleep starts with empathy, support, and an emotionally cared-for adult. That's why I never use a one-size-fits-all approach - every family is a different puzzle, a different pace, a different story.</div>"
         quote:
           label: Cytat
           type: plain
           default:
-            pl: "„Piasek jest fajny — na plaży. Nie pod powiekami” :)"
-            en: "\"Sand is fun — at the beach. Not under your eyelids\" :)"
+            pl: "„Piasek jest fajny - na plaży. Nie pod powiekami” :)"
+            en: "\"Sand is fun - at the beach. Not under your eyelids\" :)"
         body_after_quote:
           label: Treść po cytacie
           type: rich
           default:
-            pl: "<div>Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą. Współpracując ze mną, nie tracisz czasu na sprzeczne informacje — masz swoją gadającą encyklopedię pod telefonem.</div>"
-            en: "<div>For over 20 years I've supported children and parents, combining sleep and development knowledge with mindfulness and real help. Working with me, you don't waste time on conflicting information — you have your own talking encyclopedia in your pocket.</div>"
+            pl: "<div>Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą. Współpracując ze mną, nie tracisz czasu na sprzeczne informacje - masz swoją gadającą encyklopedię pod telefonem.</div>"
+            en: "<div>For over 20 years I've supported children and parents, combining sleep and development knowledge with mindfulness and real help. Working with me, you don't waste time on conflicting information - you have your own talking encyclopedia in your pocket.</div>"
     certifications:
       label: Certyfikaty
       fields:
@@ -370,8 +370,8 @@ about:
             type: plain
         defaults:
           - text:
-              pl: "Certyfikacja OCN Level 6 — Konsultantka Snu, z mentoringiem i egzaminami ocenianymi zewnętrznie"
-              en: "OCN Level 6 Certification — Sleep Consultant, with mentoring and externally assessed exams"
+              pl: "Certyfikacja OCN Level 6 - Konsultantka Snu, z mentoringiem i egzaminami ocenianymi zewnętrznie"
+              en: "OCN Level 6 Certification - Sleep Consultant, with mentoring and externally assessed exams"
           - text:
               pl: "Kwalifikacje Child Care Development (poziom licencjatu)"
               en: "Child Care Development qualifications (degree level)"
@@ -391,8 +391,8 @@ about:
           label: Uspokojenie pod przyciskiem
           type: plain
           default:
-            pl: "Najpierw logowanie, potem wybór terminu — wrócisz dokładnie tutaj."
-            en: "Sign in first, then pick a time — you will come back to exactly this point."
+            pl: "Najpierw logowanie, potem wybór terminu - wrócisz dokładnie tutaj."
+            en: "Sign in first, then pick a time - you will come back to exactly this point."
     closing:
       label: Zakończenie
       fields:
@@ -406,8 +406,8 @@ about:
           label: Treść
           type: plain
           default:
-            pl: "Napisz do mnie, kiedy zechcesz — albo zacznij po swojemu, w swoim tempie."
-            en: "Write to me whenever you like — or start on your own, at your own pace."
+            pl: "Napisz do mnie, kiedy zechcesz - albo zacznij po swojemu, w swoim tempie."
+            en: "Write to me whenever you like - or start on your own, at your own pace."
         cta:
           label: Przycisk
           type: plain
@@ -454,8 +454,8 @@ bookings:
           label: Płatność odrzucona
           type: plain
           default:
-            pl: "Płatność nie powiodła się. Termin nie został zarezerwowany — możesz spróbować ponownie."
-            en: "The payment did not go through. The slot was not booked — you can try again."
+            pl: "Płatność nie powiodła się. Termin nie został zarezerwowany - możesz spróbować ponownie."
+            en: "The payment did not go through. The slot was not booked - you can try again."
         released:
           label: Rezerwacja anulowana, termin zwolniony
           type: plain
@@ -522,6 +522,12 @@ shop:
           default:
             pl: "Posłuchaj w koncie"
             en: "Listen in your account"
+        awaiting:
+          label: Przycisk, gdy płatność za produkt jest w trakcie
+          type: plain
+          default:
+            pl: "Płatność w trakcie"
+            en: "Payment in progress"
         remove:
           label: Przycisk „usuń z koszyka”
           type: plain
@@ -574,7 +580,7 @@ shop:
             pl: "Format"
             en: "Format"
         format_value:
-          label: Format — wartość
+          label: Format - wartość
           type: plain
           default:
             pl: "Odsłuch online, bez pobierania"
@@ -586,7 +592,7 @@ shop:
             pl: "Dostęp"
             en: "Access"
         access_value:
-          label: Dostęp — wartość
+          label: Dostęp - wartość
           type: plain
           default:
             pl: "Bezterminowy, w Twoim koncie"
@@ -696,6 +702,21 @@ cart:
           default:
             pl: "Zobacz w koncie"
             en: "See them in your account"
+    awaiting:
+      label: Gdy w koszyku jest coś, za co płatność jest w trakcie
+      fields:
+        body:
+          label: Treść
+          type: plain
+          default:
+            pl: "Za te nagrania już płacisz - czekamy na potwierdzenie od operatora. Nie doliczamy ich do zamówienia, żeby nie policzyć ich dwa razy."
+            en: "You are already paying for these - we are waiting for the provider to confirm. We are leaving them out of this order so nothing is charged twice."
+        cta:
+          label: Odnośnik
+          type: plain
+          default:
+            pl: "Sprawdź w koncie"
+            en: "Check in your account"
     done:
       label: Po zakupie
       fields:
@@ -709,20 +730,44 @@ cart:
           label: Treść
           type: plain
           default:
-            pl: "Twoje audio jest już dostępne na koncie — miłego słuchania."
-            en: "Your audio is available on your account now — happy listening."
+            pl: "Twoje audio jest już dostępne na koncie - miłego słuchania."
+            en: "Your audio is available on your account now - happy listening."
         cta:
           label: Przycisk
           type: plain
           default:
             pl: "Przejdź do konta"
             en: "Go to my account"
+        pending_title:
+          label: Nagłówek, gdy płatność jest jeszcze przetwarzana
+          type: plain
+          default:
+            pl: "Potwierdzamy płatność"
+            en: "Confirming your payment"
         pending:
           label: Treść, gdy płatność jest jeszcze przetwarzana
           type: plain
           default:
-            pl: "Potwierdzamy płatność u operatora. Odśwież stronę za chwilę."
-            en: "We're confirming the payment with the provider. Refresh in a moment."
+            pl: "To potrwa tylko chwilę - ta strona zaktualizuje się sama. Możesz ją spokojnie zostawić otwartą."
+            en: "This only takes a moment - the page will update on its own. You can leave it open."
+        failed_title:
+          label: Nagłówek, gdy płatność się nie powiodła
+          type: plain
+          default:
+            pl: "Płatność nie doszła do skutku"
+            en: "The payment did not go through"
+        failed:
+          label: Treść, gdy płatność się nie powiodła
+          type: plain
+          default:
+            pl: "Nic nie zostało pobrane z Twojej karty. Nagrania wróciły do sklepu - możesz spróbować jeszcze raz."
+            en: "Nothing was taken from your card. The recordings are back in the shop whenever you want to try again."
+        failed_cta:
+          label: Przycisk, gdy płatność się nie powiodła
+          type: plain
+          default:
+            pl: "Wróć do sklepu"
+            en: "Back to the shop"
 dashboard:
   label: Moje konto
   sections:
@@ -750,6 +795,18 @@ dashboard:
           default:
             pl: "Moje audio"
             en: "My audio"
+        awaiting:
+          label: Przy nagraniu, za które płatność jest jeszcze potwierdzana
+          type: plain
+          default:
+            pl: "Potwierdzamy płatność u operatora. Nagranie pojawi się tu, gdy tylko dostaniemy potwierdzenie - zwykle w kilka chwil."
+            en: "We are confirming the payment with the provider. The recording will appear here the moment it clears - usually within moments."
+        awaiting_status:
+          label: Etykieta statusu przy takim nagraniu
+          type: plain
+          default:
+            pl: "Płatność w trakcie"
+            en: "Payment in progress"
         unplayable:
           label: Gdy kupionego nagrania nie da się odtworzyć
           type: plain
@@ -811,7 +868,7 @@ dashboard:
             pl: "Zmień adres e-mail, hasło i dane konta."
             en: "Change your email address, password and account details."
         body_no_password:
-          label: Treść (logowanie przez Google — konto bez hasła)
+          label: Treść (logowanie przez Google - konto bez hasła)
           type: plain
           default:
             pl: "Zmień adres e-mail i dane konta. Możesz też ustawić hasło."
@@ -871,8 +928,8 @@ terms:
               pl: "4. Odwołanie i zmiana terminu"
               en: "4. Rescheduling and cancellations"
             body:
-              pl: "Zmiana lub odwołanie terminu możliwe jest z odpowiednim wyprzedzeniem — szczegółowe zasady zostaną ustalone indywidualnie przy zawieraniu współpracy."
-              en: "Rescheduling or cancelling is possible with reasonable notice — detailed rules are agreed individually when starting cooperation."
+              pl: "Zmiana lub odwołanie terminu możliwe jest z odpowiednim wyprzedzeniem - szczegółowe zasady zostaną ustalone indywidualnie przy zawieraniu współpracy."
+              en: "Rescheduling or cancelling is possible with reasonable notice - detailed rules are agreed individually when starting cooperation."
           - heading:
               pl: "5. Charakter wsparcia"
               en: "5. Nature of support"
@@ -886,15 +943,15 @@ terms:
               pl: "Wszystkie informacje przekazane w trakcie współpracy są traktowane jako poufne i nie są udostępniane osobom trzecim."
               en: "All information shared during cooperation is treated as confidential and is not shared with third parties."
           # The RODO/GDPR art. 13 information notice. It lives in the CMS like every
-          # other clause so the owner can correct it without a deploy — which they
+          # other clause so the owner can correct it without a deploy - which they
           # must do before launch: the controller's identity below is a placeholder,
           # and nobody but the owner knows what belongs there.
           - heading:
               pl: "7. Dane osobowe"
               en: "7. Personal data"
             body:
-              pl: "Administratorem Twoich danych osobowych jest [DO UZUPEŁNIENIA: imię i nazwisko lub nazwa firmy, adres, NIP], kontakt: [DO UZUPEŁNIENIA: adres e-mail].\n\nDane podane przy zakładaniu konta (adres e-mail, imię) przetwarzamy po to, by prowadzić Twoje konto i udostępnić Ci zakupione materiały — podstawą jest wykonanie umowy (art. 6 ust. 1 lit. b RODO). Dane rezerwacji i zamówień przetwarzamy w tym samym celu oraz dla rozliczeń podatkowych, do czego zobowiązuje nas prawo (art. 6 ust. 1 lit. c RODO).\n\nOdbiorcami danych są wyłącznie: Paddle.com Market Ltd — operator płatności i sprzedawca formalny, Google — tylko jeśli sam wybierzesz logowanie kontem Google, oraz dostawca hostingu. Nie sprzedajemy danych, nie przekazujemy ich reklamodawcom i nie budujemy na ich podstawie profili.\n\nMasz prawo dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania i przeniesienia, a także prawo wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych. Konto możesz usunąć w każdej chwili — usuwamy wtedy dane konta poza tym, co musimy zachować dla celów księgowych."
-              en: "The controller of your personal data is [TO BE COMPLETED: name or company name, address, tax id], contact: [TO BE COMPLETED: email address].\n\nThe data you give when creating an account (email address, first name) is processed so that we can run your account and give you access to what you bought — the legal basis is performance of the contract (Art. 6(1)(b) GDPR). Booking and order data is processed for the same purpose and for tax records, which the law requires of us (Art. 6(1)(c) GDPR).\n\nThe only recipients are: Paddle.com Market Ltd, our payment provider and merchant of record; Google, but only if you choose to sign in with a Google account; and our hosting provider. We do not sell your data, pass it to advertisers, or build profiles from it.\n\nYou have the right to access, correct, erase, restrict and port your data, and to complain to your data protection authority. You can delete your account at any time — we then remove the account data apart from what we must keep for accounting."
+              pl: "Administratorem Twoich danych osobowych jest [DO UZUPEŁNIENIA: imię i nazwisko lub nazwa firmy, adres, NIP], kontakt: [DO UZUPEŁNIENIA: adres e-mail].\n\nDane podane przy zakładaniu konta (adres e-mail, imię) przetwarzamy po to, by prowadzić Twoje konto i udostępnić Ci zakupione materiały - podstawą jest wykonanie umowy (art. 6 ust. 1 lit. b RODO). Dane rezerwacji i zamówień przetwarzamy w tym samym celu oraz dla rozliczeń podatkowych, do czego zobowiązuje nas prawo (art. 6 ust. 1 lit. c RODO).\n\nOdbiorcami danych są wyłącznie: Paddle.com Market Ltd - operator płatności i sprzedawca formalny, Google - tylko jeśli sam wybierzesz logowanie kontem Google, oraz dostawca hostingu. Nie sprzedajemy danych, nie przekazujemy ich reklamodawcom i nie budujemy na ich podstawie profili.\n\nMasz prawo dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania i przeniesienia, a także prawo wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych. Konto możesz usunąć w każdej chwili - usuwamy wtedy dane konta poza tym, co musimy zachować dla celów księgowych."
+              en: "The controller of your personal data is [TO BE COMPLETED: name or company name, address, tax id], contact: [TO BE COMPLETED: email address].\n\nThe data you give when creating an account (email address, first name) is processed so that we can run your account and give you access to what you bought - the legal basis is performance of the contract (Art. 6(1)(b) GDPR). Booking and order data is processed for the same purpose and for tax records, which the law requires of us (Art. 6(1)(c) GDPR).\n\nThe only recipients are: Paddle.com Market Ltd, our payment provider and merchant of record; Google, but only if you choose to sign in with a Google account; and our hosting provider. We do not sell your data, pass it to advertisers, or build profiles from it.\n\nYou have the right to access, correct, erase, restrict and port your data, and to complain to your data protection authority. You can delete your account at any time - we then remove the account data apart from what we must keep for accounting."
           - heading:
               pl: "8. Pliki cookies"
               en: "8. Cookies"
@@ -912,7 +969,7 @@ footer:
           type: plain
           default:
             pl: "Pomagam rodzinom spokojnie poukładać sen - z empatią, wsparciem i bez presji."
-            en: "Helping families calmly piece sleep back together — with empathy, support and no pressure."
+            en: "Helping families calmly piece sleep back together - with empathy, support and no pressure."
     columns:
       label: Nagłówki kolumn
       fields:
@@ -950,8 +1007,8 @@ contact:
           label: Podtytuł
           type: plain
           default:
-            pl: "Masz pytanie zanim się umówisz? Napisz — odpowiadam osobiście."
-            en: "Got a question before booking? Write to me — I reply personally."
+            pl: "Masz pytanie zanim się umówisz? Napisz - odpowiadam osobiście."
+            en: "Got a question before booking? Write to me - I reply personally."
     form:
       label: Formularz
       fields:
@@ -994,13 +1051,13 @@ contact:
             pl: "Wiadomość poszła."
             en: "Your message is on its way."
         sent_next:
-          label: Co dalej — tekst przed odnośnikiem
+          label: Co dalej - tekst przed odnośnikiem
           type: plain
           default:
             pl: "W międzyczasie możesz zacząć po swojemu:"
             en: "In the meantime you can start on your own:"
         sent_link:
-          label: Co dalej — odnośnik
+          label: Co dalej - odnośnik
           type: plain
           default:
             pl: "Posłuchaj audioprocesów i bajek"
@@ -1021,13 +1078,13 @@ contact:
             pl: "Formularz nie działa? Napisz do mnie bezpośrednio:"
             en: "Form not working? Write to me directly:"
         label:
-          label: Odnośnik — tekst
+          label: Odnośnik - tekst
           type: plain
           default:
             pl: "Napisz na Instagramie"
             en: "Message me on Instagram"
         url:
-          label: "Odnośnik — adres (możesz wpisać mailto:twoj@adres.pl)"
+          label: "Odnośnik - adres (możesz wpisać mailto:twoj@adres.pl)"
           type: plain
           default:
             pl: "https://www.instagram.com/sleep.puzzle"

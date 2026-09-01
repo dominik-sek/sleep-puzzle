@@ -1,5 +1,5 @@
 <%#
-  The shop card's add/remove button, in a region the cart_items streams replace —
+  The shop card's add/remove button, in a region the cart_items streams replace -
   press "Dodaj" on the grid and that card's button becomes "Usuń" without the page
   reloading.
 
@@ -11,7 +11,7 @@
 <%= tag.span id: dom_id(product, :cart_toggle), class: "flex flex-col items-stretch gap-1.5" do %>
   <%= render "products/cart_button", product: product %>
 
-  <%# the grid used to confirm an add only by flipping the button to "Usuń" —
+  <%# the grid used to confirm an add only by flipping the button to "Usuń" -
       a destructive verb in the same pixels the thumb just left. Saying "Dodano"
       as well makes the confirmation an addition, not a substitution. %>
   <% if current_cart.include?(product) %>

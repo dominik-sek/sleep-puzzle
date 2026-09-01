@@ -32,6 +32,13 @@ class User < ApplicationRecord
   has_many :purchased_products, -> { distinct.merge(Order.paid) },
            through: :orders, source: :products
 
+  # Paid for, as far as the buyer is concerned, but Paddle's
+  # transaction.completed has not landed yet. Not the same thing as owning it -
+  # nothing here is streamable - but the buyer has committed money for it, so
+  # every commerce surface has to stop offering to sell it.
+  has_many :awaiting_products, -> { distinct.merge(Order.pending) },
+           through: :orders, source: :products
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -48,10 +55,26 @@ class User < ApplicationRecord
     encrypted_password.present?
   end
 
-  # Digital files are bought once and kept: owning one is what blocks buying it
-  # again, in the shop's button, in the cart and at checkout.
+  # Owns it outright: the payment is confirmed and the file can be streamed.
+  # This is the ownership question - use #claimed? for the selling question.
   def purchased?(product)
     purchased_products.exists?(id: product.id)
+  end
+
+  # Paid for and waiting on the webhook. The buyer's card has been charged and
+  # there is nothing to play yet, which is the one state the shop, the cart and
+  # the account all used to render as "not bought".
+  def awaiting_payment?(product)
+    awaiting_products.exists?(id: product.id)
+  end
+
+  # Digital files are bought once and kept, so a claim - settled or in flight -
+  # is what blocks buying one again, in the shop's button, in the cart and at
+  # checkout. Deliberately wider than #purchased?: between paying and the webhook
+  # landing, an order is still `pending`, and asking about ownership there
+  # answered "no" and let the same file be charged for a second time.
+  def claimed?(product)
+    purchased?(product) || awaiting_payment?(product)
   end
 
   def initials
@@ -70,7 +93,7 @@ class User < ApplicationRecord
   end
 
   # Validatable insists on a password whenever a record is created. A Google
-  # sign-up arrives without one by design, so that single case is excused — and
+  # sign-up arrives without one by design, so that single case is excused - and
   # only that case: the moment a password *is* being set, `super` takes over and
   # the length and confirmation rules apply as normal.
   #

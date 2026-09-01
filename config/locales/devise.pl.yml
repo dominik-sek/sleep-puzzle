@@ -15,7 +15,7 @@ pl:
       last_attempt: "Masz jeszcze jedną próbę, zanim konto zostanie zablokowane."
       not_found_in_database: "Nieprawidłowy %{authentication_keys} lub hasło."
       timeout: "Sesja wygasła. Zaloguj się ponownie, aby kontynuować."
-      unauthenticated: "Zaloguj się lub załóż konto, aby kontynuować — wrócisz do tego samego miejsca."
+      unauthenticated: "Zaloguj się lub załóż konto, aby kontynuować - wrócisz do tego samego miejsca."
       unconfirmed: "Potwierdź swój adres e-mail, aby kontynuować."
     mailer:
       confirmation_instructions:
@@ -40,8 +40,8 @@ pl:
     registrations:
       destroyed: "Konto zostało usunięte. Mamy nadzieję, że jeszcze się zobaczymy."
       signed_up: "Konto zostało założone. Witamy!"
-      signed_up_but_inactive: "Konto zostało założone, ale nie możesz się jeszcze zalogować — nie jest aktywne."
-      signed_up_but_locked: "Konto zostało założone, ale nie możesz się zalogować — jest zablokowane."
+      signed_up_but_inactive: "Konto zostało założone, ale nie możesz się jeszcze zalogować - nie jest aktywne."
+      signed_up_but_locked: "Konto zostało założone, ale nie możesz się zalogować - jest zablokowane."
       signed_up_but_unconfirmed: "Wysłaliśmy link potwierdzający na Twój adres. Otwórz go, aby aktywować konto."
       update_needs_confirmation: "Dane zostały zapisane. Potwierdź nowy adres, klikając link, który na niego wysłaliśmy."
       updated: "Dane konta zostały zapisane."
@@ -62,7 +62,7 @@ pl:
       not_found: "nie został znaleziony"
       not_locked: "nie był zablokowany"
       not_saved:
-        one: "Nie udało się zapisać — jeden błąd:"
-        few: "Nie udało się zapisać — %{count} błędy:"
-        many: "Nie udało się zapisać — %{count} błędów:"
-        other: "Nie udało się zapisać — %{count} błędu:"
+        one: "Nie udało się zapisać - jeden błąd:"
+        few: "Nie udało się zapisać - %{count} błędy:"
+        many: "Nie udało się zapisać - %{count} błędów:"
+        other: "Nie udało się zapisać - %{count} błędu:"

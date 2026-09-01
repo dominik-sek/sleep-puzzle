@@ -10,7 +10,7 @@ module BookingsHelper
 
   private
 
-  # Time.zone.name is the Rails identifier ("Warsaw") — English, and a stray
+  # Time.zone.name is the Rails identifier ("Warsaw") - English, and a stray
   # English word on the Polish page. Falls back to it so changing
   # config.time_zone leaves an unlabelled zone rather than a blank one.
   def booking_zone_name

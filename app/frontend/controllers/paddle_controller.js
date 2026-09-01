@@ -3,7 +3,7 @@ import { Turbo } from "@hotwired/turbo-rails";
 import { showToast } from "./toast_controller";
 import { loadPaddle } from "../lib/paddle";
 
-// Opens Paddle checkout for something the server has just saved as pending — a
+// Opens Paddle checkout for something the server has just saved as pending - a
 // booking holding a slot, or an order holding a cart. Rendered only by the
 // create response, so connect() fires once per checkout rather than on every
 // page load.
@@ -17,7 +17,7 @@ import { loadPaddle } from "../lib/paddle";
 // strings are resolved by the partial that mounts it rather than living here.
 //
 // Paddle.js itself is fetched here rather than by the layout, so a visitor who
-// never buys anything never gets Paddle's cookies — see lib/paddle.js.
+// never buys anything never gets Paddle's cookies - see lib/paddle.js.
 export default class extends Controller {
     static values = {
         token: String,
@@ -46,7 +46,7 @@ export default class extends Controller {
     #onPaddleEvent = (event) => {
         switch (event.detail?.name) {
             case "checkout.completed":
-                // payment is through and Paddle is about to send the buyer to successUrl —
+                // payment is through and Paddle is about to send the buyer to successUrl -
                 // tell the calendar to shut itself down until that navigation lands
                 this.#completed = true;
                 this.dispatch("completed", { target: window });
@@ -56,7 +56,7 @@ export default class extends Controller {
                 break;
             // A declined card, an expired transaction, a network failure inside the
             // overlay. Paddle shows its own message in the overlay, but only while the
-            // overlay is up — nothing reached us before, which is why the max-quantity
+            // overlay is up - nothing reached us before, which is why the max-quantity
             // rejection had to be diagnosed by hand.
             //
             // Deliberately does *not* abandon: the overlay stays open and the buyer can
@@ -76,7 +76,7 @@ export default class extends Controller {
 
     // Paddle has moved this field around between versions and does not document a
     // stable shape for it, so every plausible spot is tried before falling back to
-    // our own copy — a wrong-looking message is still better than none.
+    // our own copy - a wrong-looking message is still better than none.
     #errorDescription(detail) {
         const error = detail?.error ?? detail?.data?.error;
         const message = typeof error === "string" ? error : error?.detail ?? error?.message;
@@ -117,7 +117,7 @@ export default class extends Controller {
             return;
         }
 
-        // the buyer navigated away while the script was in flight — deliberately
+        // the buyer navigated away while the script was in flight - deliberately
         // not abandoned here, because Turbo also disconnects on the way into its
         // page cache and the record would still be wanted on the way back.
         // ReleaseAbandonedBookingsJob is the backstop if they really are gone.
@@ -138,8 +138,8 @@ export default class extends Controller {
         }
     }
 
-    // The record is already saved by the time the overlay opens — a booking holding
-    // its slot, an order holding the emptied cart — and walking away from it produces
+    // The record is already saved by the time the overlay opens - a booking holding
+    // its slot, an order holding the emptied cart - and walking away from it produces
     // no webhook at all, so nothing else would tell the server it never sold.
     async #abandon() {
         if (!this.hasAbandonUrlValue) return;

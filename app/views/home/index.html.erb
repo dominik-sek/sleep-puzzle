@@ -67,7 +67,7 @@
     align: :left
   ) do |section| %>
     <div class="flex flex-col md:flex-row w-full gap-6 md:items-center">
-      <%# full width stacked, the same treatment as the about page — at w-1/4 on a
+      <%# full width stacked, the same treatment as the about page - at w-1/4 on a
           phone the portrait was a thumbnail %>
       <div class="w-full md:w-1/4">
         <%# uploaded in the panel; until there is one, an empty frame rather than
@@ -132,7 +132,7 @@
                 <p class="text-t5 text-tan text-start"><%= package.for_whom %></p>
 
                 <%# no per-package page: land on the catalogue at this card.
-                    Label is CMS copy, the arrow is chrome — the same split as the
+                    Label is CMS copy, the arrow is chrome - the same split as the
                     about section's CTA, so the owner rewording this does not have
                     to retype an arrow or risk losing it. %>
                 <%= link_to packages_path(anchor: dom_id(package)),
@@ -155,7 +155,7 @@
     <h2 class="text-cream font-display font-bold text-t2"><%= content_block("home.process.title") %></h2>
 
     <%# owner-managed list: numbering follows display order rather than being stored.
-        flex-1 rather than a fixed column count — the owner can add a fourth step
+        flex-1 rather than a fixed column count - the owner can add a fourth step
         in the panel, and the row should divide itself rather than break. %>
     <div class="flex flex-col md:flex-row w-full gap-10 md:gap-12">
       <% content_items("home.process").each_with_index do |step, index| %>
@@ -217,7 +217,7 @@
 
   <%# Last section on the page, as in the design. The form is its own partial and
       its own frame so a rejected address re-renders inside it rather than
-      reloading the whole home page — the visitor is at the bottom of a long page
+      reloading the whole home page - the visitor is at the bottom of a long page
       and a full reload would put them back at the top. %>
   <%# Heading and copy sit in the block rather than in `title:`/`subtitle:` on
       purpose. Passing them to the component switches it to its two-column
@@ -238,10 +238,10 @@
   <% end %>
 
   <%# The page used to end on the newsletter, so the last thing it did was ask
-      for something — from a visitor who arrived exhausted and has already been
+      for something - from a visitor who arrived exhausted and has already been
       asked to book twice. This closes on the person instead: her own line, and
       the cheapest thing she can do if she is not ready to book. Secondary rather
-      than accent on purpose — it is an invitation, not another push, and the
+      than accent on purpose - it is an invitation, not another push, and the
       shop CTA one section up already holds the lamp. %>
   <%= render Section::Component.new(
     align: :center,

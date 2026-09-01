@@ -28,7 +28,7 @@ function loadApi() {
 
 // Renders the Turnstile widget explicitly rather than letting api.js scan the
 // page on load. The contact form lives in a Turbo frame and is replaced whole on
-// a validation error, and the auto-scan only ever runs once — so an auto-rendered
+// a validation error, and the auto-scan only ever runs once - so an auto-rendered
 // widget would come back as an empty div, leaving the visitor with a form they
 // cannot submit. Rendering on connect also means the replaced form gets a fresh
 // token, which matters because a token is single use.
@@ -37,7 +37,7 @@ export default class extends Controller {
                       eager: Boolean, unavailable: String };
 
     // Deferred rather than loaded on connect. README: "a visitor who only reads
-    // the site makes no third-party request at all" — loading Cloudflare on page
+    // the site makes no third-party request at all" - loading Cloudflare on page
     // render made that false for anyone who merely opened the contact page, which
     // is now where every "not ready to buy" link on the site points. Paddle.js
     // already works this way ("loads only when a checkout opens"); this matches it.
@@ -76,7 +76,7 @@ export default class extends Controller {
     }
 
     // A visitor whose network, extension or browser blocks Cloudflare would
-    // otherwise see an empty gap, submit, and be told they might be a robot —
+    // otherwise see an empty gap, submit, and be told they might be a robot -
     // with no way to ever succeed. Say so where the widget would have been.
     reportUnavailable() {
         if (!this.element.isConnected) return;

@@ -1,11 +1,11 @@
-<% content_for :title, "Pakiety — Panel" %>
+<% content_for :title, "Pakiety - Panel" %>
 
 <div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[1100px]">
   <div class="flex flex-wrap items-start justify-between gap-4">
     <div class="flex flex-col gap-1">
       <h1 class="text-t2 font-display text-cream">Pakiety</h1>
       <p class="text-t5 text-taupe">
-        Pakiety konsultacji. Cenę ustawiasz w Paddle — tutaj wybierasz, która cena należy do pakietu.
+        Pakiety konsultacji. Cenę ustawiasz w Paddle - tutaj wybierasz, która cena należy do pakietu.
       </p>
     </div>
 
@@ -50,7 +50,7 @@
           <% end %>
 
           <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>
-            <%= package.duration ? "#{package.duration} tyg." : "—" %>
+            <%= package.duration ? "#{package.duration} tyg." : "-" %>
           <% end %>
 
           <% row.with_cell do %>

@@ -39,7 +39,7 @@ RSpec.describe "Admin::ContentItems", type: :request do
     end
 
     # An empty collection renders from its declared defaults, so appending the
-    # first row used to swap the whole list for that one blank row — the owner
+    # first row used to swap the whole list for that one blank row - the owner
     # clicked "add" and the live page lost every entry it had been showing.
     context "when the collection has never been synced" do
       before { ContentItem.for_collection("terms.clauses").delete_all }

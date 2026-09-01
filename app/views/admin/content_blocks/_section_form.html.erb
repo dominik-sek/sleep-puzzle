@@ -3,7 +3,7 @@
       posted as urlencoded uploads nothing but the filename %>
   <%= form_with url: admin_content_blocks_path, method: :patch, multipart: true,
                 class: "flex flex-col gap-6" do %>
-    <%# id: nil — five section forms on one page would otherwise all be id="section" %>
+    <%# id: nil - five section forms on one page would otherwise all be id="section" %>
     <%= hidden_field_tag :section, section.full_key, id: nil %>
 
     <% section.fields.each do |field| %>
@@ -39,7 +39,7 @@
   <% end %>
 
   <% if section.collection? %>
-    <%# outside the form above on purpose — button_to would nest a <form> %>
+    <%# outside the form above on purpose - button_to would nest a <form> %>
     <div class="mt-4">
       <%= link_to admin_content_items_path(collection_key: section.full_key),
                   data: { turbo_method: :post },

@@ -68,7 +68,7 @@ RSpec.describe OrderConfirmationService do
   end
 
   # an abandoned checkout deletes its order, so a completion arriving after that
-  # is money nobody can account for — it has to be loud
+  # is money nobody can account for - it has to be loud
   it "logs an error when an order is named but cannot be found" do
     link_paddle_customer(user)
     allow(Rails.logger).to receive(:error)

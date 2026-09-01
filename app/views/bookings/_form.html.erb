@@ -22,7 +22,7 @@
   <% end %>
 
   <%# belongs_to :required adds its error to :package, the priceability guard adds
-      to :package_id — the field has to surface either %>
+      to :package_id - the field has to surface either %>
   <%= render Forms::Component.new(label: t("bookings.form.package"), name: "booking[package_id]", required: true,
     error: booking.errors[:package].first || booking.errors[:package_id].first) do |c| %>
     <% c.with_input do %>
@@ -41,7 +41,7 @@
     <%# submits the booking first; bookings#create responds with the stream that opens checkout %>
     <%# What is actually being bought, restated at the moment of commitment. The
         buyer used to reach this button having seen no price, no duration and no
-        echo of the slot they picked — four separate visual blocks to reassemble
+        echo of the slot they picked - four separate visual blocks to reassemble
         in their head, at 3am, before paying. Filled in by cally_controller from
         the option's own data and from the slot already chosen above. %>
     <div data-cally-target="summary" hidden
@@ -49,7 +49,7 @@
       <span class="text-t6 uppercase text-taupe"><%= t("bookings.form.summary") %></span>
       <span class="font-display font-bold text-t5 text-cream" data-cally-target="summaryPackage"></span>
       <%# the appointment itself: date, time, how long it runs, and which clock.
-          Package#duration is the support window in weeks — a different fact, and
+          Package#duration is the support window in weeks - a different fact, and
           putting it on this line read as if the consultation lasted a fortnight. %>
       <span class="text-t6 text-tan" data-cally-target="summarySlot"></span>
       <span class="text-t6 text-taupe" data-cally-target="summaryDuration"></span>
@@ -57,7 +57,7 @@
     </div>
 
     <%# pill + py-4: every other submit on the site is a pill, and Pill-For-Action
-        makes radius the affordance — the one control the whole site funnels
+        makes radius the affordance - the one control the whole site funnels
         toward was rendered as "read" at 38px %>
     <%= render Buttons::Component.new(
       text: t("bookings.form.submit"),

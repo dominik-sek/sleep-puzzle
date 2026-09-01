@@ -16,7 +16,7 @@ module Admin
 
     private
 
-    # An empty list means either "Paddle returned nothing" or "the call failed" —
+    # An empty list means either "Paddle returned nothing" or "the call failed" -
     # the service swallows the error so the forms keep rendering. Neither is worth
     # claiming success over, so the message says what to go and check.
     def refresh_notice(prices)

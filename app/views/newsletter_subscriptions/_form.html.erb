@@ -1,9 +1,9 @@
 <%# Swapped for "newsletter_subscriptions/subscribed" by
     newsletter_subscriptions#create, so the frame wraps the form rather than
-    sitting inside it — the same shape as the contact form. %>
+    sitting inside it - the same shape as the contact form. %>
 <%# aria-live: the frame swaps in either the rejection alert or the thank-you,
-    and neither moves focus. Without a live region a screen reader — and a
-    visitor whose keyboard is covering the message on a phone — gets no signal
+    and neither moves focus. Without a live region a screen reader - and a
+    visitor whose keyboard is covering the message on a phone - gets no signal
     that anything happened at all. %>
 <%= turbo_frame_tag "newsletter_form", aria: { live: "polite" } do %>
   <% if local_assigns[:alert].present? %>
@@ -14,7 +14,7 @@
 
   <%= form_with model: signup, url: newsletter_subscription_path,
                 class: "flex flex-wrap items-start justify-center gap-3" do |f| %>
-    <%# the design is one row — a wide pill and a button beside it — so the field
+    <%# the design is one row - a wide pill and a button beside it - so the field
         carries no visible label and the placeholder has to be the accessible
         name too. Fixed width on the input rather than flex-1: at full width it
         swallowed the row on a tablet and pushed the button onto its own line. %>
@@ -29,7 +29,7 @@
         <% field.with_input do %>
           <%# h-12 on both this and the button rather than matching their padding:
               .form-control is py-2 on a 24px line-height and the button is py-3.5
-              on 20px, so equal padding would still leave them 4px apart — and
+              on 20px, so equal padding would still leave them 4px apart - and
               .form-control drops to 14px type above 640px while the button does
               not, which would move the gap again at that breakpoint. A fixed
               height is the only thing that holds at every size. %>

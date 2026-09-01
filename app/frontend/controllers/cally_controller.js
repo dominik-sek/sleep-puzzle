@@ -4,7 +4,7 @@ import "dayjs/locale/pl";
 import "dayjs/locale/en";
 
 // No locale is chosen at import. This module is evaluated once per full page load,
-// so anything decided here survives every Turbo navigation afterwards — which is
+// so anything decided here survives every Turbo navigation afterwards - which is
 // how switching language left the calendar in the language you started in until
 // you pressed reload. The locale arrives per connect() instead, as a value the
 // server renders onto the element.
@@ -42,7 +42,7 @@ export default class extends Controller {
         let twoMonthsFromNowFormatted = twoMonthsFromNow.format('YYYY-MM-DD')
 
         this.today = todayFormatted
-        // no day is selected up front — the user picks one, and until then the hours
+        // no day is selected up front - the user picks one, and until then the hours
         // panel shows a prompt instead of today's slots
         this.calendarDateTarget.min = todayFormatted // earliest date to be selected
         this.calendarDateTarget.max = twoMonthsFromNowFormatted // latest ^
@@ -106,7 +106,7 @@ export default class extends Controller {
         if (reveal && date) this.revealHours()
     }
 
-    // Below md the hours sit under a full month grid — measured at ~560px, the
+    // Below md the hours sit under a full month grid - measured at ~560px, the
     // calendar's bottom is 240px past the fold. Picking a day changed nothing the
     // visitor could see and announced nothing, so the pivot of the whole task read
     // as "the page ignored me". The header is a live region (see _calendar), so
@@ -139,7 +139,7 @@ export default class extends Controller {
     }
 
     // cally re-renders the day cells one frame after this event, reusing the same
-    // buttons — without this they'd animate out of the previous month's styling,
+    // buttons - without this they'd animate out of the previous month's styling,
     // flashing every day as available before settling into disallowed
     suppressPagingTransition() {
         this.calendarMonthTargets.forEach((month) => { month.dataset.paging = "" })
@@ -197,7 +197,7 @@ export default class extends Controller {
 
     // Restates what is being bought at the moment of commitment: the package, the
     // slot already chosen above, and the price. The amount is read from the
-    // option's own data-price, which the server formatted — no round trip, and
+    // option's own data-price, which the server formatted - no round trip, and
     // PaddlePriceCatalogService stays the only thing that formats money.
     //
     // A package the catalogue could not price carries no data-price. That is the
@@ -248,7 +248,7 @@ export default class extends Controller {
     }
 
     resetForm() {
-        // never blank the form over a missing snapshot — an empty buy form at the
+        // never blank the form over a missing snapshot - an empty buy form at the
         // point of payment is worse than a stale one
         if (typeof this.pristineFormHTML !== "string") return
 

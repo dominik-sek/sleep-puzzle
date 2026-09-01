@@ -1,5 +1,5 @@
 # The redirect_uri handed to Google has to point back at whichever host the login
-# started from — localhost in normal development, the Cloudflare tunnel when
+# started from - localhost in normal development, the Cloudflare tunnel when
 # testing Paddle webhooks, the real domain in production, where APP_HOST pins it
 # rather than trusting a header. A lambda, not a string, because it is evaluated
 # per request: an ENV lookup at boot would also run during `assets:precompile` in

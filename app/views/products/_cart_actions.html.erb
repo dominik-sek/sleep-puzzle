@@ -4,7 +4,7 @@
 
   All three in **one** streamed region rather than just the button. They are
   siblings that all read `current_cart`, so streaming the button alone left the
-  link and the note behind until a reload — which read as them having been dropped.
+  link and the note behind until a reload - which read as them having been dropped.
 
   Renders nothing at all without a price: Paddle owns the money, and something we
   cannot price is something we cannot sell (see products/_card).
@@ -34,7 +34,7 @@
     <% if current_cart.include?(product) %>
       <%# aria-live: this note is swapped in by a turbo stream and nothing moves
           focus, so without it the confirmation is silent to a screen reader.
-          A drawn mark, not a ✓ glyph — the glyph renders from the OS fallback. %>
+          A drawn mark, not a ✓ glyph - the glyph renders from the OS fallback. %>
       <p class="flex items-center gap-1.5 text-t6 font-bold text-accent m-0" aria-live="polite">
         <%= icon "circle-check", class: "size-4 shrink-0" %>
         <%= content_block("shop.product.added_note") %>

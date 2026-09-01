@@ -1,6 +1,6 @@
 class ContactsController < ApplicationController
   # The surface the Turnstile widget is minted for. A token is issued against an
-  # action, so naming it here — and checking it on the way back — means a token
+  # action, so naming it here - and checking it on the way back - means a token
   # taken from another form on the site cannot be spent on this one.
   TURNSTILE_ACTION = "contact".freeze
 

@@ -38,15 +38,15 @@ class Product < ApplicationRecord
   # The two things the shop sells, named after how the site talks about them:
   # guided audio for the parent, bedtime stories for the child.
   #
-  # `category` is deliberately not an enum yet — it is an unused column with no
+  # `category` is deliberately not an enum yet - it is an unused column with no
   # settled meaning, and declaring one would invent that meaning here.
   # validate: true so a value outside the two becomes a validation error rather
-  # than an ArgumentError — the form is a select, but a stale or forged one
+  # than an ArgumentError - the form is a select, but a stale or forged one
   # should re-render the page, not raise
   enum :kind, { audio_process: 0, bedtime_story: 1 }, validate: true
 
   # Rendered on the shop, the product page, the cart and the dashboard, so it has
-  # to follow the reader's language — a frozen Hash of Polish strings showed
+  # to follow the reader's language - a frozen Hash of Polish strings showed
   # "Audioproces" on every English page.
   def self.kind_label(kind)
     I18n.t("products.kinds.#{kind}", default: kind.to_s)
@@ -66,14 +66,14 @@ class Product < ApplicationRecord
   }.freeze
 
   # `long_description` is the "O tym nagraniu" prose on the product page, and
-  # `includes` the "Co dostajesz" bullets beside it — the same shape as a
+  # `includes` the "Co dostajesz" bullets beside it - the same shape as a
   # package's `core`, so the admin's one-bullet-per-line editor already handles it.
   translates :name, :description, :long_description, lists: %i[includes]
 
   # The file is the thing being sold, so a product with none cannot go on sale.
   # Two layers, because a validation alone only covers rows saved from now on:
   # this refuses the publish, and the scope below keeps anything already marked
-  # published — or published straight through SQL — out of the shop.
+  # published - or published straight through SQL - out of the shop.
   #
   # A recording on its way counts as having one, so a product can be published in
   # the same save as its upload; the scope below still waits for `cdn_path`.
@@ -119,7 +119,7 @@ class Product < ApplicationRecord
 
   # Whether a buyer can be given a player for this. False for a product whose
   # audio has not been uploaded yet, and false everywhere the CDN is unconfigured
-  # — development and the test suite — so those render the library exactly as
+  # - development and the test suite - so those render the library exactly as
   # they did before the CDN existed rather than a control that 404s.
   def streamable?
     cdn_path.present? && BunnySignedUrlService.configured?
@@ -133,7 +133,7 @@ class Product < ApplicationRecord
     preview_cdn_path.present? && BunnySignedUrlService.configured?
   end
 
-  # The attachment is the whole state — purged on success and on final failure
+  # The attachment is the whole state - purged on success and on final failure
   # alike, so no status column can be left stale by a worker that died.
   def audio_upload_pending?
     audio_upload.attached?

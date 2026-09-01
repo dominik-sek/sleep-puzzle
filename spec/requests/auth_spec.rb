@@ -61,7 +61,7 @@ RSpec.describe "Auth screens", type: :request do
       expect(response.body).to include("Email address")
       expect(response.body).to include("Continue with Google")
       # the card's own Polish copy is gone; the navbar's is not, because its labels
-      # are still hardcoded Polish — see the README roadmap
+      # are still hardcoded Polish - see the README roadmap
       expect(response.body).not_to include("Adres e-mail")
     end
   end
@@ -106,7 +106,7 @@ RSpec.describe "Auth screens", type: :request do
   end
 
   # A Google sign-up has no password, and Devise's default update_resource insists
-  # on a "current password" to save anything — so before this, such an account could
+  # on a "current password" to save anything - so before this, such an account could
   # not change its email or set a password at all.
   describe "an account created through Google" do
     let(:google_user) do
@@ -152,7 +152,7 @@ RSpec.describe "Auth screens", type: :request do
     end
 
     # the exemption is for accounts with no password, not for Google accounts
-    # forever — once one is set, confirming it is required again
+    # forever - once one is set, confirming it is required again
     it "is asked to confirm once it has a password" do
       google_user.update!(password: "sekretne123", password_confirmation: "sekretne123")
       sign_in google_user

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 # The dashboard is a mounted engine, so the thing worth pinning is that it is
-# actually behind the admin flag — an engine mounted a line higher up, outside
+# actually behind the admin flag - an engine mounted a line higher up, outside
 # the namespace, would serve the queue to anyone.
 RSpec.describe "Admin::Jobs", type: :request do
   let(:admin) { User.create!(email: "owner@example.com", password: "password123", admin: true) }

@@ -8,6 +8,27 @@
   locals: cart
 %>
 <%= tag.div id: "cart" do %>
+  <%# a checkout for these is open and Paddle has not confirmed it yet. Kept out
+      of the lines below for the same reason as an owned file - charging twice -
+      but it needs its own words: this is money that has already moved on
+      something that is not in the account yet, which is the most alarming thing
+      the cart can be silent about. %>
+  <% if cart.awaiting.any? %>
+    <div class="mb-5 flex gap-3.5 rounded-2xl border border-border-input bg-ink-soft p-4.5" role="status">
+      <%= icon "clock", class: "mt-0.5 size-4.5 shrink-0 text-tan" %>
+      <div class="min-w-0">
+        <p class="text-t6 text-tan m-0"><%= content_block("cart.awaiting.body") %></p>
+        <ul class="mt-2 flex flex-col gap-1 list-none p-0">
+          <% cart.awaiting.each do |product| %>
+            <li class="text-t6 text-taupe break-words"><%= product.display_icon %> <%= product.name %></li>
+          <% end %>
+        </ul>
+        <%= link_to content_block("cart.awaiting.cta"), dashboard_index_path,
+              class: "mt-2 inline-block text-t6 font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+      </div>
+    </div>
+  <% end %>
+
   <%# something added before signing in that this account turns out to own. It is
       kept out of the lines below rather than charged for twice, so say where it
       went instead of appearing to have lost it. %>
@@ -16,11 +37,11 @@
       <p class="text-t6 text-tan m-0"><%= content_block("cart.owned.body") %></p>
       <ul class="mt-2 flex flex-col gap-1 list-none p-0">
         <% cart.already_owned.each do |product| %>
-          <li class="text-t6 text-taupe"><%= product.display_icon %> <%= product.name %></li>
+          <li class="text-t6 text-taupe break-words"><%= product.display_icon %> <%= product.name %></li>
         <% end %>
       </ul>
       <%= link_to content_block("cart.owned.cta"), dashboard_index_path,
-            class: "mt-2 inline-block text-t6 font-bold text-accent no-underline hover:text-accent-hover" %>
+            class: "mt-2 inline-block text-t6 font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
     </div>
   <% end %>
 

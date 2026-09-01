@@ -1,4 +1,4 @@
-# The cart screen. Signing in is not required here — only checkout needs an
+# The cart screen. Signing in is not required here - only checkout needs an
 # account, because Paddle has to be handed a customer we already know about.
 class CartController < ApplicationController
   def show

@@ -53,7 +53,7 @@ RSpec.describe BrevoSubscriptionService do
   end
 
   context "when a partial configuration is present" do
-    # the list and the template are as load-bearing as the key — without either
+    # the list and the template are as load-bearing as the key - without either
     # the request cannot be built at all
     it "is not configured with only an API key" do
       stub_const("ENV", ENV.to_h.except(*env.keys).merge("BREVO_API_KEY" => "xkeysib-test"))

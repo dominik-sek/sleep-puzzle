@@ -6,7 +6,7 @@ class ContactMailer < ApplicationMailer
     @message = ContactMessage.new(params.slice(:name, :email, :body))
 
     # replies go to the sender, so answering the notification reaches them
-    # directly — the same arrangement as BookingMailer#new_booking
+    # directly - the same arrangement as BookingMailer#new_booking
     mail to: ENV.fetch("OWNER_EMAIL"),
          reply_to: @message.email,
          subject: t("contact_mailer.new_message.subject", name: @message.name)

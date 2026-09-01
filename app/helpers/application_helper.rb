@@ -26,15 +26,15 @@ module ApplicationHelper
   # fallback made every tab, bookmark and share preview identical. The suffix
   # lives here so it is written once rather than in a dozen views.
   def page_title(label)
-    "#{label} — Sleep Puzzle"
+    "#{label} - Sleep Puzzle"
   end
 
   # Renders an editable block from the CMS by its key. Blocks are loaded once per
   # request and memoised, so a page using several of them still costs one query
   # rather than one each.
   #
-  # An unknown key raises in development and test — a typo should surface at once
-  # rather than quietly render nothing — and is ignored in production, where a
+  # An unknown key raises in development and test - a typo should surface at once
+  # rather than quietly render nothing - and is ignored in production, where a
   # missing block must never take a page down.
   def content_block(key, locale: I18n.locale)
     field = ContentBlock::Registry.field(key)
@@ -55,7 +55,7 @@ module ApplicationHelper
     stored = content_blocks_by_key[key]&.value_for(locale)
     return render_content_block(field, stored) if stored
 
-    # Nothing in the database — a fresh deploy, or a block nobody has filled in.
+    # Nothing in the database - a fresh deploy, or a block nobody has filled in.
     # The declared default keeps the page looking finished.
     fallback = field.default_for(locale)
     return render_content_block(field, fallback) if fallback.present?
@@ -65,7 +65,7 @@ module ApplicationHelper
 
   # An uploaded picture from the CMS, e.g. content_image("home.about.photo").
   #
-  # Returns nil when nothing has been uploaded yet — unlike a text block there is
+  # Returns nil when nothing has been uploaded yet - unlike a text block there is
   # no default to fall back to, so the template decides what an empty slot looks
   # like rather than this rendering a broken <img>.
   #
@@ -95,7 +95,7 @@ module ApplicationHelper
     safe_link_url(content_block(key), fallback: fallback)
   end
 
-  # The same check for a URL that did not come from a block of its own — a field
+  # The same check for a URL that did not come from a block of its own - a field
   # on a collection item, say, which content_link_url has no key to look up.
   def safe_link_url(value, fallback: "#")
     value = value.to_s.strip
@@ -109,7 +109,7 @@ module ApplicationHelper
 
   # The owner types a bare path like "/about", which is the Polish address. Left
   # alone it drops the locale, so the CTA on an English page lands back on the
-  # Polish version — the same bug the navbar logo has a comment about. Only paths
+  # Polish version - the same bug the navbar logo has a comment about. Only paths
   # that actually resolve under the prefix are rewritten: the locale scope holds
   # the public pages only, so "/users/sign_in" and "/admin" must stay bare.
   def localized_path(path)
@@ -127,7 +127,7 @@ module ApplicationHelper
 
   # The owner-managed list for a section, e.g. content_items("home.process").
   # Returns an array of { field_key => value } hashes in display order, falling
-  # back to the collection's declared defaults when the database has none — so a
+  # back to the collection's declared defaults when the database has none - so a
   # fresh deploy renders a populated list like the rest of the page.
   def content_items(section_key, locale: I18n.locale)
     collection = ContentBlock::Registry.collection(section_key)

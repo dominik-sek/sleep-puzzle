@@ -1,6 +1,6 @@
 <div id="<%= dom_id(product, :audio_status) %>" class="flex flex-col gap-1.5">
   <%# what is on the CDN right now, shown whichever way it got there. Read-only:
-      the path is where the file actually is, not a preference — it changes by
+      the path is where the file actually is, not a preference - it changes by
       uploading a different file. %>
   <% if product.cdn_path.present? %>
     <p class="text-t6 text-cream m-0">
@@ -11,7 +11,7 @@
 
   <% if product.audio_upload_pending? %>
     <p class="text-t6 text-yellow-300 m-0">
-      Plik wgrywa się do Bunny w tle — ta strona sama się zaktualizuje, gdy nagranie dotrze.
+      Plik wgrywa się do Bunny w tle - ta strona sama się zaktualizuje, gdy nagranie dotrze.
     </p>
   <% elsif product.audio_upload_failed? %>
     <p class="text-t6 text-orange-400 m-0">

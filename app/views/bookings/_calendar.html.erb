@@ -9,13 +9,13 @@
       once, and without it a calendar with every slot disabled just reads as
       "fully booked for two months" %>
   <%# Where the abandon verdict lands. It used to be delivered only as an
-      auto-dismissing toast — and "nothing was charged" is the one sentence a
+      auto-dismissing toast - and "nothing was charged" is the one sentence a
       frightened person most needs to be able to re-read. Empty on a normal load. %>
   <div id="booking_notice" class="md:col-span-2 empty:hidden"></div>
 
   <%# Two different nothings. `unavailable` is "we could not read the calendar, so
       we are refusing to guess"; this one is "we read it fine and she is genuinely
-      booked out for the next two months". Only the first had a state — the second
+      booked out for the next two months". Only the first had a state - the second
       rendered a fully-ghosted grid and a "pick a day" prompt that could never be
       satisfied, with no explanation and nowhere to go. %>
   <% if !local_assigns[:unavailable] && local_assigns[:no_slots] %>
@@ -78,7 +78,7 @@
   <%= render Card::Component.new(classes: "h-fit") do %>
     <div class="flex flex-col gap-5">
       <div>
-        <%# starts hidden — cally_controller reveals it once a day is picked %>
+        <%# starts hidden - cally_controller reveals it once a day is picked %>
         <%# stacked until lg: the card is half the grid from md up, so a row only
             has room for both the date and the count on a real desktop %>
         <%# tabindex="-1" so the controller can move focus here after a day is

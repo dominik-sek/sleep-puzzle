@@ -5,7 +5,7 @@
 # they become translated list fields in the same store rather than a second,
 # untranslatable place for copy to live.
 #
-# Existing rows are Polish — the site has only ever rendered pl — so the backfill
+# Existing rows are Polish - the site has only ever rendered pl - so the backfill
 # files them under "pl" and leaves "en" for the owner to fill in.
 class MakePackagesTranslatable < ActiveRecord::Migration[8.1]
   def up

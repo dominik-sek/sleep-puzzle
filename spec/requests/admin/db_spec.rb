@@ -2,7 +2,7 @@ require 'rails_helper'
 
 # PgHero is a mounted engine with no base controller to inherit from, so the
 # admin flag lives on the route itself. That is easy to get wrong in a way
-# nothing else notices — a mount a line higher up, outside the `authenticate`
+# nothing else notices - a mount a line higher up, outside the `authenticate`
 # block, would hand the query stats to anyone who guessed the path.
 RSpec.describe "Admin::Db", type: :request do
   let(:admin) { User.create!(email: "owner@example.com", password: "password123", admin: true) }
@@ -22,7 +22,7 @@ RSpec.describe "Admin::Db", type: :request do
       get admin_pg_hero_path
 
       # no matching route rather than a redirect, since the constraint is the
-      # route's — which is a 404 here and in production
+      # route's - which is a 404 here and in production
       expect(response).to have_http_status(:not_found)
     end
   end

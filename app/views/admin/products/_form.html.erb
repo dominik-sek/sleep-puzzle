@@ -39,7 +39,7 @@
       <span class="text-t6 uppercase text-taupe">Rodzaj</span>
       <%= select_tag "record[kind]",
                      options_for_select(Product.kind_options, product.kind),
-                     include_blank: "— wybierz rodzaj —",
+                     include_blank: "- wybierz rodzaj -",
                      id: "record-kind", class: "form-control" %>
     </div>
 
@@ -90,18 +90,18 @@
       <p data-audio-upload-target="error" class="hidden text-t6 text-orange-400 m-0"></p>
 
       <span class="text-t6 text-taupe">
-        <%= product.cdn_path.present? ? "Wgranie nowego pliku zastąpi obecny." : "Wgraj nagranie — trafi prosto do Bunny Storage." %>
+        <%= product.cdn_path.present? ? "Wgranie nowego pliku zastąpi obecny." : "Wgraj nagranie - trafi prosto do Bunny Storage." %>
         Formaty: <%= BunnyStorageService::ALLOWED_EXTENSIONS.join(", ") %>, do
         <%= BunnyStorageService::MAX_BYTES / 1.megabyte %> MB.
       </span>
     <% else %>
-      <%# no storage credentials — local development, or a deploy that lost them.
+      <%# no storage credentials - local development, or a deploy that lost them.
           The path stays typeable so the field is not simply dead, and the reason
           the uploader is missing is on the screen rather than in a log. %>
       <%= text_field_tag "record[cdn_path]", product.cdn_path, id: "record-cdn-path",
                          placeholder: "/bajki/o-sowie.mp3", class: "form-control" %>
       <span class="text-t6 text-taupe">
-        Wgrywanie plików jest wyłączone — brakuje BUNNY_STORAGE_ZONE i
+        Wgrywanie plików jest wyłączone - brakuje BUNNY_STORAGE_ZONE i
         BUNNY_STORAGE_PASSWORD. Na razie można wpisać ścieżkę pliku w Bunny Storage ręcznie.
       </span>
     <% end %>

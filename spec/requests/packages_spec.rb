@@ -93,7 +93,7 @@ RSpec.describe "Packages", type: :request do
 
       get packages_path
 
-      expect(response.body).to include('aria-label="Umów konsultację — Szybka ulga"')
+      expect(response.body).to include('aria-label="Umów konsultację - Szybka ulga"')
     end
 
     it "anchors each card so the home page can link straight to it" do

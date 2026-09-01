@@ -3,7 +3,7 @@
 # ActiveSupport::Notifications runs these before Pay's own charge sync, so don't
 # expect a Pay::Charge to exist here yet. If that later sync raises (Paddle API
 # down, transaction not yet queryable) the Pay::Webhook row survives and the job
-# retries the whole chain — which is why these services have to be idempotent
+# retries the whole chain - which is why these services have to be idempotent
 # rather than assume they run once.
 #
 # Pay's webhook controller silently drops events nothing is subscribed to, so an
@@ -16,13 +16,20 @@ Pay::Webhooks.delegator.subscribe "paddle_billing.transaction.completed" do |eve
   OrderConfirmationService.call(event: event)
 end
 
-# Neither of these releases the slot on the spot — BookingPaymentFailureService::GRACE
-# decides how long each one waits first, and ReleaseFailedBookingJob re-checks that
-# nothing has paid for the booking by then.
+# Neither of these releases the slot or the files on the spot - the two services'
+# GRACE decides how long each failure waits first, and the jobs they schedule
+# re-check that nothing has paid by then.
+#
+# Both sides are subscribed for the same reason as above: a failed checkout could
+# have been either kind, and each service ignores the one that does not name it.
+# An order needs this as much as a booking does - a pending order holds its
+# products out of the shop, so a payment that never arrives has to release them.
 Pay::Webhooks.delegator.subscribe "paddle_billing.transaction.payment_failed" do |event|
   BookingPaymentFailureService.call(event: event, status: :payment_failed)
+  OrderPaymentFailureService.call(event: event, status: :payment_failed)
 end
 
 Pay::Webhooks.delegator.subscribe "paddle_billing.transaction.canceled" do |event|
   BookingPaymentFailureService.call(event: event, status: :canceled)
+  OrderPaymentFailureService.call(event: event, status: :canceled)
 end

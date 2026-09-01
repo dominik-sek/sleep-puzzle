@@ -87,7 +87,7 @@ RSpec.describe "Cart", type: :request do
       expect(response.body).to include("Usuń z koszyka")
     end
 
-    # The product page shows three things that all read the cart — the button, the
+    # The product page shows three things that all read the cart - the button, the
     # link into the cart and the confirmation. Streaming only the button left the
     # other two behind until a reload, which read as them having been dropped, so
     # this asserts on the stream rather than on a fresh page load.
@@ -138,7 +138,7 @@ RSpec.describe "Cart", type: :request do
   end
 
   # the button already says "Posłuchaj w koncie", but this POST is reachable without
-  # it — a stale page, a direct request — and a file bought twice is money taken
+  # it - a stale page, a direct request - and a file bought twice is money taken
   # for nothing
   describe "adding something already owned" do
     let(:user) { User.create!(email: "customer@example.com", password: "password123") }

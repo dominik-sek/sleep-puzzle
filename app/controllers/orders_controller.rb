@@ -1,6 +1,6 @@
 # Checkout: hands the cart to the Paddle overlay the booking flow already drives.
 #
-# There is no payment screen of our own — the design draws one, but Paddle's
+# There is no payment screen of our own - the design draws one, but Paddle's
 # overlay collects the card, so the only thing here is turning the session cart
 # into a record Paddle's webhook can name.
 class OrdersController < ApplicationController
@@ -19,7 +19,15 @@ class OrdersController < ApplicationController
   def create
     cart = current_cart
 
-    return redirect_to cart_path, alert: "Twój koszyk jest pusty." if cart.empty?
+    # "Empty" here means nothing left to charge for, which is not the same as
+    # nothing in the cart: a cart holding only files a checkout is already open
+    # for has no buyable lines, and "Twój koszyk jest pusty" would read as having
+    # lost them at the worst possible moment.
+    if cart.empty?
+      alert = cart.awaiting.any? ? t("orders.status.awaiting_cart") : "Twój koszyk jest pusty."
+
+      return redirect_to cart_path, alert: alert
+    end
 
     @order = build_order(cart)
 
@@ -29,7 +37,7 @@ class OrdersController < ApplicationController
       if @checkout
         # The order now holds what the cart held, so the badge should drop to zero
         # as the overlay opens. #abandon puts it all back if the buyer closes the
-        # overlay without paying — which is the only way out that leaves no
+        # overlay without paying - which is the only way out that leaves no
         # webhook behind.
         cart.clear
         flash.now[:notice] = "Dokończ płatność, aby sfinalizować zamówienie."
@@ -47,8 +55,8 @@ class OrdersController < ApplicationController
     end
   end
 
-  # Closing the Paddle overlay fires no webhook — Paddle only reports transactions
-  # the buyer actually attempted — so the browser reports it instead.
+  # Closing the Paddle overlay fires no webhook - Paddle only reports transactions
+  # the buyer actually attempted - so the browser reports it instead.
   #
   # The order is deleted rather than kept as canceled: nothing was paid, and a
   # discarded checkout should not leave an order in the buyer's history. Its lines

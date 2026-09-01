@@ -6,7 +6,7 @@ class NewsletterSubscriptionsController < ApplicationController
   #
   # No Turnstile here, unlike the contact form. That one puts mail in the owner's
   # inbox on every submission; this one hands an address to Brevo, which sends a
-  # confirmation nobody can act on but the address's owner — so the rate limit is
+  # confirmation nobody can act on but the address's owner - so the rate limit is
   # the proportionate control, and a challenge on a one-field box in the middle
   # of the home page is not.
   rate_limit to: 3, within: 1.minute, only: :create, with: :too_many_signups
@@ -23,7 +23,7 @@ class NewsletterSubscriptionsController < ApplicationController
   private
 
   # Brevo sends them back to the home page once they follow the link in the
-  # confirmation mail — in the language they signed up in, which is why it is
+  # confirmation mail - in the language they signed up in, which is why it is
   # built here rather than fixed in the service.
   def subscribed?
     BrevoSubscriptionService.call(

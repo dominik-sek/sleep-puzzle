@@ -2,7 +2,7 @@
 
 module Admin
   # The consultation packages sold on the site. `duration` is the length of the
-  # support in weeks, and it is not translated — a number reads the same in both
+  # support in weeks, and it is not translated - a number reads the same in both
   # languages.
   class PackagesController < BaseController
     include PurchasableManagement

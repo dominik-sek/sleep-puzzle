@@ -33,7 +33,7 @@
                label: t("auth.fields.password_confirmation"), type: :password,
                options: { autocomplete: "new-password" } %>
 
-    <%# left out entirely when there is no password to confirm — asking for one the
+    <%# left out entirely when there is no password to confirm - asking for one the
         holder cannot know is what blocked every change a Google user tried to make %>
     <% unless setting_first_password %>
       <%= render "devise/shared/field", form: f, name: :current_password, label: t("auth.fields.current_password"),

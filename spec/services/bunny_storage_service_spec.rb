@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe BunnyStorageService do
   # The counterpart of the signing spec: that one pins the read side to Bunny's
   # published test vector, this one pins the write side to what Bunny's storage
-  # API actually expects — a PUT to /{zone}/{path} carrying the zone's key.
+  # API actually expects - a PUT to /{zone}/{path} carrying the zone's key.
   def upload(file = audio_upload, kind: "bedtime_story")
     described_class.call(file, kind: kind)
   end

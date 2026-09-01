@@ -24,7 +24,7 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  # Was the generator's placeholder, which is not a deliverable address — a reset
+  # Was the generator's placeholder, which is not a deliverable address - a reset
   # mail sent from it is rejected or filed as spam. ApplicationMailer already
   # resolves the real sender from the environment, so this defers to it.
   # `->(*)` because Devise calls this with the devise mapping (see
@@ -197,7 +197,7 @@ Devise.setup do |config|
   # to give user feedback and not to assert the e-mail validity.
   # Stricter than Devise's default, which accepts a bare "user@host" with no TLD.
   # Paddle's API rejects those outright, so an account that registers with one can
-  # never reach checkout — fail at sign-up instead. Also applies to Booking#email.
+  # never reach checkout - fail at sign-up instead. Also applies to Booking#email.
   config.email_regexp = /\A[^@\s]+@[^@\s]+\.[a-z]{2,}\z/i
 
   # ==> Configuration for :timeoutable

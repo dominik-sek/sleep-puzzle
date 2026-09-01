@@ -6,7 +6,7 @@
 #
 # Both halves matter. The SDK tolerates a nil DSN on its own, but an explicit
 # guard keeps the subscribers and the background sender thread from being
-# installed at all — this app runs its jobs as threads inside Puma, so every
+# installed at all - this app runs its jobs as threads inside Puma, so every
 # thread it does not need is memory it keeps.
 #
 # The environment check is not belt-and-braces: dotenv loads .env for every
@@ -14,7 +14,7 @@
 # every local and test-run exception land in the production project. It also
 # breaks the suite outright. Sentry patches Net::HTTP by prepending a module to
 # collect request breadcrumbs, and rspec-mocks refuses to stub a method defined
-# on a prepended module — `allow_any_instance_of(Net::HTTP)`, which is how the
+# on a prepended module - `allow_any_instance_of(Net::HTTP)`, which is how the
 # Turnstile and Brevo specs stand in for the network, dies with "not supported".
 #
 # config.enabled_environments would not do this. Patches are applied by
@@ -26,7 +26,7 @@ Sentry.init do |config|
   config.dsn = ENV["SENTRY_DSN"]
 
   # Staging and production both deploy this image and both report, so the
-  # environment cannot be read off Rails.env — it is "production" in each. Name
+  # environment cannot be read off Rails.env - it is "production" in each. Name
   # it explicitly per instance instead, or events from the two pile into one
   # stream and a staging crash pages you about a real one.
   config.environment = ENV.fetch("SENTRY_ENVIRONMENT", Rails.env)
@@ -42,8 +42,8 @@ Sentry.init do |config|
   config.breadcrumbs_logger = [ :active_support_logger, :http_logger ]
 
   # Never send session cookies, IP addresses, or the request body. What is left
-  # is still enough to find the request — path, params (filtered), the user id
-  # attached in ApplicationController — and this site takes bookings from named
+  # is still enough to find the request - path, params (filtered), the user id
+  # attached in ApplicationController - and this site takes bookings from named
   # people, so the body is not something to hand a third party by default.
   # Request params are additionally run through config.filter_parameters, where
   # :email already is.
@@ -52,7 +52,7 @@ Sentry.init do |config|
   config.enabled_patches = [:logger]
 
   # Performance tracing. A sampled fraction of requests carries a full span
-  # tree — controller, each SQL query, each partial — which is where an N+1 or
+  # tree - controller, each SQL query, each partial - which is where an N+1 or
   # a slow query shows up as something other than "the page feels slow".
   #
   # /up is excluded because the load balancer hits it constantly and a health

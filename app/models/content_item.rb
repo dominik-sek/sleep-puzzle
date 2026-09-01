@@ -1,4 +1,4 @@
-# One entry in a repeating list the owner controls — a process step, a stat.
+# One entry in a repeating list the owner controls - a process step, a stat.
 #
 # Unlike ContentBlock, whose keys are fixed by config/content_blocks.yml, items
 # are created and deleted from the admin panel: their *shape* is declared (the
@@ -38,7 +38,7 @@ class ContentItem < ApplicationRecord
 
   # Materialises each collection's declared defaults as real rows, so the panel
   # opens on an editable list rather than an empty one. Skips any collection that
-  # already has items — the owner's list is theirs, defaults never overwrite it.
+  # already has items - the owner's list is theirs, defaults never overwrite it.
   def self.sync!
     ContentBlock::Registry.sections.select(&:collection?).each do |section|
       materialise_defaults!(section.collection)

@@ -5,7 +5,7 @@
 # Paddle a price id. That shared shape lives here so the two models only have to
 # declare what actually differs between them.
 #
-# The price id is not stored copy — it is the join to Paddle, which owns the
+# The price id is not stored copy - it is the join to Paddle, which owns the
 # money. Nothing in this app stores an amount; the price is read back from Paddle
 # against this id (see PaddlePriceCatalogService).
 module Purchasable
@@ -23,7 +23,7 @@ module Purchasable
 
   private
 
-  # The other locale may be left empty — Translatable falls back to this one —
+  # The other locale may be left empty - Translatable falls back to this one -
   # but something has to be fillable back, or the record renders as a blank card.
   def name_in_default_locale
     return if translated?(:name, I18n.default_locale)

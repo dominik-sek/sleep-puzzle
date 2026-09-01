@@ -49,7 +49,7 @@ module Admin
       true
     end
 
-    # The uploader posts a signed blob id — the file reached the server before the
+    # The uploader posts a signed blob id - the file reached the server before the
     # form did, which is what the progress bar was measuring. A browser with no
     # JS posts the file itself; both are attachable and both are checked below.
     def staged_upload(upload)
@@ -88,7 +88,7 @@ module Admin
     def upload_pending_notice
       return unless @record.audio_upload_pending?
 
-      " Plik audio wgrywa się w tle — odśwież za chwilę."
+      " Plik audio wgrywa się w tle - odśwież za chwilę."
     end
 
     def create_notice

@@ -63,7 +63,7 @@ RSpec.describe Product, type: :model do
     end
 
     # The file is what a product sells, so it is only optional while the product
-    # is still hidden — a draft the owner is filling in.
+    # is still hidden - a draft the owner is filling in.
     it "is optional while the product is unpublished" do
       expect(build_product(cdn_path: nil, published: false)).to be_valid
       expect(build_product(cdn_path: "", published: false)).to be_valid
@@ -168,8 +168,8 @@ RSpec.describe Product, type: :model do
     end
 
     # The validation only covers rows saved from now on. This is the layer that
-    # keeps a product published before the rule existed — or flipped straight
-    # through SQL — out of the shop, the home teaser and the cart.
+    # keeps a product published before the rule existed - or flipped straight
+    # through SQL - out of the shop, the home teaser and the cart.
     it "leaves out a published product whose file is missing" do
       missing = create_product(name: "Bez pliku")
       missing.update_column(:cdn_path, nil)

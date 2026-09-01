@@ -17,6 +17,66 @@ RSpec.describe "Orders", type: :request do
     post cart_items_path, params: { product_id: with.id }
   end
 
+  # the whole bug: from the moment the overlay opens until the webhook lands,
+  # every commerce surface used to read the order as though it did not exist
+  describe "while a payment is in flight" do
+    before { sign_in user }
+
+    let!(:order) do
+      user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
+    end
+
+    it "refuses to put the product back in the cart" do
+      post cart_items_path, params: { product_id: product.id }
+
+      expect(Cart.from_session(session, owner: user).lines).to be_empty
+    end
+
+    it "will not open a second checkout for it" do
+      post cart_items_path, params: { product_id: product.id }
+
+      expect { post orders_path }.not_to change(Order, :count)
+    end
+
+    it "shows it on the account as awaiting rather than missing" do
+      get dashboard_index_path
+
+      expect(response.body).to include("Bajka o sowie")
+      expect(response.body).to include("Płatność w trakcie")
+    end
+
+    it "says the payment is still going through rather than confirming it" do
+      get order_path(order)
+
+      expect(response.body).to include("Potwierdzamy płatność")
+      expect(response.body).not_to include("Dziękujemy za zakup")
+    end
+
+    it "confirms it once the order is paid" do
+      order.mark_paid!(transaction_id: "txn_1")
+
+      get order_path(order)
+
+      expect(response.body).to include("Dziękujemy za zakup")
+    end
+
+    it "says nothing was taken once the order fails" do
+      order.fail_payment!(:payment_failed)
+
+      get order_path(order)
+
+      expect(response.body).to include("Płatność nie doszła do skutku")
+    end
+
+    it "puts the product back on sale once the order fails" do
+      order.fail_payment!(:canceled)
+
+      post cart_items_path, params: { product_id: product.id }
+
+      expect(Cart.from_session(session, owner: user).lines.map(&:product)).to eq([ product ])
+    end
+  end
+
   describe "POST /orders" do
     it "sends an anonymous buyer to sign in rather than to Paddle" do
       fill_cart

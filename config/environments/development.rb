@@ -47,7 +47,7 @@ Rails.application.configure do
   end
 
   # Normally mail just pops open in the browser. Set SMTP_ADDRESS in .env to send
-  # for real instead — the only way to verify credentials, SPF and DKIM actually
+  # for real instead - the only way to verify credentials, SPF and DKIM actually
   # work before deploying. Errors are raised in that mode so failures aren't silent.
   config.action_mailer.perform_deliveries = true
   if ENV["SMTP_ADDRESS"].present?

@@ -61,10 +61,10 @@ module AdminHelper
 
   # One hue per payment state so the statuses stay tellable apart at a glance.
   # Shared by bookings and orders, which run through the same Paddle states under
-  # two names — a booking ends up "confirmed", an order "paid".
+  # two names - a booking ends up "confirmed", an order "paid".
   #
   # These classes only reach the stylesheet because application.css has
-  # `@source "../../helpers"` — without it Tailwind never sees this file.
+  # `@source "../../helpers"` - without it Tailwind never sees this file.
   def admin_status_classes(status)
     case status.to_s
     when "pending" then "bg-yellow-400/15 text-yellow-300 border-yellow-400/30"
@@ -83,7 +83,7 @@ module AdminHelper
   end
 
   # Which languages a record has actually been written in. The site falls back to
-  # Polish, so a missing English version is not an error — but it is the one thing
+  # Polish, so a missing English version is not an error - but it is the one thing
   # about a catalogue row that is invisible until someone switches language.
   def admin_translation_badges(record, field = :name)
     safe_join(Translatable::LOCALES.map { |locale|
@@ -105,7 +105,7 @@ module AdminHelper
     tag.span("Nieznana cena w Paddle", class: "text-orange-400", title: record.paddle_price_id)
   end
 
-  # A recording on its way to Bunny, or one that never got there — neither shows
+  # A recording on its way to Bunny, or one that never got there - neither shows
   # up anywhere else on the row. Same two hues as a pending or failed payment.
   def admin_audio_upload_badge(product)
     if product.audio_upload_pending?
@@ -115,7 +115,7 @@ module AdminHelper
     elsif product.published? && !product.streamable?
       # Sold and unplayable: a buyer who already paid sees a row they cannot
       # play. Nothing else on the panel says so, because the upload itself did
-      # not fail — the file is gone, or the CDN is unconfigured for this
+      # not fail - the file is gone, or the CDN is unconfigured for this
       # environment, and either way only the owner can act on it.
       admin_status_badge(:payment_failed, "Nie do odtworzenia", classes: "text-t6")
     end

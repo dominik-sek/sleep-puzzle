@@ -31,7 +31,7 @@ RSpec.describe "Admin::PaddlePrices", type: :request do
       expect(flash[:notice]).to eq("Odświeżono ceny z Paddle (1).")
     end
 
-    # empty is either "no active prices" or "the call failed" — the service
+    # empty is either "no active prices" or "the call failed" - the service
     # swallows the error, so neither is worth reporting as a success
     it "says so when Paddle returns nothing" do
       allow(PaddlePriceCatalogService).to receive(:call).and_return([])

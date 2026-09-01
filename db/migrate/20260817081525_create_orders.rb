@@ -11,7 +11,7 @@ class CreateOrders < ActiveRecord::Migration[8.1]
     end
 
     # the checkout success URL is handed to Paddle, so it must not expose a
-    # sequential id — the same reason bookings are looked up by token
+    # sequential id - the same reason bookings are looked up by token
     add_index :orders, :token, unique: true
     # written by the webhook; unique so a redelivered event cannot be applied to
     # a second order

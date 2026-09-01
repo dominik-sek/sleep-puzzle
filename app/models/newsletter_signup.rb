@@ -4,7 +4,7 @@
 #
 # Deliberately not a record, and for a stronger reason than ContactMessage: the
 # list lives in Brevo, and a local copy of it would be a second consent record to
-# keep in step with the one that actually governs — including on unsubscribe,
+# keep in step with the one that actually governs - including on unsubscribe,
 # which happens entirely on Brevo's side and never tells us.
 #
 # So this exists only to say whether what was typed is worth sending on.

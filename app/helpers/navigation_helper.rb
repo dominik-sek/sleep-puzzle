@@ -2,7 +2,7 @@ module NavigationHelper
   # The public site's primary navigation, in order.
   #
   # Kept here rather than in shared/_navbar because the partial renders this list
-  # twice — once inline for the bar, once inside the hamburger panel — and two
+  # twice - once inline for the bar, once inside the hamburger panel - and two
   # hand-written copies drift the first time a link is added.
   #
   # Blog is designed but parked, so its entry stays commented out alongside the
@@ -17,7 +17,7 @@ module NavigationHelper
     ]
   end
 
-  # Flags stand for countries rather than languages, which is a compromise — but a
+  # Flags stand for countries rather than languages, which is a compromise - but a
   # recognisable one at a glance, and the language's own name sits next to it in the
   # menu for anyone the flag does not help. British rather than American, since the
   # audience is in the EU.
@@ -51,13 +51,13 @@ module NavigationHelper
     url_for(request.query_parameters.merge(locale: locale == I18n.default_locale ? nil : locale,
                                            only_path: true))
   rescue ActionController::UrlGenerationError
-    # a route that cannot be expressed in the other language — nothing on the
+    # a route that cannot be expressed in the other language - nothing on the
     # public site today, but a dead toggle beats a 500
     root_path(locale: locale == I18n.default_locale ? nil : locale)
   end
 
   # One row in the profile dropdown. Shared by the links and the sign-out button so
-  # the two cannot drift — a hand-styled anchor next to a form-wrapped button was
+  # the two cannot drift - a hand-styled anchor next to a form-wrapped button was
   # what made the menu look uneven.
   #
   # w-full + text-left matter because `button_to` renders its button inside a form:

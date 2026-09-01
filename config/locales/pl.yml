@@ -18,7 +18,7 @@ pl:
               blank: "Napisz wiadomość"
   activerecord:
     # Package and Product name is a translated value, not a column, so the label
-    # says which language is missing — rails-i18n supplies the "nie może być
+    # says which language is missing - rails-i18n supplies the "nie może być
     # puste" half.
     attributes:
       user:
@@ -84,7 +84,7 @@ pl:
   contacts:
     rate_limited: "Wysłano zbyt wiele wiadomości. Spróbuj ponownie za chwilę."
     turnstile_failed: "Nie udało się potwierdzić, że nie jesteś robotem. Spróbuj ponownie."
-    turnstile_unavailable: "Nie udało się załadować zabezpieczenia. Sprawdź połączenie albo napisz do mnie bezpośrednio — adres jest pod formularzem."
+    turnstile_unavailable: "Nie udało się załadować zabezpieczenia. Sprawdź połączenie albo napisz do mnie bezpośrednio - adres jest pod formularzem."
   newsletter:
     rate_limited: "Zbyt wiele prób zapisu. Spróbuj ponownie za chwilę."
     failed: "Nie udało się zapisać Cię do newslettera. Spróbuj ponownie za chwilę."
@@ -99,8 +99,8 @@ pl:
       processing_hint: "Za chwilę przeniesiemy Cię do potwierdzenia."
       available_hours: "Dostępne godziny"
       pick_a_day: "Wybierz dzień w kalendarzu, aby zobaczyć dostępne godziny."
-      unavailable: "Rezerwacja online jest chwilowo niedostępna — nie możemy w tej chwili sprawdzić wolnych terminów. Spróbuj ponownie za jakiś czas albo napisz do nas, a ustalimy termin bezpośrednio."
-      no_slots: "W najbliższych dwóch miesiącach nie ma wolnych terminów. Napisz do mnie — poszukamy czegoś razem."
+      unavailable: "Rezerwacja online jest chwilowo niedostępna - nie możemy w tej chwili sprawdzić wolnych terminów. Spróbuj ponownie za jakiś czas albo napisz do nas, a ustalimy termin bezpośrednio."
+      no_slots: "W najbliższych dwóch miesiącach nie ma wolnych terminów. Napisz do mnie - poszukamy czegoś razem."
       no_slots_cta: "Napisz do mnie"
       previous_month: "Poprzedni miesiąc"
       next_month: "Następny miesiąc"
@@ -110,7 +110,7 @@ pl:
       failed_title: "Płatność nie powiodła się"
       failed_body: "Termin został zwolniony. Możesz spróbować zarezerwować go ponownie."
       processing_title: "Przetwarzamy płatność"
-      processing_body: "To potrwa tylko chwilę — ta strona zaktualizuje się automatycznie."
+      processing_body: "To potrwa tylko chwilę - ta strona zaktualizuje się automatycznie."
       package: "Pakiet"
       starts_at: "Termin"
       payment_status: "Status płatności"
@@ -201,7 +201,7 @@ pl:
     mailer:
       reset_password:
         heading: "Ustaw nowe hasło"
-        intro: "Ktoś — mamy nadzieję, że Ty — poprosił o zmianę hasła do konta %{email}."
+        intro: "Ktoś - mamy nadzieję, że Ty - poprosił o zmianę hasła do konta %{email}."
         cta: "Ustaw nowe hasło"
         expires: "Link jest ważny przez %{hours} godzin."
         ignore: "Jeśli to nie Ty, po prostu zignoruj tę wiadomość. Hasło pozostanie bez zmian."
@@ -247,6 +247,9 @@ pl:
       paid: "Opłacone"
       payment_failed: "Płatność nieudana"
       canceled: "Anulowana"
+    status:
+      awaiting: "Czekamy na potwierdzenie od operatora płatności…"
+      awaiting_cart: "Za te nagrania płatność jest w trakcie"
   pagination:
     showing: "Wyświetlono"
     of: "z"

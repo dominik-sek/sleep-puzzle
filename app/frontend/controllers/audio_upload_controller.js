@@ -59,7 +59,7 @@ export default class extends Controller {
     }
 
     // The form submits itself from here, so the bar is left full rather than
-    // reset — it is about to be replaced by the next page either way.
+    // reset - it is about to be replaced by the next page either way.
     end() {
         this.render(100);
     }
@@ -70,7 +70,7 @@ export default class extends Controller {
 
         this.barTarget.style.width = `${percent}%`;
         this.percentTarget.textContent = `${percent}%`;
-        this.labelTarget.textContent = `${this.filename} — ${sent} / ${formatSize(this.total)}`;
+        this.labelTarget.textContent = `${this.filename} - ${sent} / ${formatSize(this.total)}`;
     }
 
     reject(message) {

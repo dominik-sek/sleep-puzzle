@@ -6,7 +6,7 @@
   padded card body cannot produce.
 
   The price comes from Paddle rather than from us (see Purchasable), so it can be
-  missing — a price archived in Paddle, or Paddle being unreachable. The card
+  missing - a price archived in Paddle, or Paddle being unreachable. The card
   still renders, without the amount and without an add button: offering to sell
   something at an unknown price is worse than showing it as unavailable.
 
@@ -65,7 +65,7 @@
 
     <%# a real route into the product. This block has been declared and editable
         in the panel since the shop was built and rendered nowhere, so the only
-        way in was the name link — 18px, no underline, no link colour. %>
+        way in was the name link - 18px, no underline, no link colour. %>
     <%= link_to product_path(product),
                 class: "group inline-flex items-center gap-1.5 self-start text-t6 font-bold text-tan no-underline hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
       <%= content_block("shop.card.details") %>

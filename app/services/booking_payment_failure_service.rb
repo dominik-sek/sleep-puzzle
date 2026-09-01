@@ -10,7 +10,7 @@ class BookingPaymentFailureService < PaddleTransactionService
   # under a payment still in flight, and flashes "Płatność nie powiodła się" on the
   # success page. Canceled has no such retry, so it goes straight through.
   #
-  # Keyed by status rather than passed in by the caller on purpose — the delay is a
+  # Keyed by status rather than passed in by the caller on purpose - the delay is a
   # property of the event, and a caller that forgets it would silently reinstate the
   # bug. Comfortably inside ReleaseAbandonedBookingsJob::ABANDON_AFTER, so that sweep
   # stays the last resort.
@@ -23,7 +23,7 @@ class BookingPaymentFailureService < PaddleTransactionService
 
   def call
     return if booking.nil?
-    # already paid for, or already released — nothing left to decide
+    # already paid for, or already released - nothing left to decide
     return unless booking.pending?
 
     wait = GRACE[@status]

@@ -1,0 +1,118 @@
+<%#
+  What the buyer is told about their money, swapped in over a turbo stream when
+  Order#mark_paid! or #fail_payment! fires. The page used to render one static
+  "refresh in a moment" and then never change - so the buyer sat on a page that
+  had no way of ever telling them the payment had cleared.
+
+  Three states, the same three the booking flow already draws: cleared, still in
+  flight, and did not happen. The receipt below is shown in all three, because
+  what was in the order is the thing being asked about either way.
+
+  locals: order
+%>
+<%= tag.div id: "order_status", class: "max-w-[640px] mx-auto w-full rounded-3xl border border-border-strong bg-surface p-8 sm:p-14 text-center" do %>
+  <% if order.paid? %>
+    <div class="text-5xl mb-5" aria-hidden="true">🎉</div>
+
+    <h1 class="text-t2 font-display font-bold text-accent mb-3.5">
+      <%= content_block("cart.done.title") %>
+    </h1>
+
+    <p class="text-t5 text-cream mb-8">
+      <%= content_block("cart.done.body") %>
+    </p>
+  <% elsif order.pending? %>
+    <%# a spinner, not a party. The money has left the buyer's card and nothing
+        is confirmed yet, so this says which of the two it is rather than
+        congratulating them on something that may still fail. %>
+    <%# the booking flow's spinner, unchanged: waiting on a Paddle webhook looks
+        the same in both halves of the site %>
+    <div class="mb-5 flex justify-center" aria-hidden="true">
+      <%= render LoadingIndicator::Component.new(type: :spinner, size: :xl, color: :accent) %>
+    </div>
+
+    <h1 class="text-t2 font-display font-bold text-cream mb-3.5">
+      <%= content_block("cart.done.pending_title") %>
+    </h1>
+
+    <p class="text-t5 text-cream mb-8" role="status">
+      <%= content_block("cart.done.pending") %>
+    </p>
+  <% else %>
+    <%# taupe, not red: nothing was taken and nobody did anything wrong. The
+        system has one saturated colour and a failed card is not an emergency. %>
+    <div class="mb-5 flex justify-center" aria-hidden="true">
+      <%= icon "circle-x", size: 44, class: "text-taupe" %>
+    </div>
+
+    <h1 class="text-t2 font-display font-bold text-cream mb-3.5">
+      <%= content_block("cart.done.failed_title") %>
+    </h1>
+
+    <p class="text-t5 text-cream mb-8" role="status">
+      <%= content_block("cart.done.failed") %>
+    </p>
+  <% end %>
+
+  <%# The receipt. Sunk into ink-soft rather than drawn as more cards, because
+      the confirmation panel is already `bg-surface` and surface on surface
+      reads as one flat block. Same row shape as the cart and the library, so
+      what the buyer just paid for looks like what they will find on their
+      account. %>
+  <div class="mb-8 rounded-2xl border border-border-strong bg-ink-soft p-4 sm:p-5 text-left">
+    <div class="mb-3.5 flex items-baseline justify-between gap-4">
+      <h2 class="text-t6 text-taupe m-0"><%= t("orders.summary.items_title") %></h2>
+      <span class="text-t6 text-taupe tabular-nums">
+        <%= t("orders.summary.item_count", count: order.order_items.size) %>
+      </span>
+    </div>
+
+    <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
+      <% order.order_items.each do |item| %>
+        <li>
+          <%# linked, so the confirmation is also the way into what was bought %>
+          <%= link_to product_path(item.product),
+                class: "group flex items-center gap-4 rounded-xl border border-border-strong bg-surface px-4 py-3.5 no-underline" do %>
+            <%# a fixed tile, not a bare emoji: glyph widths differ enough that
+                unboxed icons leave the names on a ragged left edge %>
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ink text-[22px] leading-none" aria-hidden="true">
+              <%= item.product.display_icon %>
+            </span>
+
+            <span class="flex-1 min-w-0">
+              <%# wraps rather than truncates: this is the receipt for what was
+                  just paid for, and a clipped Polish name is the wrong thing to
+                  clip on the one screen the buyer is anxious about %>
+              <span class="block text-t5 font-bold text-cream break-words group-hover:text-accent">
+                <%= item.product.name %>
+              </span>
+              <span class="block text-t6 text-taupe">
+                <%= [ item.product.kind_label, item.product.length_label ].compact_blank.join(" · ") %>
+              </span>
+            </span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <%# one action, and it changes with the outcome: into the account when there is
+      something to find there, back to the shop when there is not %>
+  <% if order.paid? || order.pending? %>
+    <%= render Buttons::Component.new(
+      text: content_block("cart.done.cta"),
+      pill: true,
+      variant: order.paid? ? :primary : :outline,
+      href: dashboard_index_path,
+      classes: order.paid? ? "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!" : "hover:cursor-pointer text-t6! py-3 px-6 font-bold! border-border-input! text-tan! hover:text-cream!"
+    ) %>
+  <% else %>
+    <%= render Buttons::Component.new(
+      text: content_block("cart.done.failed_cta"),
+      pill: true,
+      variant: :primary,
+      href: products_path,
+      classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+    ) %>
+  <% end %>
+<% end %>

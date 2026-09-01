@@ -75,7 +75,7 @@ RSpec.describe "Devise mailer", type: :mailer do
   # The body followed the locale long before the links did: a mail renders with no
   # request in scope, so every URL in it fell back to the routes-level `locale: nil`
   # and came out Polish. An English reset mail's button opened the Polish password
-  # form for anyone whose session had gone — a cleared cookie, another browser, a
+  # form for anyone whose session had gone - a cleared cookie, another browser, a
   # link opened days later. ApplicationMailer#default_url_options is what fixes it.
   describe "the link in the mail" do
     it "carries the locale when the mail is English" do
@@ -87,7 +87,7 @@ RSpec.describe "Devise mailer", type: :mailer do
       expect(mail.body.encoded).to match(%r{/users/password/edit\?[^"]*locale=en})
     end
 
-    # Polish is the default, so it is the bare path — the same one canonical
+    # Polish is the default, so it is the bare path - the same one canonical
     # address the public site uses
     it "leaves a Polish mail's link unprefixed" do
       expect(reset_mail.body.encoded).not_to include("locale=")

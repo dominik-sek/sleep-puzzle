@@ -1,69 +1,14 @@
 <% content_for :title, page_title(t("nav.cart")) %>
 <%# Where Paddle sends the buyer once payment goes through. The order is still
-    pending at this point more often than not — the webhook is what flips it — so
-    the page says which of the two it is rather than claiming success outright. %>
+    pending at this point more often than not - the webhook is what flips it -
+    so the status partial is swapped in over a stream instead of leaving the
+    buyer on a page that tells them to keep refreshing. %>
 <div class="min-h-screen flex flex-col items-center">
   <%= render Section::Component.new(
     background: :ink,
     align: :center
   ) do |section| %>
-    <div class="max-w-[640px] mx-auto w-full rounded-3xl border border-border-strong bg-surface p-8 sm:p-14 text-center">
-      <div class="text-5xl mb-5" aria-hidden="true">🎉</div>
-
-      <h1 class="text-t2 font-display font-bold text-accent mb-3.5">
-        <%= content_block("cart.done.title") %>
-      </h1>
-
-      <p class="text-t5 text-cream mb-8">
-        <%= @order.paid? ? content_block("cart.done.body") : content_block("cart.done.pending") %>
-      </p>
-
-      <%# The receipt. Sunk into ink-soft rather than drawn as more cards, because
-          the confirmation panel is already `bg-surface` and surface on surface
-          reads as one flat block. Same row shape as the cart and the library, so
-          what the buyer just paid for looks like what they will find on their
-          account. %>
-      <div class="mb-8 rounded-2xl border border-border-strong bg-ink-soft p-4 sm:p-5 text-left">
-        <div class="mb-3.5 flex items-baseline justify-between gap-4">
-          <h2 class="text-t6 text-taupe m-0"><%= t("orders.summary.items_title") %></h2>
-          <span class="text-t6 text-taupe tabular-nums">
-            <%= t("orders.summary.item_count", count: @order.order_items.size) %>
-          </span>
-        </div>
-
-        <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
-          <% @order.order_items.each do |item| %>
-            <li>
-              <%# linked, so the confirmation is also the way into what was bought %>
-              <%= link_to product_path(item.product),
-                    class: "group flex items-center gap-4 rounded-xl border border-border-strong bg-surface px-4 py-3.5 no-underline" do %>
-                <%# a fixed tile, not a bare emoji: glyph widths differ enough that
-                    unboxed icons leave the names on a ragged left edge %>
-                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ink text-[22px] leading-none" aria-hidden="true">
-                  <%= item.product.display_icon %>
-                </span>
-
-                <span class="flex-1 min-w-0">
-                  <span class="block text-[15px] font-bold text-cream truncate group-hover:text-accent">
-                    <%= item.product.name %>
-                  </span>
-                  <span class="block text-[12px] text-taupe">
-                    <%= [ item.product.kind_label, item.product.length_label ].compact_blank.join(" · ") %>
-                  </span>
-                </span>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
-      </div>
-
-      <%= render Buttons::Component.new(
-        text: content_block("cart.done.cta"),
-        pill: true,
-        variant: :primary,
-        href: dashboard_index_path,
-        classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
-      ) %>
-    </div>
+    <%= turbo_stream_from @order %>
+    <%= render "orders/status", order: @order %>
   <% end %>
 </div>

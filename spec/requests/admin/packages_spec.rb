@@ -80,7 +80,7 @@ RSpec.describe "Admin::Packages", type: :request do
       get new_admin_package_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("pri_123", "Szybka ulga — Jednorazowo — 249,00 PLN")
+      expect(response.body).to include("pri_123", "Szybka ulga - Jednorazowo - 249,00 PLN")
     end
 
     it "falls back to a text field when Paddle cannot be reached" do

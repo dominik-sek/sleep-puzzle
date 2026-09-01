@@ -51,7 +51,7 @@ RSpec.describe "Integrations::GoogleCalendar", type: :request do
   end
 
   # OWNER_EMAIL still names the notification inbox, and that must no longer be
-  # what grants access — matching it while not being an admin gets you nothing.
+  # what grants access - matching it while not being an admin gets you nothing.
   it "refuses someone who merely matches OWNER_EMAIL" do
     stub_const("ENV", ENV.to_h.merge("OWNER_EMAIL" => customer.email))
     sign_in customer

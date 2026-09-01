@@ -6,12 +6,12 @@ Status: **confirmed direction, blocked on one dependency decision.** No code wri
 
 A parent who has reached the shop is being asked to pay for a recording of a voice
 they have never heard. PRODUCT.md names the differentiator as Karola herself, and
-the shop is the lower rung of the ladder — the thing offered to families who cannot
+the shop is the lower rung of the ladder - the thing offered to families who cannot
 reach 1:1. Today that rung sells her voice with an emoji.
 
 Visitor mode: **Operate** on the surrounding page, but the preview itself is the one
 **Persuade** moment in the shop. Success is a visitor who presses play and then
-decides — either way. A preview that converts nobody but stops a refund is still
+decides - either way. A preview that converts nobody but stops a refund is still
 working.
 
 ## 2. Outcome and proof
@@ -50,12 +50,12 @@ no preview on the card.
 - **Product shorter than 30s:** the preview is the whole file. Acceptable for a
   30-second lullaby; worth a floor if any product is that short.
 - **Owned:** full player, no preview.
-- **Unpriced:** no preview either — a page that cannot sell should not spend
+- **Unpriced:** no preview either - a page that cannot sell should not spend
   bandwidth. (Open: arguable the other way.)
 
 ## 6. Interaction and layout
 
-The player sits directly under the price and above the add button — after the reason
+The player sits directly under the price and above the add button - after the reason
 to want it, before the ask. Native `<audio controls preload="none">`, matching the
 dashboard: no custom transport to build, keyboard and screen-reader behaviour for
 free, and `preload="none"` so a page view costs no bandwidth.
@@ -66,14 +66,14 @@ and cover art is a separate decision.
 
 ## 7. Constraints and open decisions
 
-**BLOCKING — a new system dependency.** Auto-cut needs `ffmpeg`, which is not
+**BLOCKING - a new system dependency.** Auto-cut needs `ffmpeg`, which is not
 installed and has no Ruby equivalent here. Adding it means:
   - `brew install ffmpeg` locally,
   - two `apt-get install` lines in the Dockerfile (build and runtime stages),
   - and it ships to the Kamal VPS and the Render staging service.
 
 This is the same shape as the existing `libvips` dependency, which the README
-already documents as required — so it is a known pattern in this project, not a new
+already documents as required - so it is a known pattern in this project, not a new
 kind of risk. But it is an infrastructure change with deploy consequences and it
 should be an explicit decision, not a side effect of a design task.
 

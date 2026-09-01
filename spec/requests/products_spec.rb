@@ -15,6 +15,36 @@ RSpec.describe "Products", type: :request do
       expect(response.body).to include("Dodaj do koszyka")
     end
 
+    # the double-charge: pending means the card is charged and the webhook has
+    # not landed, and the grid used to keep offering to sell it
+    it "offers no add button for a product a pending order already covers" do
+      allow(PaddlePriceCatalogService).to receive(:call)
+        .and_return([ paddle_price(id: "pri_456", amount: "2500", currency: "PLN") ])
+      product = create_product(name: "Bajka o sowie")
+      user = User.create!(email: "customer@example.com", password: "password123")
+      user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
+      sign_in user
+
+      get products_path
+
+      expect(response.body).to include("Płatność w trakcie")
+      expect(response.body).not_to include("Dodaj do koszyka")
+    end
+
+    it "offers the add button again once that order is released" do
+      allow(PaddlePriceCatalogService).to receive(:call)
+        .and_return([ paddle_price(id: "pri_456", amount: "2500", currency: "PLN") ])
+      product = create_product(name: "Bajka o sowie")
+      user = User.create!(email: "customer@example.com", password: "password123")
+      order = user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
+      order.fail_payment!(:canceled)
+      sign_in user
+
+      get products_path
+
+      expect(response.body).to include("Dodaj do koszyka")
+    end
+
     it "does not list an unpublished product" do
       create_product(name: "Szkic", published: false)
 
@@ -29,7 +59,7 @@ RSpec.describe "Products", type: :request do
       expect(response.body).to include("Nagrania pojawią się tu wkrótce")
     end
 
-    # Paddle owns the money, so an unreachable Paddle means no price — better to
+    # Paddle owns the money, so an unreachable Paddle means no price - better to
     # show the product as unavailable than to offer it at a guessed number
     it "hides the add button when the price cannot be read" do
       create_product(name: "Bajka o sowie")
@@ -82,7 +112,7 @@ RSpec.describe "Products", type: :request do
       expect(response.body).to include("Dodaj do koszyka")
     end
 
-    # bought already, and a digital file is bought once — the card leads to where
+    # bought already, and a digital file is bought once - the card leads to where
     # it is rather than offering to sell it again
     it "shows an account link instead of an add button for something owned" do
       allow(PaddlePriceCatalogService).to receive(:call)
@@ -277,7 +307,7 @@ RSpec.describe "Products", type: :request do
     end
 
     # 403 rather than 404: the shop lists the product, so its existence is not the
-    # secret — the recording behind it is
+    # secret - the recording behind it is
     it "refuses someone who has not bought it" do
       sign_in user
 
@@ -325,7 +355,7 @@ RSpec.describe "Products", type: :request do
       expect(response).to have_http_status(:not_found)
     end
 
-    # The panel cannot produce this any more — publishing requires a file — so
+    # The panel cannot produce this any more - publishing requires a file - so
     # this is the defence-in-depth case: a row that lost its path some other way
     # must still not hand out a signed URL.
     it "404s when the product has no file uploaded yet" do

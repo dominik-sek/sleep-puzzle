@@ -48,13 +48,29 @@ RSpec.describe "Dashboard", type: :request do
         expect(response.body).to include(product.kind_label)
       end
 
-      # an order Paddle has not confirmed is not a purchase
-      it "does not list an unpaid order's products" do
+      # not a purchase yet, but the buyer's card has been charged - this screen
+      # used to tell them they owned nothing
+      it "lists a pending order's products as awaiting payment" do
         user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
 
         get dashboard_index_path
 
-        expect(response.body).not_to include("Bajka o sowie")
+        expect(response.body).to include("Bajka o sowie")
+        expect(response.body).to include("Płatność w trakcie")
+        expect(response.body).not_to include("Nie masz jeszcze żadnych audio")
+      end
+
+      it "gives a pending order's product no player" do
+        user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
+
+        get dashboard_index_path
+
+        expect(response.body).not_to include(stream_product_path(product))
+      end
+
+      it "still shows the empty state when nothing is bought or pending" do
+        get dashboard_index_path
+
         expect(response.body).to include("Nie masz jeszcze żadnych audio")
       end
 
@@ -98,7 +114,7 @@ RSpec.describe "Dashboard", type: :request do
           expect(response.body).to include(%(preload="none"))
         end
 
-        # a control with nothing behind it would be a lie — the same reason the
+        # a control with nothing behind it would be a lie - the same reason the
         # library had no player at all before the CDN existed
         it "leaves out the player when no file has been uploaded" do
           with_bunny_cdn
@@ -156,7 +172,7 @@ RSpec.describe "Dashboard", type: :request do
       end
 
       # the slot is being held, so hiding it would leave the buyer wondering
-      # whether the booking registered at all — but it must not read as settled
+      # whether the booking registered at all - but it must not read as settled
       it "shows a pending one, labelled" do
         booking_for(starts_at: 3.days.from_now, status: :pending)
 

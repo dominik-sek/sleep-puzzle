@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 # The navbar and footer were hardcoded Polish, so English pages rendered Polish
-# chrome around translated content — the switcher looked half-finished.
+# chrome around translated content - the switcher looked half-finished.
 RSpec.describe "Navbar and footer copy", type: :request do
   let(:user) { User.create!(email: "customer@example.com", password: "password123") }
 

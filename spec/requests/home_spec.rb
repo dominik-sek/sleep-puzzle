@@ -4,7 +4,7 @@ RSpec.describe "Home", type: :request do
   # The state a fresh deploy is in: migrations run, nothing seeded, nobody has
   # opened the admin panel yet. The page must still render its real copy.
   context "with an empty database" do
-    # "Empty" is about the CMS — no ContentBlock rows, asserted below. One package
+    # "Empty" is about the CMS - no ContentBlock rows, asserted below. One package
     # still has to exist: `home.packages.details` is the label on a package card,
     # so it only renders inside the `@packages.any?` branch. Without this the
     # example would pass while that field went unchecked.

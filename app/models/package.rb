@@ -14,7 +14,7 @@
 class Package < ApplicationRecord
   include Purchasable
 
-  # `core` and `extra` are bullet lists — the "Co otrzymujecie" benefits and the
+  # `core` and `extra` are bullet lists - the "Co otrzymujecie" benefits and the
   # add-ons beneath them on the packages page. They were empty jsonb columns
   # before the copy became bilingual; keeping them in the same store means there
   # is one place a package's words live, rather than one translatable place and

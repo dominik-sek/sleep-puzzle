@@ -3,7 +3,7 @@
 module Admin
   # One screen for the whole CMS: a tree of pages > sections > fields on the left,
   # and an accordion of editable sections on the right. There is no create or
-  # destroy — the set of blocks comes from config/content_blocks.yml.
+  # destroy - the set of blocks comes from config/content_blocks.yml.
   #
   # Each section is its own form, so saving one leaves the rest of the page (and
   # any half-finished edit in another section) alone.
@@ -30,8 +30,8 @@ module Admin
         problems = save_images(section)
       end
 
-      # A rejected upload does not undo the copy that saved alongside it — the
-      # text is fine, only the file was wrong — so this reports rather than rolls
+      # A rejected upload does not undo the copy that saved alongside it - the
+      # text is fine, only the file was wrong - so this reports rather than rolls
       # back, and says which file and why.
       if problems.any?
         redirect_to admin_content_blocks_path(open: section.full_key), alert: problems.to_sentence

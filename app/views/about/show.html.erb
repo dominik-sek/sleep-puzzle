@@ -1,5 +1,5 @@
 <%# Copy comes from the CMS (config/content_blocks.yml + /admin/content_blocks).
-    The page is narrower than the catalogue screens — it is one column of prose,
+    The page is narrower than the catalogue screens - it is one column of prose,
     so it follows the design's 1000px rather than the usual 1240px. %>
 <% content_for :title, page_title(t("nav.about")) %>
 
@@ -16,7 +16,7 @@
                                    class: "border border-border-strong rounded-2xl w-full aspect-square object-cover") %>
 
           <%# no portrait uploaded is the launch state, and it is the first thing
-              on the page on a phone. A dashed frame reads as 1.43:1 of nothing —
+              on the page on a phone. A dashed frame reads as 1.43:1 of nothing -
               on a dimmed screen the page simply looks broken. The mascot is the
               brand's own piece, so the slot is filled rather than merely guarded.
               alt="": it stands in for her portrait, it does not describe her. %>
@@ -36,7 +36,7 @@
           </p>
 
           <%# divs, not spans: rich text renders a block-level trix-content wrapper.
-              trix-lead / trix-copy target that wrapper — setting a colour here
+              trix-lead / trix-copy target that wrapper - setting a colour here
               alone does nothing, which is why the lead used to render as body. %>
           <div class="trix-lead mb-4.5"><%= content_block("about.intro.lead") %></div>
           <div class="trix-copy mb-4.5"><%= content_block("about.intro.body") %></div>
@@ -52,7 +52,7 @@
       <%# a panel rather than a plain list: the design sets the credentials apart
           from the prose, and they are the one part a sceptical reader scans for.
           These four facts are the entire evidence this business is allowed to
-          show — no testimonials, no counts, no case studies — so the panel is
+          show - no testimonials, no counts, no case studies - so the panel is
           sized as evidence rather than as a footnote: a real subsection heading,
           reading-weight text, and an edge at border-input, which is the token
           that clears 3:1 and is meant to be seen. %>
@@ -86,7 +86,7 @@
           href: bookings_path,
           classes: "hover:cursor-pointer py-4 px-7.5 font-bold!"
         ) %>
-        <%# labels the wall before it is hit — bookings is behind authenticate_user!,
+        <%# labels the wall before it is hit - bookings is behind authenticate_user!,
             and since after_sign_in_path_for honours stored_location_for the claim
             that you come back here is now true %>
         <p class="text-t6 text-taupe text-center m-0">

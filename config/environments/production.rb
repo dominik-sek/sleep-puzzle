@@ -52,7 +52,7 @@ Rails.application.configure do
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :solid_queue
 
-  # Booking mail is transactional — a silent failure means a customer who paid
+  # Booking mail is transactional - a silent failure means a customer who paid
   # never hears back, so surface it and let the job retry.
   config.action_mailer.raise_delivery_errors = true
 
@@ -61,7 +61,7 @@ Rails.application.configure do
 
   # Brevo's HTTP API when there is a key for it, plain SMTP otherwise.
   #
-  # Not a preference — Render drops outbound SMTP, so the socket hangs until
+  # Not a preference - Render drops outbound SMTP, so the socket hangs until
   # Net::OpenTimeout and no port or credential fixes it. The API goes out over
   # 443, which is the same way BrevoSubscriptionService already reaches Brevo
   # from that instance. SMTP stays the fallback because it is provider-agnostic
@@ -81,13 +81,13 @@ Rails.application.configure do
   }
 
   # An unset SMTP_ADDRESS is not an error until the first delivery, and by then
-  # it reads as a refused connection rather than as missing configuration —
+  # it reads as a refused connection rather than as missing configuration -
   # Ruby resolves a nil host to localhost. This does not raise, because a site
   # that cannot send mail should still serve pages, but it does say so once at
   # boot. `bin/rails mail:check` is the same check with a connection attempt.
   config.after_initialize do
     if ENV["BREVO_API_KEY"].blank? && ENV["SMTP_ADDRESS"].blank?
-      Rails.logger.warn("[mail] neither BREVO_API_KEY nor SMTP_ADDRESS is set — mail will fail at delivery.")
+      Rails.logger.warn("[mail] neither BREVO_API_KEY nor SMTP_ADDRESS is set - mail will fail at delivery.")
     end
   end
 

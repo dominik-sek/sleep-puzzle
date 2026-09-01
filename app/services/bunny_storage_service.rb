@@ -2,7 +2,7 @@
 #
 # The counterpart to BunnySignedUrlService: that one mints a URL for a path, this
 # one is how a path comes to exist. Before it, the owner uploaded through Bunny's
-# own dashboard and pasted the resulting path into the admin form — two systems to
+# own dashboard and pasted the resulting path into the admin form - two systems to
 # be logged into, and a typo in the paste failed as a 403 the first time a buyer
 # pressed play rather than as anything visible at the time.
 #
@@ -16,7 +16,7 @@
 # .rejection, which is every check that needs no network.
 class BunnyStorageService < ApplicationService
   # Bunny's storage endpoints are region-specific and the zone's own region is not
-  # discoverable from here — a PUT to the wrong one 404s — so it is configuration.
+  # discoverable from here - a PUT to the wrong one 404s - so it is configuration.
   # This is Falkenstein, which is what a zone gets unless it was told otherwise.
   DEFAULT_HOST = "storage.bunnycdn.com"
 
@@ -37,8 +37,8 @@ class BunnyStorageService < ApplicationService
   ALLOWED_EXTENSIONS = %w[mp3 m4a aac ogg opus wav flac].freeze
 
   # Roughly a two-hour recording at a generous bitrate. The point is not to police
-  # the owner's files but to fail on the obvious mistake — a video, an unrendered
-  # project — before it has been pushed across the wire.
+  # the owner's files but to fail on the obvious mistake - a video, an unrendered
+  # project - before it has been pushed across the wire.
   MAX_BYTES = 250.megabytes
 
   # Generous on read because the response only comes after the whole body has been
@@ -62,7 +62,7 @@ class BunnyStorageService < ApplicationService
     end
 
     # The zone's FTP & API password from Bunny's panel, which is a write key for
-    # every file in the zone — not the read-only one, and not the CDN token.
+    # every file in the zone - not the read-only one, and not the CDN token.
     def password
       ENV["BUNNY_STORAGE_PASSWORD"].presence
     end
@@ -80,7 +80,7 @@ class BunnyStorageService < ApplicationService
     def rejection_for(kind:, filename:, size:)
       return "Wgrywanie plików nie jest skonfigurowane (BUNNY_STORAGE_ZONE, BUNNY_STORAGE_PASSWORD)." unless configured?
       return "Nie wybrano pliku." if filename.blank?
-      return "Najpierw wybierz rodzaj produktu — od niego zależy folder w Bunny." if FOLDERS[kind.to_s].blank?
+      return "Najpierw wybierz rodzaj produktu - od niego zależy folder w Bunny." if FOLDERS[kind.to_s].blank?
       return "Dozwolone formaty: #{ALLOWED_EXTENSIONS.join(', ')}." unless ALLOWED_EXTENSIONS.include?(extension_of(filename))
       return "Plik jest za duży (maksymalnie #{MAX_BYTES / 1.megabyte} MB)." if size > MAX_BYTES
 
@@ -95,7 +95,7 @@ class BunnyStorageService < ApplicationService
   # @param upload [ActionDispatch::Http::UploadedFile, File] the file itself
   # @param kind [String, Symbol] the product's Product#kind, which decides the folder
   # @param filename [String, nil] the stored path's basename, for callers whose
-  #   file has no original_filename — the job's tempfile has none
+  #   file has no original_filename - the job's tempfile has none
   def initialize(upload, kind:, filename: nil)
     @upload = upload
     @kind = kind
@@ -127,7 +127,7 @@ class BunnyStorageService < ApplicationService
     @retryable == true
   end
 
-  # The path to write to Product#cdn_path — set only on success, so a caller that
+  # The path to write to Product#cdn_path - set only on success, so a caller that
   # forgets to check gets nil rather than a path to a file that is not there.
   attr_reader :path
 
@@ -222,7 +222,7 @@ class BunnyStorageService < ApplicationService
   #
   # The original name is kept in recognisable form so the storage zone stays
   # readable from Bunny's own file browser, and the random suffix is what keeps
-  # two uploads of "nagranie.mp3" from becoming one file — silently replacing a
+  # two uploads of "nagranie.mp3" from becoming one file - silently replacing a
   # recording another product is still pointing at.
   def storage_path
     @storage_path ||= "/#{folder}/#{slug}-#{SecureRandom.hex(4)}.#{extension}"
