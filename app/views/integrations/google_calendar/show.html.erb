@@ -4,15 +4,23 @@
   <div class="flex flex-col gap-1">
     <h1 class="text-t2 font-display text-cream">Kalendarz Google</h1>
     <p class="text-t5 text-taupe">
-      Opłacone rezerwacje trafiają do tego kalendarza jako wydarzenia.
+      Opłacone rezerwacje trafiają do tego kalendarza jako wydarzenia. Działa to
+      też w drugą stronę: każde wydarzenie w tym kalendarzu blokuje pokrywające
+      się terminy - również całodniowe, więc urlop wpisujesz normalnie.
     </p>
   </div>
 
   <div class="flex flex-wrap items-center gap-4 rounded-xl border border-border-strong bg-surface px-4 py-3">
     <% if @integration.present? %>
-      <span class="inline-block rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 text-t6 font-medium text-emerald-300 whitespace-nowrap">
-        Połączono
-      </span>
+      <% if @calendar_id.present? %>
+        <span class="inline-block rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 text-t6 font-medium text-emerald-300 whitespace-nowrap">
+          Połączono
+        </span>
+      <% else %>
+        <span class="inline-block rounded-full border border-yellow-400/30 bg-yellow-400/15 px-2.5 py-1 text-t6 font-medium text-yellow-300 whitespace-nowrap">
+          Wybierz kalendarz
+        </span>
+      <% end %>
 
       <%= button_to "Odłącz kalendarz", integrations_google_calendar_path, method: :delete,
             form_class: "contents ml-auto",
@@ -30,4 +38,39 @@
       <% end %>
     <% end %>
   </div>
+
+  <% if @integration.present? %>
+    <div class="flex flex-col gap-3 rounded-xl border border-border-strong bg-surface px-4 py-4">
+      <div class="flex flex-col gap-1">
+        <h2 class="text-t4 font-display text-cream">Kalendarz do zapisu rezerwacji</h2>
+        <p class="text-t6 text-taupe">
+          Lista pochodzi z połączonego konta Google i zawiera tylko kalendarze, do których masz prawo zapisu.
+        </p>
+      </div>
+
+      <% if @calendars.nil? %>
+        <p class="text-t6 text-yellow-300">
+          Nie udało się pobrać listy kalendarzy z Google. Odśwież stronę lub połącz kalendarz ponownie.
+        </p>
+      <% elsif @calendars.empty? %>
+        <p class="text-t6 text-yellow-300">
+          To konto Google nie ma żadnego kalendarza z prawem zapisu.
+        </p>
+      <% else %>
+        <%= form_with url: integrations_google_calendar_path, method: :patch, class: "flex flex-wrap items-center gap-3" do |form| %>
+          <%= form.select :calendar_id,
+                options_for_select(
+                  @calendars.map { |calendar| [ calendar.summary_override.presence || calendar.summary, calendar.id ] },
+                  @calendar_id
+                ),
+                { include_blank: "Wybierz kalendarz" },
+                name: "integration[calendar_id]",
+                class: "min-w-[260px] grow rounded-lg border border-border-input bg-ink-soft px-3 py-2 text-t6 text-cream" %>
+
+          <%= form.submit "Zapisz",
+                class: "rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-t6 font-medium text-ink cursor-pointer hover:bg-accent-hover" %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 </div>

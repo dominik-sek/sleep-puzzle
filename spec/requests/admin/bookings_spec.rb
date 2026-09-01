@@ -97,11 +97,10 @@ RSpec.describe "Admin::Bookings", type: :request do
       expect(response.body).not_to include(%(href="#{booking_path(booking)}"))
     end
 
-    # The link only renders when a calendar is configured, and GOOGLE_CALENDAR_ID
-    # arrives via .env locally but not in CI. Pin it so the example tests the view
-    # rather than the runner's environment.
+    # The link only renders once a calendar has been picked, so pin it rather than
+    # depending on what the runner's database happens to hold.
     it "links out to the Google Calendar event" do
-      stub_const("ENV", ENV.to_h.merge("GOOGLE_CALENDAR_ID" => "abc123@group.calendar.google.com"))
+      allow(Integration).to receive(:google_calendar_id).and_return("abc123@group.calendar.google.com")
       booking = create_booking(name: "Anna Kowalska")
       booking.update!(calendar_event_id: "31dnutl6u8qj6prgerlnckm66s")
       sign_in admin

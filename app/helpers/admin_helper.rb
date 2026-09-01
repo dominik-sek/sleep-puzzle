@@ -50,7 +50,7 @@ module AdminHelper
   # Returns nil when there is nothing to link to, so the caller can fall back to
   # plain text rather than render a dead link.
   def google_calendar_event_url(booking)
-    calendar_id = ENV["GOOGLE_CALENDAR_ID"]
+    calendar_id = Integration.google_calendar_id
     return if booking.calendar_event_id.blank? || calendar_id.blank?
 
     short_calendar_id = calendar_id.sub(/@(.).*\z/, '@\1')

@@ -109,7 +109,7 @@ Rails.application.routes.draw do
   end
 
   namespace :integrations do
-    resource :google_calendar, only: [ :show, :destroy ], controller: "google_calendar" do
+    resource :google_calendar, only: [ :show, :update, :destroy ], controller: "google_calendar" do
       get :connect, on: :collection
       get :callback, on: :collection
     end

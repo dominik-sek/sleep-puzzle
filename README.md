@@ -80,6 +80,24 @@ still set up, so it can come back once a system spec exists.
   one anyway, so the shop never offers something there is nothing to deliver for.
 * **Accounts** - Devise, plus Google OAuth. A Google sign-up has no password, and
   `User#password_set?` is what keeps `/users/edit` from demanding one.
+* **Calendar** - `/integrations/google_calendar` is two steps: connect the Google
+  account, then pick which of its calendars bookings are written to. The pick is
+  stored on the integration row, so changing calendars is a dropdown rather than
+  a redeploy. Only calendars the grant can write to are offered - a subscribed
+  one cannot hold a booking. Connected-but-unpicked is a real state and the panel
+  says so; the app treats it as `NoCalendarSelected`, a kind of `NotConnected`,
+  so a half-finished setup degrades the same way a missing one does instead of
+  failing a payment. `GOOGLE_CALENDAR_ID` is now only the pre-panel fallback and
+  can be dropped from the environment once a calendar has been picked.
+* **Availability reads the calendar both ways** - `GoogleCalendarService#busy`
+  lists the events rather than asking freebusy, so anything the owner writes into
+  the calendar by hand blocks the slots it covers. Freebusy is the obvious API
+  here and the wrong one: it drops every event marked transparent, and Google
+  Calendar marks all-day events transparent by default, so a fortnight of "urlop"
+  entered the normal way blocked nothing and left every slot inside it on sale.
+  Transparency is ignored rather than honoured, because an event wrongly read as
+  busy costs one visible blocked slot while one wrongly read as free sells a time
+  she is not available. Nothing is cached - the list is fetched per render.
 * **Admin** - one boolean, `users.admin`. `bin/rails 'admin:promote[you@example.com]'`
   (also `admin:demote`, `admin:list`). `OWNER_EMAIL` is an inbox, not a permission.
 * **Dashboards** - `/admin/jobs` (Solid Queue) and `/admin/db` (PgHero). Both bring
@@ -146,9 +164,75 @@ TLS is Cloudflare's origin certificate, not Let's Encrypt. The record is proxied
 so port 80 never reaches the VPS and the ACME challenge can't complete; `proxy/ssl`
 names two secrets whose values are the PEM bodies, and Kamal uploads them to
 kamal-proxy on deploy. The zone must be on **Full (strict)** - anything less and
-Cloudflare accepts an unverified origin. `forward_headers: true` is load-bearing:
-kamal-proxy stops passing `X-Forwarded-*` once SSL is on, and without the real
-client IP every `rate_limit` in the app shares one bucket.
+Cloudflare accepts an unverified origin.
+
+That forces every domain this VPS serves into **one Cloudflare account**. Kamal takes
+a single `certificate_pem`/`private_key_pem` pair for the whole proxy, so one cert has
+to cover every name in `proxy/hosts`; Cloudflare will only put a hostname on an origin
+cert if its zone sits in the issuing account. Two accounts means two certs, and there
+is nowhere to put the second. Adding a domain therefore means moving its zone in
+alongside the others and reissuing the cert with both names on it, not issuing a
+second one. Check what the current cert actually covers before pointing a new name at
+the origin - a host in `proxy/hosts` that the cert omits answers every request with a
+Cloudflare 526, and it fails at cutover rather than at deploy:
+
+```sh
+openssl x509 -in .kamal/cloudflare-origin.pem -noout -ext subjectAltName
+```
+
+Turnstile is the exception and stays portable: a widget's hostname list is just a list,
+so the domain does not have to be a zone on that account, or on Cloudflare at all.
+
+**A second domain that only redirects stays out of all of this.** `sleep-puzzle.com`
+is not in `proxy/hosts` and not on the origin cert on purpose: a Cloudflare redirect
+rule answers it at the edge with a 301 to `sleeppuzzle.com`, so it never opens a
+connection to the VPS and never needs a certificate the VPS holds. Putting it in
+`proxy/hosts` instead would force it onto the origin cert and spend a round trip to
+Poland to emit a `Location` header.
+
+Two things make the edge redirect work, and both are easy to miss:
+
+* The zone still has to be **in Cloudflare, in the same account** - not for the
+  origin cert, but so Universal SSL issues an edge certificate. Without it
+  `https://sleep-puzzle.com` throws a browser cert warning *before* anything gets a
+  chance to redirect, and the redirect rule never runs.
+* A redirect rule needs a proxied record to intercept, but there is no origin to
+  point one at. Use a placeholder that is orange-clouded and unroutable - an `A` to
+  `192.0.2.1` (TEST-NET-1) or an `AAAA` to `100::`, for the apex and for `www`.
+  Cloudflare answers before it ever tries to connect. Pointing the record at the
+  VPS instead redirects nothing - DNS cannot express a 301 - and kamal-proxy
+  rejects the unknown SNI, so it surfaces as a 525 rather than as anything that
+  hints at the cause.
+
+The rule itself lives on the **`sleep-puzzle.com` zone**, not the `sleeppuzzle.com`
+one. Rules are per-zone and only see traffic for the zone they sit on; the same rule
+added to the canonical zone redirects it to itself, which is an infinite loop.
+Nothing else is served from the redirecting zone, so it matches **all incoming
+requests** rather than a filter expression:
+
+| field | value |
+| --- | --- |
+| type | dynamic |
+| expression | `concat("https://sleeppuzzle.com", http.request.uri.path)` |
+| status | 301 |
+| preserve query string | on |
+
+Dynamic, not static: a static redirect goes to one fixed URL, so every deep link
+lands on the home page. `http.request.uri.path` is the path *without* the query, so
+the toggle is what carries `?utm_source=...` across - it is not redundant with the
+expression. Use `http.request.uri` instead and it already includes the query, in
+which case leave the toggle off or the query gets appended twice.
+
+Keep it a 301 in one direction only. `sleeppuzzle.com` is canonical in more places
+than DNS: `APP_HOST` in `config/deploy.yml` pins both the mailer link host and the
+OAuth `redirect_uri`, which has to match an authorised redirect URI in the Google
+console exactly (`https://sleeppuzzle.com/users/auth/google_oauth2/callback`).
+Changing `APP_HOST` without changing it there fails as `redirect_uri_mismatch` at
+sign-in, not at deploy.
+
+`forward_headers: true` is load-bearing: kamal-proxy stops passing `X-Forwarded-*`
+once SSL is on, and without the real client IP every `rate_limit` in the app shares
+one bucket.
 
 On a fresh server, `kamal accessory boot db` before `kamal deploy`, or `db:prepare`
 has nothing to connect to. **Back up separately** - losing the VPS loses the

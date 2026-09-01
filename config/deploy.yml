@@ -7,7 +7,7 @@ image: gothic459/sleep-puzzle
 # Deploy to these servers.
 servers:
   web:
-    - 146.59.57.32
+    - 146.59.57.68
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -24,8 +24,8 @@ proxy:
   # alert, which Cloudflare surfaces as a 525 rather than anything app-shaped.
   # `sleep-puzzle.` is deliberately absent: that name belongs to Render staging.
   hosts:
-    - dominiksek.pl
-    - www.dominiksek.pl
+    - sleeppuzzle.com
+    - www.sleeppuzzle.com
   # PEM bodies, not paths: Kamal reads these two names out of .kamal/secrets and
   # uploads the contents to the proxy container itself.
   ssl:
@@ -98,7 +98,15 @@ env:
 
     # Mailer link host. Not pulled from .env.production, whose APP_HOST is the
     # Render staging name -- booking mail would link customers at staging.
-    APP_HOST: dominiksek.pl
+    #
+    # Also the canonical host for OAuth: config/initializers/omniauth.rb pins
+    # redirect_uri to https://APP_HOST/users/auth/google_oauth2/callback rather
+    # than trusting the request header, so this exact name has to be an
+    # authorised redirect URI in the Google console. Changing it here without
+    # changing it there breaks Google sign-in with redirect_uri_mismatch.
+    # One canonical name only -- alternate domains redirect at Cloudflare's edge
+    # and never reach this app.
+    APP_HOST: sleeppuzzle.com
 
     # Set number of processes dedicated to Solid Queue (default: 1)
     # JOB_CONCURRENCY: 3

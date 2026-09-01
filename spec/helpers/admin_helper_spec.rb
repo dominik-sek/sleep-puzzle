@@ -41,11 +41,8 @@ RSpec.describe AdminHelper, type: :helper do
   end
 
   describe "#google_calendar_event_url" do
-    around do |example|
-      original = ENV["GOOGLE_CALENDAR_ID"]
-      ENV["GOOGLE_CALENDAR_ID"] = "abc123@group.calendar.google.com"
-      example.run
-      ENV["GOOGLE_CALENDAR_ID"] = original
+    before do
+      allow(Integration).to receive(:google_calendar_id).and_return("abc123@group.calendar.google.com")
     end
 
     # Pins the encoding to what Google puts in an event's htmlLink: base64 of
@@ -67,7 +64,7 @@ RSpec.describe AdminHelper, type: :helper do
     end
 
     it "returns nil when no calendar is configured" do
-      ENV["GOOGLE_CALENDAR_ID"] = nil
+      allow(Integration).to receive(:google_calendar_id).and_return(nil)
 
       expect(helper.google_calendar_event_url(Booking.new(calendar_event_id: "abc"))).to be_nil
     end

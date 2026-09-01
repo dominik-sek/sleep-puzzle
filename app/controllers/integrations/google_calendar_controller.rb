@@ -8,7 +8,25 @@ class Integrations::GoogleCalendarController < ApplicationController
   before_action :require_admin
 
   def show
-    @integration = Integration.find_by(service_name: Integration::GOOGLE_CALENDAR)
+    @integration = Integration.google_calendar
+    @calendar_id = Integration.google_calendar_id
+    @calendars = @integration && writable_calendars
+  end
+
+  # Which calendar the bookings land in. Used to be GOOGLE_CALENDAR_ID, which
+  # meant a redeploy to change and a raw id to find by hand.
+  def update
+    integration = Integration.google_calendar
+    calendar_id = params.dig(:integration, :calendar_id).presence
+
+    if integration.nil?
+      redirect_to integrations_google_calendar_path, alert: "Najpierw połącz konto Google."
+    elsif calendar_id.blank?
+      redirect_to integrations_google_calendar_path, alert: "Wybierz kalendarz z listy."
+    else
+      integration.update!(calendar_id: calendar_id)
+      redirect_to integrations_google_calendar_path, notice: "Kalendarz został zapisany."
+    end
   end
 
   def connect
@@ -17,7 +35,7 @@ class Integrations::GoogleCalendarController < ApplicationController
 
   def callback
     authorizer.handle_auth_callback(Integration::GOOGLE_CALENDAR, request)
-    redirect_to integrations_google_calendar_path, notice: "Kalendarz Google został połączony."
+    redirect_to integrations_google_calendar_path, notice: "Konto Google zostało połączone. Wybierz kalendarz poniżej."
   rescue Google::Auth::AuthorizationError => e
     Rails.logger.warn("Google Calendar auth failed: #{e.message}")
     redirect_to integrations_google_calendar_path, alert: "Nie udało się połączyć z Kalendarzem Google. Spróbuj ponownie."
@@ -58,6 +76,16 @@ class Integrations::GoogleCalendarController < ApplicationController
     authorizer.revoke_authorization(Integration::GOOGLE_CALENDAR)
   rescue Signet::AuthorizationError, Signet::UnexpectedStatusError => e
     Rails.logger.warn("Google Calendar revoke failed, disconnecting locally anyway: #{e.message}")
+  end
+
+  # nil, not [], when the list cannot be read: an empty list means the account
+  # genuinely owns no writable calendar, and the panel says different things
+  # about that than about a call to Google that failed.
+  def writable_calendars
+    GoogleCalendarService.call.writable_calendars
+  rescue GoogleCalendarService::NotConnected, Google::Apis::Error => e
+    Rails.logger.warn("Could not list Google calendars: #{e.message}")
+    nil
   end
 
   def authorizer
