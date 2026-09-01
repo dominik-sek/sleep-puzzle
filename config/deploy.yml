@@ -20,7 +20,12 @@ servers:
 # Set the zone's SSL/TLS mode to "Full (strict)" so the CF-to-origin hop is
 # verified rather than merely encrypted.
 proxy:
-  host: sleep-puzzle.dominiksek.pl
+  # kamal-proxy answers only to the hosts named here -- any other SNI gets a TLS
+  # alert, which Cloudflare surfaces as a 525 rather than anything app-shaped.
+  # `sleep-puzzle.` is deliberately absent: that name belongs to Render staging.
+  hosts:
+    - dominiksek.pl
+    - www.dominiksek.pl
   # PEM bodies, not paths: Kamal reads these two names out of .kamal/secrets and
   # uploads the contents to the proxy container itself.
   ssl:
@@ -59,7 +64,6 @@ env:
     - PADDLE_BILLING_SIGNING_SECRET
     - MAIL_FROM
     - OWNER_EMAIL
-    - APP_HOST
     - SMTP_ADDRESS
     - SMTP_PORT
     - SMTP_USER_NAME
@@ -91,6 +95,10 @@ env:
     # that file is shared with the local production-mode boot, and a staging tag
     # on real errors means Sentry files them under the wrong environment.
     SENTRY_ENVIRONMENT: production
+
+    # Mailer link host. Not pulled from .env.production, whose APP_HOST is the
+    # Render staging name -- booking mail would link customers at staging.
+    APP_HOST: dominiksek.pl
 
     # Set number of processes dedicated to Solid Queue (default: 1)
     # JOB_CONCURRENCY: 3
