@@ -89,6 +89,15 @@ RSpec.describe "Contacts", type: :request do
       expect(response.body).to include("Dziękuję za wiadomość!")
     end
 
+    # the confirmation sits inside the frame, so its link has to break out of it
+    # or the shop loads into "contact_form" and Turbo renders "content missing"
+    it "sends the shop link in the confirmation to the whole page" do
+      post contact_path, params: valid_params
+
+      link = response.body[/<a[^>]*href="\/products"[^>]*>/]
+      expect(link).to include('data-turbo-frame="_top"')
+    end
+
     it "sends to the owner with the sender as reply-to, so answering reaches them" do
       perform_enqueued_jobs do
         post contact_path, params: valid_params

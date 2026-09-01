@@ -44,7 +44,14 @@ class BrevoApiDelivery
   def deliver!(mail)
     raise DeliveryError, "BREVO_API_KEY is not set" unless self.class.configured?
 
-    response = post(payload_for(mail))
+    payload = payload_for(mail)
+
+    # Brevo answers a payload with no sender with a bare "valid sender email
+    # required", which names nothing to go and fix. Blank MAIL_FROM is the way
+    # this happens, so say that instead of spending the request.
+    raise DeliveryError, "no sender address - MAIL_FROM is blank" if payload[:sender].blank?
+
+    response = post(payload)
 
     # 201 with a messageId is the documented success. Anything else is worth
     # raising on: raise_delivery_errors is true in production, so this surfaces

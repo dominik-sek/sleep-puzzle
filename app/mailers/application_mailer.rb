@@ -1,7 +1,10 @@
 class ApplicationMailer < ActionMailer::Base
   # Procs rather than literals so a changed .env takes effect on boot without the
   # values being frozen into the class at load time.
-  default from: -> { ENV.fetch("MAIL_FROM", "kontakt@example.com") },
+  # .presence, not fetch's default: MAIL_FROM ships from .env.production as a
+  # name that exists but is often blank, and fetch only falls back on a missing
+  # key. A blank from reaches Brevo as no sender at all - a 400 on every mail.
+  default from: -> { ENV["MAIL_FROM"].presence || "kontakt@example.com" },
           reply_to: -> { ENV["MAIL_REPLY_TO"].presence || ENV["OWNER_EMAIL"].presence }
 
   layout "mailer"

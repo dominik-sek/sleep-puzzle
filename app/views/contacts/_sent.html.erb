@@ -28,7 +28,10 @@
 
     <p class="text-t6 text-taupe m-0">
       <%= content_block("contact.form.sent_next") %>
+      <%# _top: the link lives inside the frame, so without it Turbo loads
+          /products into "contact_form" and the shop page has no such frame. %>
       <%= link_to content_block("contact.form.sent_link"), products_path,
+                  data: { turbo_frame: "_top" },
                   class: "font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
     </p>
   </div>

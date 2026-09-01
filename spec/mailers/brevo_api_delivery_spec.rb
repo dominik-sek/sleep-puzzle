@@ -84,6 +84,12 @@ RSpec.describe BrevoApiDelivery do
       expect { delivery.deliver!(mail) }.to raise_error(described_class::DeliveryError, /could not be reached/)
     end
 
+    it "names the blank setting rather than spending a request Brevo will refuse" do
+      mail[:from] = ""
+
+      expect { delivery.deliver!(mail) }.to raise_error(described_class::DeliveryError, /MAIL_FROM is blank/)
+    end
+
     it "says so when the key is missing, rather than posting an unauthenticated request" do
       stub_const("ENV", ENV.to_h.except("BREVO_API_KEY"))
 
