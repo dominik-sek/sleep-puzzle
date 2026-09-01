@@ -161,7 +161,7 @@ builder:
 # Kamal still bootstraps Docker itself as long as this user has *passwordless*
 # sudo -- it probes with `sudo -n`, which fails outright against a password prompt.
 ssh:
-  user: debian
+  user: ubuntu
 
 # Use accessory services (secrets come from .kamal/secrets).
 #
