@@ -124,6 +124,14 @@ Every secret comes from ENV — there is no `config/master.key`, and
 also has to be listed under `env.secret` in `config/deploy.yml`. A secret missing
 from either file doesn't ship.
 
+TLS is Cloudflare's origin certificate, not Let's Encrypt. The record is proxied,
+so port 80 never reaches the VPS and the ACME challenge can't complete; `proxy/ssl`
+names two secrets whose values are the PEM bodies, and Kamal uploads them to
+kamal-proxy on deploy. The zone must be on **Full (strict)** — anything less and
+Cloudflare accepts an unverified origin. `forward_headers: true` is load-bearing:
+kamal-proxy stops passing `X-Forwarded-*` once SSL is on, and without the real
+client IP every `rate_limit` in the app shares one bucket.
+
 On a fresh server, `kamal accessory boot db` before `kamal deploy`, or `db:prepare`
 has nothing to connect to. **Back up separately** — losing the VPS loses the
 database. Run `pg_dump` from the accessory, not the app container, whose

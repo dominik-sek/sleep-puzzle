@@ -33,6 +33,10 @@
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
+# Cloudflare origin certificate and its private key, read by .kamal/secrets.
+/.kamal/*.key
+/.kamal/*.pem
+
 
 # Vite Ruby
 /public/vite*

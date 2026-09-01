@@ -23,12 +23,17 @@ default: &default
   # config/queue.yml too so the two cannot drift.
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS", 5).to_i +
                        (ENV["SOLID_QUEUE_IN_PUMA"] ? ENV.fetch("JOB_THREADS", 3).to_i + 3 : 0) %>
-  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost").to_json %>
   port: <%= ENV.fetch("DATABASE_PORT", 5432) %>
   # Left blank, PostgreSQL falls back to the OS user running Rails and to no
   # password, which is the usual peer-authenticated local setup.
-  username: <%= ENV["DATABASE_USERNAME"] %>
-  password: <%= ENV["DATABASE_PASSWORD"] %>
+  #
+  # to_json, not bare interpolation: ERB renders before YAML parses, so a password
+  # opening with @, % or ` is a reserved indicator and blows up the whole file.
+  # JSON is a subset of YAML, so this quotes and escapes correctly, and nil still
+  # renders as null.
+  username: <%= ENV["DATABASE_USERNAME"].to_json %>
+  password: <%= ENV["DATABASE_PASSWORD"].to_json %>
 
 development:
   <<: *default
