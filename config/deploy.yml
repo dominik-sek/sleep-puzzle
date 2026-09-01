@@ -147,7 +147,7 @@ builder:
   # machine here is arm64, so a local build runs the whole bundle install and asset
   # pipeline under QEMU. Building on the server is native, and it means no Docker
   # daemon is needed locally at all -- only the buildx CLI plugin.
-  remote: ssh://debian@146.59.57.32
+  remote: ssh://ubuntu@146.59.57.68
 
   #
   # # Pass arguments and secrets to the Docker build process
@@ -172,7 +172,7 @@ accessories:
   db:
     image: postgres:17
     # Same machine as the web server above.
-    host: 146.59.57.32
+    host: 146.59.57.68
     # Bound to loopback, so 5432 is reachable for psql and pg_dump over SSH but
     # never from the internet. The app container doesn't use this mapping at all;
     # it reaches Postgres by container name on the kamal network.
