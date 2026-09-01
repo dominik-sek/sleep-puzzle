@@ -53,6 +53,23 @@ RSpec.describe "Products", type: :request do
       expect(response.body).not_to include("Szkic")
     end
 
+    # a lone card used to stretch across the full grid width
+    it "caps the grid when there are too few cards to fill a row" do
+      create_product(name: "Jedyny")
+
+      get products_path
+
+      expect(response.body).to include("sm:max-w-[320px]")
+    end
+
+    it "leaves the grid uncapped once a row fills on its own" do
+      4.times { |i| create_product(name: "Nagranie #{i}") }
+
+      get products_path
+
+      expect(response.body).not_to include("sm:max-w-[320px]")
+    end
+
     it "renders the CMS empty state when there is nothing to sell" do
       get products_path
 

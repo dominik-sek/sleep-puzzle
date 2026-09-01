@@ -85,7 +85,9 @@
               <h2 class="mb-3.5 font-display font-bold text-t3 text-cream">
                 <%= content_block("shop.product.about") %>
               </h2>
-              <p class="text-t5 leading-[1.75] text-tan text-pretty m-0"><%= @product.long_description %></p>
+              <%# a product with no bullets leaves this column alone in the grid,
+                  and the measure ran past 100ch. 70ch is the system's ceiling. %>
+              <p class="text-t5 leading-[1.75] text-tan text-pretty m-0 max-w-[70ch]"><%= @product.long_description %></p>
             </div>
           <% end %>
 
@@ -115,7 +117,10 @@
             <%= content_block("shop.product.more") %>
           </h2>
 
-          <div class="grid gap-4.5 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+          <%# capped like the shop grid: a catalogue of two leaves exactly one tile
+              here, and uncapped it ran the full column width. %>
+          <% also_cap = { 1 => "sm:max-w-[360px]", 2 => "sm:max-w-[738px]" }[@also.size] %>
+          <div class="grid gap-4.5 <%= also_cap %> [grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))]">
             <% @also.each do |other| %>
               <%= render "products/also_card", product: other %>
             <% end %>

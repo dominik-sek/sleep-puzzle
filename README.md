@@ -179,6 +179,13 @@ database. Run `pg_dump` from the accessory, not the app container, whose
   `product_path(product)` raises `missing required keys: [:id]`.
 * **Sentry is production-only on purpose.** It patches `Net::HTTP` on init, which
   breaks specs that stub it, and `enabled_environments` doesn't help.
+* **Cap an `auto-fit` grid on the grid, not on the track.** The card grids in the
+  shop and under a product use `minmax(240px, 1fr)`, so with fewer cards than a
+  row holds the tracks share the whole width and one product stretches a tile
+  across 1240px. The views cap the grid's own `max-width` from the collection
+  size instead. Putting a definite max in the `minmax()` looks equivalent but
+  isn't - the repetition count is computed from the max when it's definite, which
+  silently drops a full row from four columns to three.
 * **PgHero query stats need `pg_stat_statements`**, which a stock local Postgres
   doesn't preload. Everything else on that dashboard works without it.
 

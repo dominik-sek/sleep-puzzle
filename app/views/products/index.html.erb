@@ -33,8 +33,14 @@
 
       <% if @products.any? %>
         <%# auto-fit rather than fixed breakpoints, as the design has it: the grid
-            fits as many 240px cards as the row has room for %>
-        <div class="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
+            fits as many 240px cards as the row has room for and the tracks share
+            what is left. With too few cards to fill a row there is nothing to share
+            with, and one product used to stretch a tile across the whole 1240px, so
+            the grid is capped at what those cards want: 320px each plus the gaps.
+            The cap belongs on the grid, not the track - a definite track max would
+            cut a full row from four columns to three. %>
+        <% shop_cap = { 1 => "sm:max-w-[320px]", 2 => "sm:max-w-[664px]", 3 => "sm:max-w-[1008px]" }[@products.size] %>
+        <div class="grid gap-6 <%= shop_cap %> [grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))]">
           <% @products.each do |product| %>
             <%= render "products/card", product: product %>
           <% end %>
