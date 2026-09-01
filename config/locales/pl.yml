@@ -194,7 +194,7 @@ pl:
       destroy_confirm: "Na pewno? Tej operacji nie da się cofnąć."
     set_password:
       title: "Ustaw hasło"
-      hint: "Zalogowałaś się przez Google, więc nie masz jeszcze hasła. Możesz je ustawić, żeby móc logować się także adresem e-mail."
+      hint: "Twoje konto powstało przez logowanie Google, więc nie ma jeszcze hasła. Możesz je ustawić, żeby móc logować się także adresem e-mail."
     oauth:
       google: "Kontynuuj z Google"
       separator: "albo"

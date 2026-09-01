@@ -8,7 +8,7 @@ pl:
       send_instructions: "Za kilka minut otrzymasz e-mail z instrukcją potwierdzenia adresu."
       send_paranoid_instructions: "Jeśli Twój adres jest w naszej bazie, za kilka minut otrzymasz e-mail z instrukcją potwierdzenia."
     failure:
-      already_authenticated: "Jesteś już zalogowana."
+      already_authenticated: "Masz już aktywną sesję."
       inactive: "Twoje konto nie zostało jeszcze aktywowane."
       invalid: "Nieprawidłowy %{authentication_keys} lub hasło."
       locked: "Twoje konto jest zablokowane."
@@ -35,7 +35,7 @@ pl:
       no_token: "Ta strona jest dostępna tylko z linku w e-mailu o zmianie hasła. Sprawdź, czy adres jest kompletny."
       send_instructions: "Za kilka minut otrzymasz e-mail z instrukcją ustawienia nowego hasła."
       send_paranoid_instructions: "Jeśli Twój adres jest w naszej bazie, za kilka minut otrzymasz e-mail z linkiem do ustawienia nowego hasła."
-      updated: "Hasło zostało zmienione. Jesteś zalogowana."
+      updated: "Hasło zostało zmienione. Zalogowano."
       updated_not_active: "Hasło zostało zmienione."
     registrations:
       destroyed: "Konto zostało usunięte. Mamy nadzieję, że jeszcze się zobaczymy."
