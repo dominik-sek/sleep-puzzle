@@ -49,7 +49,7 @@ Sentry.init do |config|
   # :email already is.
   config.send_default_pii = false
   config.enable_logs = true
-  config.enabled_patches = [:logger]
+  config.enabled_patches = [ :logger ]
 
   # Performance tracing. A sampled fraction of requests carries a full span
   # tree - controller, each SQL query, each partial - which is where an N+1 or
