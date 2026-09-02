@@ -184,6 +184,6 @@ accessories:
       secret:
         - POSTGRES_PASSWORD
     # Bind mount on the host, so `kamal accessory reboot db` and image upgrades
-    # don't take the data with them. Back this up off-server; see the README.
+    # don't take the data with them. Back this up off-server; see docs/deploying.md.
     directories:
       - data:/var/lib/postgresql/data
