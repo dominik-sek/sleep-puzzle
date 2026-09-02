@@ -48,7 +48,7 @@ without a redeploy.
 | | |
 | --- | --- |
 | ![Admin dashboard](docs/images/admin-dashboard.png) | ![Google Calendar integration](docs/images/admin-calendar.png) |
-| **Panel.** Bookings, orders, packages, products, content, calendar, jobs and the database, all in Polish - it's staff-facing and the staff is Polish. | **Calendar.** Connect the Google account, then pick which calendar bookings are written to. Not-connected is a first-class state, not a crash. |
+| **Panel.** Bookings, orders, packages, products, content, calendar, jobs and the database, all in Polish - it's staff-facing and the staff is Polish. | **Calendar.** Connect the Google account, then pick which calendar bookings are written to. |
 | ![Editing a text and image section](docs/images/admin-cms-rich-image.png) | ![Editing a repeating collection](docs/images/admin-cms-collection.png) |
 | **Content editing.** Every page, section and field comes from `content_blocks.yml`, with Polish and English side by side and a rich-text editor where the field asks for one. | **Collections.** Repeating sections the owner can add to, reorder and delete - the same YAML declaration, rendered as a list. |
 
