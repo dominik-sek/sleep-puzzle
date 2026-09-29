@@ -48,7 +48,7 @@ Sentry.init do |config|
   # Request params are additionally run through config.filter_parameters, where
   # :email already is.
   config.send_default_pii = false
-  config.enable_logs = true
+  config.rails.structured_logging.enabled = true
   config.enabled_patches = [ :logger ]
 
   # Performance tracing. A sampled fraction of requests carries a full span

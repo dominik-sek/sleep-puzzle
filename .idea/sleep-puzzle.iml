@@ -134,7 +134,7 @@
     <orderEntry type="library" scope="PROVIDED" name="pagy (v43.6.3, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="parallel (v2.2.0, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="parser (v3.3.12.0, rbenv: 4.0.5) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="pay (v11.8.0, rbenv: 4.0.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="pay (v12.1.0, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="pg (v1.6.3, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="pghero (v4.0.1, rbenv: 4.0.5) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="pp (v0.6.4, rbenv: 4.0.5) [gem]" level="application" />
