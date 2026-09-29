@@ -18,13 +18,22 @@ export default class extends Controller {
     // Set when the server rendered a section expanded (after saving, or adding or
     // removing a list item). The accordion is already open in the markup, so this
     // only has to bring it into view.
-    static values = { open: String };
+    static values = { open: String, page: String, pages: Object };
+    static targets = ["frame", "pageSelect", "localeSelect", "status"];
 
     connect() {
         this.onClick = this.handleClick.bind(this);
         this.onHashChange = this.handleHashChange.bind(this);
+        this.onInput = this.handleInput.bind(this);
+        this.onFrameLoad = this.frameLoaded.bind(this);
+        this.previewTargets = new Map();
+        this.selectedSection = this.hasOpenValue ? this.openValue.replace(/^section-/, "").replace("-", ".") : null;
 
         this.element.addEventListener("click", this.onClick);
+        this.element.addEventListener("input", this.onInput);
+        this.element.addEventListener("trix-change", this.onInput);
+        this.frameTarget.addEventListener("load", this.onFrameLoad);
+        if (this.frameTarget.contentDocument?.readyState === "complete") this.frameLoaded();
         // covers editing the anchor in the address bar and back/forward between
         // two anchors, neither of which reloads the document
         window.addEventListener("hashchange", this.onHashChange);
@@ -46,6 +55,9 @@ export default class extends Controller {
 
     disconnect() {
         this.element.removeEventListener("click", this.onClick);
+        this.element.removeEventListener("input", this.onInput);
+        this.element.removeEventListener("trix-change", this.onInput);
+        this.frameTarget.removeEventListener("load", this.onFrameLoad);
         window.removeEventListener("hashchange", this.onHashChange);
         cancelAnimationFrame(this.retryFrame);
     }
@@ -70,6 +82,8 @@ export default class extends Controller {
             event.preventDefault();
             const hash = link.getAttribute("href");
             this.revealUntilItSticks(hash);
+            const section = document.querySelector(hash)?.dataset.previewSection;
+            if (section) this.selectSection(section);
             history.replaceState(history.state, "", hash);
             return;
         }
@@ -83,7 +97,11 @@ export default class extends Controller {
 
         const content = document.getElementById(folder.getAttribute("aria-controls"));
         const firstField = content?.querySelector(':scope > div > a[href^="#section-"]');
-        if (firstField) this.revealUntilItSticks(firstField.getAttribute("href"));
+        if (firstField) {
+            this.revealUntilItSticks(firstField.getAttribute("href"));
+            const section = document.querySelector(firstField.getAttribute("href"))?.dataset.previewSection;
+            if (section) this.selectSection(section);
+        }
     }
 
     // Returns whether the section ended up open, so the caller knows to stop retrying.
@@ -117,5 +135,170 @@ export default class extends Controller {
         });
 
         return true;
+    }
+
+    changePage() {
+        this.selectedSection = null;
+        this.pageValue = this.pageSelectTarget.value;
+        this.loadPreview();
+    }
+
+    changeLocale() {
+        this.loadPreview();
+    }
+
+    showSection(event) {
+        const section = event.currentTarget.closest("[data-preview-section]")?.dataset.previewSection;
+        if (!section) return;
+
+        this.selectSection(section);
+        if (!window.matchMedia("(min-width: 1024px)").matches) {
+            this.frameTarget.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
+    selectSection(section) {
+        this.selectedSection = section;
+        const page = section.split(".")[0];
+        if (page !== this.pageValue) {
+            this.pageValue = page;
+            this.pageSelectTarget.value = page;
+            this.loadPreview();
+        } else {
+            this.highlightSection();
+        }
+    }
+
+    previewConfig() {
+        return this.pagesValue[this.pageValue]?.[this.localeSelectTarget.value];
+    }
+
+    loadPreview() {
+        const url = this.previewConfig()?.url;
+        if (!url) {
+            this.statusTarget.textContent = "Ta strona nie ma jeszcze podglądu.";
+            return;
+        }
+
+        this.previewTargets.clear();
+        this.statusTarget.textContent = "Ładowanie podglądu…";
+        this.frameTarget.src = url;
+    }
+
+    frameLoaded() {
+        const doc = this.frameTarget.contentDocument;
+        if (!doc?.body) {
+            this.statusTarget.textContent = "Nie udało się otworzyć podglądu.";
+            return;
+        }
+
+        // The iframe has no script permission. Keep its links and forms inert,
+        // while still allowing the owner to scroll through the real page.
+        doc.addEventListener("click", (event) => {
+            if (event.target.closest("a, button")) event.preventDefault();
+        });
+        doc.addEventListener("submit", (event) => event.preventDefault());
+
+        const style = doc.createElement("style");
+        style.textContent = ".cms-preview-highlight { outline: 2px solid #e6a37b !important; outline-offset: 4px; border-radius: 3px; }";
+        doc.head.appendChild(style);
+
+        const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+        const textNodes = [];
+        while (walker.nextNode()) {
+            const node = walker.currentNode;
+            if (!node.parentElement?.closest("script, style, noscript")) textNodes.push(node);
+        }
+
+        this.previewEntries = (this.previewConfig()?.entries || []).map((entry) => ({ ...entry, matches: [] }));
+        for (const entry of this.previewEntries) {
+            if (!entry.text) continue;
+
+            const matches = entry.type === "rich"
+                ? [...doc.querySelectorAll(".trix-content")].filter((element) => this.normalize(element.textContent) === entry.text)
+                : textNodes.filter((node) => this.normalize(node.textContent) === entry.text);
+
+            entry.matches = matches.map((node) => ({ node, original: entry.type === "rich" ? node.innerHTML : node.textContent }));
+            if (entry.key && matches.length) this.previewTargets.set(entry.key, entry);
+        }
+
+        this.highlightSection();
+        this.updateLiveValues();
+    }
+
+    normalize(text) {
+        return (text || "").replace(/\s+/g, " ").trim();
+    }
+
+    highlightSection() {
+        const doc = this.frameTarget.contentDocument;
+        if (!doc?.body) return;
+        doc.querySelectorAll(".cms-preview-highlight").forEach((element) => element.classList.remove("cms-preview-highlight"));
+
+        if (!this.selectedSection) {
+            this.statusTarget.textContent = "Wybierz sekcję, aby zaznaczyć jej miejsce na stronie.";
+            return;
+        }
+
+        const entries = this.previewEntries?.filter((entry) => entry.section === this.selectedSection) || [];
+        const elements = entries.flatMap((entry) => entry.matches.map(({ node }) => entry.type === "rich" ? node : node.parentElement));
+        const visible = elements.filter((element) => element && element.getClientRects().length);
+        if (!visible.length) {
+            this.statusTarget.textContent = "Ta treść nie jest widoczna w bieżącym stanie strony. Może pojawić się dopiero po dodaniu danych lub wykonaniu akcji.";
+            return;
+        }
+
+        visible.forEach((element) => element.classList.add("cms-preview-highlight"));
+        // scrollIntoView on a node inside an iframe can also move the outer
+        // admin document. Keep automatic positioning inside the preview only.
+        const frameWindow = this.frameTarget.contentWindow;
+        const top = visible[0].getBoundingClientRect().top + frameWindow.scrollY - frameWindow.innerHeight / 2;
+        frameWindow.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+        this.statusTarget.textContent = "Zaznaczono miejsce wybranej sekcji na stronie.";
+    }
+
+    handleInput(event) {
+        if (event.target.dataset.previewKey) this.updateLiveValues(event.target.dataset.previewKey);
+    }
+
+    inputValue(key, locale) {
+        const field = [...this.element.querySelectorAll("[data-preview-key]")]
+            .find((input) => input.dataset.previewKey === key && input.dataset.previewLocale === locale);
+        if (!field) return null;
+
+        if (field.tagName === "TRIX-EDITOR") {
+            return document.getElementById(field.getAttribute("input"))?.value || "";
+        }
+        return field.value;
+    }
+
+    liveText(entry) {
+        const locale = this.localeSelectTarget.value;
+        const chosen = this.inputValue(entry.key, locale);
+        const polish = this.inputValue(entry.key, "pl");
+        const raw = chosen?.trim() || (locale === "en" ? polish?.trim() : null) || entry.defaults?.[locale] || "";
+        if (entry.type !== "rich") return this.normalize(raw);
+
+        const template = document.createElement("template");
+        template.innerHTML = raw;
+        return this.normalize(template.content.textContent);
+    }
+
+    updateLiveValues(key = null) {
+        const entries = key ? [this.previewTargets.get(key)].filter(Boolean) : this.previewTargets.values();
+        for (const entry of entries) {
+            const text = this.liveText(entry);
+            if (text === entry.text && !entry.liveEdited) continue;
+
+            for (const match of entry.matches) {
+                if (text === entry.text) {
+                    if (entry.type === "rich") match.node.innerHTML = match.original;
+                    else match.node.textContent = match.original;
+                } else {
+                    match.node.textContent = text;
+                }
+            }
+            entry.liveEdited = text !== entry.text;
+        }
     }
 }

@@ -4,7 +4,9 @@
      data-controller="content-blocks"
      <%= tag.attributes(
            "data-content-blocks-open-value" =>
-             @open_section && "section-#{@open_section.page.key}-#{@open_section.key}"
+             @open_section && "section-#{@open_section.page.key}-#{@open_section.key}",
+           "data-content-blocks-page-value" => @preview_page,
+           "data-content-blocks-pages-value" => @preview_data.to_json
          ) %>>
   <div class="flex flex-col gap-1">
     <h1 class="text-t2 font-display text-cream">Treści</h1>
@@ -13,52 +15,83 @@
     </p>
   </div>
 
-  <div class="flex flex-col lg:flex-row gap-6 items-start">
-    <aside class="w-full lg:w-72 lg:shrink-0 lg:sticky lg:top-6">
-      <%= render TreeView::Component.new(variant: :bordered) do |tree| %>
-        <% @pages.each do |page| %>
-          <% tree.with_node(label: page.label, type: :folder, default_open: true) do |page_node| %>
-            <% page.sections.each do |section| %>
-              <% page_node.with_child(label: section.label, type: :folder) do |section_node| %>
-                <% section.fields.each do |field| %>
-                  <% section_node.with_child(
-                       label: field.label,
-                       href: "#section-#{page.key}-#{section.key}"
-                     ) %>
-                <% end %>
-
-                <%# a collection-only section would otherwise be an empty folder
-                    with nothing in the tree pointing at its editor %>
-                <% if section.collection? %>
-                  <% section_node.with_child(
-                       label: "Lista: #{section.collection.item_label.downcase}",
-                       href: "#section-#{page.key}-#{section.key}"
-                     ) %>
-                <% end %>
-              <% end %>
-            <% end %>
-          <% end %>
-        <% end %>
-      <% end %>
+  <div class="flex flex-col 2xl:flex-row gap-6 items-start">
+    <aside class="hidden 2xl:block 2xl:w-56 2xl:shrink-0 2xl:sticky 2xl:top-6 2xl:max-h-[calc(100vh-3rem)] 2xl:overflow-y-auto">
+      <%= render "admin/content_blocks/tree", pages: @pages %>
     </aside>
 
-    <div class="flex-1 min-w-0 w-full flex flex-col gap-8">
-      <% @pages.each do |page| %>
-        <section class="flex flex-col gap-3">
-          <h2 class="text-t3 font-display text-cream"><%= page.label %></h2>
+    <div class="flex-1 min-w-0 w-full flex flex-col gap-5">
+      <details class="2xl:hidden w-full rounded-lg border border-border-strong bg-ink-soft">
+        <summary class="cursor-pointer px-4 py-3 text-t6 font-medium text-cream">Nawigacja po treściach</summary>
+        <div class="max-h-72 overflow-y-auto px-3 pb-3">
+          <%= render "admin/content_blocks/tree", pages: @pages %>
+        </div>
+      </details>
 
-          <%# allow_multiple so comparing two sections does not close the first %>
-          <%= render Accordion::Component.new(allow_multiple: true, variant: :bordered) do |accordion| %>
-            <% page.sections.each do |section| %>
-              <% accordion.with_item(title: section.label, default_open: section == @open_section) do %>
-                <%= render "admin/content_blocks/section_form",
-                           page: page, section: section, blocks: @blocks,
-                           items: @items[section.full_key] || [] %>
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(350px,0.9fr)] gap-6 items-start">
+        <div class="min-w-0 w-full flex flex-col gap-8 order-last lg:order-first">
+          <% @pages.each do |page| %>
+            <section class="flex flex-col gap-3">
+              <h2 class="text-t3 font-display text-cream"><%= page.label %></h2>
+
+              <%# allow_multiple so comparing two sections does not close the first %>
+              <%= render Accordion::Component.new(allow_multiple: true, variant: :bordered) do |accordion| %>
+                <% page.sections.each do |section| %>
+                  <% accordion.with_item(title: section.label, default_open: section == @open_section) do %>
+                    <%= render "admin/content_blocks/section_form",
+                               page: page, section: section, blocks: @blocks,
+                               items: @items[section.full_key] || [] %>
+                  <% end %>
+                <% end %>
               <% end %>
-            <% end %>
+            </section>
           <% end %>
+        </div>
+
+        <section class="order-first lg:order-last min-w-0 w-full rounded-xl border border-border-strong bg-ink-soft p-4 sm:p-5 flex flex-col gap-4 lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)] lg:max-h-[950px]">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 class="text-t4 font-display text-cream">Podgląd strony</h2>
+              <p class="text-t6 text-taupe mt-1">
+                Użyj „Pokaż na stronie”, aby znaleźć sekcję. Tekst pojawia się w podglądzie podczas pisania;
+                zdjęcia, listy i formatowanie zobaczysz po zapisie.
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <label class="flex flex-col gap-1 text-t6 text-taupe">
+                Strona
+                <select data-content-blocks-target="pageSelect"
+                        data-action="change->content-blocks#changePage"
+                        class="form-control min-w-36">
+                  <% @pages.each do |page| %>
+                    <%= tag.option page.label, value: page.key, selected: page.key == @preview_page %>
+                  <% end %>
+                </select>
+              </label>
+              <label class="flex flex-col gap-1 text-t6 text-taupe">
+                Język
+                <select data-content-blocks-target="localeSelect"
+                        data-action="change->content-blocks#changeLocale"
+                        class="form-control">
+                  <option value="pl">Polski</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <p data-content-blocks-target="status" role="status" class="text-t6 text-taupe m-0">
+            Wybierz sekcję, aby zaznaczyć jej miejsce na stronie.
+          </p>
+          <div class="h-[420px] lg:h-auto lg:flex-1 lg:min-h-0 overflow-hidden rounded-lg border border-border-strong bg-ink">
+            <iframe data-content-blocks-target="frame"
+                    src="<%= content_preview_path(@preview_page, locale: :pl) %>"
+                    title="Podgląd strony"
+                    sandbox="allow-same-origin"
+                    class="w-full h-full border-0"></iframe>
+          </div>
         </section>
-      <% end %>
+      </div>
     </div>
   </div>
 </div>

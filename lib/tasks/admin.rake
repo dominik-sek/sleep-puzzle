@@ -1,4 +1,16 @@
 namespace :admin do
+  desc "Create the local development admin account for CMS testing"
+  task local: :environment do
+    abort "This account is only available in development." unless Rails.env.development?
+
+    user = User.find_or_initialize_by(email: "admin@admin.com")
+    user.assign_attributes(admin: true, password: "admin", password_confirmation: "admin")
+    # Devise requires six characters. This deliberately short, requested test
+    # password is confined to the local development database.
+    user.save!(validate: false)
+    puts "Local admin ready: #{user.email}"
+  end
+
   desc "Grant admin access: bin/rails 'admin:promote[me@example.com]'"
   task :promote, [ :email ] => :environment do |_task, args|
     user = User.find_by(email: args[:email])

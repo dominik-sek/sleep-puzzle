@@ -13,8 +13,10 @@
   <span class="text-t6 text-taupe"><%= label %></span>
 
   <% if field.rich? %>
-    <%= rich_text_area_tag name, value&.to_trix_html %>
+    <%= rich_text_area_tag name, value&.to_trix_html,
+                           data: { preview_key: field.full_key, preview_locale: locale } %>
   <% else %>
-    <%= text_field_tag name, value, id: dom_id, class: "form-control" %>
+    <%= text_field_tag name, value, id: dom_id, class: "form-control",
+                       data: { preview_key: field.full_key, preview_locale: locale } %>
   <% end %>
 </div>

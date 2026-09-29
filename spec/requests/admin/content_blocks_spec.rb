@@ -27,6 +27,22 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
       end
     end
 
+    it "embeds the selected public page and exposes its current copy for the live preview" do
+      ContentBlock.find_by!(key: "about.intro.name").update!(value_pl: "Nowa Karola")
+
+      get admin_content_blocks_path(open: "about.intro")
+
+      page = Capybara.string(response.body)
+      preview = page.find('[data-controller="content-blocks"]')
+      data = JSON.parse(preview["data-content-blocks-pages-value"])
+
+      expect(preview["data-content-blocks-page-value"]).to eq("about")
+      expect(page).to have_css('iframe[title="Podgląd strony"][sandbox="allow-same-origin"][src="/about"]')
+      expect(data.dig("about", "en", "url")).to eq("/en/about")
+      expect(data.dig("about", "pl", "entries")).to include(include("key" => "about.intro.name", "text" => "Nowa Karola"))
+      expect(page).to have_css('[data-preview-section="about.intro"] button', text: "Pokaż na stronie")
+    end
+
     it "gives each section its own form and anchor" do
       get admin_content_blocks_path
 

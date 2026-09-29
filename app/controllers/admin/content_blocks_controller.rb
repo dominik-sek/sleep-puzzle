@@ -16,6 +16,15 @@ module Admin
       @pages = ContentBlock::Registry.pages
       @blocks = ContentBlock.declared.with_bodies.index_by(&:key)
       @items = ContentItem.declared.order(:position, :id).group_by(&:collection_key)
+      @preview_page = @open_section&.page&.key || "home"
+      @preview_data = @pages.to_h do |page|
+        [ page.key, ContentBlock::LOCALES.to_h do |locale|
+          [ locale, {
+            url: helpers.content_preview_path(page.key, locale: locale),
+            entries: preview_entries(page, locale)
+          } ]
+        end ]
+      end
     end
 
     def update
@@ -42,6 +51,36 @@ module Admin
     end
 
     private
+
+    def preview_entries(page, locale)
+      sections = page.key == "footer" ? [ page ] : [ page, @pages.find { |candidate| candidate.key == "footer" } ].compact
+
+      sections.flat_map do |source_page|
+        source_page.sections.flat_map do |section|
+          fields = section.fields.reject(&:image?).filter_map do |field|
+            value = @blocks[field.full_key]&.value_for(locale) || field.default_for(locale)
+            next if value.blank?
+
+            { key: field.full_key, section: section.full_key,
+              type: field.type, text: helpers.strip_tags(value.to_s).squish,
+              defaults: ContentBlock::LOCALES.to_h do |language|
+                [ language, helpers.strip_tags(field.default_for(language).to_s).squish ]
+              end }
+          end
+
+          collection = section.collection
+          next fields unless collection
+
+          values = @items[section.full_key].presence&.map { |item| item.to_values(locale) } || collection.default_items(locale)
+          fields + values.flat_map do |item|
+            collection.fields.filter_map do |field|
+              text = item[field.key].to_s.squish
+              { section: section.full_key, text: text } if text.present?
+            end
+          end
+        end
+      end
+    end
 
     # A declared field may have no row yet: nothing runs content_blocks:sync on
     # deploy, and the panel builds its tree from the registry rather than from

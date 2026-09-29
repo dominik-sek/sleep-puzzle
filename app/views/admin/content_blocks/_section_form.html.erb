@@ -1,4 +1,9 @@
-<div id="section-<%= page.key %>-<%= section.key %>" class="scroll-mt-6">
+<div id="section-<%= page.key %>-<%= section.key %>" data-preview-section="<%= section.full_key %>" class="scroll-mt-6">
+  <button type="button" data-action="click->content-blocks#showSection"
+          class="mb-4 inline-flex items-center gap-2 rounded-lg border border-border-input bg-surface px-3 py-2 text-t6 text-cream hover:bg-ink-soft cursor-pointer">
+    <%= icon "external-link", class: "size-3.5" %>
+    Pokaż na stronie
+  </button>
   <%# multipart: a section may carry an image field, and a file input in a form
       posted as urlencoded uploads nothing but the filename %>
   <%= form_with url: admin_content_blocks_path, method: :patch, multipart: true,
@@ -17,7 +22,7 @@
             <span class="text-t6 font-mono text-taupe-dark"><%= field.full_key %></span>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 2xl:grid-cols-2 gap-4">
             <% ContentBlock::LOCALES.each do |locale| %>
               <%= render "admin/content_blocks/field_input",
                          section: section, field: field, block: blocks[field.full_key], locale: locale %>

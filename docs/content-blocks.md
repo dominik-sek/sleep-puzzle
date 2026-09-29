@@ -1,5 +1,17 @@
 # Editable content
 
+## Podgląd w panelu
+
+Na `/admin/content_blocks` wybierz stronę i język w panelu „Podgląd strony”.
+Przycisk „Pokaż na stronie” przy sekcji zaznacza jej widoczną treść i przewija
+podgląd do tego miejsca. Zmiany tekstu widać podczas pisania bez zapisywania;
+zdjęcia, układ list i formatowanie tekstu sformatowanego pojawiają się po
+zapisaniu sekcji. Treści zależne od stanu strony, na przykład komunikat po
+zakupie, można zobaczyć tylko wtedy, gdy ten stan występuje w podglądzie.
+
+Lokalne konto testowe można odtworzyć poleceniem `bin/rails admin:local`
+(tylko w środowisku development).
+
 `config/content_blocks.yml` **is the schema** - no Ruby names any field. 
 
 Meaning
