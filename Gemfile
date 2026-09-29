@@ -111,7 +111,7 @@ gem "googleauth", "~> 1.17"
 
 gem "rails_semantic_logger"
 
-gem "pay", "~> 11.5"
+gem "pay", "~> 12.1"
 
 gem "paddle", "~> 2.9"
 
