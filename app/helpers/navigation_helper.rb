@@ -1,4 +1,10 @@
 module NavigationHelper
+  def profile_avatar_dom_id(user)
+    fallback = user.initials.presence || user.email.first.upcase
+    fingerprint = Digest::SHA256.hexdigest([ user.avatar_url, fallback ].join("\0")).first(12)
+    "profile-avatar-#{user.id}-#{fingerprint}"
+  end
+
   # The public site's primary navigation, in order.
   #
   # Kept here rather than in shared/_navbar because the partial renders this list

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "google/apis/calendar_v3"
 
 # The public 1:1 landing and the signed-in checkout show the same availability.

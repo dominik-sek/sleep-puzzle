@@ -42,8 +42,33 @@ RSpec.describe "Navbar", type: :request do
       get root_path
 
       page = Capybara.string(response.body)
-      expect(page).to have_css('[data-controller="avatar"] img[data-action="error->avatar#showFallback"]')
+      avatar = page.find('[data-controller="avatar"]')
+      expect(avatar["id"]).to match(/\Aprofile-avatar-#{user.id}-[0-9a-f]{12}\z/)
+      expect(avatar["data-turbo-permanent"]).to eq("true")
+      expect(avatar).to have_css('img[data-action="error->avatar#showFallback"]')
       expect(page).to have_css('[data-avatar-target="fallback"].hidden', text: "K", visible: :all)
+    end
+
+    it "changes the permanent avatar ID when Google updates the picture" do
+      user.update!(avatar_url: "https://example.com/first.jpg")
+      get root_path
+      first_id = Capybara.string(response.body).find('[data-controller="avatar"]')["id"]
+
+      user.update!(avatar_url: "https://example.com/second.jpg")
+      get root_path
+
+      expect(Capybara.string(response.body).find('[data-controller="avatar"]')["id"]).not_to eq(first_id)
+    end
+
+    it "changes the permanent avatar ID when fallback initials change" do
+      user.update!(first_name: "Karola")
+      get root_path
+      first_id = Capybara.string(response.body).find('[data-controller="avatar"]')["id"]
+
+      user.update!(first_name: "Maria")
+      get root_path
+
+      expect(Capybara.string(response.body).find('[data-controller="avatar"]')["id"]).not_to eq(first_id)
     end
 
     # "fit" is not a Tailwind class, so it resolved to nothing and the panel
