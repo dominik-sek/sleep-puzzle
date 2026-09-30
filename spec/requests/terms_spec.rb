@@ -32,16 +32,13 @@ RSpec.describe "Terms", type: :request do
       expect(response.body).to include("nie zastępują konsultacji medycznej")
     end
 
-    # The RODO art. 13 notice and the cookie statement. Asserted by clause rather
-    # than by wording so a reworded paragraph does not fail the suite, but the
-    # page is never allowed to ship without them: they are the only place the site
-    # tells a visitor who the controller is and what is stored in their browser.
-    it "carries the personal data and cookie clauses" do
+    it "directs readers of the personal data and cookie clauses to the privacy policy" do
       get terms_path
 
       expect(response.body).to include("7. Dane osobowe")
       expect(response.body).to include("8. Pliki cookies")
-      expect(response.body).to include("Prezesa Urzędu Ochrony Danych Osobowych")
+      expect(response.body).to include(%(href="#{privacy_path}"))
+      expect(response.body).not_to include("[DO UZUPEŁNIENIA")
     end
 
     it "carries them in English too" do
@@ -98,6 +95,7 @@ RSpec.describe "Terms", type: :request do
     get root_path
 
     expect(response.body).to include(%(href="#{terms_path}"))
+    expect(response.body).to include(%(href="#{privacy_path}"))
   end
 
   # the tile is CMS-driven so the owner can repoint it, but it should ship

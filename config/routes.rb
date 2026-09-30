@@ -74,6 +74,7 @@ Rails.application.routes.draw do
     # singular for the same reason as `about` above: there is one regulamin. The
     # `controller:` keeps the class name singular too, matching the file.
     resource :terms, only: [ :show ], controller: "terms"
+    resource :privacy, only: [ :show ], controller: "privacy"
   end
 
   # staff-only; access is the `admin` boolean on users, granted with

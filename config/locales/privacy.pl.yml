@@ -1,0 +1,35 @@
+pl:
+  privacy:
+    intro: "Ta polityka opisuje, jakie dane przetwarza Sleep Puzzle podczas korzystania ze strony, konta, zakupów, formularzy oraz funkcji Google."
+    terms_notice: "Zasady przetwarzania danych, w tym korzystania z funkcji Google, opisuje"
+    oauth_notice: "Przed zalogowaniem się przez Google zapoznaj się z naszą"
+    sections:
+      - title: "1. Administrator i kontakt"
+        body: |-
+          Za przetwarzanie danych w serwisie odpowiada podmiot prowadzący Sleep Puzzle. W sprawach prywatności możesz skontaktować się przez formularz na stronie Kontakt.
+          Pełne dane identyfikacyjne i adres kontaktowy administratora zostaną podane po ich potwierdzeniu.
+      - title: "2. Dane, cele i podstawy przetwarzania"
+        body: |-
+          Konto: adres e-mail, dane profilu i dane logowania służą do utworzenia konta, uwierzytelnienia oraz udostępnienia zakupionych materiałów. Rezerwacje i zakupy: imię, adres e-mail, termin, wybrany produkt lub pakiet oraz status płatności służą do wykonania zamówienia i obsługi klienta. Podstawą jest wykonanie umowy lub działania podjęte na Twoje żądanie przed jej zawarciem.
+          Formularz kontaktowy: imię, adres e-mail i treść wiadomości służą do udzielenia odpowiedzi. Newsletter: adres e-mail przekazujemy do Brevo po dobrowolnym zgłoszeniu; zapis wymaga potwierdzenia w wiadomości e-mail, a rezygnacja jest możliwa przez link w newsletterze.
+          Dane potrzebne do rozliczeń zachowujemy w zakresie wymaganym przez prawo. Dane techniczne związane z bezpieczeństwem, ochroną przed nadużyciami i diagnozowaniem błędów przetwarzamy w uzasadnionym interesie zapewnienia działania serwisu.
+      - title: "3. Logowanie przez Google"
+        body: |-
+          Jeśli wybierzesz logowanie przez Google, otrzymujemy z Google identyfikator konta, adres e-mail, imię i nazwisko oraz adres zdjęcia profilowego. Używamy ich wyłącznie do utworzenia lub odnalezienia konta Sleep Puzzle, zalogowania Cię i wyświetlenia danych profilu. Adres zdjęcia zapisujemy w koncie; wyświetlenie zdjęcia może spowodować pobranie go z serwerów Google. Nie uzyskujemy w ten sposób dostępu do Twojego Kalendarza Google.
+      - title: "4. Kalendarz Google administratora"
+        body: |-
+          Osoba administrująca Sleep Puzzle może osobno połączyć własny Kalendarz Google. Aplikacja odczytuje listę kalendarzy, wydarzenia i ich terminy, aby wskazać zajęte godziny, a w wybranym kalendarzu tworzy, aktualizuje i usuwa wydarzenia rezerwacji. Takie wydarzenie zawiera imię klienta, jego adres e-mail, nazwę pakietu, termin i status płatności. Dane istniejących wydarzeń nie są pokazywane klientom; służą tylko do ustalenia dostępności.
+          Token dostępu i token odświeżania połączonego kalendarza przechowujemy w bazie danych w postaci zaszyfrowanej. Po odłączeniu kalendarza usuwamy zapisane tokeny i podejmujemy próbę cofnięcia uprawnień w Google. Dane otrzymane z interfejsów Google wykorzystujemy wyłącznie do opisanych funkcji logowania i rezerwacji; nie używamy ich do reklam ani nie sprzedajemy ich.
+      - title: "5. Odbiorcy danych"
+        body: |-
+          Dane mogą być przekazywane dostawcom niezbędnym do działania serwisu: operatorowi hostingu, Paddle w związku z płatnościami, Brevo w związku z wiadomościami i newsletterem, Cloudflare przy weryfikacji formularza kontaktowego, dostawcy przechowywania i dostarczania plików audio oraz Sentry przy diagnostyce błędów. Google otrzymuje dane potrzebne do logowania, a do Kalendarza Google administratora trafiają opisane wyżej szczegóły rezerwacji. Zakres przekazania zależy od funkcji, z której korzystasz. Dostawcy mogą przetwarzać dane poza Twoim krajem; szczegóły transferów wymagają potwierdzenia z nimi.
+      - title: "6. Okres przechowywania i Twoje prawa"
+        body: |-
+          Dane konta przechowujemy przez czas korzystania z konta; dane zamówień i rezerwacji przez czas potrzebny do obsługi umowy, rozliczeń i ewentualnych roszczeń. Wiadomości przechowujemy przez czas potrzebny do obsługi sprawy. Newsletter obsługuje Brevo do czasu rezygnacji. Okresy wynikające z przepisów o rozliczeniach mogą być dłuższe niż czas istnienia konta.
+          Możesz żądać dostępu do danych, ich sprostowania lub usunięcia, ograniczenia przetwarzania, przeniesienia danych oraz wnieść sprzeciw, gdy podstawą jest uzasadniony interes. Możesz wycofać zgodę, jeśli jest podstawą przetwarzania, oraz złożyć skargę do właściwego organu ochrony danych. Aby skorzystać z tych praw, użyj strony Kontakt. Konto można usunąć w ustawieniach; nie oznacza to usunięcia danych, których dalsze przechowywanie jest wymagane przez prawo.
+      - title: "7. Pliki cookie i usługi zewnętrzne"
+        body: |-
+          Serwis używa własnego cookie sesyjnego potrzebnego do logowania, koszyka i ochrony formularzy. Nie używamy cookies analitycznych ani reklamowych. Po wybraniu płatności ładowany jest Paddle, po wybraniu logowania Google następuje przejście do Google, a formularz kontaktowy używa Cloudflare Turnstile. Ci dostawcy mogą stosować własne technologie zgodnie ze swoimi politykami. Czcionki są hostowane w serwisie.
+      - title: "8. Zmiany polityki"
+        body: |-
+          Gdy zmienimy sposób korzystania z danych Google, zaktualizujemy tę politykę i poinformujemy użytkowników o istotnych zmianach przed rozpoczęciem nowego sposobu użycia danych.

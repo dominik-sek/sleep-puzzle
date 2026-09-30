@@ -1,0 +1,35 @@
+en:
+  privacy:
+    intro: "This policy explains how Sleep Puzzle handles data when you use the website, account, purchases, forms and Google features."
+    terms_notice: "Our handling of personal data, including the use of Google features, is explained in the"
+    oauth_notice: "Before signing in with Google, please read our"
+    sections:
+      - title: "1. Controller and contact"
+        body: |-
+          The entity operating Sleep Puzzle is responsible for processing data through the service. For privacy enquiries, use the form on the Contact page.
+          The controller's full legal identity and contact address will be published once confirmed.
+      - title: "2. Data, purposes and legal grounds"
+        body: |-
+          Account: your email address, profile and sign-in details are used to create and authenticate your account and give you access to purchased materials. Bookings and purchases: your name, email address, appointment time, selected product or package, and payment status are used to fulfil the order and support you. The legal ground is performance of a contract or steps you request before entering one.
+          Contact form: your name, email address and message are used to reply. Newsletter: we send your email address to Brevo when you voluntarily subscribe; you must confirm by email, and you can unsubscribe using the link in the newsletter.
+          We keep records required for accounting by law. Technical data used for security, abuse prevention and error diagnosis is processed for our legitimate interest in operating the service.
+      - title: "3. Sign in with Google"
+        body: |-
+          If you choose Google sign-in, we receive your Google account identifier, email address, first and last name, and profile image URL. We use these only to create or find your Sleep Puzzle account, sign you in and display your profile. We store the image URL with your account; displaying the image may fetch it from Google. Google sign-in does not give us access to your Google Calendar.
+      - title: "4. Administrator's Google Calendar"
+        body: |-
+          A Sleep Puzzle administrator may separately connect their own Google Calendar. The application reads the calendar list, events and their times to determine unavailable slots. It creates, updates and deletes booking events in the chosen calendar. Each booking event includes the customer's name, email address, package name, appointment time and payment status. Existing event details are not shown to customers; they are used only to determine availability.
+          We store the connected calendar's access and refresh tokens encrypted in the database. Disconnecting removes the stored tokens and attempts to revoke access with Google. We use data received through Google APIs only for the sign-in and booking functions described here. We do not use it for advertising or sell it.
+      - title: "5. Data recipients"
+        body: |-
+          Data may be shared with providers needed to operate the service: the hosting provider; Paddle for payments; Brevo for email and the newsletter; Cloudflare for contact form verification; the audio storage and delivery provider; and Sentry for error diagnosis. Google receives data needed for sign-in, and the administrator's Google Calendar receives the booking details described above. What is shared depends on the feature you use. Providers may process data outside your country; details of those transfers must be confirmed with them.
+      - title: "6. Retention and your rights"
+        body: |-
+          We keep account data while you use the account, and order and booking data for the time needed to perform the contract, keep accounts and handle claims. We keep messages as long as needed to handle the enquiry. Brevo manages newsletter data until you unsubscribe. Legal accounting periods may outlast your account.
+          You may request access, correction, erasure, restriction and portability of your data, and object when processing is based on legitimate interests. You may withdraw consent where it is the legal ground, and complain to the relevant data protection authority. Use the Contact page to exercise these rights. You can delete your account in its settings; this does not erase records we must retain by law.
+      - title: "7. Cookies and external services"
+        body: |-
+          The service uses its own session cookie for sign-in, the cart and form protection. We do not use analytics or advertising cookies. Paddle loads when you choose to pay, Google is opened when you choose Google sign-in, and the contact form uses Cloudflare Turnstile. These providers may use their own technologies under their policies. Fonts are hosted by the service.
+      - title: "8. Policy changes"
+        body: |-
+          If we change how we use Google data, we will update this policy and notify users of material changes before using their data for a new purpose.

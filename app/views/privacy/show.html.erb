@@ -1,0 +1,23 @@
+<% content_for :title, page_title(t("nav.privacy")) %>
+
+<div class="flex flex-col items-center w-full">
+  <%= render Section::Component.new(background: :ink, align: :left) do %>
+    <div class="max-w-[800px] mx-auto w-full">
+      <h1 class="font-display font-bold text-t2 text-cream text-center mb-8"><%= t("nav.privacy") %></h1>
+      <p class="text-t6 text-tan leading-relaxed mb-8"><%= t("privacy.intro") %></p>
+
+      <div class="flex flex-col gap-7">
+        <% t("privacy.sections").each do |section| %>
+          <section>
+            <h2 class="text-t6 font-extrabold text-accent mb-2"><%= section.fetch(:title) %></h2>
+            <div class="text-t6 text-tan leading-relaxed whitespace-pre-line"><%= section.fetch(:body).strip %></div>
+          </section>
+        <% end %>
+      </div>
+
+      <p class="text-t6 text-tan leading-relaxed mt-8">
+        <%= link_to t("nav.terms"), terms_path, class: "text-accent hover:text-accent-hover" %>
+      </p>
+    </div>
+  <% end %>
+</div>

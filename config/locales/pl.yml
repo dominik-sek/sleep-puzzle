@@ -224,6 +224,7 @@ pl:
     shop: "Sklep"
     contact: "Kontakt"
     terms: "Regulamin współpracy"
+    privacy: "Polityka prywatności"
     cart: "Koszyk"
     remove_from_cart: "Usuń z koszyka"
     my_account: "Moje konto"
