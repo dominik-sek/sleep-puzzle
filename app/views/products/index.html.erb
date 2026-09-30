@@ -45,7 +45,7 @@
             <%= render "products/card", product: product %>
           <% end %>
         </div>
-      <% else %>
+      <% elsif @packages.empty? %>
         <%# an empty shop used to be one sentence with nowhere to go. The rung
             above the catalogue is the consultations, so that is the way out. %>
         <div class="flex flex-col items-start gap-5">
@@ -59,6 +59,22 @@
             variant: :secondary,
             classes: "hover:cursor-pointer text-t6! font-bold! py-4 px-6"
           ) %>
+        </div>
+      <% end %>
+
+      <% if @packages.any? %>
+        <div class="mt-16">
+          <h2 class="mb-7 font-display text-t2 font-bold text-cream"><%= t("offers.one_to_one") %></h2>
+          <div class="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))]">
+            <% @packages.each do |package| %>
+              <%= link_to packages_path(anchor: dom_id(package)), class: "flex flex-col gap-3 rounded-2xl border border-border-strong bg-surface p-6 text-cream no-underline hover:border-accent" do %>
+                <span class="text-t6 font-bold uppercase text-accent"><%= t("offers.one_to_one") %></span>
+                <span class="font-display text-t3 font-bold"><%= package.name %></span>
+                <span class="text-t5 text-tan"><%= package.for_whom %></span>
+                <span class="mt-auto pt-3 text-t5 font-bold text-accent"><%= t("offers.see_times") %> →</span>
+              <% end %>
+            <% end %>
+          </div>
         </div>
       <% end %>
     </div>

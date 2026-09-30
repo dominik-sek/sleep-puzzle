@@ -25,5 +25,36 @@ require 'rails_helper'
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #
 RSpec.describe User, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe ".from_omniauth" do
+    def google_auth(email:, image: nil)
+      OmniAuth::AuthHash.new(
+        provider: "google_oauth2", uid: "google-123",
+        info: { email: email, first_name: "Karola", last_name: "Testowa", image: image }
+      )
+    end
+
+    it "keeps an existing avatar when Google omits the picture" do
+      user = User.create!(email: "karola@example.com", password: "password123",
+                          avatar_url: "https://example.com/previous.jpg")
+
+      expect(described_class.from_omniauth(google_auth(email: user.email))).to eq(user)
+      expect(user.reload.avatar_url).to eq("https://example.com/previous.jpg")
+    end
+
+    it "updates the avatar when Google provides a new picture" do
+      user = User.create!(email: "karola@example.com", password: "password123",
+                          avatar_url: "https://example.com/previous.jpg")
+
+      described_class.from_omniauth(google_auth(email: user.email, image: "https://example.com/current.jpg"))
+
+      expect(user.reload.avatar_url).to eq("https://example.com/current.jpg")
+    end
+
+    it "creates a Google account without an avatar when no picture is available" do
+      user = described_class.from_omniauth(google_auth(email: "new@example.com"))
+
+      expect(user).to be_persisted
+      expect(user.avatar_url).to be_nil
+    end
+  end
 end

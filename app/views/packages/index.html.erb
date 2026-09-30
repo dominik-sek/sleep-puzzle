@@ -11,6 +11,7 @@
       <div class="text-t4 text-tan max-w-2xl">
         <%= content_block("packages.hero.subtitle") %>
       </div>
+      <div class="trix-copy max-w-2xl"><%= content_block("packages.collaboration.body") %></div>
     </div>
 
     <% if @packages.any? %>
@@ -38,6 +39,20 @@
     <% end %>
   <% end %>
 
+  <section id="calendar" class="w-full scroll-mt-24 bg-ink px-5 py-16">
+    <div class="mx-auto flex max-w-[1240px] flex-col gap-6">
+      <div class="max-w-2xl">
+        <h2 class="font-display text-t2 font-bold text-cream"><%= t("offers.calendar_title") %></h2>
+        <p class="text-t5 text-tan"><%= t("offers.calendar_intro") %></p>
+      </div>
+      <%= render "bookings/calendar", availability: @availability,
+                 available_dates: @available_dates, unavailable: @calendar_unavailable,
+                 no_slots: @no_slots, preview: true %>
+    </div>
+  </section>
+
+  <%= render "shared/testimonials" %>
+
   <%# The page used to end on N identical requests for money and nothing else.
       This closes on the two things it never offered: a way to ask a question,
       and the cheaper rung of the ladder for a family that cannot reach 1:1 yet.
@@ -60,10 +75,10 @@
     <% section.with_actions do %>
       <div class="flex flex-col items-center gap-5">
         <%= render Buttons::Component.new(
-          text: content_block("packages.closing.cta"),
+          text: t("offers.instagram_cta"),
           pill: true,
           variant: :secondary,
-          href: contact_path,
+          href: instagram_contact_url,
           classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold!"
         ) %>
 

@@ -233,7 +233,7 @@ RSpec.describe "Dashboard", type: :request do
 
       expect(response.body).not_to include("<audio")
       expect(response.body).to include("Tego nagrania chwilowo nie da się odtworzyć")
-      expect(response.body).to include(contact_path)
+      expect(response.body).to include("https://www.instagram.com/sleep.puzzle/")
     end
 
     it "anchors each library row so the shop can link straight to one" do

@@ -216,6 +216,16 @@ pl:
     submitting: "Wysyłanie…"
     adding: "Dodawanie…"
     removing: "Usuwanie…"
+  offers:
+    audio: "Audioproces"
+    one_to_one: "Współpraca 1:1"
+    explore: "Poznaj ofertę"
+    instagram_cta: "Napisz na Instagramie"
+    calendar_title: "Zobacz dostępne terminy"
+    calendar_intro: "Wybierz dzień i sprawdź godziny. Rezerwację dokończysz po zalogowaniu."
+    calendar_preview: "Ten termin jest dostępny. Zaloguj się, aby dokończyć rezerwację i płatność."
+    continue_booking: "Przejdź do rezerwacji"
+    see_times: "Zobacz terminy"
   nav:
     menu: "Menu"
     packages: "Pakiety"

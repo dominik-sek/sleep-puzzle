@@ -2,6 +2,16 @@ require 'rails_helper'
 
 RSpec.describe "Products", type: :request do
   describe "GET /products" do
+    it "lists published 1:1 packages beside audio products" do
+      create_package(name: "Wspólna droga")
+      create_package(name: "Ukryty", published: false)
+
+      get products_path
+
+      expect(response.body).to include("Wspólna droga", "#{packages_path}#package_")
+      expect(response.body).not_to include("Ukryty")
+    end
+
     it "lists the published products with their Paddle price" do
       allow(PaddlePriceCatalogService).to receive(:call)
         .and_return([ paddle_price(id: "pri_456", amount: "2500", currency: "PLN") ])
@@ -73,7 +83,7 @@ RSpec.describe "Products", type: :request do
     it "renders the CMS empty state when there is nothing to sell" do
       get products_path
 
-      expect(response.body).to include("Nagrania pojawią się tu wkrótce")
+      expect(response.body).to include("Oferty pojawią się tu wkrótce")
     end
 
     # Paddle owns the money, so an unreachable Paddle means no price - better to

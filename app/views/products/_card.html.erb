@@ -58,7 +58,7 @@
       <% else %>
         <%# not sellable, but still wanted by someone: offer the one route that
             works rather than a dead end. Packages already does this. %>
-        <%= link_to content_block("shop.card.unavailable_cta"), contact_path,
+        <%= link_to content_block("shop.card.unavailable_cta"), instagram_contact_url,
                     class: "text-t6 font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
       <% end %>
     </div>

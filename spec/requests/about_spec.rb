@@ -30,11 +30,11 @@ RSpec.describe "About", type: :request do
       expect(response.body).to include("CBTi")
     end
 
-    it "points its call to action at the booking form" do
+    it "points its call to action at the 1:1 landing" do
       get about_path
 
-      expect(response.body).to include("Umów konsultację")
-      expect(response.body).to include(bookings_path)
+      expect(response.body).to include("Poznaj współpracę 1:1")
+      expect(response.body).to include(packages_path)
     end
 
     # nothing uploaded yet is the normal state on a fresh deploy, and on a phone
@@ -63,7 +63,7 @@ RSpec.describe "About", type: :request do
 
       expect(response.body).to include("Children&#39;s Sleep Consultant")
       expect(response.body).to include("Certifications &amp; qualifications")
-      expect(response.body).to include("Book a consultation")
+      expect(response.body).to include("Explore working together 1:1")
     end
 
     it "does not require signing in" do

@@ -83,15 +83,15 @@
           text: content_block("about.cta.label"),
           pill: true,
           variant: :primary,
-          href: bookings_path,
+          href: packages_path,
           classes: "hover:cursor-pointer py-4 px-7.5 font-bold!"
         ) %>
         <%# labels the wall before it is hit - bookings is behind authenticate_user!,
             and since after_sign_in_path_for honours stored_location_for the claim
             that you come back here is now true %>
-        <p class="text-t6 text-taupe text-center m-0">
-          <%= content_block("about.cta.reassurance") %>
-        </p>
+        <% if false # The former sign-in reassurance belongs to the old direct booking CTA. %>
+          <p class="text-t6 text-taupe text-center m-0"><%= content_block("about.cta.reassurance") %></p>
+        <% end %>
       </div>
     </div>
   <% end %>
@@ -120,7 +120,7 @@
           text: content_block("about.closing.cta"),
           pill: true,
           variant: :secondary,
-          href: contact_path,
+          href: instagram_contact_url,
           classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold!"
         ) %>
 

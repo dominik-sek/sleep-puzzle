@@ -17,14 +17,32 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
   describe "GET /admin/content_blocks" do
     before { sign_in admin }
 
-    it "renders every page, section and field on one screen" do
+    it "renders visible sections and fields on one screen" do
       get admin_content_blocks_path
 
       expect(response).to have_http_status(:ok)
       ContentBlock::Registry.pages.each do |page|
         expect(response.body).to include(page.label)
-        page.sections.each { |section| expect(response.body).to include(section.label) }
+        page.sections.reject(&:admin_hidden?).each { |section| expect(response.body).to include(section.label) }
       end
+    end
+
+    it "hides retired home controls while keeping their saved content" do
+      ContentBlock.find_by!(key: "home.about.body").update!(value_pl: "Zachowany opis")
+
+      get admin_content_blocks_path
+
+      page = Capybara.string(response.body)
+      %w[stats process packages audio newsletter].each do |section|
+        expect(page).to have_no_css(%([id="section-home-#{section}"]))
+      end
+      expect(page).to have_no_css('#section-home-about [name="fields[body][pl]"]')
+      expect(page).to have_no_css('#section-home-about [name^="fields[cta_"]')
+      expect(page).to have_no_css('#section-home-closing [name="fields[cta][pl]"]')
+      expect(response.body).not_to include("Zachowany opis")
+      preview = JSON.parse(page.find('[data-controller="content-blocks"]')["data-content-blocks-pages-value"])
+      expect(preview.dig("home", "pl", "entries").map { |entry| entry["key"] }).not_to include("home.about.body", "home.closing.cta")
+      expect(ContentBlock.find_by!(key: "home.about.body").value_pl).to eq("Zachowany opis")
     end
 
     it "embeds the selected public page and exposes its current copy for the live preview" do
@@ -46,7 +64,7 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
     it "gives each section its own form and anchor" do
       get admin_content_blocks_path
 
-      sections = ContentBlock::Registry.sections
+      sections = ContentBlock::Registry.sections.reject(&:admin_hidden?)
       expect(response.body.scan('name="section"').size).to eq(sections.size)
       sections.each do |section|
         expect(response.body).to include(%(id="section-#{section.page.key}-#{section.key}"))
@@ -57,7 +75,7 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
     it "renders a Trix editor per language for rich fields and a text input for plain ones" do
       get admin_content_blocks_path
 
-      rich = ContentBlock::Registry.fields.count(&:rich?)
+      rich = ContentBlock::Registry.fields.count { |field| field.rich? && !field.admin_hidden? && !field.section.admin_hidden? }
       expect(response.body.scan("<trix-editor").size).to eq(rich * ContentBlock::LOCALES.size)
       expect(response.body).to include(%(name="fields[title][pl]"))
     end
@@ -80,12 +98,19 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
     end
 
     it "renders the requested section expanded" do
-      get admin_content_blocks_path(open: "home.process")
+      get admin_content_blocks_path(open: "home.methodology")
 
       # opened server-side rather than by javascript: a redirect's anchor does
       # not survive Turbo following it with fetch
       expect(open_sections(response.body)).to have_css(OPEN_SECTION, count: 1)
-      expect(response.body).to include(%(data-content-blocks-open-value="section-home-process"))
+      expect(response.body).to include(%(data-content-blocks-open-value="section-home-methodology"))
+    end
+
+    it "does not expand a hidden section requested directly" do
+      get admin_content_blocks_path(open: "home.process")
+
+      expect(open_sections(response.body)).to have_css(OPEN_SECTION, count: 0)
+      expect(response.body).not_to include(%(data-content-blocks-open-value="section-home-process"))
     end
 
     it "ignores an unknown section in ?open=" do
@@ -123,6 +148,9 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
     end
 
     it "saves rich fields as Action Text" do
+      hidden_button = ContentBlock.find_by!(key: "home.about.cta_label")
+      hidden_button.update!(value_pl: "Zachowany przycisk")
+
       patch admin_content_blocks_path, params: {
         section: "home.about",
         fields: { lead: { pl: "<div>Wstęp</div>", en: "<div>Lead</div>" } }
@@ -132,6 +160,7 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
       expect(block.body_pl.body.to_html).to include("Wstęp")
       expect(block.body_en.body.to_html).to include("Lead")
       expect(block.value_pl).to be_nil
+      expect(hidden_button.reload.value_pl).to eq("Zachowany przycisk")
     end
 
     it "leaves other sections untouched" do

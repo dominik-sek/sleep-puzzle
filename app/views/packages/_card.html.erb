@@ -83,18 +83,16 @@
               thumb target; the type stays at Label size, which is what DESIGN.md
               assigns to button text. %>
           <%= render Buttons::Component.new(
-            text: content_block("packages.card.cta"),
+            text: t("offers.see_times"),
             pill: true,
             variant: :primary,
-            href: bookings_path(package_id: package.id),
-            aria_label: "#{content_block('packages.card.cta')} - #{package.name}",
+            href: packages_path(anchor: "calendar"),
+            aria_label: "#{t('offers.see_times')} - #{package.name}",
             classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold! w-full justify-center"
           ) %>
           <%# the tap is not the commitment it looks like: the booking form carries
               a package select, so the choice really is changeable afterwards %>
-          <p class="text-t6 text-taupe text-center m-0">
-            <%= content_block("packages.card.reassurance") %>
-          </p>
+          <p class="text-t6 text-taupe text-center m-0"><%= t("offers.calendar_intro") %></p>
         <% else %>
           <%# nothing sellable here: offer the one route that still works rather
               than a button into a checkout that cannot complete %>
@@ -102,7 +100,7 @@
             text: content_block("packages.card.unavailable_cta"),
             pill: true,
             variant: :secondary,
-            href: contact_path,
+            href: instagram_contact_url,
             aria_label: "#{content_block('packages.card.unavailable_cta')} - #{package.name}",
             classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold! w-full justify-center"
           ) %>

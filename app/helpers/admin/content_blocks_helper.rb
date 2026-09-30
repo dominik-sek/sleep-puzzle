@@ -8,8 +8,9 @@ module Admin::ContentBlocksHelper
     options = { locale: (locale == :en ? :en : nil) }
 
     case page_key
-    when "home", "footer" then root_path(**options)
+    when "home", "footer", "testimonials" then root_path(**options)
     when "packages" then packages_path(**options)
+    when "audio_landing" then audio_process_path(**options)
     when "about" then about_path(**options)
     when "bookings" then bookings_path(**options)
     when "shop" then products_path(**options)

@@ -13,6 +13,7 @@ module Admin
       # fragment: Turbo follows a redirect with fetch, and fetch strips the
       # fragment, so an anchor never survives the round trip.
       @open_section = ContentBlock::Registry.section(params[:open])
+      @open_section = nil if @open_section&.admin_hidden?
       @pages = ContentBlock::Registry.pages
       @blocks = ContentBlock.declared.with_bodies.index_by(&:key)
       @items = ContentItem.declared.order(:position, :id).group_by(&:collection_key)
@@ -56,8 +57,8 @@ module Admin
       sections = page.key == "footer" ? [ page ] : [ page, @pages.find { |candidate| candidate.key == "footer" } ].compact
 
       sections.flat_map do |source_page|
-        source_page.sections.flat_map do |section|
-          fields = section.fields.reject(&:image?).filter_map do |field|
+        source_page.sections.reject(&:admin_hidden?).flat_map do |section|
+          fields = section.fields.reject { |field| field.image? || field.admin_hidden? }.filter_map do |field|
             value = @blocks[field.full_key]&.value_for(locale) || field.default_for(locale)
             next if value.blank?
 

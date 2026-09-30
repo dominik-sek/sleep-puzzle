@@ -23,7 +23,7 @@
       <p class="text-t5 text-tan m-0"><%= t("bookings.calendar.no_slots") %></p>
       <%= render Buttons::Component.new(
         text: t("bookings.calendar.no_slots_cta"),
-        href: contact_path,
+        href: instagram_contact_url,
         pill: true,
         variant: :secondary,
         classes: "hover:cursor-pointer text-t6! font-bold! py-4 px-6"
@@ -114,7 +114,17 @@
 
       <div data-cally-target="slotForm" hidden>
         <hr class="border-border my-4"/>
-        <%= render "form", booking: booking, package_options: package_options %>
+        <% if local_assigns[:preview] %>
+          <input type="hidden" data-cally-target="dateField">
+          <input type="hidden" data-cally-target="timeField">
+          <div data-cally-target="bookingFrame">
+            <p class="text-t5 text-tan"><%= t("offers.calendar_preview") %></p>
+            <%= link_to t("offers.continue_booking"), bookings_path,
+                        class: "inline-flex rounded-full bg-accent px-6 py-4 font-bold text-ink no-underline hover:bg-accent-hover" %>
+          </div>
+        <% else %>
+          <%= render "form", booking: booking, package_options: package_options %>
+        <% end %>
       </div>
     </div>
   <% end %>

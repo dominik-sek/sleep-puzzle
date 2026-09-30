@@ -9,9 +9,9 @@ RSpec.describe "Navbar and footer copy", type: :request do
     it "reads Polish" do
       get root_path
 
-      expect(response.body).to include("Pakiety")
+      expect(response.body).to include("Współpraca 1:1")
       expect(response.body).to include("O mnie")
-      expect(response.body).to include("Umów konsultację")
+      expect(response.body).to include("Napisz na Instagramie")
       expect(response.body).to include("Zaloguj się")
       expect(response.body).to include("Wszelkie prawa zastrzeżone")
     end
@@ -21,10 +21,10 @@ RSpec.describe "Navbar and footer copy", type: :request do
     it "translates the nav links" do
       get root_path(locale: :en)
 
-      expect(response.body).to include("Packages")
+      expect(response.body).to include("Work together 1:1")
       expect(response.body).to include("About me")
       expect(response.body).to include("Shop")
-      expect(response.body).to include("Contact")
+      expect(response.body).to include("Audio process")
       # not asserted by absence of "Pakiety": CMS copy with no English version
       # deliberately falls back to Polish, and the home page's section headings
       # have not been translated by the owner yet
@@ -34,7 +34,7 @@ RSpec.describe "Navbar and footer copy", type: :request do
     it "translates the calls to action and the sign-in button" do
       get root_path(locale: :en)
 
-      expect(response.body).to include("Book a consultation")
+      expect(response.body).to include("Message me on Instagram")
       expect(response.body).to include("Log in")
       expect(response.body).not_to include("Umów konsultację")
       expect(response.body).not_to include("Zaloguj się")

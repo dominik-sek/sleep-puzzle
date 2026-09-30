@@ -9,11 +9,13 @@ module NavigationHelper
   # markup that would render it.
   def primary_nav_items
     [
-      { label: t("nav.packages"), href: packages_path },
-      { label: t("nav.about"), href: about_path },
+      { label: t("offers.audio"), href: audio_process_path },
+      { label: t("offers.one_to_one"), href: packages_path }
       # { label: t("nav.blog"), href: blog_path },
-      { label: t("nav.shop"), href: products_path },
-      { label: t("nav.contact"), href: contact_path }
+      # Hidden entries retained for restoration:
+      # { label: t("nav.about"), href: about_path },
+      # { label: t("nav.shop"), href: products_path },
+      # { label: t("nav.contact"), href: contact_path }
     ]
   end
 

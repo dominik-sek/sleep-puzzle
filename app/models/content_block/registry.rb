@@ -10,8 +10,9 @@ class ContentBlock
     PATH = Rails.root.join("config/content_blocks.yml")
     TYPES = %w[plain rich image].freeze
 
-    Field = Struct.new(:key, :label, :type, :defaults, :section, keyword_init: true) do
+    Field = Struct.new(:key, :label, :type, :defaults, :section, :admin_hidden, keyword_init: true) do
       def full_key = "#{section.full_key}.#{key}"
+      def admin_hidden? = !!admin_hidden
       def rich? = type == "rich"
       def plain? = type == "plain"
 
@@ -32,7 +33,7 @@ class ContentBlock
 
     # A field of a collection item. Items hold short plain strings only, so there
     # is no `rich` here and no Action Text behind them.
-    ItemField = Struct.new(:key, :label, :type, keyword_init: true)
+    ItemField = Struct.new(:key, :label, :type, :multiline, keyword_init: true)
 
     # A repeating list the owner can add to and remove from. At most one per
     # section, keyed by the section itself.
@@ -51,8 +52,9 @@ class ContentBlock
       end
     end
 
-    Section = Struct.new(:key, :label, :fields, :collection, :page, keyword_init: true) do
+    Section = Struct.new(:key, :label, :fields, :collection, :page, :admin_hidden, keyword_init: true) do
       def full_key = "#{page.key}.#{key}"
+      def admin_hidden? = !!admin_hidden
       def collection? = !collection.nil?
     end
 
@@ -104,7 +106,8 @@ class ContentBlock
           type = field_config.fetch("type")
           raise ArgumentError, "Collection items support only plain fields; got #{type.inspect} for #{section.full_key}.#{field_key}" unless type == "plain"
 
-          ItemField.new(key: field_key, label: field_config.fetch("label"), type: type)
+          ItemField.new(key: field_key, label: field_config.fetch("label"), type: type,
+                        multiline: field_config.fetch("multiline", false))
         end
 
         Collection.new(
@@ -124,7 +127,8 @@ class ContentBlock
               key: section_key,
               label: section_config.fetch("label"),
               page: page,
-              fields: []
+              fields: [],
+              admin_hidden: section_config.fetch("admin_hidden", false)
             )
 
             section.collection = build_collection(section_config["collection"], section)
@@ -138,7 +142,8 @@ class ContentBlock
                 label: field_config.fetch("label"),
                 type: type,
                 defaults: field_config.fetch("default", {}),
-                section: section
+                section: section,
+                admin_hidden: field_config.fetch("admin_hidden", false)
               )
             end
 

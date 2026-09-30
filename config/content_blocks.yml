@@ -24,6 +24,8 @@
 #   A section may also hold a repeating list the owner can add to and remove from
 #   (process steps, stats). Items carry only plain short strings, and their
 #   `defaults` seed the list when the database has none.
+# admin_hidden: true keeps a section or field available for later restoration,
+#   while removing its controls from the content editor.
 home:
   label: Strona główna
   sections:
@@ -58,22 +60,77 @@ home:
             pl: "<div>Nazywam się Karola - ta, co układa sen rodzin jak puzzle. Wierzę, że zdrowy sen zaczyna się od empatii, wsparcia i emocjonalnie zaopiekowanego dorosłego.</div>"
         body:
           label: Treść
+          admin_hidden: true
           type: rich
           default:
             pl: "<div>Od ponad 20 lat wspieram dzieci i rodziców, łącząc wiedzę o śnie i rozwoju dziecka z uważnością i realną pomocą.</div>"
         cta_label:
           label: Przycisk - tekst
+          admin_hidden: true
           type: plain
           default:
             pl: "Poznaj mnie lepiej"
             en: "More about me"
         cta_url:
-          label: "Przycisk - adres (np. https://instagram.com/... lub /kontakt)"
+          label: "Przycisk - adres"
+          admin_hidden: true
           type: plain
           default:
             pl: "/about"
+    choices:
+      label: Dwie ścieżki oferty
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Jak mogę Ci pomóc"
+            en: "How can I help you?"
+        audio:
+          label: Opis audioprocesu
+          type: plain
+          default:
+            pl: "Posłuchaj i pracuj we własnym tempie"
+            en: "Listen and work at your own pace"
+        one_to_one:
+          label: Opis współpracy 1:1
+          type: plain
+          default:
+            pl: "Ułóżmy plan dla Twojej rodziny razem"
+            en: "Let's make a plan for your family together"
+    methodology:
+      label: Metodologia
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Moja metodologia"
+            en: "My approach"
+        body:
+          label: Treść
+          type: rich
+          default:
+            pl: "<div>Każda rodzina ma własny rytm. Zaczynam od zrozumienia Waszej sytuacji, a potem dobieram małe, możliwe do wdrożenia kroki. Łączę wiedzę o śnie i rozwoju dziecka z empatią dla całej rodziny.</div>"
+            en: "<div>Every family has its own rhythm. I start by understanding your situation, then choose small, workable steps. I combine knowledge of sleep and child development with empathy for the whole family.</div>"
+    disagree:
+      label: Z czym się nie zgadzam
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Z czym się nie zgadzam"
+            en: "What I don't believe in"
+        body:
+          label: Treść
+          type: rich
+          default:
+            pl: "<div>Nie wierzę w jeden schemat, który pasuje każdemu dziecku. Nie obiecuję szybkich cudów ani nie dokładam presji rodzicom, którzy już robią bardzo dużo.</div>"
+            en: "<div>I don't believe in one routine for every child. I don't promise instant miracles or add pressure to parents who are already doing so much.</div>"
     stats:
       label: Liczby
+      admin_hidden: true
       collection:
         item_label: Liczba
         fields:
@@ -85,6 +142,7 @@ home:
               pl: "20+ lat"
     process:
       label: Jak wygląda współpraca
+      admin_hidden: true
       fields:
         title:
           label: Nagłówek
@@ -115,6 +173,7 @@ home:
               pl: "Opis kroku"
     packages:
       label: Pakiety współpracy
+      admin_hidden: true
       fields:
         title:
           label: Nagłówek
@@ -134,6 +193,7 @@ home:
             en: "See details"
     audio:
       label: Audioprocesy i bajki
+      admin_hidden: true
       fields:
         title:
           label: Nagłówek
@@ -147,6 +207,7 @@ home:
             pl: "<div>Nagrania do samodzielnej pracy nad rutyną oraz kojące bajki audio dla dzieci - dostępne po zalogowaniu na Twoim koncie.</div>"
     newsletter:
       label: Newsletter
+      admin_hidden: true
       fields:
         title:
           label: Nagłówek
@@ -195,6 +256,7 @@ home:
             en: "Not sure where to start? Write to me and I will answer."
         cta:
           label: Przycisk
+          admin_hidden: true
           type: plain
           default:
             pl: "Napisz do mnie"
@@ -202,6 +264,15 @@ home:
 packages:
   label: Pakiety
   sections:
+    collaboration:
+      label: O współpracy
+      fields:
+        body:
+          label: Opis współpracy
+          type: rich
+          default:
+            pl: "<div>Współpraca 1:1 zaczyna się od rozmowy o Waszej codzienności. Wspólnie wybierzemy zakres wsparcia, który odpowiada Waszym potrzebom, a potem krok po kroku wprowadzimy zmiany.</div>"
+            en: "<div>Working together starts with a conversation about your everyday life. We choose the level of support that fits your family, then make changes one step at a time.</div>"
     hero:
       label: Sekcja główna
       fields:
@@ -209,8 +280,8 @@ packages:
           label: Nagłówek
           type: plain
           default:
-            pl: "Pakiety współpracy"
-            en: "Working together"
+            pl: "Współpraca 1:1"
+            en: "Work together 1:1"
         subtitle:
           label: Podtytuł
           type: rich
@@ -385,8 +456,8 @@ about:
           label: Przycisk
           type: plain
           default:
-            pl: "Umów konsultację"
-            en: "Book a consultation"
+            pl: "Poznaj współpracę 1:1"
+            en: "Explore working together 1:1"
         reassurance:
           label: Uspokojenie pod przyciskiem
           type: plain
@@ -499,8 +570,8 @@ shop:
           label: Podtytuł
           type: plain
           default:
-            pl: "Audioprocesy do samodzielnej pracy nad snem i kojące bajki audio dla najmłodszych."
-            en: "Audio processes for working on sleep on your own, and soothing audio stories for the little ones."
+            pl: "Wszystkie sposoby współpracy w jednym miejscu: audioprocesy, bajki audio i pakiety 1:1."
+            en: "All ways to work together in one place: audio processes, bedtime stories and 1:1 packages."
         returning:
           label: Podpowiedź dla powracających kupujących
           type: plain
@@ -640,8 +711,8 @@ shop:
           label: Treść
           type: plain
           default:
-            pl: "Nagrania pojawią się tu wkrótce. Zajrzyj za jakiś czas."
-            en: "Recordings will appear here soon. Do check back."
+            pl: "Oferty pojawią się tu wkrótce. Zajrzyj za jakiś czas."
+            en: "Offers will appear here soon. Do check back."
         cta:
           label: Przycisk w pustym sklepie
           type: plain
@@ -955,6 +1026,72 @@ terms:
               pl: "Informacje o plikach cookies i usługach zewnętrznych znajdują się w Polityce prywatności dostępnej pod adresem /privacy."
               en: "Details of cookies and external services are in the Privacy policy at /en/privacy."
 
+audio_landing:
+  label: Landing audioprocesu
+  sections:
+    hero:
+      label: Wprowadzenie
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Audioproces"
+            en: "Audio process"
+        intro:
+          label: Wstęp
+          type: rich
+          default:
+            pl: "<div>Wsparcie, do którego możesz wracać we własnym tempie. Poznaj audioproces i sprawdź, czy odpowiada potrzebom Twojej rodziny.</div>"
+            en: "<div>Support you can return to at your own pace. Explore the audio process and see if it suits your family.</div>"
+        empty:
+          label: Gdy audioproces nie jest jeszcze dostępny
+          type: plain
+          default:
+            pl: "Audioproces pojawi się tutaj wkrótce."
+            en: "The audio process will appear here soon."
+    details:
+      label: Szczegóły
+      fields:
+        for_whom:
+          label: Nagłówek „dla kogo”
+          type: plain
+          default:
+            pl: "Dla kogo"
+            en: "Who it is for"
+        includes:
+          label: Nagłówek „co obejmuje”
+          type: plain
+          default:
+            pl: "Co obejmuje"
+            en: "What is included"
+testimonials:
+  label: Opinie i efekty
+  sections:
+    entries:
+      label: Prawdziwe opinie i efekty
+      fields:
+        title:
+          label: Nagłówek sekcji
+          type: plain
+          default:
+            pl: "Opinie i efekty"
+            en: "Stories and results"
+      collection:
+        item_label: Opinia
+        fields:
+          quote:
+            label: Cytat z opinii
+            type: plain
+            multiline: true
+          author:
+            label: Podpis (za zgodą autorki/autora)
+            type: plain
+          effect:
+            label: Efekt współpracy
+            type: plain
+            multiline: true
+        defaults: []
 footer:
   label: Stopka
   sections:

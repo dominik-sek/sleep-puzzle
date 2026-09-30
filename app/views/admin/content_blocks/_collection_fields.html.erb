@@ -3,7 +3,11 @@
 
   <% if items.empty? %>
     <p class="text-t6 text-taupe">
-      Brak elementów. Strona pokazuje wartości domyślne, dopóki nie dodasz własnych.
+      <% if collection.defaults.empty? %>
+        Brak elementów. Sekcja pojawi się na stronie po dodaniu kompletnej opinii.
+      <% else %>
+        Brak elementów. Strona pokazuje wartości domyślne, dopóki nie dodasz własnych.
+      <% end %>
     </p>
   <% end %>
 
@@ -34,11 +38,16 @@
 
           <div class="grid grid-cols-1 2xl:grid-cols-2 gap-3">
             <% ContentItem::LOCALES.each do |locale| %>
-              <%= text_field_tag "items[#{item.id}][values][#{field.key}][#{locale}]",
-                                 item.values.dig(field.key, locale.to_s),
-                                 id: "item-#{item.id}-#{field.key}-#{locale}",
-                                 placeholder: locale == :pl ? "Polski" : "English",
-                                 class: "form-control" %>
+              <% input_options = { id: "item-#{item.id}-#{field.key}-#{locale}",
+                                   placeholder: locale == :pl ? "Polski" : "English",
+                                   class: "form-control" } %>
+              <% input_name = "items[#{item.id}][values][#{field.key}][#{locale}]" %>
+              <% input_value = item.values.dig(field.key, locale.to_s) %>
+              <% if field.multiline %>
+                <%= text_area_tag input_name, input_value, **input_options.merge(rows: 4) %>
+              <% else %>
+                <%= text_field_tag input_name, input_value, **input_options %>
+              <% end %>
             <% end %>
           </div>
         </div>

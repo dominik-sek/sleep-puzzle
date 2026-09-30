@@ -23,7 +23,8 @@
       <div>
         <h3 class="text-t6 font-extrabold uppercase tracking-wide text-accent mb-3.5"><%= content_block("footer.columns.explore") %></h3>
         <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
-          <li><%= link_to t("nav.packages"), packages_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("offers.audio"), audio_process_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <li><%= link_to t("offers.one_to_one"), packages_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
           <li><%= link_to t("nav.about"), about_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
           <%# parked with the navbar entry; see shared/_navbar %>
           <%#= tag.li(link_to("Blog", blog_path)) %>
@@ -34,8 +35,12 @@
       <div>
         <h3 class="text-t6 font-extrabold uppercase tracking-wide text-accent mb-3.5"><%= content_block("footer.columns.account") %></h3>
         <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
-          <li><%= link_to t("nav.book"), bookings_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
-          <li><%= link_to t("nav.my_account"), dashboard_index_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <% if false # The former direct booking link is retained for restoration. %>
+            <li><%= link_to t("nav.book"), bookings_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <% end %>
+          <li><%= link_to(user_signed_in? ? t("nav.my_account") : t("nav.sign_in"),
+                            user_signed_in? ? dashboard_index_path : new_user_session_path,
+                            class: "text-t6 text-tan no-underline hover:text-accent") %></li>
           <li><%= link_to t("nav.terms"), terms_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
           <li><%= link_to t("nav.privacy"), privacy_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
         </ul>
@@ -45,11 +50,13 @@
         <h3 class="text-t6 font-extrabold uppercase tracking-wide text-accent mb-3.5"><%= content_block("footer.columns.follow") %></h3>
         <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
           <li>
-            <%= link_to "Instagram", "https://www.instagram.com/sleep.puzzle",
+            <%= link_to "Instagram", instagram_contact_url,
                         target: "_blank", rel: "noopener",
                         class: "text-t6 text-accent no-underline hover:text-accent-hover" %>
           </li>
-          <li><%= link_to t("nav.contact"), contact_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <% if false # The contact form remains at its direct URL for restoration. %>
+            <li><%= link_to t("nav.contact"), contact_path, class: "text-t6 text-tan no-underline hover:text-accent" %></li>
+          <% end %>
         </ul>
       </div>
     </div>

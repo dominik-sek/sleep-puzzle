@@ -1,9 +1,9 @@
 <%= render TreeView::Component.new(variant: :bordered) do |tree| %>
   <% pages.each do |page| %>
     <% tree.with_node(label: page.label, type: :folder, default_open: true) do |page_node| %>
-      <% page.sections.each do |section| %>
+      <% page.sections.reject(&:admin_hidden?).each do |section| %>
         <% page_node.with_child(label: section.label, type: :folder) do |section_node| %>
-          <% section.fields.each do |field| %>
+          <% section.fields.reject(&:admin_hidden?).each do |field| %>
             <% section_node.with_child(
                  label: field.label,
                  href: "#section-#{page.key}-#{section.key}"

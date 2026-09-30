@@ -1,5 +1,5 @@
 class BookingsController < ApplicationController
-  require "google/apis/calendar_v3"
+  include BookingAvailability
 
   before_action :authenticate_user!
   before_action :load_package_options, only: [ :index, :create, :abandon ]
@@ -197,37 +197,6 @@ class BookingsController < ApplicationController
     end
   end
 
-  def load_availability
-    busy_periods = GoogleCalendarService.call.busy
-    available_blocks = SlotComparatorService.call(busy_periods: busy_periods)
-
-    @availability = build_availability(available_blocks)
-
-    # get the dates that have at least one available slot
-    open_dates = @availability[:dates].filter_map { |date|
-      date[:date] if date[:hours].any? { |hour| hour[:available] }
-    }
-
-    # the view needs the boolean as well as the payload: @available_dates is JSON
-    # for the calendar element, and "[]" is not blank, so the empty case cannot be
-    # read off it without parsing it back
-    @no_slots = open_dates.empty?
-    @available_dates = open_dates.to_json
-  rescue GoogleCalendarService::NotConnected, Google::Apis::Error => e
-    # No calendar means no way to know what the owner is already busy with, and
-    # this page used to 500 outright rather than say so. Every slot is rendered
-    # taken rather than free, because free would be a guess and a wrong guess
-    # sells a time she is already sitting in someone else's consultation for.
-    # `build_availability([])` is the honest version of that: the same grid the
-    # page always draws, with nothing in it selectable.
-    Rails.logger.error("Booking availability could not be read: #{e.message}")
-
-    @calendar_unavailable = true
-    @availability = build_availability([])
-    @no_slots = false # unreadable is a different nothing; that banner owns it
-    @available_dates = [].to_json
-  end
-
   def combined_starts_at
     return nil if booking_params[:date].blank? || booking_params[:hour].blank?
 
@@ -238,29 +207,4 @@ class BookingsController < ApplicationController
     params.require(:booking).permit(:name, :date, :hour, :package_id)
   end
 
-  # rebuild the full per-date slot list (available + unavailable) from the weekly
-  # template, so booked slots still render as disabled buttons instead of vanishing
-  def build_availability(available_blocks)
-    available_starts = available_blocks.map(&:begin).to_set
-
-    dates = schedule_dates.filter_map do |date|
-      windows = SlotComparatorService::WEEKLY_SCHEDULE[date.wday]
-      next if windows.blank?
-
-      slot_starts = windows.map { |starts_at, _ends_at| Time.zone.parse("#{date} #{starts_at}") }
-
-      hours = windows.zip(slot_starts).map do |(starts_at, _ends_at), slot_start|
-        { hour: starts_at, available: available_starts.include?(slot_start) }
-      end
-
-      # the offset is this date's own, not the page's - see BookingsHelper
-      { date: date.iso8601, hours: hours, zone: helpers.booking_timezone_label(slot_starts.first) }
-    end
-
-    { from: schedule_dates.first.iso8601, to: schedule_dates.last.iso8601, dates: dates }
-  end
-
-  def schedule_dates
-    @schedule_dates ||= Date.current..SlotComparatorService::SCHEDULE_LENGTH.from_now.to_date
-  end
 end

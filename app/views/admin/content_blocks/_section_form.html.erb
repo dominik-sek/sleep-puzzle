@@ -11,7 +11,7 @@
     <%# id: nil - five section forms on one page would otherwise all be id="section" %>
     <%= hidden_field_tag :section, section.full_key, id: nil %>
 
-    <% section.fields.each do |field| %>
+    <% section.fields.reject(&:admin_hidden?).each do |field| %>
       <% if field.image? %>
         <%= render "admin/content_blocks/image_input",
                    section: section, field: field, block: blocks[field.full_key] %>

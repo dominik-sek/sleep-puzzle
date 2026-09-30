@@ -13,21 +13,11 @@ RSpec.describe "Newsletter subscriptions", type: :request do
     service
   end
 
-  describe "the form on the home page" do
-    it "renders inside its own frame, from the CMS defaults" do
+  describe "the hidden home form" do
+    it "keeps the newsletter off the home page" do
       get root_path
 
-      expect(response.body).to include("Newsletter Sleep Puzzle")
-      expect(response.body).to include("Raz na jakiś czas")
-      expect(response.body).to include("newsletter_form")
-      expect(response.body).to include(%(name="newsletter_signup[email]"))
-    end
-
-    it "is translated on the English home page" do
-      get root_path(locale: :en)
-
-      expect(response.body).to include("Sleep Puzzle newsletter")
-      expect(response.body).to include("Subscribe")
+      expect(response.body).not_to include("newsletter_form", "Newsletter Sleep Puzzle")
     end
   end
 

@@ -1,4 +1,8 @@
 module ApplicationHelper
+  def instagram_contact_url
+    "https://www.instagram.com/sleep.puzzle/"
+  end
+
   ICON_ROOT = Rails.root.join("app/assets/icons")
 
   ICON_CACHE = Concurrent::Map.new

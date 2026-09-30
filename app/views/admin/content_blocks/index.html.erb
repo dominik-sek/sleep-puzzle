@@ -36,7 +36,7 @@
 
               <%# allow_multiple so comparing two sections does not close the first %>
               <%= render Accordion::Component.new(allow_multiple: true, variant: :bordered) do |accordion| %>
-                <% page.sections.each do |section| %>
+                <% page.sections.reject(&:admin_hidden?).each do |section| %>
                   <% accordion.with_item(title: section.label, default_open: section == @open_section) do %>
                     <%= render "admin/content_blocks/section_form",
                                page: page, section: section, blocks: @blocks,

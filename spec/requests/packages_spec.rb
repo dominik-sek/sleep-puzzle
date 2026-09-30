@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe "Packages", type: :request do
+  before do
+    allow(GoogleCalendarService).to receive(:call).and_return(instance_double(GoogleCalendarService, busy: []))
+  end
+
   def package_with_benefits(**attributes)
     create_package(**attributes).tap do |package|
       package.assign_translation(:for_whom, :pl, "Dla rodziców niemowląt")
@@ -11,13 +15,30 @@ RSpec.describe "Packages", type: :request do
   end
 
   describe "GET /packages" do
+    it "shows calendar availability to a signed-out visitor on the landing" do
+      get packages_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('id="calendar"', 'id="availability"', 'data-cally-available-dates-value=')
+      expect(response.body).not_to include('name="booking[name]"')
+    end
+
+    it "keeps the landing available when the calendar token has expired" do
+      allow(GoogleCalendarService).to receive(:call).and_raise(Google::Auth::AuthorizationError, "invalid_grant")
+
+      get packages_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t("bookings.calendar.unavailable"))
+    end
+
     it "renders the CMS headings from their declared defaults on an empty database" do
       expect(ContentBlock.count).to eq(0)
 
       get packages_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Pakiety współpracy")
+      expect(response.body).to include("Współpraca 1:1")
       expect(response.body).not_to include("brak treści")
     end
 
@@ -55,13 +76,13 @@ RSpec.describe "Packages", type: :request do
       expect(response.body).not_to include("Szkic")
     end
 
-    it "points each call to action at the booking form for that package" do
+    it "points each call to action at the calendar on this page" do
       allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
       package = create_package(name: "Szybka ulga")
 
       get packages_path
 
-      expect(response.body).to include("#{bookings_path}?package_id=#{package.id}")
+      expect(response.body).to include("#{packages_path}#calendar")
     end
 
     it "shows the amount Paddle holds for the package" do
@@ -84,7 +105,7 @@ RSpec.describe "Packages", type: :request do
 
       expect(response.body).to include("Cena chwilowo niedostępna")
       expect(response.body).not_to include("#{bookings_path}?package_id=#{package.id}")
-      expect(response.body).to include(contact_path)
+      expect(response.body).to include("https://www.instagram.com/sleep.puzzle/")
     end
 
     it "names the package in each call to action for assistive tech" do
@@ -93,7 +114,7 @@ RSpec.describe "Packages", type: :request do
 
       get packages_path
 
-      expect(response.body).to include('aria-label="Umów konsultację - Szybka ulga"')
+      expect(response.body).to include('aria-label="Zobacz terminy - Szybka ulga"')
     end
 
     it "anchors each card so the home page can link straight to it" do

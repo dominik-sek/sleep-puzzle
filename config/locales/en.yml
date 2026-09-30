@@ -236,6 +236,16 @@ en:
     submitting: "Sending…"
     adding: "Adding…"
     removing: "Removing…"
+  offers:
+    audio: "Audio process"
+    one_to_one: "Work together 1:1"
+    explore: "Explore the offer"
+    instagram_cta: "Message me on Instagram"
+    calendar_title: "See available times"
+    calendar_intro: "Choose a day to see open times. Sign in to finish your booking."
+    calendar_preview: "This time is available. Sign in to finish booking and payment."
+    continue_booking: "Continue to booking"
+    see_times: "See available times"
   nav:
     menu: "Menu"
     packages: "Packages"

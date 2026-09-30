@@ -5,10 +5,17 @@ RSpec.describe "Navbar", type: :request do
 
   describe "the cart control" do
     it "is an icon rather than an emoji" do
-      get root_path
+      get products_path
 
       expect(response.body).to include(%(aria-label="Koszyk"))
       expect(response.body).not_to include("🧺")
+    end
+
+    it "shows the same cart icon on the home page" do
+      get root_path
+
+      expect(response.body).to include(%(aria-label="Koszyk"))
+      expect(response.body.scan(%(id="cart_badge")).size).to eq(1)
     end
 
     it "shows no count bubble on an empty cart" do
@@ -20,7 +27,7 @@ RSpec.describe "Navbar", type: :request do
     it "shows the count once something is in there" do
       post cart_items_path, params: { product_id: create_product.id }
 
-      get root_path
+      get products_path
 
       expect(response.body).to include("bg-accent px-1")
     end
@@ -28,6 +35,16 @@ RSpec.describe "Navbar", type: :request do
 
   describe "the profile dropdown" do
     before { sign_in user }
+
+    it "renders initials as a fallback for a Google image that fails to load" do
+      user.update!(first_name: "Karola", avatar_url: "https://example.com/avatar.jpg")
+
+      get root_path
+
+      page = Capybara.string(response.body)
+      expect(page).to have_css('[data-controller="avatar"] img[data-action="error->avatar#showFallback"]')
+      expect(page).to have_css('[data-avatar-target="fallback"].hidden', text: "K", visible: :all)
+    end
 
     # "fit" is not a Tailwind class, so it resolved to nothing and the panel
     # collapsed to the width of its longest label

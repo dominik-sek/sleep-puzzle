@@ -10,6 +10,7 @@ class ProductsController < ApplicationController
 
   def index
     @products = Product.published.ordered
+    @packages = Package.published.ordered
   end
 
   # Read through the published scope, so an unpublished product 404s rather than

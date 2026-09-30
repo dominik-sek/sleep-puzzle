@@ -706,3 +706,78 @@ trix-editor:empty:not(:focus)::before {
 .trix-content .attachment__caption {
   @apply mt-2 text-t6 text-taupe;
 }
+
+/* One piece's neck and rounded tab cross the shared seam. */
+.offer-puzzle {
+  position: relative;
+  border: 1px solid var(--color-border-strong);
+  transition: border-color 150ms ease;
+}
+
+.offer-puzzle--audio {
+  z-index: 1;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.offer-puzzle__joint {
+  position: absolute;
+  z-index: 2;
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+}
+
+.offer-puzzle__joint--mobile {
+  bottom: -40px;
+  left: calc(50% - 40px);
+}
+
+.offer-puzzle__joint--desktop {
+  display: none;
+}
+
+.offer-puzzle__fill {
+  fill: var(--color-surface);
+}
+
+.offer-puzzle__seam {
+  fill: none;
+  stroke: var(--color-border-strong);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.offer-puzzle--one-to-one {
+  border-radius: 0 0 1.5rem 1.5rem;
+  border-top: 0;
+}
+
+.offer-puzzle:hover {
+  border-color: var(--color-accent);
+}
+
+.offer-puzzle--audio:hover .offer-puzzle__seam {
+  stroke: var(--color-accent);
+}
+
+@media (min-width: 768px) {
+  .offer-puzzle--audio {
+    border-radius: 1.5rem 0 0 1.5rem;
+  }
+
+  .offer-puzzle__joint--mobile {
+    display: none;
+  }
+
+  .offer-puzzle__joint--desktop {
+    display: block;
+    top: calc(50% - 40px);
+    right: -40px;
+  }
+
+  .offer-puzzle--one-to-one {
+    border-radius: 0 1.5rem 1.5rem 0;
+    border-top: 1px solid var(--color-border-strong);
+    border-left: 0;
+  }
+}

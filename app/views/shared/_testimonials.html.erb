@@ -1,0 +1,17 @@
+<% testimonials = content_items("testimonials.entries").select { |item| item["quote"].present? && item["author"].present? } %>
+<% if testimonials.any? %>
+  <section class="w-full bg-ink-soft px-5 py-16" aria-labelledby="testimonials-title">
+    <div class="mx-auto max-w-[1240px]">
+      <h2 id="testimonials-title" class="mb-8 font-display text-t2 font-bold text-cream"><%= content_block("testimonials.entries.title") %></h2>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <% testimonials.each do |item| %>
+          <blockquote class="m-0 flex flex-col gap-4 rounded-2xl border border-border-strong bg-surface p-6">
+            <p class="m-0 text-t5 text-cream">“<%= item["quote"] %>”</p>
+            <% if item["effect"].present? %><p class="m-0 text-t6 text-accent"><%= item["effect"] %></p><% end %>
+            <footer class="mt-auto text-t6 text-taupe"><%= item["author"] %></footer>
+          </blockquote>
+        <% end %>
+      </div>
+    </div>
+  </section>
+<% end %>

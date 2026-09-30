@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   scope "(:locale)", locale: /en/ do
     # Defines the root path route ("/")
     root "home#index"
+    get "audioproces", to: "audio_processes#show", as: :audio_process
     # one page: each card carries everything a package has to say, so there is
     # no per-package page to link to
     resources :packages, only: [ :index ]

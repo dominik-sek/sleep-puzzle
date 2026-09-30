@@ -108,15 +108,18 @@ class User < ApplicationRecord
   def self.from_omniauth(access_token)
     data = access_token.info
     user = User.where(email: data["email"]).first
+    avatar_url = data["image"].presence
 
     if user
-      user.update(avatar_url: data["image"])
+      # Google may omit the profile picture in a particular OAuth response.
+      # Keep the last known photo instead of replacing it with nil.
+      user.update(avatar_url: avatar_url) if avatar_url
     else
       user = User.create(
         first_name: data["first_name"],
         last_name: data["last_name"],
         email: data["email"],
-        avatar_url: data["image"],
+        avatar_url: avatar_url,
         # deliberately no password: a random one the holder is never told is not a
         # password, and storing one made /users/edit ask them to confirm it. They
         # can set a real one later from the account screen.

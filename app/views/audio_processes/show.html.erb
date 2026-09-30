@@ -1,0 +1,44 @@
+<% content_for :title, page_title(content_block("audio_landing.hero.title")) %>
+<div class="min-h-screen flex flex-col items-center">
+  <%= render Section::Component.new(background: :ink, align: :left) do |section| %>
+    <div class="mx-auto grid w-full max-w-[1080px] gap-10 md:grid-cols-2 md:items-center">
+      <div>
+        <p class="mb-3 text-t6 font-bold uppercase text-accent"><%= t("offers.audio") %></p>
+        <h1 class="font-display text-t1 font-bold text-cream"><%= content_block("audio_landing.hero.title") %></h1>
+        <div class="trix-lead mt-5"><%= content_block("audio_landing.hero.intro") %></div>
+        <% if @product %>
+          <h2 class="mt-8 font-display text-t3 text-accent"><%= @product.name %></h2>
+          <p class="text-t5 text-tan"><%= @product.description %></p>
+          <p class="font-display text-t3 font-bold text-cream"><%= product_price_label(@product) || content_block("shop.card.unavailable") %></p>
+          <%= render "products/cart_actions", product: @product if product_price_label(@product) %>
+        <% else %>
+          <p class="mt-8 text-t5 text-tan"><%= content_block("audio_landing.hero.empty") %></p>
+        <% end %>
+      </div>
+      <div class="flex aspect-square items-center justify-center rounded-3xl border border-border-strong bg-surface text-[110px]" aria-hidden="true">
+        <%= @product&.display_icon || "🌙" %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @product %>
+    <%= render Section::Component.new(background: :ink_soft, align: :left) do |section| %>
+      <div class="mx-auto grid w-full max-w-[1080px] gap-10 md:grid-cols-2">
+        <div>
+          <h2 class="font-display text-t2 font-bold text-cream"><%= content_block("audio_landing.details.for_whom") %></h2>
+          <p class="text-t5 text-tan"><%= @product.long_description.presence || @product.description %></p>
+        </div>
+        <% if @product.includes.any? %>
+          <div>
+            <h2 class="font-display text-t2 font-bold text-cream"><%= content_block("audio_landing.details.includes") %></h2>
+            <ul class="space-y-3 text-t5 text-tan">
+              <% @product.includes.each do |item| %><li><%= item %></li><% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= render "shared/testimonials" %>
+</div>

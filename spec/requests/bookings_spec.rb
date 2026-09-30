@@ -99,7 +99,7 @@ RSpec.describe "Bookings", type: :request do
       get bookings_path
 
       expect(response.body).to include("nie ma wolnych terminów")
-      expect(response.body).to include(contact_path)
+      expect(response.body).to include("https://www.instagram.com/sleep.puzzle/")
     end
 
     it "does not claim the calendar is unreadable" do
