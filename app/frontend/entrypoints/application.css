@@ -707,7 +707,7 @@ trix-editor:empty:not(:focus)::before {
   @apply mt-2 text-t6 text-taupe;
 }
 
-/* One piece's neck and rounded tab cross the shared seam. */
+/* The cards share one edge; only the hovered card and that edge light up. */
 .offer-puzzle {
   position: relative;
   border: 1px solid var(--color-border-strong);
@@ -728,7 +728,7 @@ trix-editor:empty:not(:focus)::before {
 }
 
 .offer-puzzle__joint--mobile {
-  bottom: -40px;
+  bottom: -40.5px;
   left: calc(50% - 40px);
 }
 
@@ -743,8 +743,9 @@ trix-editor:empty:not(:focus)::before {
 .offer-puzzle__seam {
   fill: none;
   stroke: var(--color-border-strong);
-  stroke-width: 2;
+  stroke-width: 1;
   stroke-linejoin: round;
+  transition: stroke 150ms ease;
 }
 
 .offer-puzzle--one-to-one {
@@ -752,12 +753,17 @@ trix-editor:empty:not(:focus)::before {
   border-top: 0;
 }
 
-.offer-puzzle:hover {
+.offer-puzzle:is(:hover, :focus-visible) {
   border-color: var(--color-accent);
 }
 
-.offer-puzzle--audio:hover .offer-puzzle__seam {
+.offer-puzzle--audio:is(:hover, :focus-visible) .offer-puzzle__seam,
+.offer-puzzle-pair:has(> .offer-puzzle--one-to-one:is(:hover, :focus-visible)) .offer-puzzle__seam {
   stroke: var(--color-accent);
+}
+
+.offer-puzzle-pair:has(> .offer-puzzle--one-to-one:is(:hover, :focus-visible)) .offer-puzzle--audio {
+  border-bottom-color: var(--color-accent);
 }
 
 @media (min-width: 768px) {
@@ -772,12 +778,17 @@ trix-editor:empty:not(:focus)::before {
   .offer-puzzle__joint--desktop {
     display: block;
     top: calc(50% - 40px);
-    right: -40px;
+    right: -40.5px;
   }
 
   .offer-puzzle--one-to-one {
     border-radius: 0 1.5rem 1.5rem 0;
     border-top: 1px solid var(--color-border-strong);
     border-left: 0;
+  }
+
+  .offer-puzzle-pair:has(> .offer-puzzle--one-to-one:is(:hover, :focus-visible)) .offer-puzzle--audio {
+    border-bottom-color: var(--color-border-strong);
+    border-right-color: var(--color-accent);
   }
 }

@@ -19,15 +19,16 @@
   <section class="w-full bg-ink-soft px-5 py-16" aria-labelledby="help-title">
     <div class="mx-auto max-w-[1240px]">
       <h2 id="help-title" class="mb-8 text-center font-display text-t2 font-bold text-cream"><%= content_block("home.choices.title") %></h2>
-      <div class="grid md:grid-cols-2">
+      <div class="offer-puzzle-pair grid md:grid-cols-2">
         <%= link_to audio_process_path, class: "offer-puzzle offer-puzzle--audio group flex min-h-64 flex-col justify-between gap-8 bg-surface p-8 text-cream no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+          <%# Change the SVG path's d= to reshape the joint: mobile first, desktop second. %>
           <svg class="offer-puzzle__joint offer-puzzle__joint--mobile" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
-            <path class="offer-puzzle__fill" d="M0 0 H80 V40 H63 V52 H57 C57 62 49 70 40 70 C31 70 23 62 23 52 H17 V40 H0 Z" />
-            <path class="offer-puzzle__seam" d="M0 40 H17 V52 H23 C23 62 31 70 40 70 C49 70 57 62 57 52 H63 V40 H80" />
+            <path class="offer-puzzle__fill" d="M0 0 H80 V40 H60 C60 51 51 60 40 60 C29 60 20 51 20 40 H0 Z" />
+            <path class="offer-puzzle__seam" d="M0 40 H20 C20 51 29 60 40 60 C51 60 60 51 60 40 H80" />
           </svg>
           <svg class="offer-puzzle__joint offer-puzzle__joint--desktop" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
-            <path class="offer-puzzle__fill" d="M0 0 H40 V17 H52 V23 C62 23 70 31 70 40 C70 49 62 57 52 57 V63 H40 V80 H0 Z" />
-            <path class="offer-puzzle__seam" d="M40 0 V17 H52 V23 C62 23 70 31 70 40 C70 49 62 57 52 57 V63 H40 V80" />
+            <path class="offer-puzzle__fill" d="M0 0 H40 V20 C51 20 60 29 60 40 C60 51 51 60 40 60 V80 H0 Z" />
+            <path class="offer-puzzle__seam" d="M40 0 V20 C51 20 60 29 60 40 C60 51 51 60 40 60 V80" />
           </svg>
           <span class="text-t6 font-bold uppercase text-accent"><%= t("offers.audio") %></span>
           <span class="font-display text-t3 font-bold"><%= content_block("home.choices.audio") %></span>
