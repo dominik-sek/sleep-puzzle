@@ -158,10 +158,14 @@ RSpec.describe "Locale", type: :request do
     it "is a menu naming each language in itself, with a flag" do
       get about_path
 
-      expect(response.body).to include("Polski")
-      expect(response.body).to include("English")
-      expect(response.body).to include("🇵🇱")
-      expect(response.body).to include("🇬🇧")
+      page = Capybara.string(response.body)
+      menu = page.find("#locale-content", visible: :all)
+      expect(menu).to have_text("Polski")
+      expect(menu).to have_text("English")
+      expect(menu).to have_css('img[src*="flags/pl"][alt=""]', visible: :all)
+      expect(menu).to have_css('img[src*="flags/gb"][alt=""]', visible: :all)
+      expect(page).to have_css('button[data-content-id="locale-content"] img[src*="flags/pl"]', visible: :all)
+      expect(response.body).not_to include("🇵🇱", "🇬🇧")
     end
 
     it "marks the language you are on rather than linking it" do

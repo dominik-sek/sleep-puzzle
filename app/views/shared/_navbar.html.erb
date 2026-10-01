@@ -83,7 +83,7 @@
                 data-action="click->navbar#toggleMenu pointerenter->navbar#handlePointerEnter pointermove->navbar#handlePointerMove pointerleave->navbar#handlePointerLeave keydown->navbar#handleTriggerKeydown"
                 data-state="closed"
                 class="group flex items-center gap-1.5 rounded-md px-2 py-2 text-sm font-medium text-cream select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
-          <span aria-hidden="true"><%= locale_flag(I18n.locale) %></span>
+          <%= locale_flag(I18n.locale) %>
           <span class="uppercase text-t6 font-bold"><%= I18n.locale %></span>
           <%= icon "chevron-down", class: "size-3.5 shrink-0 text-taupe" %>
         </button>

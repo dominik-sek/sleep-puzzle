@@ -13,13 +13,13 @@
 
   <% if current %>
     <span class="<%= item_classes %> text-accent" aria-current="true">
-      <span aria-hidden="true"><%= locale_flag(locale) %></span>
+      <%= locale_flag(locale) %>
       <span><%= locale_name(locale) %></span>
       <%= icon "circle-check", class: "size-3.5 shrink-0 ml-auto" %>
     </span>
   <% else %>
     <%= link_to alternate_locale_url(locale), class: item_classes, hreflang: locale, rel: "alternate" do %>
-      <span aria-hidden="true"><%= locale_flag(locale) %></span>
+      <%= locale_flag(locale) %>
       <span><%= locale_name(locale) %></span>
     <% end %>
   <% end %>

@@ -29,14 +29,16 @@ module NavigationHelper
   # recognisable one at a glance, and the language's own name sits next to it in the
   # menu for anyone the flag does not help. British rather than American, since the
   # audience is in the EU.
-  LOCALE_FLAGS = { pl: "🇵🇱", en: "🇬🇧" }.freeze
+  # Flag emoji depend on the operating system's emoji font. Windows does not
+  # reliably render country flags, so serve the same SVGs on every platform.
+  LOCALE_FLAGS = { pl: "flags/pl.svg", en: "flags/gb.svg" }.freeze
 
   # Each language named in itself, so "English" is legible to someone who cannot
   # read the Polish page they are currently on, and vice versa.
   LOCALE_NAMES = { pl: "Polski", en: "English" }.freeze
 
   def locale_flag(locale)
-    LOCALE_FLAGS.fetch(locale.to_sym, "🏳️")
+    image_tag(LOCALE_FLAGS.fetch(locale.to_sym), alt: "", class: "inline-block h-4 w-6 shrink-0")
   end
 
   def locale_name(locale)
