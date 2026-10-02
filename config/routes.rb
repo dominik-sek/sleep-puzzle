@@ -40,8 +40,8 @@ Rails.application.routes.draw do
     end
     resources :products, only: [ :index, :show ] do
       # what a buyer's player points at: it authorises, then redirects to a
-      # freshly signed CDN URL. A member route rather than a nested resource
-      # because there is only ever one file per product
+      # freshly signed CDN URL. This legacy member route serves bedtime stories;
+      # audioprocess chapter streams have their own route below.
       get :stream, on: :member
 
       # deliberately outside the authenticate_user! that guards :stream - the
@@ -49,6 +49,8 @@ Rails.application.routes.draw do
       # may not have an account, can hear it. It signs the preview's own path,
       # never the full recording's.
       get :preview, on: :member
+      get :trailer, on: :member
+      get "chapters/:chapter_id/stream", to: "products#stream_chapter", on: :member, as: :stream_chapter
     end
     # singular: one cart per visitor, kept in the session, so there is no id to
     # carry. Its lines are addressed by product id - there are no cart item rows.
@@ -94,7 +96,13 @@ Rails.application.routes.draw do
     # endpoint that returns you to whichever page you asked from
     resource :paddle_prices, only: [ :update ]
     resources :packages, except: [ :show ]
-    resources :products, except: [ :show ]
+    resources :products, except: [ :show ] do
+      resources :audio_chapters, except: [ :index, :show ], controller: "audio_chapters"
+    end
+    resources :staged_media_uploads, only: [ :create ] do
+      put "chunks/:index", to: "staged_media_uploads#chunk", on: :member, as: :chunk
+      post :complete, on: :member
+    end
 
     # Solid Queue dashboard. Inside the admin namespace so it is gated by the
     # same admin flag as everything else here - see the initializer.

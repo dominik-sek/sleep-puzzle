@@ -9,4 +9,38 @@
   </div>
 
   <%= render "form", product: @record, prices: @prices %>
+
+  <% if @record.audio_process? %>
+    <section class="rounded-xl border border-border-input p-5">
+      <h2 class="font-display text-t3 text-cream">Trailer wideo</h2>
+      <p class="text-t6 text-taupe">Obecny plik: <%= @record.trailer_cdn_path.presence || "brak" %></p>
+      <% if @record.trailer_upload.attached? %><p class="text-yellow-300">Film jest przetwarzany w tle.</p><% end %>
+      <% if @record.trailer_upload_error.present? %><p class="text-orange-400"><%= @record.trailer_upload_error %></p><% end %>
+      <%= render "media_uploader", target: @record, label: "Wgraj lub wymień trailer", accept: "video/mp4,video/quicktime,.mov",
+                 extensions: %w[mp4 mov], max_bytes: StagedMediaUpload::MAX_VIDEO_BYTES %>
+    </section>
+
+    <section class="rounded-xl border border-border-input p-5">
+      <div class="flex flex-wrap justify-between gap-3">
+        <h2 class="font-display text-t3 text-cream">Chaptery</h2>
+        <%= link_to "Dodaj chapter", new_admin_product_audio_chapter_path(@record), class: "rounded-lg bg-accent px-4 py-2 text-ink" %>
+      </div>
+      <ol class="mt-4 flex flex-col gap-3 list-none p-0">
+        <% @record.audio_chapters.each do |chapter| %>
+          <li class="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-t5 text-cream">
+            <span><%= chapter.position %>. <%= chapter.title %> — <%= chapter.duration_label || "czas nieznany" %>
+              <% if chapter.audio_upload.attached? %>· trwa upload<% elsif chapter.upload_error.present? %>· błąd: <%= chapter.upload_error %><% elsif !chapter.ready? %>· brak pliku<% end %>
+            </span>
+            <span class="flex gap-3">
+              <%= link_to "Edytuj / wgraj audio", edit_admin_product_audio_chapter_path(@record, chapter), class: "text-accent" %>
+              <% unless @record.order_items.exists? %>
+                <%= button_to "Usuń", admin_product_audio_chapter_path(@record, chapter), method: :delete,
+                              data: { turbo_confirm: "Usunąć chapter?" }, class: "text-red-400 cursor-pointer" %>
+              <% end %>
+            </span>
+          </li>
+        <% end %>
+      </ol>
+    </section>
+  <% end %>
 </div>

@@ -44,6 +44,16 @@ RSpec.describe "Admin::Products", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Bajka o sowie", "Bajka na dobranoc", "Wieczorny rytuał", "Audioproces")
     end
+
+    it "counts ready audioprocess chapters as playable" do
+      with_bunny_cdn
+      create_product(name: "Proces", kind: :audio_process)
+
+      get admin_products_path
+
+      expect(response.body).to include("Proces")
+      expect(response.body).not_to include("Nie do odtworzenia")
+    end
   end
 
   describe "GET /admin/products/new and /edit" do

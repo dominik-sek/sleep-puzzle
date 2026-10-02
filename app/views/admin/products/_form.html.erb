@@ -17,6 +17,7 @@
        {}
      end %>
 
+<% upload_data[:controller] = [ upload_data[:controller], "product-kind" ].compact.join(" ") %>
 <%= form_with model: [ :admin, product ], scope: :record, multipart: true,
               data: upload_data, class: "flex flex-col gap-6" do %>
   <%= render "admin/shared/form_errors", record: product %>
@@ -40,7 +41,8 @@
       <%= select_tag "record[kind]",
                      options_for_select(Product.kind_options, product.kind),
                      include_blank: "- wybierz rodzaj -",
-                     id: "record-kind", class: "form-control" %>
+                     id: "record-kind", class: "form-control",
+                     data: { product_kind_target: "select", action: "change->product-kind#update" } %>
     </div>
 
     <div class="flex flex-col gap-1.5">
@@ -61,7 +63,7 @@
     <%= render "admin/shared/price_field", record: product, prices: prices %>
   </div>
 
-  <div class="flex flex-col gap-1.5">
+  <div class="flex flex-col gap-1.5" data-product-kind-target="story">
     <span class="text-t6 uppercase text-taupe">Plik audio (Bunny)</span>
 
     <%= render "admin/products/audio_status", product: product %>
@@ -106,6 +108,11 @@
       </span>
     <% end %>
   </div>
+
+  <p data-product-kind-target="process" class="text-t6 text-taupe m-0">
+    Audioproces: zapisz produkt jako szkic, dodaj chaptery i wgraj audio na ekranie edycji.
+    Opublikuj go po wgraniu co najmniej jednego chapteru.
+  </p>
 
   <%= render "admin/shared/publication_fields", record: product %>
 

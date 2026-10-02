@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_30_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_02_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -51,6 +51,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_120000) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "audio_chapters", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.integer "position", default: 0, null: false
+    t.jsonb "translations", default: {}, null: false
+    t.string "cdn_path"
+    t.integer "duration_seconds"
+    t.string "upload_error"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id", "position", "id"], name: "index_audio_chapters_on_product_id_and_position_and_id"
+    t.index ["product_id"], name: "index_audio_chapters_on_product_id"
   end
 
   create_table "bookings", force: :cascade do |t|
@@ -244,6 +257,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_120000) do
     t.string "paddle_price_id"
     t.integer "position", default: 0, null: false
     t.string "preview_cdn_path"
+    t.string "trailer_cdn_path"
+    t.string "trailer_upload_error"
     t.boolean "published", default: false, null: false
     t.jsonb "translations", default: {}, null: false
     t.datetime "updated_at", null: false
@@ -391,6 +406,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_120000) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "staged_media_uploads", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "target_type", null: false
+    t.bigint "target_id", null: false
+    t.string "filename", null: false
+    t.bigint "byte_size", null: false
+    t.integer "chunk_count", null: false
+    t.string "token", null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["target_type", "target_id"], name: "index_staged_media_uploads_on_target_type_and_target_id"
+    t.index ["token"], name: "index_staged_media_uploads_on_token", unique: true
+    t.index ["user_id"], name: "index_staged_media_uploads_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.string "avatar_url"
@@ -411,6 +442,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_120000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "audio_chapters", "products"
   add_foreign_key "bookings", "packages"
   add_foreign_key "bookings", "users"
   add_foreign_key "order_items", "orders"
@@ -426,4 +458,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_120000) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "staged_media_uploads", "users"
 end

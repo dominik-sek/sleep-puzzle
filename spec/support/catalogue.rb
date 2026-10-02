@@ -30,7 +30,14 @@ module CatalogueHelpers
   end
 
   def create_product(**attributes)
-    build_product(**attributes).tap(&:save!)
+    build_product(**attributes).tap do |product|
+      if product.audio_process? && product.cdn_path.present?
+        chapter = product.audio_chapters.build(cdn_path: product.cdn_path, duration_seconds: 600)
+        chapter.assign_translation(:title, :pl, "Nagranie")
+        chapter.assign_translation(:title, :en, "Recording")
+      end
+      product.save!
+    end
   end
 
   def paddle_price(id: "pri_123", product_name: "Pakiet", description: "Jednorazowo", amount: "24900", currency: "PLN")

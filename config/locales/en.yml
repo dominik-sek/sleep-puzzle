@@ -165,6 +165,10 @@ en:
       one: "Support lasts %{count} week"
       other: "Support lasts %{count} weeks"
   products:
+    trailer: "Watch the introduction"
+    trailer_label: "Introduction video: %{name}"
+    chapters:
+      title: "Audio process chapters"
     kinds:
       audio_process: "Audio process"
       bedtime_story: "Bedtime story"

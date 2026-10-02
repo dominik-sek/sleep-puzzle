@@ -1,0 +1,8 @@
+<% if product.trailerable? %>
+  <div class="mt-6">
+    <h2 class="mb-3 font-display text-t3 font-bold text-cream"><%= t('products.trailer') %></h2>
+    <video controls preload="none" playsinline class="aspect-video w-full rounded-2xl bg-black"
+           src="<%= trailer_product_path(product) %>"
+           aria-label="<%= t('products.trailer_label', name: product.name) %>"></video>
+  </div>
+<% end %>

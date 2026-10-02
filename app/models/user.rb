@@ -27,6 +27,7 @@ class User < ApplicationRecord
 
   has_many :bookings, dependent: :restrict_with_error
   has_many :orders, dependent: :restrict_with_error
+  has_many :staged_media_uploads, dependent: :destroy
   # what the dashboard's audio library reads: every product this user has paid
   # for, deduplicated, so buying the same story twice lists it once
   has_many :purchased_products, -> { distinct.merge(Order.paid) },

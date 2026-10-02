@@ -108,6 +108,20 @@ module AdminHelper
   # A recording on its way to Bunny, or one that never got there - neither shows
   # up anywhere else on the row. Same two hues as a pending or failed payment.
   def admin_audio_upload_badge(product)
+    if product.audio_process?
+      chapters = product.audio_chapters
+      if chapters.any? { |chapter| chapter.audio_upload.attached? }
+        return admin_status_badge(:pending, "Wgrywanie…", classes: "text-t6")
+      end
+      if chapters.any? { |chapter| chapter.upload_error.present? }
+        return admin_status_badge(:payment_failed, "Błąd pliku", classes: "text-t6")
+      end
+      if product.published? && (!chapters.any?(&:ready?) || !BunnySignedUrlService.configured?)
+        return admin_status_badge(:payment_failed, "Nie do odtworzenia", classes: "text-t6")
+      end
+      return
+    end
+
     if product.audio_upload_pending?
       admin_status_badge(:pending, "Wgrywanie…", classes: "text-t6")
     elsif product.audio_upload_failed?

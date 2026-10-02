@@ -145,6 +145,10 @@ pl:
       many: "Czas trwania wsparcia: %{count} tygodni"
       other: "Czas trwania wsparcia: %{count} tygodnia"
   products:
+    trailer: "Zobacz wprowadzenie"
+    trailer_label: "Film wprowadzający: %{name}"
+    chapters:
+      title: "Program audioprocesu"
     kinds:
       audio_process: "Audioproces"
       bedtime_story: "Bajka na dobranoc"

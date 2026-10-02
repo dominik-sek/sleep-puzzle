@@ -2,20 +2,22 @@
 #
 # Table name: products
 #
-#  id                 :bigint           not null, primary key
-#  audio_upload_error :string
-#  category           :integer
-#  cdn_path           :string
-#  icon               :string
-#  kind               :integer
-#  length_minutes     :integer
-#  position           :integer          default(0), not null
-#  preview_cdn_path   :string
-#  published          :boolean          default(FALSE), not null
-#  translations       :jsonb            not null
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  paddle_price_id    :string
+#  id                   :bigint           not null, primary key
+#  audio_upload_error   :string
+#  category             :integer
+#  cdn_path             :string
+#  icon                 :string
+#  kind                 :integer
+#  length_minutes       :integer
+#  position             :integer          default(0), not null
+#  preview_cdn_path     :string
+#  published            :boolean          default(FALSE), not null
+#  trailer_cdn_path     :string
+#  trailer_upload_error :string
+#  translations         :jsonb            not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  paddle_price_id      :string
 #
 class Product < ApplicationRecord
   include Purchasable
@@ -24,11 +26,13 @@ class Product < ApplicationRecord
   # paid for, so deleting a bought product would rewrite their history. The panel
   # unpublishes instead.
   has_many :order_items, dependent: :restrict_with_error
+  has_many :audio_chapters, -> { ordered }, dependent: :destroy
 
   # Where a recording waits between the admin pressing save and Bunny having it.
   # Nothing streams from here; ProductAudioUploadJob purges it once `cdn_path` is
   # set.
   has_one_attached :audio_upload
+  has_one_attached :trailer_upload
 
   # One stream for the whole catalogue rather than one per product: the index
   # would otherwise open a subscription per row, and an upload result has to
@@ -70,20 +74,26 @@ class Product < ApplicationRecord
   # package's `core`, so the admin's one-bullet-per-line editor already handles it.
   translates :name, :description, :long_description, lists: %i[includes]
 
-  # The file is the thing being sold, so a product with none cannot go on sale.
-  # Two layers, because a validation alone only covers rows saved from now on:
-  # this refuses the publish, and the scope below keeps anything already marked
-  # published - or published straight through SQL - out of the shop.
+  # A story needs its single recording; an audioprocess needs a ready chapter.
+  # The scope also keeps rows changed outside validations out of the shop.
   #
-  # A recording on its way counts as having one, so a product can be published in
+  # A story recording on its way counts as having one, so it can be published in
   # the same save as its upload; the scope below still waits for `cdn_path`.
-  validates :cdn_path, presence: true, if: -> { published? && !audio_upload_pending? }
+  validates :cdn_path, presence: true, if: -> { bedtime_story? && published? && !audio_upload_pending? }
+  validate :ready_chapter_for_publication
 
-  # Overrides Purchasable's, which Package still uses unchanged: a consultation
-  # has no file to deliver, so `published` means exactly what it says there.
-  # [nil, ""] because the admin form posts an empty string for an untouched
-  # field, and normalize_cdn_path leaves a blank one alone.
-  scope :published, -> { where(published: true).where.not(cdn_path: [ nil, "" ]) }
+  # Overrides Purchasable's so an incomplete audio product cannot appear in the
+  # shop, even if its published flag was changed directly in SQL.
+  scope :published, lambda {
+    where(published: true).where(<<~SQL)
+      (products.kind = 1 AND products.cdn_path IS NOT NULL AND products.cdn_path <> '')
+      OR (products.kind = 0 AND EXISTS (
+        SELECT 1 FROM audio_chapters
+        WHERE audio_chapters.product_id = products.id
+          AND audio_chapters.cdn_path IS NOT NULL AND audio_chapters.cdn_path <> ''
+      ))
+    SQL
+  }
 
   validates :kind, presence: true
   validates :length_minutes, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
@@ -95,11 +105,15 @@ class Product < ApplicationRecord
   validates :cdn_path,
             format: { with: %r{\A/[a-zA-Z0-9/._-]+\z}, message: :invalid },
             allow_blank: true
+  validates :trailer_cdn_path,
+            format: { with: %r{\A/[a-zA-Z0-9/._-]+\z}, message: :invalid },
+            allow_blank: true
 
   # BunnyStorageService always hands back a leading slash, but the admin form falls
   # back to a typed path when the storage zone is unconfigured, and that may or may
   # not have one.
   before_validation :normalize_cdn_path
+  before_validation :normalize_trailer_cdn_path
 
   def kind_label
     self.class.kind_label(kind)
@@ -112,17 +126,23 @@ class Product < ApplicationRecord
   # nil when the owner has not filled it in, so the product page can leave the
   # whole "Długość" slot out rather than printing a unit with no number
   def length_label
-    return if length_minutes.blank?
+    minutes = if audio_process?
+      seconds = audio_chapters.ready.sum(:duration_seconds)
+      (seconds / 60.0).ceil if seconds.positive?
+    else
+      length_minutes
+    end
+    return if minutes.blank?
 
-    I18n.t("products.length_minutes", count: length_minutes)
+    I18n.t("products.length_minutes", count: minutes)
   end
 
-  # Whether a buyer can be given a player for this. False for a product whose
-  # audio has not been uploaded yet, and false everywhere the CDN is unconfigured
+  # Whether a buyer can be given a story player. Audioprocess chapters ask their
+  # own streamable? method. False everywhere the CDN is unconfigured
   # - development and the test suite - so those render the library exactly as
   # they did before the CDN existed rather than a control that 404s.
   def streamable?
-    cdn_path.present? && BunnySignedUrlService.configured?
+    bedtime_story? && cdn_path.present? && BunnySignedUrlService.configured?
   end
 
   # Whether the shop can let someone hear thirty seconds before paying. Same two
@@ -130,7 +150,11 @@ class Product < ApplicationRecord
   # uploaded before previews existed have none, and the page simply omits the
   # player rather than offering a control that 404s.
   def previewable?
-    preview_cdn_path.present? && BunnySignedUrlService.configured?
+    bedtime_story? && preview_cdn_path.present? && BunnySignedUrlService.configured?
+  end
+
+  def trailerable?
+    audio_process? && trailer_cdn_path.present? && BunnySignedUrlService.configured?
   end
 
   # The attachment is the whole state - purged on success and on final failure
@@ -146,10 +170,24 @@ class Product < ApplicationRecord
 
   private
 
+  def ready_chapter_for_publication
+    return unless published? && audio_process?
+    return if audio_chapters.any?(&:ready?)
+
+    errors.add(:base, "Dodaj co najmniej jeden gotowy chapter przed publikacją.")
+  end
+
   def normalize_cdn_path
     return if cdn_path.blank?
 
     self.cdn_path = cdn_path.strip
     self.cdn_path = "/#{cdn_path}" unless cdn_path.start_with?("/")
+  end
+
+  def normalize_trailer_cdn_path
+    return if trailer_cdn_path.blank?
+
+    self.trailer_cdn_path = trailer_cdn_path.strip
+    self.trailer_cdn_path = "/#{trailer_cdn_path}" unless trailer_cdn_path.start_with?("/")
   end
 end

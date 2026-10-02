@@ -1,0 +1,11 @@
+<div class="p-6 sm:p-8 max-w-[900px] flex flex-col gap-6">
+  <h1 class="font-display text-t2 text-cream">Chapter: <%= @chapter.title %></h1>
+  <%= render "form", product: @product, chapter: @chapter %>
+  <div class="rounded-xl border border-border-input p-5">
+    <p class="text-t5 text-cream">Plik audio: <%= @chapter.cdn_path.presence || "jeszcze nie wgrano" %></p>
+    <% if @chapter.audio_upload.attached? %><p class="text-yellow-300">Plik jest przetwarzany w tle.</p><% end %>
+    <% if @chapter.upload_error.present? %><p class="text-orange-400"><%= @chapter.upload_error %></p><% end %>
+    <%= render "admin/products/media_uploader", target: @chapter, label: "Wgraj lub wymień audio", accept: "audio/*",
+               extensions: BunnyStorageService::ALLOWED_EXTENSIONS, max_bytes: StagedMediaUpload::MAX_AUDIO_BYTES %>
+  </div>
+</div>

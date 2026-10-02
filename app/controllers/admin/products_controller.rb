@@ -13,7 +13,7 @@ module Admin
 
     # the row badge asks each product about its attachment
     def index_scope
-      super.with_attached_audio_upload
+      super.with_attached_audio_upload.includes(audio_chapters: { audio_upload_attachment: :blob })
     end
 
     # The recording is uploaded here rather than through Bunny's dashboard, but

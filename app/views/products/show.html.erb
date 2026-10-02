@@ -64,6 +64,8 @@
             </div>
           <% end %>
 
+          <%= render "products/trailer", product: @product if @product.audio_process? %>
+
           <%= render "products/cart_actions", product: @product %>
 
           <dl class="mt-3 grid gap-3 border-t border-border pt-5.5 [grid-template-columns:repeat(auto-fit,minmax(120px,1fr))]">
@@ -77,6 +79,8 @@
           </dl>
         </div>
       </div>
+
+      <%= render "products/chapter_outline", product: @product if @product.audio_process? %>
 
       <% if @product.long_description.present? || @product.includes.any? %>
         <div class="mt-11 md:mt-16 grid gap-7 md:gap-12 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">

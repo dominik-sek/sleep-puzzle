@@ -6,7 +6,7 @@ class ProductsController < ApplicationController
   # that a copied URL is not a durable way to hand the sample around.
   PREVIEW_TTL = 15.minutes
 
-  before_action :authenticate_user!, only: :stream
+  before_action :authenticate_user!, only: %i[stream stream_chapter]
 
   def index
     @products = Product.published.ordered
@@ -29,6 +29,7 @@ class ProductsController < ApplicationController
   # on the CDN cannot strand a link someone already has.
   def stream
     product = Product.published.find(params[:id])
+    head :not_found and return unless product.bedtime_story?
 
     # 403 rather than 404: the shop lists this product, so its existence is not
     # the secret - the file behind it is
@@ -40,6 +41,27 @@ class ProductsController < ApplicationController
     # only draws a player when Product#streamable?, so reaching this is either a
     # stale page or a hand-typed URL.
     head :not_found and return if url.nil?
+
+    redirect_to url, allow_other_host: true
+  end
+
+  def stream_chapter
+    product = Product.audio_process.find(params[:id])
+    chapter = product.audio_chapters.ready.find(params[:chapter_id])
+    head :forbidden and return unless current_user.purchased?(product)
+
+    url = BunnySignedUrlService.call(chapter.cdn_path)
+    head :not_found and return unless url
+
+    redirect_to url, allow_other_host: true
+  end
+
+  def trailer
+    product = Product.published.audio_process.find(params[:id])
+    head :not_found and return unless product.trailerable?
+
+    url = BunnySignedUrlService.call(product.trailer_cdn_path)
+    head :not_found and return unless url
 
     redirect_to url, allow_other_host: true
   end

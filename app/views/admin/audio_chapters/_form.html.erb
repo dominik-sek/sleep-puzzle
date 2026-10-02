@@ -1,0 +1,20 @@
+<%= form_with model: [ :admin, product, chapter ], class: "flex flex-col gap-5" do |form| %>
+  <%= render "admin/shared/form_errors", record: chapter %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <% Translatable::LOCALES.each do |locale| %>
+      <div>
+        <%= label_tag "chapter-title-#{locale}", "Tytuł (#{locale})", class: "text-t6 uppercase text-taupe" %>
+        <%= text_field_tag "audio_chapter[translations][title][#{locale}]", chapter.raw_translation(:title, locale),
+                           id: "chapter-title-#{locale}", class: "form-control" %>
+      </div>
+    <% end %>
+  </div>
+  <div>
+    <%= form.label :position, "Kolejność", class: "text-t6 uppercase text-taupe" %>
+    <%= form.number_field :position, min: 0, class: "form-control" %>
+  </div>
+  <div class="flex gap-3">
+    <%= form.submit "Zapisz chapter", class: "rounded-lg bg-accent px-4 py-2 text-ink cursor-pointer" %>
+    <%= link_to "Powrót do produktu", edit_admin_product_path(product), class: "text-tan" %>
+  </div>
+<% end %>

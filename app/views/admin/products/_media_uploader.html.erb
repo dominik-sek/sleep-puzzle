@@ -1,0 +1,23 @@
+<% if BunnyStorageService.configured? %>
+  <div data-controller="media-upload"
+       data-media-upload-target-type-value="<%= target.class.name %>"
+       data-media-upload-target-id-value="<%= target.id %>"
+       data-media-upload-extensions-value="<%= extensions.to_json %>"
+       data-media-upload-max-bytes-value="<%= max_bytes %>"
+       data-media-upload-create-url-value="<%= admin_staged_media_uploads_path %>"
+       data-media-upload-chunk-url-template-value="<%= chunk_admin_staged_media_upload_path('UPLOAD_ID', index: 'CHUNK_INDEX') %>"
+       data-media-upload-complete-url-template-value="<%= complete_admin_staged_media_upload_path('UPLOAD_ID') %>"
+       class="flex flex-col gap-3">
+    <label class="text-t6 uppercase text-taupe" for="media-upload-<%= target.class.name.underscore %>-<%= target.id %>"><%= label %></label>
+    <input type="file" accept="<%= accept %>" id="media-upload-<%= target.class.name.underscore %>-<%= target.id %>"
+           data-media-upload-target="input" data-action="change->media-upload#validate"
+           class="form-control">
+    <p class="text-t6 text-taupe m-0">Formaty: <%= extensions.join(', ') %>. Limit: <%= max_bytes / 1.megabyte %> MB.</p>
+    <progress data-media-upload-target="progress" value="0" max="100" class="hidden w-full"></progress>
+    <p data-media-upload-target="error" class="hidden text-t6 text-orange-400 m-0" role="alert"></p>
+    <button type="button" data-media-upload-target="submit" data-action="click->media-upload#upload"
+            class="self-start rounded-lg bg-accent px-4 py-2 text-ink cursor-pointer"><%= label %></button>
+  </div>
+<% else %>
+  <p class="text-t6 text-orange-400">Wgrywanie plików jest wyłączone. Skonfiguruj Bunny Storage.</p>
+<% end %>

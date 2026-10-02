@@ -115,7 +115,9 @@
               <%# preload="none" so nothing is fetched and no token is minted until
                   play is actually pressed. Products with no file uploaded keep the
                   plain row - a control with nothing behind it would be a lie. %>
-              <% if product.streamable? %>
+              <% if product.audio_process? %>
+                <%= render "dashboard/chapter_playlist", product: product %>
+              <% elsif product.streamable? %>
                 <audio controls preload="none" class="mt-3.5 w-full"
                        src="<%= stream_product_path(product) %>"
                        aria-label="<%= t('products.player.label', name: product.name) %>"></audio>

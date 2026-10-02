@@ -1,4 +1,4 @@
-# Puts an audio file into the Bunny storage zone the pull zone sits in front of.
+# Puts an audio file or a prepared trailer into the Bunny storage zone.
 #
 # The counterpart to BunnySignedUrlService: that one mints a URL for a path, this
 # one is how a path comes to exist. Before it, the owner uploaded through Bunny's
@@ -35,6 +35,7 @@ class BunnyStorageService < ApplicationService
   # disagree about mp3 (audio/mpeg, audio/mp3, application/octet-stream all show
   # up), and it is the extension that ends up in the signed URL either way.
   ALLOWED_EXTENSIONS = %w[mp3 m4a aac ogg opus wav flac].freeze
+  VIDEO_EXTENSIONS = %w[mp4].freeze
 
   # Roughly a two-hour recording at a generous bitrate. The point is not to police
   # the owner's files but to fail on the obvious mistake - a video, an unrendered
@@ -77,12 +78,14 @@ class BunnyStorageService < ApplicationService
     # can be judged from its blob without being read back off disk.
     #
     # @return [String, nil] the reason to refuse, in the admin's language
-    def rejection_for(kind:, filename:, size:)
+    def rejection_for(kind:, filename:, size:, media: :audio)
       return "Wgrywanie plików nie jest skonfigurowane (BUNNY_STORAGE_ZONE, BUNNY_STORAGE_PASSWORD)." unless configured?
       return "Nie wybrano pliku." if filename.blank?
       return "Najpierw wybierz rodzaj produktu - od niego zależy folder w Bunny." if FOLDERS[kind.to_s].blank?
-      return "Dozwolone formaty: #{ALLOWED_EXTENSIONS.join(', ')}." unless ALLOWED_EXTENSIONS.include?(extension_of(filename))
-      return "Plik jest za duży (maksymalnie #{MAX_BYTES / 1.megabyte} MB)." if size > MAX_BYTES
+      extensions = media.to_sym == :video ? VIDEO_EXTENSIONS : ALLOWED_EXTENSIONS
+      max_bytes = media.to_sym == :video ? StagedMediaUpload::MAX_VIDEO_BYTES : MAX_BYTES
+      return "Dozwolone formaty: #{extensions.join(', ')}." unless extensions.include?(extension_of(filename))
+      return "Plik jest za duży (maksymalnie #{max_bytes / 1.megabyte} MB)." if size > max_bytes
 
       "Plik jest pusty." if size.zero?
     end
@@ -96,18 +99,19 @@ class BunnyStorageService < ApplicationService
   # @param kind [String, Symbol] the product's Product#kind, which decides the folder
   # @param filename [String, nil] the stored path's basename, for callers whose
   #   file has no original_filename - the job's tempfile has none
-  def initialize(upload, kind:, filename: nil)
+  def initialize(upload, kind:, filename: nil, media: :audio)
     @upload = upload
     @kind = kind
     @filename = filename.presence
+    @media = media
   end
 
   # Everything decidable without opening a socket, so the admin form can refuse a
   # bad file in the request. `store` runs it too.
   #
   # @return [String, nil] the reason to refuse, in the admin's language
-  def self.rejection(upload, kind:, filename: nil)
-    new(upload, kind: kind, filename: filename).rejection
+  def self.rejection(upload, kind:, filename: nil, media: :audio)
+    new(upload, kind: kind, filename: filename, media: media).rejection
   end
 
   # mirrors BookingPaymentCheckService: .call does the work, then you ask.
@@ -137,9 +141,9 @@ class BunnyStorageService < ApplicationService
   attr_reader :error
 
   def rejection
-    return self.class.rejection_for(kind: @kind, filename: nil, size: 0) if @upload.blank?
+    return self.class.rejection_for(kind: @kind, filename: nil, size: 0, media: @media) if @upload.blank?
 
-    self.class.rejection_for(kind: @kind, filename: filename, size: size)
+    self.class.rejection_for(kind: @kind, filename: filename, size: size, media: @media)
   end
 
   private

@@ -6,7 +6,7 @@ class DashboardController < ApplicationController
   def index
     # deduplicated across orders, and only from orders Paddle has confirmed -
     # see User#purchased_products
-    @products = current_user.purchased_products.ordered
+    @products = current_user.purchased_products.includes(:audio_chapters).ordered
 
     # Paid for, webhook not landed. Listed above the library rather than left
     # out: this screen used to say "you have no audio yet" to someone who had
