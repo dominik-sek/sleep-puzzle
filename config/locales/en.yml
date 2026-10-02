@@ -243,6 +243,7 @@ en:
     instagram_cta: "Message me on Instagram"
     calendar_title: "See available times"
     calendar_intro: "Choose a day to see open times. Sign in to finish your booking."
+    calendar_intro_signed_in: "Choose a time and finish your booking."
     calendar_preview: "This time is available. Sign in to finish booking and payment."
     continue_booking: "Continue to booking"
     see_times: "See available times"

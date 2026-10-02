@@ -35,17 +35,19 @@
     <% end %>
   <% end %>
 
-  <section id="calendar" class="w-full scroll-mt-24 bg-ink px-5 py-16">
-    <div class="mx-auto flex max-w-[1240px] flex-col gap-6">
-      <div class="max-w-2xl">
-        <h2 class="font-display text-t2 font-bold text-cream"><%= t("offers.calendar_title") %></h2>
-        <p class="text-t5 text-tan"><%= t("offers.calendar_intro") %></p>
+  <% unless user_signed_in? %>
+    <section id="calendar" class="w-full scroll-mt-24 bg-ink px-5 py-16">
+      <div class="mx-auto flex max-w-[1240px] flex-col gap-6">
+        <div class="max-w-2xl">
+          <h2 class="font-display text-t2 font-bold text-cream"><%= t("offers.calendar_title") %></h2>
+          <p class="text-t5 text-tan"><%= t("offers.calendar_intro") %></p>
+        </div>
+        <%= render "bookings/calendar", availability: @availability,
+                   available_dates: @available_dates, unavailable: @calendar_unavailable,
+                   no_slots: @no_slots, preview: true %>
       </div>
-      <%= render "bookings/calendar", availability: @availability,
-                 available_dates: @available_dates, unavailable: @calendar_unavailable,
-                 no_slots: @no_slots, preview: true %>
-    </div>
-  </section>
+    </section>
+  <% end %>
 
   <%= render "shared/testimonials" %>
 

@@ -21,6 +21,20 @@ RSpec.describe "Packages", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('id="calendar"', 'id="availability"', 'data-cally-available-dates-value=')
       expect(response.body).not_to include('name="booking[name]"')
+      expect(response.body).to include('data-cally-target="bookingLink"')
+    end
+
+    it "links a signed-in visitor to booking with the package preselected" do
+      user = User.create!(email: "customer@example.com", password: "password123")
+      sign_in user
+      allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
+      package = create_package(name: "Szybka ulga")
+
+      get packages_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(bookings_path(package_id: package.id))
+      expect(response.body).not_to include('id="calendar"', 'id="availability"', 'name="booking[name]"')
     end
 
     it "keeps the landing available when the calendar token has expired" do

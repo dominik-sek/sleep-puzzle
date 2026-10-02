@@ -34,6 +34,23 @@ RSpec.describe "Bookings", type: :request do
 
       expect(response).to have_http_status(:ok)
     end
+
+    it "restores a selected available slot after sign-in" do
+      date = Date.current.next_occurring(:monday).iso8601
+      hour = SlotComparatorService::WEEKLY_SCHEDULE.fetch(Date.iso8601(date).wday).first.first
+
+      get bookings_path(date: date, hour: hour)
+
+      expect(response.body).to include(%(data-cally-selected-date-value="#{date}"))
+      expect(response.body).to include(%(data-cally-selected-hour-value="#{hour}"))
+    end
+
+    it "does not restore a slot that is not available" do
+      get bookings_path(date: 1.week.from_now.to_date.iso8601, hour: "23:59")
+
+      expect(response.body).to include('data-cally-selected-date-value=""')
+      expect(response.body).to include('data-cally-selected-hour-value=""')
+    end
   end
 
   # The owner has not connected her calendar yet, or the grant she gave has since
@@ -160,9 +177,10 @@ RSpec.describe "Bookings", type: :request do
       allow_any_instance_of(BookingsController)
         .to receive(:checkout_for).and_return({ items: [] })
 
-      expect { post bookings_path, params: booking_params }.to change(Booking, :count).by(1)
+      expect { post bookings_path, params: booking_params, as: :turbo_stream }.to change(Booking, :count).by(1)
 
       expect(Booking.last).to be_pending
+      expect(response.body).to include('target="availability"', 'target="paddle_checkout"')
     end
   end
 

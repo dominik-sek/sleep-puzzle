@@ -6,6 +6,11 @@ class BookingsController < ApplicationController
 
   def index
     load_availability
+    selected_slot = @availability[:dates].find { |date| date[:date] == params[:date] }
+    if selected_slot&.dig(:hours)&.any? { |hour| hour[:hour] == params[:hour] && hour[:available] }
+      @selected_date = params[:date]
+      @selected_hour = params[:hour]
+    end
 
     @booking = Booking.new(
       name: current_user.full_name,

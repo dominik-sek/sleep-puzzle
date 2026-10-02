@@ -4,6 +4,8 @@
      data-cally-no-slots-label-value="<%= t("bookings.available_slots", count: 0) %>"
      data-cally-locale-value="<%= I18n.locale %>"
      data-cally-slot-length-value="<%= t("bookings.slot_length") %>"
+     data-cally-selected-date-value="<%= local_assigns[:selected_date] %>"
+     data-cally-selected-hour-value="<%= local_assigns[:selected_hour] %>"
      data-action="paddle:completed@window->cally#lock pageshow@window->cally#unlock">
   <%# spans the grid rather than sitting in a column: it explains both halves at
       once, and without it a calendar with every slot disabled just reads as
@@ -117,9 +119,10 @@
         <% if local_assigns[:preview] %>
           <input type="hidden" data-cally-target="dateField">
           <input type="hidden" data-cally-target="timeField">
-          <div data-cally-target="bookingFrame">
-            <p class="text-t5 text-tan"><%= t("offers.calendar_preview") %></p>
+          <div data-cally-target="bookingFrame" class="flex flex-col items-start gap-4">
+            <p class="text-t5 text-tan m-0"><%= t("offers.calendar_preview") %></p>
             <%= link_to t("offers.continue_booking"), bookings_path,
+                        data: { cally_target: "bookingLink" },
                         class: "inline-flex rounded-full bg-accent px-6 py-4 font-bold text-ink no-underline hover:bg-accent-hover" %>
           </div>
         <% else %>

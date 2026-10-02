@@ -4,6 +4,6 @@
   <h1 class="text-t1 text-cream font-display"><%= content_block("bookings.hero.title") %></h1>
   <span class="text-tan text-t5"><%= content_block("bookings.hero.subtitle") %></span>
 </div>
-  <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking, package_options: @package_options, unavailable: @calendar_unavailable, no_slots: @no_slots %>
+  <%= render "calendar", availability: @availability, available_dates: @available_dates, booking: @booking, package_options: @package_options, unavailable: @calendar_unavailable, no_slots: @no_slots, selected_date: @selected_date, selected_hour: @selected_hour %>
   <%= render "shared/paddle_checkout", checkout: nil %>
 <% end %>

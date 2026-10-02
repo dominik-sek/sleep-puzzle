@@ -3,6 +3,6 @@ class PackagesController < ApplicationController
 
   def index
     @packages = Package.published.ordered
-    load_availability
+    load_availability unless user_signed_in?
   end
 end

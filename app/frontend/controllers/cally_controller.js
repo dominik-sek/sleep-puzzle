@@ -10,12 +10,14 @@ import "dayjs/locale/en";
 // server renders onto the element.
 
 export default class extends Controller {
-    static targets = ["calendarDate", "calendarMonth", "heading", "monthHeading", "hoursHeader", "emptyState", "hoursPanel", "availableCount", "slotForm", "dateField", "timeField", "bookingFrame", "overlay",
+    static targets = ["calendarDate", "calendarMonth", "heading", "monthHeading", "hoursHeader", "emptyState", "hoursPanel", "availableCount", "slotForm", "dateField", "timeField", "bookingFrame", "bookingLink", "overlay",
                       "summary", "summaryPackage", "summarySlot", "summaryPrice", "summaryDuration"]
     static values = {
         slotLength: String,
         availableDates: Array,
         noSlotsLabel: String,
+        selectedDate: String,
+        selectedHour: String,
         // rendered by the server with the page, so it is right on a Turbo
         // navigation without anything having to be told the language changed
         locale: { type: String, default: "pl" }
@@ -28,11 +30,19 @@ export default class extends Controller {
         this.pristineFormHTML = this.bookingFrameTarget.innerHTML
         this.setCalendarDefaults()
         this.setDisallowedDates()
-        this.selectedDate = this.calendarDateTarget.value || null
-        this.selectedTime = null
+        this.selectedDate = this.selectedDateValue || this.calendarDateTarget.value || null
+        this.selectedTime = this.selectedHourValue || null
+        if (this.selectedDateValue) this.calendarDateTarget.value = this.selectedDateValue
         this.showHoursFor(this.selectedDate)
         this.updateHeading()
         this.updateMonthHeading(this.selectedDate || this.initialFocusedDate)
+        if (this.selectedTime) {
+            const button = this.hoursPanelTargets
+                .find((panel) => panel.dataset.date === this.selectedDate)
+                ?.querySelector(`[data-hour="${this.selectedTime}"]`)
+            button?.setAttribute("aria-pressed", "true")
+            this.showForm()
+        }
     }
     // All dates are expected in ISO-8601 format (YYYY-MM-DD).
     setCalendarDefaults(){
@@ -178,6 +188,12 @@ export default class extends Controller {
         this.dateFieldTarget.value = this.selectedDate
         this.timeFieldTarget.value = this.selectedTime
         this.slotFormTarget.hidden = false
+        if (this.hasBookingLinkTarget) {
+            const url = new URL(this.bookingLinkTarget.href)
+            url.searchParams.set("date", this.selectedDate)
+            url.searchParams.set("hour", this.selectedTime)
+            this.bookingLinkTarget.href = url.toString()
+        }
         this.bindPackageSelect()
         this.updateSummary()
     }

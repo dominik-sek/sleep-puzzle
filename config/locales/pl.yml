@@ -223,6 +223,7 @@ pl:
     instagram_cta: "Napisz na Instagramie"
     calendar_title: "Zobacz dostępne terminy"
     calendar_intro: "Wybierz dzień i sprawdź godziny. Rezerwację dokończysz po zalogowaniu."
+    calendar_intro_signed_in: "Wybierz termin i dokończ rezerwację."
     calendar_preview: "Ten termin jest dostępny. Zaloguj się, aby dokończyć rezerwację i płatność."
     continue_booking: "Przejdź do rezerwacji"
     see_times: "Zobacz terminy"

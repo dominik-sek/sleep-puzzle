@@ -86,13 +86,12 @@
             text: t("offers.see_times"),
             pill: true,
             variant: :primary,
-            href: packages_path(anchor: "calendar"),
+            href: user_signed_in? ? bookings_path(package_id: package.id) : packages_path(anchor: "calendar"),
             aria_label: "#{t('offers.see_times')} - #{package.name}",
             classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold! w-full justify-center"
           ) %>
-          <%# the tap is not the commitment it looks like: the booking form carries
-              a package select, so the choice really is changeable afterwards %>
-          <p class="text-t6 text-taupe text-center m-0"><%= t("offers.calendar_intro") %></p>
+          <%# The booking form still lets a signed-in buyer change this package. %>
+          <p class="text-t6 text-taupe text-center m-0"><%= t(user_signed_in? ? "offers.calendar_intro_signed_in" : "offers.calendar_intro") %></p>
         <% else %>
           <%# nothing sellable here: offer the one route that still works rather
               than a button into a checkout that cannot complete %>
