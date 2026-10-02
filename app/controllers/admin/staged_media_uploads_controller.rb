@@ -26,19 +26,7 @@ module Admin
 
       @upload.with_lock do
         return head :conflict if @upload.completed_at?
-
-        FileUtils.mkdir_p(@upload.directory)
-        temporary = @upload.directory.join("#{index}.tmp")
-        begin
-          File.open(temporary, "wb") do |file|
-            IO.copy_stream(request.body, file, @upload.expected_chunk_size(index) + 1)
-          end
-          return head :unprocessable_entity unless temporary.size == @upload.expected_chunk_size(index)
-
-          File.rename(temporary, @upload.directory.join(index.to_s))
-        ensure
-          File.delete(temporary) if temporary.exist?
-        end
+        return head :unprocessable_content unless @upload.write_chunk(index, request.body)
       end
       head :no_content
     end
@@ -48,37 +36,25 @@ module Admin
         return head :conflict if @upload.completed_at?
         return render json: { error: "Brakuje części pliku." }, status: :unprocessable_entity unless @upload.complete?
 
-        assembled = @upload.directory.join("assembled")
-        File.open(assembled, "wb") do |output|
-          @upload.chunk_count.times do |index|
-            File.open(@upload.directory.join(index.to_s), "rb") { |part| IO.copy_stream(part, output) }
-          end
-        end
-        return head :unprocessable_entity unless assembled.size == @upload.byte_size
-
         target = @upload.target
         return head :not_found unless target
 
-        File.open(assembled, "rb") do |file|
-          content_type = Marcel::MimeType.for(file, name: @upload.filename)
-          file.rewind
-          blob = ActiveStorage::Blob.create_and_upload!(io: file, filename: @upload.filename,
-                                                       content_type: content_type)
+        blob = @upload.assemble_blob
+        return head :unprocessable_content unless blob
 
-          if @upload.video?
-            target.trailer_upload.attach(blob)
-            target.update_column(:trailer_upload_error, nil)
-            ProductTrailerUploadJob.perform_later(target, target.trailer_upload.attachment.id)
-            redirect = edit_admin_product_path(target)
-          else
-            target.audio_upload.attach(blob)
-            target.update_column(:upload_error, nil)
-            AudioChapterUploadJob.perform_later(target, target.audio_upload.attachment.id)
-            redirect = edit_admin_product_path(target.product)
-          end
-          @upload.update!(completed_at: Time.current)
-          render json: { redirect: redirect }
+        if @upload.video?
+          target.trailer_upload.attach(blob)
+          target.update_column(:trailer_upload_error, nil)
+          ProductTrailerUploadJob.perform_later(target, target.trailer_upload.attachment.id)
+          redirect = edit_admin_product_path(target)
+        else
+          target.audio_upload.attach(blob)
+          target.update_column(:upload_error, nil)
+          AudioChapterUploadJob.perform_later(target, target.audio_upload.attachment.id)
+          redirect = edit_admin_product_path(target.product)
         end
+        @upload.update!(completed_at: Time.current)
+        render json: { redirect: redirect }
       end
     ensure
       @upload&.cleanup! if @upload&.completed_at?

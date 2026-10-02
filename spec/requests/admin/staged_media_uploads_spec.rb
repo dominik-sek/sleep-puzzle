@@ -66,4 +66,14 @@ RSpec.describe "Admin staged media uploads", type: :request do
         headers: { "CONTENT_TYPE" => "application/octet-stream" }
     expect(response).to have_http_status(:not_found)
   end
+
+  it "rejects chunk indexes outside the declared range" do
+    upload = StagedMediaUpload.create!(user: admin, target_type: "Product", target_id: product.id,
+                                       filename: "intro.mp4", byte_size: 5, chunk_count: 1)
+
+    put chunk_admin_staged_media_upload_path(upload, index: 1), params: "video",
+        headers: { "CONTENT_TYPE" => "application/octet-stream" }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(upload.directory.exist?).to be(false)
+  end
 end
