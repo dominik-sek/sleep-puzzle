@@ -132,7 +132,11 @@ module Admin
     end
 
     def plain_params
-      params.require(:record).permit(*plain_attributes)
+      attributes = params.require(:record).permit(*plain_attributes)
+      # An emptied number field posts "", which Rails casts to nil and would
+      # override the database's default before the record is inserted.
+      attributes[:position] = 0 if attributes.key?(:position) && attributes[:position].blank?
+      attributes
     end
   end
 end

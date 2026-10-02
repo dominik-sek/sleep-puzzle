@@ -31,6 +31,7 @@ class ContentItem < ApplicationRecord
   translates store: :values
 
   validates :collection_key, presence: true
+  validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :collection_must_be_declared
 
   scope :for_collection, ->(key) { where(collection_key: key).order(:position, :id) }

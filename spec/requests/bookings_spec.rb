@@ -125,6 +125,16 @@ RSpec.describe "Bookings", type: :request do
                    date: 1.week.from_now.to_date.to_s, hour: "08:15" } }
     end
 
+    it "asks for a new slot when a malformed date is submitted" do
+      params = booking_params
+      params[:booking][:date] = "2026-99-99"
+
+      expect { post bookings_path, params: params }.not_to change(Booking, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("bookings.form.reselect_slot"))
+    end
+
     it "refuses a package Paddle cannot price, before writing anything" do
       unpriceable = create_package(name: "Bez ceny", paddle_price_id: "pri_gone")
 

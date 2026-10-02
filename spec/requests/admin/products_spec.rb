@@ -77,6 +77,13 @@ RSpec.describe "Admin::Products", type: :request do
       expect(response).to redirect_to(admin_products_path)
     end
 
+    it "uses the default order when the position field is cleared" do
+      expect { post admin_products_path, params: product_params(position: "") }
+        .to change(Product, :count).by(1)
+
+      expect(Product.last.position).to eq(0)
+    end
+
     it "re-renders with errors when the name is missing" do
       params = product_params(translations: { "name" => { "pl" => "", "en" => "" } })
 

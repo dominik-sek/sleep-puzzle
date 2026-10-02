@@ -201,6 +201,8 @@ class BookingsController < ApplicationController
     return nil if booking_params[:date].blank? || booking_params[:hour].blank?
 
     Time.zone.parse("#{booking_params[:date]} #{booking_params[:hour]}")
+  rescue ArgumentError
+    nil
   end
 
   def booking_params

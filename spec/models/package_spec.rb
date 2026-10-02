@@ -93,6 +93,11 @@ RSpec.describe Package, type: :model do
       expect(build_package(duration: 4)).to be_valid
       expect(build_package(duration: nil)).to be_valid
     end
+
+    it "rejects a missing or negative display order" do
+      expect(build_package(position: nil)).not_to be_valid
+      expect(build_package(position: -1)).not_to be_valid
+    end
   end
 
   describe "scopes" do

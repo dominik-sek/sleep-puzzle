@@ -15,6 +15,8 @@ module Purchasable
     include Translatable
 
     validates :paddle_price_id, presence: true
+    validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    validates :published, inclusion: { in: [ true, false ] }
     validate :name_in_default_locale
 
     scope :published, -> { where(published: true) }

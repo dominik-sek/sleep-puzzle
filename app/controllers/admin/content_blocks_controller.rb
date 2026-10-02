@@ -49,6 +49,9 @@ module Admin
         redirect_to admin_content_blocks_path(open: section.full_key),
                     notice: "Zapisano „#{section.label}”."
       end
+    rescue ActiveRecord::RecordInvalid => error
+      redirect_to admin_content_blocks_path(open: section.full_key),
+                  alert: "Nie udało się zapisać „#{section.label}”: #{error.record.errors.full_messages.to_sentence}"
     end
 
     private

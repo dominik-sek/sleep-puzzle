@@ -99,6 +99,23 @@ RSpec.describe "Admin::ContentItems", type: :request do
       expect(item.value_for("body", :pl)).to eq("Opis")
     end
 
+    it "rejects a malformed position without losing the section's existing content" do
+      item = ContentItem.create!(collection_key: "home.process", position: 1)
+      block = ContentBlock.find_by!(key: "home.process.title")
+      original_title = block.value_pl
+
+      patch admin_content_blocks_path, params: {
+        section: "home.process",
+        fields: { title: { pl: "Nowy tytuł" } },
+        items: { item.id.to_s => { position: "abc" } }
+      }
+
+      expect(response).to redirect_to(admin_content_blocks_path(open: "home.process"))
+      expect(flash[:alert]).to include("Nie udało się zapisać")
+      expect(item.reload.position).to eq(1)
+      expect(block.reload.value_pl).to eq(original_title)
+    end
+
     it "ignores fields that are not declared on the collection" do
       item = ContentItem.create!(collection_key: "home.process", position: 1)
 

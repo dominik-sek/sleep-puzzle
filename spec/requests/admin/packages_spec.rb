@@ -120,6 +120,14 @@ RSpec.describe "Admin::Packages", type: :request do
       expect(response).to redirect_to(admin_packages_path)
     end
 
+    it "uses the default order when the position field is cleared" do
+      expect { post admin_packages_path, params: package_params(position: "") }
+        .to change(Package, :count).by(1)
+
+      expect(Package.last.position).to eq(0)
+      expect(response).to redirect_to(admin_packages_path)
+    end
+
     it "splits a list field into one entry per line" do
       post admin_packages_path, params: package_params
 
@@ -137,6 +145,14 @@ RSpec.describe "Admin::Packages", type: :request do
 
       expect { post admin_packages_path, params: params }.not_to change(Package, :count)
       expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("Nie udało się zapisać")
+    end
+
+    it "re-renders instead of raising a database error for an empty visibility value" do
+      expect { post admin_packages_path, params: package_params(published: "") }
+        .not_to change(Package, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("Nie udało się zapisać")
     end
 
@@ -166,6 +182,15 @@ RSpec.describe "Admin::Packages", type: :request do
       expect(I18n.with_locale(:en) { package.name }).to eq("Quick relief")
       expect(package.paddle_price_id).to eq("pri_999")
       expect(package).not_to be_published
+    end
+
+    it "uses the default order when the position field is cleared" do
+      package = create_package(position: 3)
+
+      patch admin_package_path(package), params: { record: { position: "" } }
+
+      expect(package.reload.position).to eq(0)
+      expect(response).to redirect_to(admin_packages_path)
     end
   end
 
