@@ -76,7 +76,7 @@ module Card
     end
 
     def body_classes
-      [body_padding_classes, ("flex grow flex-col" if @stretch_body)].compact.join(" ")
+      [ body_padding_classes, ("flex grow flex-col" if @stretch_body) ].compact.join(" ")
     end
 
     def footer_classes
