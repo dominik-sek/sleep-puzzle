@@ -27,6 +27,7 @@ module Card
     # @param divide [Boolean] Add dividers between header, body, footer
     # @param full_width_mobile [Boolean] Edge-to-edge on mobile
     # @param classes [String] Additional CSS classes
+    # @param stretch_body [Boolean] Let the body fill a card with a fixed or stretched height
     def initialize(
       variant: :default,
       padding: :md,
@@ -37,7 +38,8 @@ module Card
       clickable: false,
       divide: false,
       full_width_mobile: false,
-      classes: nil
+      classes: nil,
+      stretch_body: false
     )
       super()
       @variant = VARIANTS.include?(variant) ? variant : :default
@@ -50,6 +52,7 @@ module Card
       @divide = divide
       @full_width_mobile = full_width_mobile
       @classes = classes
+      @stretch_body = stretch_body
     end
 
     def wrapper_classes
@@ -73,7 +76,7 @@ module Card
     end
 
     def body_classes
-      body_padding_classes
+      [body_padding_classes, ("flex grow flex-col" if @stretch_body)].compact.join(" ")
     end
 
     def footer_classes

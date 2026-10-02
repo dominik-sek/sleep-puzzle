@@ -14,9 +14,9 @@
 %>
 <% price_label = package_price_label(package) %>
 
-<%= render Card::Component.new(classes: "h-full") do |card| %>
+<%= render Card::Component.new(classes: "grow flex flex-col", stretch_body: true) do |card| %>
   <% card.with_body do %>
-    <div class="flex flex-col h-full gap-6 text-left">
+    <div class="flex grow flex-col gap-6 text-left">
       <div class="flex flex-col gap-2">
         <%# break-words: a long Polish compound in a ~370px column would otherwise
             clip against the card's overflow-hidden wrapper rather than wrap %>

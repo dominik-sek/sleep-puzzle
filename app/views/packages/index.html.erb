@@ -15,19 +15,15 @@
     </div>
 
     <% if @packages.any? %>
-      <%# auto-fit rather than fixed breakpoints, the same way the shop grid does
-          it: the package list is owner-managed, so a fourth package added in the
-          panel has to divide the row rather than orphan on one of its own. The
-          380px ceiling stops a single package stretching to the full 1240px, and
-          justify-center keeps one or two cards under the centred hero instead of
-          hanging off its left edge. min(100%,280px) is the floor so a narrow
-          phone gets one full-width column rather than a horizontal scrollbar.
-          items-stretch so cards in a row match height regardless of list length. %>
-      <div class="grid gap-6 items-stretch w-full justify-center [grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),380px))]">
+      <%# Three packages use three explicit columns from tablet width upward, so
+          the last card cannot wrap just because a minimum card width is unmet.
+          One or two packages keep their narrower, centred layout. %>
+      <% layout = { 1 => "sm:grid-cols-1 max-w-[376px]", 2 => "sm:grid-cols-2 max-w-[776px]" }.fetch(@packages.size, "sm:grid-cols-2 md:grid-cols-3 max-w-[1176px]") %>
+      <div class="grid grid-cols-1 items-stretch gap-6 w-full <%= layout %>">
         <% @packages.each do |package| %>
           <%# anchor for the home page's "Zobacz szczegóły"; scroll-mt keeps the
               card clear of the navbar when it is jumped to %>
-          <div id="<%= dom_id(package) %>" class="scroll-mt-24 h-full">
+          <div id="<%= dom_id(package) %>" class="scroll-mt-24 flex min-w-0 flex-col">
             <%= render "packages/card", package: package %>
           </div>
         <% end %>
