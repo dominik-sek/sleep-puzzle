@@ -72,6 +72,18 @@ RSpec.describe "Admin::Products", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Bajka o sowie")
     end
+
+    it "prefills Trix with the existing includes list and markdown formatting" do
+      product = create_product(kind: :audio_process, includes: [ "Wstęp do procesu", "- **Siedem** nagrań", "- Plan działania" ])
+
+      get edit_admin_product_path(product)
+
+      page = Capybara.string(response.body)
+      editor = page.find('trix-editor[id="record-includes-pl"]')
+      value = page.find("##{editor[:input]}", visible: :all)[:value]
+      expect(value).to include("<p>Wstęp do procesu</p>", "<li><strong>Siedem</strong> nagrań</li>", "<li>Plan działania</li>")
+      expect(page).to have_css('trix-editor[id="record-includes-en"]')
+    end
   end
 
   describe "POST /admin/products" do
@@ -138,6 +150,28 @@ RSpec.describe "Admin::Products", type: :request do
       expect(product).to be_audio_process
       expect(I18n.with_locale(:en) { product.name }).to eq("Evening ritual")
       expect(I18n.with_locale(:pl) { product.name }).to eq("Bajka o sowie")
+    end
+
+    it "saves formatted includes per language and clears the old list" do
+      product = create_product(kind: :audio_process, includes: [ "Stara pozycja" ])
+
+      patch admin_product_path(product), params: {
+        record: { includes_rich: {
+          pl: "<ul><li><strong>Nowa</strong> pozycja</li></ul>",
+          en: "<ul><li>New item</li></ul>"
+        } }
+      }
+
+      expect(response).to redirect_to(admin_products_path)
+      product.reload
+      expect(product.raw_translation(:includes, :pl)).to eq([])
+      expect(product.includes_content.to_s).to include("<strong>Nowa</strong>")
+      expect(I18n.with_locale(:en) { product.includes_content.to_s }).to include("New item")
+
+      get edit_admin_product_path(product)
+      editor = Capybara.string(response.body).find('trix-editor[id="record-includes-pl"]')
+      expect(Capybara.string(response.body).find("##{editor[:input]}", visible: :all)[:value])
+        .to include("<strong>Nowa</strong>")
     end
   end
 

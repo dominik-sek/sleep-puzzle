@@ -106,5 +106,6 @@ Needs Ruby 4.0.5, PostgreSQL, libvips and ffmpeg.
 | | |
 | --- | --- |
 | [docs/content-blocks.md](docs/content-blocks.md) | The content-block schema in full |
+| [docs/production-db-local.md](docs/production-db-local.md) | Download and restore a production database copy locally |
 | [PRODUCT.md](PRODUCT.md) | Who this is for and what it's meant to do |
 | [DESIGN.md](DESIGN.md) | The design system it's built to |

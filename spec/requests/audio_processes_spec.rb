@@ -12,6 +12,18 @@ RSpec.describe "Audio process landing", type: :request do
     expect(response.body).not_to include("Bajka")
   end
 
+  it "formats existing markdown in the includes list" do
+    create_product(kind: :audio_process, includes: [ "Wstęp do procesu", "**Program**", "- **Siedem** nagrań", "- Plan działania" ])
+
+    get audio_process_path
+
+    page = Capybara.string(response.body)
+    expect(page).to have_css(".trix-content p", text: "Wstęp do procesu")
+    expect(page).to have_css(".trix-content li strong", text: "Siedem")
+    expect(page).to have_css(".trix-content li", text: "Plan działania")
+    expect(response.body).not_to include("**Siedem**")
+  end
+
   it "shows a truthful empty state when no audio process is published" do
     get audio_process_path
 

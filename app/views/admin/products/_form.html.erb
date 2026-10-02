@@ -32,8 +32,7 @@
              label: "O tym nagraniu", type: :textarea,
              hint: "dłuższy opis na stronie produktu" %>
 
-  <%= render "admin/shared/translated_input", record: product, field: "includes",
-             label: "Co dostajesz", type: :list %>
+  <%= render "admin/products/includes_input", product: product %>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="flex flex-col gap-1.5">

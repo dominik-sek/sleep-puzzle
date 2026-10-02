@@ -691,6 +691,15 @@ trix-editor:empty:not(:focus)::before {
   @apply mb-4 list-decimal pl-6;
 }
 
+.product-includes .trix-content {
+  @apply text-cream;
+}
+
+.audio-includes .trix-content li + li,
+.product-includes .trix-content li + li {
+  @apply mt-3;
+}
+
 .trix-content blockquote {
   @apply mb-4 border-l-2 border-accent pl-4 italic;
 }

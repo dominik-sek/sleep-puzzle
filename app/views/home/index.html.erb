@@ -31,12 +31,12 @@
             <path class="offer-puzzle__seam" d="M40 0 V20 C51 20 60 29 60 40 C60 51 51 60 40 60 V80" />
           </svg>
           <span class="text-t6 font-bold uppercase text-accent"><%= t("offers.audio") %></span>
-          <span class="font-display text-t3 font-bold"><%= content_block("home.choices.audio") %></span>
+          <span class="text-t5"><%= content_block("home.choices.audio") %></span>
           <span class="inline-flex items-center gap-2 text-t5 font-bold text-accent"><%= t("offers.explore") %><%= icon "arrow-right", class: "size-5" %></span>
         <% end %>
         <%= link_to packages_path, class: "offer-puzzle offer-puzzle--one-to-one group flex min-h-64 flex-col justify-between gap-8 bg-surface p-8 text-cream no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
           <span class="text-t6 font-bold uppercase text-accent"><%= t("offers.one_to_one") %></span>
-          <span class="font-display text-t3 font-bold"><%= content_block("home.choices.one_to_one") %></span>
+          <span class="text-t5"><%= content_block("home.choices.one_to_one") %></span>
           <span class="inline-flex items-center gap-2 text-t5 font-bold text-accent"><%= t("offers.explore") %><%= icon "arrow-right", class: "size-5" %></span>
         <% end %>
       </div>

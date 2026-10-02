@@ -8,9 +8,11 @@
         <div class="trix-lead mt-5"><%= content_block("audio_landing.hero.intro") %></div>
         <% if @product %>
           <h2 class="mt-8 font-display text-t3 text-accent"><%= @product.name %></h2>
-          <p class="text-t5 text-tan"><%= @product.description %></p>
-          <p class="font-display text-t3 font-bold text-cream"><%= product_price_label(@product) || content_block("shop.card.unavailable") %></p>
-          <%= render "products/cart_actions", product: @product if product_price_label(@product) %>
+          <p class="mt-3 text-t5 text-tan"><%= @product.description %></p>
+          <p class="mt-6 font-display text-t3 font-bold text-cream"><%= product_price_label(@product) || content_block("shop.card.unavailable") %></p>
+          <% if product_price_label(@product) %>
+            <div class="mt-6"><%= render "products/cart_actions", product: @product %></div>
+          <% end %>
         <% else %>
           <p class="mt-8 text-t5 text-tan"><%= content_block("audio_landing.hero.empty") %></p>
         <% end %>
@@ -37,14 +39,12 @@
       <div class="mx-auto grid w-full max-w-[1080px] gap-10 md:grid-cols-2">
         <div>
           <h2 class="font-display text-t2 font-bold text-cream"><%= content_block("audio_landing.details.for_whom") %></h2>
-          <p class="text-t5 text-tan"><%= @product.long_description.presence || @product.description %></p>
+          <p class="mt-4 text-t5 text-tan"><%= @product.long_description.presence || @product.description %></p>
         </div>
-        <% if @product.includes.any? %>
+        <% if @product.includes_content.present? %>
           <div>
             <h2 class="font-display text-t2 font-bold text-cream"><%= content_block("audio_landing.details.includes") %></h2>
-            <ul class="space-y-3 text-t5 text-tan">
-              <% @product.includes.each do |item| %><li><%= item %></li><% end %>
-            </ul>
+            <div class="trix-copy audio-includes mt-4"><%= @product.includes_content %></div>
           </div>
         <% end %>
       </div>

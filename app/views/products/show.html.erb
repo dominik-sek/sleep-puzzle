@@ -82,7 +82,7 @@
 
       <%= render "products/chapter_outline", product: @product if @product.audio_process? %>
 
-      <% if @product.long_description.present? || @product.includes.any? %>
+      <% if @product.long_description.present? || @product.includes_content.present? %>
         <div class="mt-11 md:mt-16 grid gap-7 md:gap-12 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
           <% if @product.long_description.present? %>
             <div>
@@ -95,21 +95,12 @@
             </div>
           <% end %>
 
-          <% if @product.includes.any? %>
+          <% if @product.includes_content.present? %>
             <div>
               <h2 class="mb-3.5 font-display font-bold text-t3 text-cream">
                 <%= content_block("shop.product.includes") %>
               </h2>
-              <ul class="flex flex-col gap-3 list-none p-0 m-0">
-                <% @product.includes.each do |item| %>
-                  <li class="flex items-start gap-3">
-                    <%# the system's own mark, not a font glyph: U+2726 sits outside both
-                        self-hosted subsets and renders from the OS fallback %>
-                    <%= icon "astroid", class: "size-4 shrink-0 mt-1 text-accent" %>
-                    <span class="text-t5 text-cream"><%= item %></span>
-                  </li>
-                <% end %>
-              </ul>
+              <div class="product-includes"><%= @product.includes_content %></div>
             </div>
           <% end %>
         </div>

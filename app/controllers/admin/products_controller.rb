@@ -11,6 +11,21 @@ module Admin
 
     private
 
+    def assign_translations
+      super
+
+      submitted = params.dig(:record, :includes_rich)
+      return if submitted.blank?
+
+      Translatable::LOCALES.each do |locale|
+        value = submitted[locale.to_s]
+        next if value.nil?
+
+        @record.public_send(:"includes_#{locale}=", value)
+        @record.assign_translation_list(:includes, locale, [])
+      end
+    end
+
     # the row badge asks each product about its attachment
     def index_scope
       super.with_attached_audio_upload.includes(audio_chapters: { audio_upload_attachment: :blob })

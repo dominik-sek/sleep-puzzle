@@ -48,7 +48,12 @@ node_modules
 # SimpleCov coverage reports
 /coverage
 
+# Local database exports (may contain customer data and tokens).
+/backups/
+
 !/.env.example
 
 # macOS
 .DS_Store
+/docs/production-db-local.md
+/script/sync_production_db

@@ -33,6 +33,8 @@ class Product < ApplicationRecord
   # set.
   has_one_attached :audio_upload
   has_one_attached :trailer_upload
+  has_rich_text :includes_pl
+  has_rich_text :includes_en
 
   # One stream for the whole catalogue rather than one per product: the index
   # would otherwise open a subscription per row, and an upload result has to
@@ -69,10 +71,34 @@ class Product < ApplicationRecord
     "bedtime_story" => "🧸"
   }.freeze
 
-  # `long_description` is the "O tym nagraniu" prose on the product page, and
-  # `includes` the "Co dostajesz" bullets beside it - the same shape as a
-  # package's `core`, so the admin's one-bullet-per-line editor already handles it.
+  # Older products keep their "Co dostajesz" bullets in the translated includes
+  # list. New edits use Action Text; the old list is rendered and prefilled until
+  # that language is saved from Trix.
   translates :name, :description, :long_description, lists: %i[includes]
+
+  def includes_content(locale = I18n.locale)
+    locales = [ locale.to_sym, I18n.default_locale ].uniq
+
+    locales.each do |language|
+      rich = public_send(:"includes_#{language}")
+      return rich if rich.body.present?
+
+      legacy = raw_translation(:includes, language)
+      return ActionText::Content.new(legacy_includes_html(legacy)) if Array(legacy).any?
+    end
+
+    nil
+  end
+
+  # The editor must use only this language's value; falling back to Polish in an
+  # empty English field would silently save the Polish copy as a translation.
+  def includes_editor_html(locale)
+    rich = public_send(:"includes_#{locale}")
+    return rich.body.to_trix_html if rich.body.present?
+
+    legacy = raw_translation(:includes, locale)
+    legacy_includes_html(legacy) if Array(legacy).any?
+  end
 
   # A story needs its single recording; an audioprocess needs a ready chapter.
   # The scope also keeps rows changed outside validations out of the shop.
@@ -169,6 +195,39 @@ class Product < ApplicationRecord
   end
 
   private
+
+  def legacy_includes_html(items)
+    lines = Array(items).flat_map { |item| item.to_s.lines }.map(&:strip).reject(&:blank?)
+    has_marked_bullets = audio_process? && lines.any? { |line| line.match?(/\A[-*+]\s+/) }
+    parts = []
+    list_open = false
+
+    lines.each do |line|
+      bullet = line.match(/\A(?:[-*+]\s+|\d+[.)]\s+)(.*)\z/)
+      if bullet || !has_marked_bullets
+        unless list_open
+          parts << "<ul>"
+          list_open = true
+        end
+        parts << "<li>#{legacy_includes_inline(bullet ? bullet[1] : line)}</li>"
+      else
+        if list_open
+          parts << "</ul>"
+          list_open = false
+        end
+        parts << "<p>#{legacy_includes_inline(line)}</p>"
+      end
+    end
+
+    parts << "</ul>" if list_open
+    parts.join
+  end
+
+  def legacy_includes_inline(text)
+    escaped = ERB::Util.html_escape(text)
+    escaped = escaped.gsub(/\*\*(.+?)\*\*/, '<strong>\1</strong>')
+    escaped.gsub(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/, '<em>\1</em>')
+  end
 
   def ready_chapter_for_publication
     return unless published? && audio_process?
