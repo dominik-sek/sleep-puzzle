@@ -1,4 +1,6 @@
-<% testimonials = content_items("testimonials.entries").select { |item| item["quote"].present? && item["author"].present? } %>
+<% testimonials = local_assigns.fetch(:testimonials) do
+     content_items("testimonials.entries").select { |item| item["quote"].present? && item["author"].present? }
+   end %>
 <% if testimonials.any? %>
   <section class="w-full bg-ink-soft px-5 py-16" aria-labelledby="testimonials-title">
     <div class="mx-auto max-w-[1240px]">

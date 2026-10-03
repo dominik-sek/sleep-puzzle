@@ -128,6 +128,26 @@ home:
           default:
             pl: "<div>Nie wierzę w jeden schemat, który pasuje każdemu dziecku. Nie obiecuję szybkich cudów ani nie dokładam presji rodzicom, którzy już robią bardzo dużo.</div>"
             en: "<div>I don't believe in one routine for every child. I don't promise instant miracles or add pressure to parents who are already doing so much.</div>"
+    faq:
+      label: Najczęściej zadawane pytania
+      fields:
+        title:
+          label: Nagłówek sekcji
+          type: plain
+          default:
+            pl: "Najczęściej zadawane pytania"
+            en: "Frequently asked questions"
+      collection:
+        item_label: Pytanie
+        fields:
+          question:
+            label: Pytanie
+            type: plain
+          answer:
+            label: Odpowiedź
+            type: plain
+            multiline: true
+        defaults: []
     stats:
       label: Liczby
       admin_hidden: true

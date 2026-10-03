@@ -56,9 +56,28 @@
     </div>
   <% end %>
 
-  <%= render "shared/testimonials" %>
+  <% testimonials = content_items("testimonials.entries").select { |item| item["quote"].present? && item["author"].present? } %>
+  <%= render "shared/testimonials", testimonials: testimonials %>
 
-  <%= render Section::Component.new(background: :ink_soft, align: :center) do |section| %>
+  <% next_background = testimonials.any? ? :ink : :ink_soft %>
+  <% faq_items = content_items("home.faq").select { |item| item["question"].present? && item["answer"].present? } %>
+  <% if faq_items.any? %>
+    <section class="w-full <%= next_background == :ink ? "bg-ink" : "bg-ink-soft" %> px-5 py-16" aria-labelledby="faq-title">
+      <div class="mx-auto max-w-[1080px]">
+        <h2 id="faq-title" class="mb-8 font-display text-t2 font-bold text-cream"><%= content_block("home.faq.title") %></h2>
+        <%= render Accordion::Component.new(variant: :bordered) do |accordion| %>
+          <% faq_items.each do |item| %>
+            <% accordion.with_item(title: item["question"]) do %>
+              <div class="text-t5 font-normal leading-relaxed text-tan"><%= simple_format(item["answer"]) %></div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+    <% next_background = next_background == :ink ? :ink_soft : :ink %>
+  <% end %>
+
+  <%= render Section::Component.new(background: next_background, align: :center) do |section| %>
     <h2 class="font-display text-t2 font-bold text-cream"><%= content_block("home.closing.quote") %></h2>
     <p class="text-t4 text-tan"><%= content_block("home.closing.lead") %></p>
     <% section.with_actions do %>

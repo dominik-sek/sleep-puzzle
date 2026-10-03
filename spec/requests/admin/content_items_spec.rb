@@ -31,6 +31,27 @@ RSpec.describe "Admin::ContentItems", type: :request do
       expect(response).to redirect_to(admin_content_blocks_path(open: "home.process"))
     end
 
+    it "lets the admin add a FAQ question and answer" do
+      get admin_content_blocks_path(open: "home.faq")
+
+      expect(response.body).to include('id="section-home-faq"', "Dodaj: pytanie")
+
+      post admin_content_items_path, params: { collection_key: "home.faq" }
+      item = ContentItem.for_collection("home.faq").last
+
+      expect(response).to redirect_to(admin_content_blocks_path(open: "home.faq"))
+      get admin_content_blocks_path(open: "home.faq")
+      expect(response.body).to include("items[#{item.id}][values][question][pl]", "items[#{item.id}][values][answer][pl]")
+
+      patch admin_content_blocks_path, params: {
+        section: "home.faq",
+        items: { item.id.to_s => { values: { question: { pl: "Czy to działa?" }, answer: { pl: "Tak." } } } }
+      }
+
+      expect(item.reload.value_for("question", :pl)).to eq("Czy to działa?")
+      expect(item.value_for("answer", :pl)).to eq("Tak.")
+    end
+
     it "positions each new item after the last" do
       # 1..3 are home.process's declared defaults, materialised by sync!
       3.times { post admin_content_items_path, params: { collection_key: "home.process" } }
