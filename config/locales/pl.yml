@@ -139,6 +139,8 @@ pl:
       awaiting: "Czekamy na potwierdzenie od operatora płatności…"
       back: "Wróć do panelu"
   packages:
+    comparison_alt: "Porównanie zawartości trzech pakietów współpracy"
+    comparison_hint: "Kliknij grafikę, aby ją powiększyć"
     duration:
       one: "Czas trwania wsparcia: %{count} tydzień"
       few: "Czas trwania wsparcia: %{count} tygodnie"

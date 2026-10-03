@@ -68,6 +68,40 @@ RSpec.describe "Packages", type: :request do
       expect(response.body).to include("Dodatkowo", "Dodatkowa konsultacja 30 min")
     end
 
+    it "shows an existing comparison upload below the package cards" do
+      create_package(name: "Szybka ulga")
+      blob = ActiveStorage::Blob.create_and_upload!(
+        io: file_fixture("photo.png").open,
+        filename: "comparison.png",
+        content_type: "image/png"
+      )
+      attachment = ActionText::Attachment.from_attachable(blob)
+      ContentBlock.create!(key: "packages.collaboration.body", body_pl: "<div>Opis współpracy #{attachment.to_html}</div>")
+
+      get packages_path
+
+      page = Capybara.string(response.body)
+      expect(page).to have_css("#package-comparison img[alt='Porównanie zawartości trzech pakietów współpracy']")
+      expect(page).to have_css("#package-comparison [data-controller='lightbox'] a[data-pswp-src][data-pswp-width][data-pswp-height]")
+      expect(page).to have_no_css(".trix-copy.max-w-2xl img")
+      expect(response.body.index("Szybka ulga")).to be < response.body.index('id="package-comparison"')
+      expect(response.body).to include("Opis współpracy")
+    end
+
+    it "uses the dedicated CMS image when one has been uploaded" do
+      create_package(name: "Szybka ulga")
+      block = ContentBlock.create!(key: "packages.comparison.image")
+      block.image.attach(io: file_fixture("photo.png").open, filename: "comparison.png", content_type: "image/png")
+
+      get packages_path
+
+      expect(response.body).to include('id="package-comparison"')
+      page = Capybara.string(response.body)
+      expect(page).to have_css("#package-comparison img[alt='Porównanie zawartości trzech pakietów współpracy']")
+      expect(page).to have_css("#package-comparison a[data-pswp-src][data-pswp-width][data-pswp-height]")
+      expect(response.body.index("Szybka ulga")).to be < response.body.index('id="package-comparison"')
+    end
+
     # an empty list should take its heading with it rather than leave a stub
     it "leaves out a list the owner has not filled in" do
       create_package(name: "Szybka ulga")

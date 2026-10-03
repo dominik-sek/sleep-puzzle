@@ -9,6 +9,13 @@ zdjęcia, układ list i formatowanie tekstu sformatowanego pojawiają się po
 zapisaniu sekcji. Treści zależne od stanu strony, na przykład komunikat po
 zakupie, można zobaczyć tylko wtedy, gdy ten stan występuje w podglądzie.
 
+Na stronie „Pakiety” grafikę tabeli wgrywa się w sekcji „Porównanie pod
+pakietami” → „Grafika porównawcza”. Obraz pojawia się pod kartami pakietów.
+Dotychczasową grafikę osadzoną w „Opisie współpracy” strona pokazuje w tym
+samym miejscu, dopóki nie zostanie wgrany obraz do osobnego pola. Po
+przeniesieniu warto usunąć stary obraz z opisu, aby późniejsze usunięcie
+grafiki porównawczej nie przywróciło starej wersji.
+
 Lokalne konto testowe można odtworzyć poleceniem `bin/rails admin:local`
 (tylko w środowisku development).
 
@@ -51,7 +58,7 @@ has written.
 ## Types of content
 - plain text
 - rich text (Trix)
-- image upload (one per language)
+- image upload (one shared by both languages)
 - repeating list (collection)
 
 example of collection:

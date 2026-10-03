@@ -5,6 +5,15 @@ RSpec.describe GoogleCalendarService do
 
   before { allow(AuthorizeCalendarService).to receive(:call).and_return(authorizer) }
 
+  it "does not read a stored calendar grant in development by default" do
+    allow(Rails.env).to receive(:development?).and_return(true)
+    allow(ENV).to receive(:[]).with("ENABLE_GOOGLE_CALENDAR_IN_DEVELOPMENT").and_return(nil)
+
+    expect(AuthorizeCalendarService).not_to receive(:call)
+    expect { described_class.call }
+      .to raise_error(described_class::NotConnected, /disabled in development/)
+  end
+
   describe "when there is no usable calendar" do
     # Nothing in the token store, because nobody has been through the OAuth flow
     # in the panel yet. This used to hand back a service with a nil authorization,

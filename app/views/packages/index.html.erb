@@ -1,4 +1,5 @@
 <% content_for :title, page_title(t("nav.packages")) %>
+<% collaboration_body, embedded_comparison = package_collaboration_parts %>
 <div class="min-h-screen flex flex-col items-center">
   <%= render Section::Component.new(
     background: :ink,
@@ -11,7 +12,7 @@
       <div class="text-t4 text-tan max-w-2xl">
         <%= content_block("packages.hero.subtitle") %>
       </div>
-      <div class="trix-copy max-w-2xl"><%= content_block("packages.collaboration.body") %></div>
+      <div class="trix-copy max-w-2xl"><%= collaboration_body %></div>
     </div>
 
     <% if @packages.any? %>
@@ -28,6 +29,21 @@
           </div>
         <% end %>
       </div>
+      <% comparison_image = package_comparison_image(embedded_comparison) %>
+      <% if comparison_image.present? %>
+        <div class="mt-12 w-full max-w-[640px]" id="package-comparison">
+          <%= render Lightbox::Component.new(variant: :single, show_download_button: false,
+                                             show_dots_indicator: false, classes: "block w-full") do |lightbox| %>
+            <% lightbox.with_item src: comparison_image[:src],
+                                  thumbnail_src: comparison_image[:thumbnail_src],
+                                  width: comparison_image[:width].positive? ? comparison_image[:width] : 800,
+                                  height: comparison_image[:height].positive? ? comparison_image[:height] : 1100,
+                                  alt: t("packages.comparison_alt"),
+                                  classes: "w-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent" %>
+          <% end %>
+          <p class="mt-3 text-center text-t6 text-taupe"><%= t("packages.comparison_hint") %></p>
+        </div>
+      <% end %>
     <% else %>
       <p class="text-t4 text-tan max-w-2xl">
         <%= content_block("packages.empty.body") %>

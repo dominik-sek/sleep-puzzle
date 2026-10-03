@@ -15,6 +15,10 @@ class GoogleCalendarService < ApplicationService
   class NoCalendarSelected < NotConnected; end
 
   def call
+    if Rails.env.development? && ENV["ENABLE_GOOGLE_CALENDAR_IN_DEVELOPMENT"] != "true"
+      raise NotConnected, "Google Calendar is disabled in development"
+    end
+
     @service = Google::Apis::CalendarV3::CalendarService.new
     @service.authorization = credentials
     self

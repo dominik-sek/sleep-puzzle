@@ -332,6 +332,12 @@ packages:
           default:
             pl: "Zapytaj o ten pakiet"
             en: "Ask about this package"
+    comparison:
+      label: Porównanie pod pakietami
+      fields:
+        image:
+          label: Grafika porównawcza
+          type: image
     empty:
       label: Gdy nie ma pakietów
       fields:
