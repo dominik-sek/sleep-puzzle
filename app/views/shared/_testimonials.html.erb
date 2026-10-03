@@ -16,7 +16,8 @@
         <% testimonials.each do |item| %>
           <% carousel.with_slide(classes: "!select-text") do %>
             <%= render Testimonial::Component.new(
-              quote: item["quote"], author_name: item["author"], effect: item["effect"],
+              quote: item["quote"], author_name: item["author"],
+              author_title: item["author_title"], author_image: item["avatar"],
               variant: :card, size: :md
             ) %>
           <% end %>

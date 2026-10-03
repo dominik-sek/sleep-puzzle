@@ -35,8 +35,8 @@ module Admin
 
       ContentBlock.transaction do
         save_section(section)
-        save_items(section)
-        problems = save_images(section)
+        item_problems = save_items(section)
+        problems = item_problems + save_images(section)
       end
 
       # A rejected upload does not undo the copy that saved alongside it - the
@@ -128,7 +128,9 @@ module Admin
     def save_items(section)
       collection = section.collection
       submitted = params[:items]
-      return if collection.nil? || submitted.blank?
+      return [] if collection.nil? || submitted.blank?
+
+      problems = []
 
       ContentItem.for_collection(collection.full_key).each do |item|
         attributes = submitted[item.id.to_s]
@@ -143,8 +145,29 @@ module Admin
           end
         end
 
+        if collection.full_key == "testimonials.entries"
+          if attributes[:remove_avatar] == "1"
+            item.avatar.purge_later
+          elsif (file = attributes[:avatar]).present?
+            problem = avatar_rejection_for(file)
+            problem ? problems << problem : item.avatar = file
+          end
+        end
+
         item.save!
       end
+
+      problems
+    end
+
+    def avatar_rejection_for(file)
+      unless file.content_type.in?(ContentBlock::IMAGE_CONTENT_TYPES)
+        return "„#{file.original_filename}” nie jest obsługiwanym obrazem (PNG, JPG, WEBP, AVIF)"
+      end
+
+      return unless file.size > ContentBlock::IMAGE_MAX_BYTES
+
+      "„#{file.original_filename}” jest za duży (limit #{helpers.number_to_human_size(ContentBlock::IMAGE_MAX_BYTES)})"
     end
 
     # Uploads, read key by key from the registry the same way item values are, so

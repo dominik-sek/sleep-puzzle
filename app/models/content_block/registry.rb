@@ -62,9 +62,17 @@ class ContentBlock
 
     class << self
       def pages
-        # reloaded every request in development so editing the YAML doesn't need
-        # a server restart; built once everywhere else
-        return build_pages if Rails.env.development?
+        # In development, refresh only when the YAML changes. Building this tree
+        # for every field lookup makes the CMS preview parse the file hundreds of
+        # times in a single request.
+        if Rails.env.development?
+          modified_at = PATH.mtime
+          if @pages.nil? || @pages_mtime != modified_at
+            @pages = build_pages
+            @pages_mtime = modified_at
+          end
+          return @pages
+        end
 
         @pages ||= build_pages
       end

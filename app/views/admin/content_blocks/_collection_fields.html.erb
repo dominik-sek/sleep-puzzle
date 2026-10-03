@@ -48,6 +48,21 @@
           <% end %>
         </div>
       <% end %>
+
+      <% if collection.full_key == "testimonials.entries" %>
+        <div class="flex flex-col gap-2">
+          <label for="item-<%= item.id %>-avatar" class="text-t6 text-tan">Zdjęcie autora (opcjonalnie)</label>
+          <% if item.avatar.attached? %>
+            <%= image_tag item.avatar.variant(resize_to_fill: [ 96, 96 ]), alt: "", class: "size-16 rounded-full object-cover" %>
+            <label class="flex items-center gap-2 text-t6 text-tan">
+              <%= check_box_tag "items[#{item.id}][remove_avatar]", "1", false %> Usuń zdjęcie przy zapisie
+            </label>
+          <% end %>
+          <%= file_field_tag "items[#{item.id}][avatar]", id: "item-#{item.id}-avatar",
+                             accept: ContentBlock::IMAGE_CONTENT_TYPES.join(","), class: "form-control" %>
+          <p class="text-t6 text-taupe">PNG, JPG, WEBP lub AVIF, do <%= number_to_human_size(ContentBlock::IMAGE_MAX_BYTES) %>. Bez zdjęcia pojawią się inicjały.</p>
+        </div>
+      <% end %>
     </div>
   <% end %>
 </div>

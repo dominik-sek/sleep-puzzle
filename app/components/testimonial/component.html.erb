@@ -25,19 +25,24 @@
   <% end %>
 
   <% if card? && !centered? %>
-    <% if author_image.present? %>
-      <div class="flex items-center mb-4">
-        <div class="<%= avatar_wrapper_classes %>">
-          <img src="<%= author_image %>" alt="<%= author_name %>" class="<%= avatar_classes %>">
-        </div>
-        <div class="ml-4">
-          <div class="<%= author_name_classes %>"><%= author_name %></div>
-          <% if author_subtitle.present? %>
-            <div class="<%= author_title_classes %>"><%= author_subtitle %></div>
-          <% end %>
-        </div>
+    <div class="mb-5 flex min-w-0 items-center gap-3" data-controller="avatar">
+      <div class="<%= avatar_wrapper_classes %>">
+        <% if author_image.present? %>
+          <%= image_tag author_image_source, alt: "", class: "#{avatar_classes} shrink-0",
+                        data: { avatar_target: "image", action: "error->avatar#showFallback" } %>
+        <% end %>
+        <span aria-hidden="true" data-avatar-target="fallback"
+              class="<%= author_image.present? ? 'hidden' : 'flex' %> size-full items-center justify-center rounded-full bg-gradient-to-br from-red-400 to-red-600 text-sm font-bold text-white">
+          <%= author_initials %>
+        </span>
       </div>
-    <% end %>
+      <div class="min-w-0">
+        <div class="<%= author_name_classes %>"><%= author_name %></div>
+        <% if author_subtitle.present? %>
+          <div class="<%= author_title_classes %> break-words"><%= author_subtitle %></div>
+        <% end %>
+      </div>
+    </div>
 
     <% if show_rating? %>
       <div class="flex items-center mb-3">
@@ -54,22 +59,7 @@
       </div>
     <% end %>
 
-    <blockquote class="<%= quote_classes %>">
-      “<%= quote.strip %>”
-    </blockquote>
-
-    <% if effect.present? %>
-      <p class="mt-4 mb-0 break-words text-t6 text-tan"><%= effect %></p>
-    <% end %>
-
-    <% if author_image.blank? %>
-      <footer class="mt-auto pt-6">
-        <div class="<%= author_name_classes %>"><%= author_name %></div>
-        <% if author_subtitle.present? %>
-          <div class="<%= author_title_classes %>"><%= author_subtitle %></div>
-        <% end %>
-      </footer>
-    <% end %>
+    <blockquote class="<%= quote_classes %>">“<%= quote.strip %>”</blockquote>
 
   <% elsif centered? %>
     <blockquote class="<%= quote_classes %> mb-6">

@@ -8,9 +8,8 @@ module Testimonial
     # @param quote [String] The testimonial quote text (required)
     # @param author_name [String] The author's name (required)
     # @param author_title [String] The author's job title or role
-    # @param author_image [String] URL to the author's avatar image
+    # @param author_image [String, ActiveStorage::Attached::One] URL or uploaded avatar
     # @param company [String] The author's company name
-    # @param effect [String] Optional result described in the original opinion
     # @param rating [Integer] Star rating (1-5), nil to hide
     # @param variant [Symbol] Display variant: :default, :card, :centered
     # @param size [Symbol] Size variant: :sm, :md, :lg
@@ -22,7 +21,6 @@ module Testimonial
       author_title: nil,
       author_image: nil,
       company: nil,
-      effect: nil,
       rating: nil,
       variant: :default,
       size: :md,
@@ -35,7 +33,6 @@ module Testimonial
       @author_title = author_title
       @author_image = author_image
       @company = company
-      @effect = effect
       @rating = rating.to_i.clamp(0, 5) if rating.present?
       @variant = VARIANTS.include?(variant) ? variant : :default
       @size = SIZES.include?(size) ? size : :md
@@ -53,14 +50,15 @@ module Testimonial
 
     def quote_classes
       [
-        "m-0 whitespace-pre-line break-words leading-relaxed text-cream",
+        "m-0 whitespace-pre-line break-words text-cream",
+        card? ? "font-semibold leading-[1.65]" : "leading-relaxed",
         quote_size_classes
       ].join(" ")
     end
 
     def author_name_classes
       [
-        "break-words font-bold text-tan",
+        "break-words font-bold #{card? ? 'text-cream' : 'text-tan'}",
         author_name_size_classes
       ].join(" ")
     end
@@ -81,9 +79,17 @@ module Testimonial
 
     def avatar_wrapper_classes
       [
-        "rounded-full bg-ink-soft flex items-center justify-center overflow-hidden",
+        "shrink-0 rounded-full bg-ink-soft flex items-center justify-center overflow-hidden",
         avatar_size_classes
       ].join(" ")
+    end
+
+    def author_initials
+      @author_name.to_s.split(/\s+/).first(2).filter_map { |part| part[0]&.upcase }.join.presence || "?"
+    end
+
+    def author_image_source
+      @author_image.respond_to?(:variant) ? @author_image.variant(resize_to_fill: [ 112, 112 ]) : @author_image
     end
 
     def show_rating?
@@ -115,7 +121,7 @@ module Testimonial
 
     private
 
-    attr_reader :quote, :author_name, :author_title, :author_image, :company, :effect,
+    attr_reader :quote, :author_name, :author_title, :author_image, :company,
                 :rating, :variant, :size, :show_quote_icon
 
     def base_classes
@@ -125,7 +131,7 @@ module Testimonial
     def variant_classes
       case @variant
       when :card
-        "flex h-full min-w-0 flex-col rounded-2xl border border-border-strong bg-surface p-6 sm:p-8"
+        "flex h-full min-w-0 flex-col rounded-2xl border border-border-strong bg-surface p-6 shadow-[0_12px_36px_rgba(0,0,0,0.12)] sm:p-7"
       when :centered
         "text-center"
       else # :default
@@ -134,6 +140,8 @@ module Testimonial
     end
 
     def quote_size_classes
+      return({ sm: "text-t6", md: "text-[1.05rem]", lg: "text-t4" }.fetch(@size)) if card?
+
       case @size
       when :sm then "text-t6"
       when :lg then "text-t4"
@@ -145,7 +153,7 @@ module Testimonial
       case @size
       when :sm then "text-t6"
       when :lg then "text-t5"
-      else "text-t6" # :md
+      else card? ? "text-base" : "text-t6" # :md
       end
     end
 
@@ -161,7 +169,7 @@ module Testimonial
       case @size
       when :sm then "size-8"
       when :lg then "size-14"
-      else "size-10" # :md
+      else card? ? "size-12" : "size-10" # :md
       end
     end
   end

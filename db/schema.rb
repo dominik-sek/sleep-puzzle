@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_03_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_03_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -429,6 +429,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_000000) do
     t.string "locale"
     t.text "quote"
     t.string "author"
+    t.string "author_title"
     t.datetime "consented_at"
     t.datetime "submitted_at"
     t.bigint "published_content_item_id"

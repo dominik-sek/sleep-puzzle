@@ -24,6 +24,20 @@
           <% if @invitation.errors[:author].any? %><p class="text-t6 text-red-400"><%= @invitation.errors[:author].to_sentence %></p><% end %>
         </div>
 
+        <div class="flex flex-col gap-2">
+          <%= f.label :author_title, t("testimonials.author_title_label"), class: "text-t5 font-bold text-cream" %>
+          <%= f.text_field :author_title, maxlength: 100, class: "form-control" %>
+          <p class="text-t6 text-taupe"><%= t("testimonials.author_title_hint") %></p>
+          <% if @invitation.errors[:author_title].any? %><p class="text-t6 text-red-400"><%= @invitation.errors[:author_title].to_sentence %></p><% end %>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <%= f.label :avatar, t("testimonials.avatar_label"), class: "text-t5 font-bold text-cream" %>
+          <%= f.file_field :avatar, accept: ContentBlock::IMAGE_CONTENT_TYPES.join(","), class: "form-control" %>
+          <p class="text-t6 text-taupe"><%= t("testimonials.avatar_hint") %></p>
+          <% if @invitation.errors[:avatar].any? %><p class="text-t6 text-red-400"><%= @invitation.errors[:avatar].to_sentence %></p><% end %>
+        </div>
+
         <div>
           <label class="flex items-start gap-3 text-t6 text-tan">
             <%= f.check_box :publication_consent, required: true, class: "mt-1 accent-accent" %>

@@ -143,7 +143,13 @@ module ApplicationHelper
     end
 
     stored = content_items_by_collection[section_key]
-    return stored.map { |item| item.to_values(locale) } if stored.present?
+    if stored.present?
+      return stored.map do |item|
+        values = item.to_values(locale)
+        values["avatar"] = item.avatar if section_key == "testimonials.entries" && item.avatar.attached?
+        values
+      end
+    end
 
     collection.default_items(locale)
   end
@@ -151,7 +157,7 @@ module ApplicationHelper
   private
 
   def content_items_by_collection
-    @content_items_by_collection ||= ContentItem.declared.order(:position, :id).group_by(&:collection_key)
+    @content_items_by_collection ||= ContentItem.declared.includes(avatar_attachment: :blob).order(:position, :id).group_by(&:collection_key)
   end
 
   def content_blocks_by_key

@@ -24,15 +24,19 @@
 class ContentItem < ApplicationRecord
   include Translatable
 
+  has_one_attached :avatar
+
   LOCALES = Translatable::LOCALES
 
   # No field list: a collection's shape comes from the registry at runtime, so
-  # there is nothing to generate readers for at boot.
+  # there is nothing to generate readers for at boot. Testimonials additionally
+  # use the avatar attachment shared by the public card and the CMS editor.
   translates store: :values
 
   validates :collection_key, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :collection_must_be_declared
+  validate :avatar_must_be_an_image
 
   scope :for_collection, ->(key) { where(collection_key: key).order(:position, :id) }
   scope :declared, -> { where(collection_key: ContentBlock::Registry.sections.select(&:collection?).map(&:full_key)) }
@@ -89,5 +93,12 @@ class ContentItem < ApplicationRecord
     return if collection
 
     errors.add(:collection_key, "is not a collection declared in config/content_blocks.yml")
+  end
+
+  def avatar_must_be_an_image
+    return unless avatar.attached?
+
+    errors.add(:avatar, I18n.t("testimonials.avatar_invalid_type")) unless avatar.blob.content_type.in?(ContentBlock::IMAGE_CONTENT_TYPES)
+    errors.add(:avatar, I18n.t("testimonials.avatar_too_large")) if avatar.blob.byte_size > ContentBlock::IMAGE_MAX_BYTES
   end
 end

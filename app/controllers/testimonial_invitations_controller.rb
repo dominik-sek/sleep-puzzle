@@ -27,6 +27,6 @@ class TestimonialInvitationsController < ApplicationController
 
   def submission_params
     params.fetch(:testimonial_invitation, ActionController::Parameters.new)
-          .permit(:quote, :author, :publication_consent)
+          .permit(:quote, :author, :author_title, :avatar, :publication_consent)
   end
 end

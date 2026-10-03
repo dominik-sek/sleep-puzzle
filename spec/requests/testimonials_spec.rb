@@ -5,11 +5,10 @@ RSpec.describe "Shared testimonials", type: :request do
     allow(GoogleCalendarService).to receive(:call).and_return(instance_double(GoogleCalendarService, busy: []))
   end
 
-  def add_testimonial(position:, quote:, author: "Rodzic", effect: nil, en_quote: nil, en_author: nil)
+  def add_testimonial(position:, quote:, author: "Rodzic", en_quote: nil, en_author: nil)
     item = ContentItem.new(collection_key: "testimonials.entries", position: position)
     item.assign_value("quote", :pl, quote)
     item.assign_value("author", :pl, author)
-    item.assign_value("effect", :pl, effect) if effect
     item.assign_value("quote", :en, en_quote) if en_quote
     item.assign_value("author", :en, en_author) if en_author
     item.save!
@@ -28,16 +27,47 @@ RSpec.describe "Shared testimonials", type: :request do
   end
 
   it "renders one Rails Blocks card with the same opinion on all three pages" do
-    add_testimonial(position: 1, quote: "Wreszcie mamy spokojne wieczory", effect: "Łatwiejsze zasypianie")
+    add_testimonial(position: 1, quote: "Wreszcie mamy spokojne wieczory")
 
     [ root_path, audio_process_path, packages_path ].each do |path|
       get path
 
       page = Capybara.string(response.body)
       expect(page).to have_css('section[aria-labelledby="testimonials-title"] [data-controller="carousel"] blockquote', count: 1)
-      expect(response.body).to include("Wreszcie mamy spokojne wieczory", "Łatwiejsze zasypianie", "Opinie")
+      expect(page.find('section[aria-labelledby="testimonials-title"] blockquote').native.inner_html).to start_with("“")
+      expect(response.body).to include("Wreszcie mamy spokojne wieczory", "Opinie")
       expect(page).to have_no_css('section[aria-labelledby="testimonials-title"] img')
+      expect(page).to have_css('section[aria-labelledby="testimonials-title"] [data-avatar-target="fallback"]', text: "R")
     end
+  end
+
+  it "lets the admin upload and remove a testimonial avatar" do
+    item = add_testimonial(position: 1, quote: "Spokojniejsze wieczory", author: "Anna Kowalska")
+    sign_in User.create!(email: "owner@example.com", password: "password123", admin: true)
+
+    patch admin_content_blocks_path, params: {
+      section: "testimonials.entries",
+      items: { item.id.to_s => { avatar: fixture_file_upload("photo.png", "image/png") } }
+    }
+
+    expect(item.reload.avatar).to be_attached
+    get root_path
+    expect(Capybara.string(response.body)).to have_css('section[aria-labelledby="testimonials-title"] img[alt=""]')
+
+    patch admin_content_blocks_path, params: {
+      section: "testimonials.entries",
+      items: { item.id.to_s => { avatar: fixture_file_upload("not-an-image.txt", "text/plain") } }
+    }
+    expect(flash[:alert]).to include("nie jest obsługiwanym obrazem")
+    expect(item.reload.avatar).to be_attached
+
+    patch admin_content_blocks_path, params: {
+      section: "testimonials.entries", items: { item.id.to_s => { remove_avatar: "1" } }
+    }
+
+    expect(item.reload.avatar).not_to be_attached
+    get root_path
+    expect(Capybara.string(response.body)).to have_css('section[aria-labelledby="testimonials-title"] [data-avatar-target="fallback"]', text: "AK")
   end
 
   it "uses a carousel with one mobile card and at most three desktop cards, in admin order" do

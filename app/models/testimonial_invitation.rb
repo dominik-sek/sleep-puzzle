@@ -6,6 +6,7 @@
 #
 #  id                        :bigint           not null, primary key
 #  author                    :string
+#  author_title              :string
 #  consented_at              :datetime
 #  locale                    :string
 #  quote                     :text
@@ -31,6 +32,7 @@ class TestimonialInvitation < ApplicationRecord
   STATUSES = %w[open submitted approved declined].freeze
 
   belongs_to :published_content_item, class_name: "ContentItem", optional: true
+  has_one_attached :avatar
 
   attribute :publication_consent, :boolean
 
@@ -41,7 +43,9 @@ class TestimonialInvitation < ApplicationRecord
   validates :status, inclusion: { in: STATUSES }
   validates :quote, presence: true, length: { maximum: 2_000 }, if: :submitted_or_later?
   validates :author, presence: true, length: { maximum: 100 }, if: :submitted_or_later?
+  validates :author_title, length: { maximum: 100 }
   validates :publication_consent, acceptance: { accept: true }, on: :submit
+  validate :avatar_must_be_an_image
 
   scope :recent_first, -> { order(created_at: :desc) }
 
@@ -65,9 +69,10 @@ class TestimonialInvitation < ApplicationRecord
     with_lock do
       return false unless open?
 
-      assign_attributes(attributes.slice(:quote, :author, :publication_consent))
+      assign_attributes(attributes.slice(:quote, :author, :author_title, :avatar, :publication_consent))
       self.quote = quote&.strip
       self.author = author&.strip
+      self.author_title = author_title&.strip
       self.locale = locale.to_s
       self.status = "submitted"
       self.consented_at = Time.current if publication_consent
@@ -86,6 +91,8 @@ class TestimonialInvitation < ApplicationRecord
       )
       item.assign_value("quote", locale, quote)
       item.assign_value("author", locale, author)
+      item.assign_value("author_title", locale, author_title) if author_title.present?
+      item.avatar.attach(avatar.blob) if avatar.attached?
       item.save!
       update!(status: "approved", published_content_item: item)
       true
@@ -109,5 +116,12 @@ class TestimonialInvitation < ApplicationRecord
 
   def ensure_token
     self.token ||= SecureRandom.urlsafe_base64(32)
+  end
+
+  def avatar_must_be_an_image
+    return unless avatar.attached?
+
+    errors.add(:avatar, I18n.t("testimonials.avatar_invalid_type")) unless avatar.blob.content_type.in?(ContentBlock::IMAGE_CONTENT_TYPES)
+    errors.add(:avatar, I18n.t("testimonials.avatar_too_large")) if avatar.blob.byte_size > ContentBlock::IMAGE_MAX_BYTES
   end
 end

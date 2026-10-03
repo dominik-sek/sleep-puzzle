@@ -18,6 +18,24 @@ RSpec.describe ContentBlock::Registry do
     expect(page.sections).to all(satisfy { |s| s.fields.present? || s.collection? })
   end
 
+  it "reuses the development tree until the YAML file changes" do
+    previous_pages = described_class.instance_variable_get(:@pages)
+    previous_mtime = described_class.instance_variable_get(:@pages_mtime)
+    described_class.instance_variable_set(:@pages, nil)
+    described_class.instance_variable_set(:@pages_mtime, nil)
+
+    allow(Rails.env).to receive(:development?).and_return(true)
+    allow(described_class::PATH).to receive(:mtime).and_return(Time.at(1), Time.at(1), Time.at(2))
+    expect(described_class).to receive(:build_pages).twice.and_call_original
+
+    first = described_class.pages
+    expect(described_class.pages).to equal(first)
+    expect(described_class.pages).not_to equal(first)
+  ensure
+    described_class.instance_variable_set(:@pages, previous_pages)
+    described_class.instance_variable_set(:@pages_mtime, previous_mtime)
+  end
+
   describe "collections" do
     it "keys a collection by its owning section" do
       expect(described_class.collection("home.process").full_key).to eq("home.process")

@@ -1113,10 +1113,9 @@ testimonials:
           author:
             label: Podpis (za zgodą autorki/autora; może być anonimowy)
             type: plain
-          effect:
-            label: Efekt opisany w oryginalnej opinii (opcjonalnie)
+          author_title:
+            label: Opis pod podpisem (opcjonalnie)
             type: plain
-            multiline: true
         defaults: []
 footer:
   label: Stopka
