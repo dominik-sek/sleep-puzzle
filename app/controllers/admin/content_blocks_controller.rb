@@ -1,23 +1,22 @@
 # frozen_string_literal: true
 
+require "cgi"
+
 module Admin
-  # One screen for the whole CMS: a tree of pages > sections > fields on the left,
-  # and an accordion of editable sections on the right. There is no create or
-  # destroy - the set of blocks comes from config/content_blocks.yml.
-  #
-  # Each section is its own form, so saving one leaves the rest of the page (and
-  # any half-finished edit in another section) alone.
+  # The registry supplies navigation and the selected section's editor. Keeping
+  # one form on screen makes long copy, images and collections usable on a laptop.
   class ContentBlocksController < BaseController
     def index
-      # Which section to render expanded. A query param rather than a URL
-      # fragment: Turbo follows a redirect with fetch, and fetch strips the
-      # fragment, so an anchor never survives the round trip.
-      @open_section = ContentBlock::Registry.section(params[:open])
-      @open_section = nil if @open_section&.admin_hidden?
       @pages = ContentBlock::Registry.pages
+      requested_section = ContentBlock::Registry.section(params[:open])
+      requested_page = @pages.find { |page| page.key == params[:page] }
+      page = requested_section && !requested_section.admin_hidden? ? requested_section.page : requested_page || @pages.first
+      @open_section = requested_section unless requested_section&.admin_hidden?
+      @open_section ||= page.sections.find { |section| !section.admin_hidden? }
+      @editor_locale = editor_locale
       @blocks = ContentBlock.declared.with_bodies.index_by(&:key)
       @items = ContentItem.declared.order(:position, :id).group_by(&:collection_key)
-      @preview_page = @open_section&.page&.key || "home"
+      @preview_page = @open_section&.page&.key || page.key
       @preview_data = @pages.to_h do |page|
         [ page.key, ContentBlock::LOCALES.to_h do |locale|
           [ locale, {
@@ -44,17 +43,24 @@ module Admin
       # text is fine, only the file was wrong - so this reports rather than rolls
       # back, and says which file and why.
       if problems.any?
-        redirect_to admin_content_blocks_path(open: section.full_key), alert: problems.to_sentence
+        redirect_to section_path(section), alert: problems.to_sentence
       else
-        redirect_to admin_content_blocks_path(open: section.full_key),
-                    notice: "Zapisano „#{section.label}”."
+        redirect_to section_path(section), notice: "Zapisano „#{section.label}”."
       end
     rescue ActiveRecord::RecordInvalid => error
-      redirect_to admin_content_blocks_path(open: section.full_key),
+      redirect_to section_path(section),
                   alert: "Nie udało się zapisać „#{section.label}”: #{error.record.errors.full_messages.to_sentence}"
     end
 
     private
+
+    def editor_locale
+      params[:lang] == "en" ? "en" : "pl"
+    end
+
+    def section_path(section)
+      admin_content_blocks_path(open: section.full_key, **(editor_locale == "en" ? { lang: "en" } : {}))
+    end
 
     def preview_entries(page, locale)
       sections = page.key == "footer" ? [ page ] : [ page, @pages.find { |candidate| candidate.key == "footer" } ].compact
@@ -66,9 +72,9 @@ module Admin
             next if value.blank?
 
             { key: field.full_key, section: section.full_key,
-              type: field.type, text: helpers.strip_tags(value.to_s).squish,
+              type: field.type, text: preview_text(value),
               defaults: ContentBlock::LOCALES.to_h do |language|
-                [ language, helpers.strip_tags(field.default_for(language).to_s).squish ]
+                [ language, preview_text(field.default_for(language)) ]
               end }
           end
 
@@ -84,6 +90,10 @@ module Admin
           end
         end
       end
+    end
+
+    def preview_text(value)
+      CGI.unescapeHTML(helpers.strip_tags(value.to_s)).squish
     end
 
     # A declared field may have no row yet: nothing runs content_blocks:sync on

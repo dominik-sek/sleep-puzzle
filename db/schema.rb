@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_02_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_03_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -257,11 +257,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_000000) do
     t.string "paddle_price_id"
     t.integer "position", default: 0, null: false
     t.string "preview_cdn_path"
-    t.string "trailer_cdn_path"
-    t.string "trailer_upload_error"
     t.boolean "published", default: false, null: false
     t.jsonb "translations", default: {}, null: false
     t.datetime "updated_at", null: false
+    t.string "trailer_cdn_path"
+    t.string "trailer_upload_error"
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|
@@ -422,6 +422,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_000000) do
     t.index ["user_id"], name: "index_staged_media_uploads_on_user_id"
   end
 
+  create_table "testimonial_invitations", force: :cascade do |t|
+    t.string "token", null: false
+    t.string "recipient_label", null: false
+    t.string "status", default: "open", null: false
+    t.string "locale"
+    t.text "quote"
+    t.string "author"
+    t.datetime "consented_at"
+    t.datetime "submitted_at"
+    t.bigint "published_content_item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["published_content_item_id"], name: "index_testimonial_invitations_on_published_content_item_id"
+    t.index ["status"], name: "index_testimonial_invitations_on_status"
+    t.index ["token"], name: "index_testimonial_invitations_on_token", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.string "avatar_url"
@@ -459,4 +476,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_000000) do
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "staged_media_uploads", "users"
+  add_foreign_key "testimonial_invitations", "content_items", column: "published_content_item_id", on_delete: :nullify
 end

@@ -1,0 +1,17 @@
+en:
+  testimonials:
+    carousel_label: "Testimonials"
+    previous: "Previous testimonials"
+    next: "Next testimonials"
+    form_title: "Share a testimonial"
+    form_intro: "Tell us about your experience. Your testimonial will appear on the site only after review and approval."
+    quote_label: "Your testimonial"
+    author_label: "Name to display"
+    author_hint: "You can use just your first name or a safe description, such as “Parent of a toddler”. Please do not include your child's details."
+    consent_label: "I agree to the publication of my testimonial and chosen name on the Sleep Puzzle website."
+    consent_error: "Consent to publication is required."
+    privacy: "Privacy policy"
+    submit: "Send testimonial"
+    submitted: "Thank you for sharing your testimonial."
+    thanks_title: "Thank you"
+    thanks_body: "Your testimonial has been sent for review."

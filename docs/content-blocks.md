@@ -2,12 +2,19 @@
 
 ## Podgląd w panelu
 
-Na `/admin/content_blocks` wybierz stronę i język w panelu „Podgląd strony”.
-Przycisk „Pokaż na stronie” przy sekcji zaznacza jej widoczną treść i przewija
-podgląd do tego miejsca. Zmiany tekstu widać podczas pisania bez zapisywania;
-zdjęcia, układ list i formatowanie tekstu sformatowanego pojawiają się po
-zapisaniu sekcji. Treści zależne od stanu strony, na przykład komunikat po
-zakupie, można zobaczyć tylko wtedy, gdy ten stan występuje w podglądzie.
+Na `/admin/content_blocks` wybierz stronę i sekcję; wyszukiwarka znajdzie też
+sekcję po nazwie pola. Edytujesz jedną sekcję naraz. Zakładki „Polski” i
+„English” pokazują jeden język, ale zapisują oba; puste angielskie pole
+wyświetla na stronie polską treść. Przed opuszczeniem sekcji z niezapisanymi
+zmianami pojawia się ostrzeżenie.
+
+Przycisk „Podgląd” otwiera podgląd obok edytora na laptopie, a na węższym
+ekranie przełącza do podglądu. „Pokaż na stronie” otwiera go od razu,
+zaznacza widoczną treść wybranej sekcji i przewija podgląd do tego miejsca.
+Zmiany tekstu widać podczas pisania bez zapisywania; zdjęcia, układ list i
+formatowanie tekstu sformatowanego pojawiają się po zapisie. Treści zależne
+od stanu strony, na przykład komunikat po zakupie, można zobaczyć tylko
+wtedy, gdy ten stan występuje w podglądzie.
 
 Na stronie „Pakiety” grafikę tabeli wgrywa się w sekcji „Porównanie pod
 pakietami” → „Grafika porównawcza”. Obraz pojawia się pod kartami pakietów.

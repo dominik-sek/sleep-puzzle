@@ -2,18 +2,26 @@
      content_items("testimonials.entries").select { |item| item["quote"].present? && item["author"].present? }
    end %>
 <% if testimonials.any? %>
-  <section class="w-full bg-ink-soft px-5 py-16" aria-labelledby="testimonials-title">
-    <div class="mx-auto max-w-[1240px]">
+  <% background = local_assigns.fetch(:background, :ink_soft) %>
+  <% width_class = testimonials.size == 1 ? "max-w-[720px]" : "max-w-[1240px]" %>
+  <section class="w-full <%= background == :ink ? "bg-ink" : "bg-ink-soft" %> px-5 py-16" aria-labelledby="testimonials-title">
+    <div class="mx-auto <%= width_class %>">
       <h2 id="testimonials-title" class="mb-8 font-display text-t2 font-bold text-cream"><%= content_block("testimonials.entries.title") %></h2>
-      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <%= render Carousel::Component.new(
+        slide_size: :testimonials, dots: false, buttons: testimonials.size > 1,
+        show_gradients: false, align: "start", label: t("testimonials.carousel_label"),
+        previous_label: t("testimonials.previous"), next_label: t("testimonials.next"),
+        classes: "!max-w-none"
+      ) do |carousel| %>
         <% testimonials.each do |item| %>
-          <blockquote class="m-0 flex flex-col gap-4 rounded-2xl border border-border-strong bg-surface p-6">
-            <p class="m-0 text-t5 text-cream">“<%= item["quote"] %>”</p>
-            <% if item["effect"].present? %><p class="m-0 text-t6 text-accent"><%= item["effect"] %></p><% end %>
-            <footer class="mt-auto text-t6 text-taupe"><%= item["author"] %></footer>
-          </blockquote>
+          <% carousel.with_slide(classes: "!select-text") do %>
+            <%= render Testimonial::Component.new(
+              quote: item["quote"], author_name: item["author"], effect: item["effect"],
+              variant: :card, size: :md
+            ) %>
+          <% end %>
         <% end %>
-      </div>
+      <% end %>
     </div>
   </section>
 <% end %>

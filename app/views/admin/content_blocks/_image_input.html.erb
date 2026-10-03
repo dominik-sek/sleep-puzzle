@@ -12,9 +12,15 @@
 %>
 
 <div class="flex flex-col gap-2">
-  <div class="flex flex-wrap items-baseline gap-2">
-    <span class="text-t6 uppercase text-taupe"><%= field.label %></span>
-    <span class="text-t6 font-mono text-taupe-dark"><%= field.full_key %></span>
+  <div class="flex items-start justify-between gap-2">
+    <span class="text-t6 uppercase text-tan"><%= field.label %></span>
+    <details class="text-xs text-taupe-dark text-right">
+      <summary title="Identyfikator pola" class="cursor-pointer list-none text-taupe hover:text-tan">
+        <%= icon "info", class: "size-4" %>
+        <span class="sr-only">Identyfikator pola</span>
+      </summary>
+      <code><%= field.full_key %></code>
+    </details>
   </div>
 
   <div class="flex flex-wrap items-start gap-4">

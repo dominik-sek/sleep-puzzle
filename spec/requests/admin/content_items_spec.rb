@@ -31,6 +31,12 @@ RSpec.describe "Admin::ContentItems", type: :request do
       expect(response).to redirect_to(admin_content_blocks_path(open: "home.process"))
     end
 
+    it "returns to the English tab after adding an item" do
+      post admin_content_items_path(collection_key: "home.faq", lang: "en")
+
+      expect(response).to redirect_to(admin_content_blocks_path(open: "home.faq", lang: "en"))
+    end
+
     it "lets the admin add a FAQ question and answer" do
       get admin_content_blocks_path(open: "home.faq")
 

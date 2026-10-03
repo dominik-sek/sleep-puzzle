@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-3">
-  <span class="text-t6 uppercase text-taupe">Lista</span>
+  <span class="text-t6 uppercase text-tan">Lista</span>
 
   <% if items.empty? %>
     <p class="text-t6 text-taupe">
@@ -12,44 +12,40 @@
   <% end %>
 
   <% items.each_with_index do |item, index| %>
-    <div class="flex flex-col gap-3 rounded-lg border border-border-strong bg-ink-soft p-3">
+    <div class="flex flex-col gap-3 rounded-lg border border-border-strong bg-ink-soft p-3 sm:p-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <span class="text-t6 uppercase text-taupe">
-          <%= collection.item_label %> <%= index + 1 %>
-        </span>
-
-        <div class="flex items-center gap-4">
-          <span class="flex items-center gap-2">
-            <span class="text-t6 text-taupe">Pozycja</span>
+        <span class="text-t6 uppercase text-tan"><%= collection.item_label %> <%= index + 1 %></span>
+        <div class="flex flex-wrap items-center gap-4">
+          <label for="item-<%= item.id %>-position" class="flex items-center gap-2 text-t6 text-taupe">
+            Pozycja
             <%= number_field_tag "items[#{item.id}][position]", item.position,
                                  id: "item-#{item.id}-position", min: 0,
                                  class: "form-control w-20 py-1" %>
-          </span>
-
-          <%= link_to "Usuń", admin_content_item_path(item),
+          </label>
+          <%= link_to "Usuń", admin_content_item_path(item, lang: (editor_locale == "en" ? "en" : nil)),
                       data: { turbo_method: :delete, turbo_confirm: "Usunąć ten element?" },
                       class: "text-t6 text-red-400 no-underline hover:text-red-300" %>
         </div>
       </div>
 
       <% collection.fields.each do |field| %>
-        <div class="flex flex-col gap-1.5">
-          <span class="text-t6 text-taupe"><%= field.label %></span>
-
-          <div class="grid grid-cols-1 2xl:grid-cols-2 gap-3">
-            <% ContentItem::LOCALES.each do |locale| %>
-              <% input_options = { id: "item-#{item.id}-#{field.key}-#{locale}",
-                                   placeholder: locale == :pl ? "Polski" : "English",
-                                   class: "form-control" } %>
-              <% input_name = "items[#{item.id}][values][#{field.key}][#{locale}]" %>
-              <% input_value = item.values.dig(field.key, locale.to_s) %>
+        <div class="flex flex-col gap-1.5 min-w-0">
+          <span class="text-t6 text-tan"><%= field.label %></span>
+          <% ContentItem::LOCALES.each do |locale| %>
+            <% input_id = "item-#{item.id}-#{field.key}-#{locale}" %>
+            <% input_name = "items[#{item.id}][values][#{field.key}][#{locale}]" %>
+            <% input_value = item.values.dig(field.key, locale.to_s) %>
+            <div data-content-blocks-target="localePanel" data-lang="<%= locale %>"
+                 <%= "hidden" unless editor_locale == locale.to_s %> class="min-w-0">
+              <label for="<%= input_id %>" class="sr-only"><%= field.label %> — <%= locale == :pl ? "Polski" : "English" %></label>
+              <% input_options = { id: input_id, class: "form-control w-full" } %>
               <% if field.multiline %>
                 <%= text_area_tag input_name, input_value, **input_options.merge(rows: 4) %>
               <% else %>
                 <%= text_field_tag input_name, input_value, **input_options %>
               <% end %>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
         </div>
       <% end %>
     </div>

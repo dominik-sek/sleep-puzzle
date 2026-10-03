@@ -51,6 +51,9 @@
     <% end %>
   <% end %>
 
+  <% testimonials = content_items("testimonials.entries").select { |item| item["quote"].present? && item["author"].present? } %>
+  <%= render "shared/testimonials", testimonials: testimonials %>
+
   <% unless user_signed_in? %>
     <section id="calendar" class="w-full scroll-mt-24 bg-ink px-5 py-16">
       <div class="mx-auto flex max-w-[1240px] flex-col gap-6">
@@ -65,8 +68,6 @@
     </section>
   <% end %>
 
-  <%= render "shared/testimonials" %>
-
   <%# The page used to end on N identical requests for money and nothing else.
       This closes on the two things it never offered: a way to ask a question,
       and the cheaper rung of the ladder for a family that cannot reach 1:1 yet.
@@ -74,7 +75,7 @@
       push, and the cards above already hold the lamp. Renders in the empty state
       too, where it is the only exit the page has. %>
   <%= render Section::Component.new(
-    background: :ink_soft,
+    background: user_signed_in? && testimonials.any? ? :ink : :ink_soft,
     align: :center
   ) do |section| %>
     <div class="flex flex-col gap-4 items-center">

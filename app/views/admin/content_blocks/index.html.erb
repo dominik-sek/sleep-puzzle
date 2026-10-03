@@ -1,97 +1,127 @@
 <% content_for :title, "Treści - Panel" %>
 
-<div class="p-6 sm:p-8 flex flex-col gap-6"
+<div class="p-4 sm:p-6 xl:p-8 flex flex-col gap-5"
      data-controller="content-blocks"
-     <%= tag.attributes(
-           "data-content-blocks-open-value" =>
-             @open_section && "section-#{@open_section.page.key}-#{@open_section.key}",
-           "data-content-blocks-page-value" => @preview_page,
-           "data-content-blocks-pages-value" => @preview_data.to_json
-         ) %>>
-  <div class="flex flex-col gap-1">
-    <h1 class="text-t2 font-display text-cream">Treści</h1>
-    <p class="text-t5 text-taupe">
-      Teksty na stronie. Pusta wersja angielska wyświetli polską. Każdą sekcję zapisujesz osobno.
-    </p>
-  </div>
+     data-content-blocks-section-value="<%= @open_section.full_key %>"
+     data-content-blocks-page-value="<%= @preview_page %>"
+     data-content-blocks-pages-value="<%= @preview_data.to_json %>"
+     data-content-blocks-lang-value="<%= @editor_locale %>">
+  <header class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h1 class="text-t2 font-display text-cream">Treści</h1>
+      <p class="text-t5 text-taupe mt-1">Wybierz stronę i sekcję, którą chcesz edytować.</p>
+    </div>
+    <button type="button" data-content-blocks-target="previewButton"
+            data-action="click->content-blocks#togglePreview"
+            aria-controls="content-preview" aria-expanded="false"
+            class="inline-flex items-center gap-2 rounded-lg border border-border-input bg-surface px-4 py-2.5 text-t6 text-cream hover:bg-ink-soft cursor-pointer">
+      <%= icon "external-link", class: "size-4" %>
+      <span data-content-blocks-target="previewButtonLabel">Podgląd</span>
+    </button>
+  </header>
 
-  <div class="flex flex-col 2xl:flex-row gap-6 items-start">
-    <aside class="hidden 2xl:block 2xl:w-56 2xl:shrink-0 2xl:sticky 2xl:top-6 2xl:max-h-[calc(100vh-3rem)] 2xl:overflow-y-auto">
-      <%= render "admin/content_blocks/tree", pages: @pages %>
+  <div class="grid grid-cols-1 xl:grid-cols-[14rem_minmax(0,1fr)] gap-5 items-start min-w-0">
+    <aside class="rounded-xl border border-border-strong bg-ink-soft p-4 xl:sticky xl:top-6 xl:max-h-[calc(100vh-3rem)] xl:overflow-y-auto">
+      <label for="content-search" class="block text-t6 text-tan mb-2">Znajdź treść</label>
+      <input type="search" id="content-search" placeholder="Strona, sekcja lub pole"
+             autocomplete="off" data-content-blocks-target="search"
+             data-action="input->content-blocks#search"
+             class="form-control w-full mb-4">
+
+      <div data-content-blocks-target="navigation">
+        <label for="content-page" class="block text-t6 text-tan mb-2">Strona</label>
+        <select id="content-page" data-content-blocks-target="editorPage"
+                data-action="change->content-blocks#changeEditorPage"
+                class="form-control w-full mb-4">
+          <% @pages.each do |page| %>
+            <%= tag.option page.label, value: page.key, selected: page == @open_section.page %>
+          <% end %>
+        </select>
+
+        <nav aria-label="Sekcje strony">
+          <p class="text-t6 text-taupe mb-2">Sekcje</p>
+          <div class="flex flex-col gap-1">
+            <% @open_section.page.sections.reject(&:admin_hidden?).each do |section| %>
+              <%= link_to admin_content_blocks_path(open: section.full_key, lang: (@editor_locale == "en" ? "en" : nil)),
+                          class: "block rounded-lg px-3 py-2.5 text-sm no-underline #{section == @open_section ? 'bg-accent/15 text-accent ring-1 ring-accent/40 font-semibold' : 'text-tan hover:bg-surface hover:text-cream'}",
+                          "aria-current": (section == @open_section ? "page" : nil) do %>
+                <%= section.label %>
+              <% end %>
+            <% end %>
+          </div>
+        </nav>
+      </div>
+
+      <div data-content-blocks-target="results" hidden>
+        <p data-content-blocks-target="resultCount" role="status" class="text-t6 text-taupe mb-2"></p>
+        <nav aria-label="Wyniki wyszukiwania" class="flex flex-col gap-1">
+          <% @pages.each do |page| %>
+            <% page.sections.reject(&:admin_hidden?).each do |section| %>
+              <% search_text = ([page.label, section.label] + section.fields.reject(&:admin_hidden?).map(&:label) + (section.collection&.fields&.map(&:label) || [])).join(" ") %>
+              <%= link_to admin_content_blocks_path(open: section.full_key, lang: (@editor_locale == "en" ? "en" : nil)),
+                          data: { content_blocks_target: "searchResult", search_text: search_text },
+                          class: "block rounded-lg px-3 py-2.5 text-sm text-cream no-underline hover:bg-surface" do %>
+                <span class="block text-xs text-taupe"><%= page.label %></span>
+                <span><%= section.label %></span>
+              <% end %>
+            <% end %>
+          <% end %>
+        </nav>
+        <p data-content-blocks-target="noResults" class="text-t6 text-taupe" hidden>Nie znaleziono takiej treści.</p>
+      </div>
     </aside>
 
-    <div class="flex-1 min-w-0 w-full flex flex-col gap-5">
-      <details class="2xl:hidden w-full rounded-lg border border-border-strong bg-ink-soft">
-        <summary class="cursor-pointer px-4 py-3 text-t6 font-medium text-cream">Nawigacja po treściach</summary>
-        <div class="max-h-72 overflow-y-auto px-3 pb-3">
-          <%= render "admin/content_blocks/tree", pages: @pages %>
+    <div class="cms-workspace grid grid-cols-1 gap-5 min-w-0 items-start"
+         data-content-blocks-target="workspace" data-preview-open="false">
+      <section class="cms-editor min-w-0 rounded-xl border border-border-strong bg-surface"
+               aria-labelledby="content-section-title">
+        <div class="px-4 pt-4 sm:px-6 sm:pt-6">
+          <p class="text-t6 text-taupe"><%= @open_section.page.label %> / Sekcja</p>
+          <h2 id="content-section-title" class="font-display text-t3 text-cream mt-1"><%= @open_section.label %></h2>
         </div>
-      </details>
+        <%= render "admin/content_blocks/section_form",
+                   page: @open_section.page, section: @open_section, blocks: @blocks,
+                   items: @items[@open_section.full_key] || [], editor_locale: @editor_locale %>
+      </section>
 
-      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(350px,0.9fr)] gap-6 items-start">
-        <div class="min-w-0 w-full flex flex-col gap-8 order-last lg:order-first">
-          <% @pages.each do |page| %>
-            <section class="flex flex-col gap-3">
-              <h2 class="text-t3 font-display text-cream"><%= page.label %></h2>
-
-              <%# allow_multiple so comparing two sections does not close the first %>
-              <%= render Accordion::Component.new(allow_multiple: true, variant: :bordered) do |accordion| %>
-                <% page.sections.reject(&:admin_hidden?).each do |section| %>
-                  <% accordion.with_item(title: section.label, default_open: section == @open_section) do %>
-                    <%= render "admin/content_blocks/section_form",
-                               page: page, section: section, blocks: @blocks,
-                               items: @items[section.full_key] || [] %>
-                  <% end %>
-                <% end %>
+      <section id="content-preview" data-content-blocks-target="preview" hidden
+               class="min-w-0 rounded-xl border border-border-strong bg-ink-soft p-4 sm:p-5 flex flex-col gap-4 lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)] lg:max-h-[950px]">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h2 class="text-t4 font-display text-cream">Podgląd strony</h2>
+            <p class="text-t6 text-taupe mt-1">Tekst zmienia się podczas pisania. Zdjęcia, listy i formatowanie zobaczysz po zapisie.</p>
+          </div>
+          <button type="button" data-action="click->content-blocks#togglePreview"
+                  aria-label="Zamknij podgląd" class="shrink-0 rounded-lg p-2 text-taupe hover:text-cream hover:bg-surface cursor-pointer">
+            <%= icon "x", class: "size-4" %>
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <label class="flex-1 min-w-36 text-t6 text-taupe">
+            Strona
+            <select data-content-blocks-target="pageSelect" data-action="change->content-blocks#changePage" class="form-control mt-1">
+              <% @pages.each do |page| %>
+                <%= tag.option page.label, value: page.key, selected: page.key == @preview_page %>
               <% end %>
-            </section>
-          <% end %>
+            </select>
+          </label>
+          <label class="min-w-28 text-t6 text-taupe">
+            Język
+            <select data-content-blocks-target="localeSelect" data-action="change->content-blocks#changeLocale" class="form-control mt-1">
+              <option value="pl" <%= "selected" if @editor_locale == "pl" %>>Polski</option>
+              <option value="en" <%= "selected" if @editor_locale == "en" %>>English</option>
+            </select>
+          </label>
         </div>
-
-        <section class="order-first lg:order-last min-w-0 w-full rounded-xl border border-border-strong bg-ink-soft p-4 sm:p-5 flex flex-col gap-4 lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)] lg:max-h-[950px]">
-          <div class="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 class="text-t4 font-display text-cream">Podgląd strony</h2>
-              <p class="text-t6 text-taupe mt-1">
-                Użyj „Pokaż na stronie”, aby znaleźć sekcję. Tekst pojawia się w podglądzie podczas pisania;
-                zdjęcia, listy i formatowanie zobaczysz po zapisie.
-              </p>
-            </div>
-            <div class="flex flex-wrap gap-3">
-              <label class="flex flex-col gap-1 text-t6 text-taupe">
-                Strona
-                <select data-content-blocks-target="pageSelect"
-                        data-action="change->content-blocks#changePage"
-                        class="form-control min-w-36">
-                  <% @pages.each do |page| %>
-                    <%= tag.option page.label, value: page.key, selected: page.key == @preview_page %>
-                  <% end %>
-                </select>
-              </label>
-              <label class="flex flex-col gap-1 text-t6 text-taupe">
-                Język
-                <select data-content-blocks-target="localeSelect"
-                        data-action="change->content-blocks#changeLocale"
-                        class="form-control">
-                  <option value="pl">Polski</option>
-                  <option value="en">English</option>
-                </select>
-              </label>
-            </div>
-          </div>
-
-          <p data-content-blocks-target="status" role="status" class="text-t6 text-taupe m-0">
-            Wybierz sekcję, aby zaznaczyć jej miejsce na stronie.
-          </p>
-          <div class="h-[420px] lg:h-auto lg:flex-1 lg:min-h-0 overflow-hidden rounded-lg border border-border-strong bg-ink">
-            <iframe data-content-blocks-target="frame"
-                    src="<%= content_preview_path(@preview_page, locale: :pl) %>"
-                    title="Podgląd strony"
-                    sandbox="allow-same-origin"
-                    class="w-full h-full border-0"></iframe>
-          </div>
-        </section>
-      </div>
+        <p data-content-blocks-target="status" role="status" class="text-t6 text-taupe m-0">
+          Wybierz „Pokaż na stronie”, aby zaznaczyć miejsce sekcji.
+        </p>
+        <div class="h-[min(65vh,650px)] lg:h-auto lg:flex-1 lg:min-h-0 overflow-hidden rounded-lg border border-border-strong bg-ink">
+          <iframe data-content-blocks-target="frame"
+                  title="Podgląd strony" sandbox="allow-same-origin"
+                  class="w-full h-full border-0"></iframe>
+        </div>
+      </section>
     </div>
   </div>
 </div>

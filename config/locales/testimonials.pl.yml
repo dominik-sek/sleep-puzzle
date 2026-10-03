@@ -1,0 +1,17 @@
+pl:
+  testimonials:
+    carousel_label: "Opinie"
+    previous: "Poprzednie opinie"
+    next: "Następne opinie"
+    form_title: "Dodaj opinię"
+    form_intro: "Podziel się swoimi doświadczeniami. Opinia pojawi się na stronie dopiero po sprawdzeniu i zatwierdzeniu."
+    quote_label: "Twoja opinia"
+    author_label: "Podpis do wyświetlenia"
+    author_hint: "Możesz podać samo imię albo bezpieczny podpis, np. „Mama dwulatka”. Nie wpisuj danych dziecka."
+    consent_label: "Zgadzam się na publikację mojej opinii i podanego podpisu na stronie Sleep Puzzle."
+    consent_error: "Zgoda na publikację jest wymagana."
+    privacy: "Polityka prywatności"
+    submit: "Wyślij opinię"
+    submitted: "Dziękujemy za przesłanie opinii."
+    thanks_title: "Dziękujemy za opinię"
+    thanks_body: "Opinia została przesłana do sprawdzenia."

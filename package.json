@@ -16,6 +16,8 @@
     "@rails/activestorage": "^8.1.301",
     "cally": "^0.9.2",
     "dayjs": "^1.11.21",
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-wheel-gestures": "^8.1.0",
     "lucide": "^1.23.0",
     "photoswipe": "^5.4.4",
     "stimulus-vite-helpers": "^3.1.0",

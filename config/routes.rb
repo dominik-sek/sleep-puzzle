@@ -67,6 +67,7 @@ Rails.application.routes.draw do
     end
     # one page that both shows the form and takes it, so there is no id to carry
     resource :contact, only: [ :show, :create ]
+    resources :testimonial_invitations, only: [ :show, :update ], param: :token, path: "opinia"
     # create only: the form lives on the home page, and everything after the
     # address is handed over - the confirmation, the list, the unsubscribe - is
     # Brevo's, so there is nothing here to show, edit or destroy
@@ -92,6 +93,12 @@ Rails.application.routes.draw do
       patch :update, on: :collection
     end
     resources :content_items, only: [ :create, :destroy ]
+    resources :testimonial_invitations, only: [ :index, :create ] do
+      member do
+        post :approve
+        post :decline
+      end
+    end
     # the price list is shared by both catalogue screens, so refreshing it is one
     # endpoint that returns you to whichever page you asked from
     resource :paddle_prices, only: [ :update ]

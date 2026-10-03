@@ -29,10 +29,10 @@ module Admin
 
     private
 
-    # ?open= rather than an anchor: Turbo follows the redirect with fetch, which
-    # strips the fragment, so the section has to be reopened server-side.
     def redirect_to_section(section, notice)
-      redirect_to admin_content_blocks_path(open: section&.full_key), notice: notice
+      options = { open: section&.full_key }
+      options[:lang] = "en" if params[:lang] == "en"
+      redirect_to admin_content_blocks_path(**options), notice: notice
     end
   end
 end

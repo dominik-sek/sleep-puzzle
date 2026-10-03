@@ -1092,29 +1092,29 @@ audio_landing:
             pl: "Co obejmuje"
             en: "What is included"
 testimonials:
-  label: Opinie i efekty
+  label: Opinie
   sections:
     entries:
-      label: Prawdziwe opinie i efekty
+      label: Opinie
       fields:
         title:
           label: Nagłówek sekcji
           type: plain
           default:
-            pl: "Opinie i efekty"
-            en: "Stories and results"
+            pl: "Opinie"
+            en: "Testimonials"
       collection:
         item_label: Opinia
         fields:
           quote:
-            label: Cytat z opinii
+            label: Wierny cytat z opinii (po potwierdzeniu zgody na publikację)
             type: plain
             multiline: true
           author:
-            label: Podpis (za zgodą autorki/autora)
+            label: Podpis (za zgodą autorki/autora; może być anonimowy)
             type: plain
           effect:
-            label: Efekt współpracy
+            label: Efekt opisany w oryginalnej opinii (opcjonalnie)
             type: plain
             multiline: true
         defaults: []

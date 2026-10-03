@@ -775,6 +775,19 @@ trix-editor:empty:not(:focus)::before {
   border-bottom-color: var(--color-accent);
 }
 
+/* The CMS editor gets the full workspace until the owner opens the preview. */
+@media (min-width: 1024px) {
+  .cms-workspace[data-preview-open="true"] {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, .75fr);
+  }
+}
+
+@media (max-width: 1023px) {
+  .cms-workspace[data-preview-open="true"] > .cms-editor {
+    display: none;
+  }
+}
+
 @media (min-width: 768px) {
   .offer-puzzle--audio {
     border-radius: 1.5rem 0 0 1.5rem;

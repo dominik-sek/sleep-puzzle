@@ -1,0 +1,41 @@
+<section class="<%= wrapper_classes %>" <%= tag.attributes(wrapper_attributes) %>>
+  <div class="<%= viewport_classes %>" data-carousel-target="viewport">
+    <div class="<%= slides_container_classes %>">
+      <% slides.each do |slide| %>
+        <%= slide %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if show_buttons? || show_dots? %>
+    <div class="flex justify-between items-center mt-4 px-4 sm:px-6 md:px-8" data-carousel-target="controlsContainer">
+      <% if show_buttons? %>
+        <div class="grid grid-cols-2 gap-2 items-center z-10">
+          <button
+            class="flex items-center justify-center size-10 rounded-full bg-surface p-2 text-sm font-semibold text-tan border border-border-strong hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-40 disabled:cursor-not-allowed"
+            type="button"
+            data-carousel-target="prevButton"
+            aria-label="<%= previous_label %>"
+          >
+            <%= prev_icon_svg.html_safe %>
+          </button>
+
+          <button
+            class="flex items-center justify-center size-10 rounded-full bg-surface p-2 text-sm font-semibold text-tan border border-border-strong hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-40 disabled:cursor-not-allowed"
+            type="button"
+            data-carousel-target="nextButton"
+            aria-label="<%= next_label %>"
+          >
+            <%= next_icon_svg.html_safe %>
+          </button>
+        </div>
+      <% else %>
+        <div></div>
+      <% end %>
+
+      <% if show_dots? %>
+        <div class="z-10 flex flex-wrap justify-end items-center gap-1.5" data-carousel-target="dotsContainer"></div>
+      <% end %>
+    </div>
+  <% end %>
+</section>

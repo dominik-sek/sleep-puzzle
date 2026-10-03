@@ -17,20 +17,25 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
   describe "GET /admin/content_blocks" do
     before { sign_in admin }
 
-    it "renders visible sections and fields on one screen" do
+    it "lists every visible section for search and renders one section form" do
       get admin_content_blocks_path
 
       expect(response).to have_http_status(:ok)
-      ContentBlock::Registry.pages.each do |page|
-        expect(response.body).to include(page.label)
-        page.sections.reject(&:admin_hidden?).each { |section| expect(response.body).to include(section.label) }
+      document = Capybara.string(response.body)
+      ContentBlock::Registry.pages.each do |registry_page|
+        expect(response.body).to include(registry_page.label)
+        registry_page.sections.reject(&:admin_hidden?).each do |section|
+          expect(response.body).to include(%(href="#{admin_content_blocks_path(open: section.full_key)}"))
+        end
       end
+      expect(document).to have_css('form [name="section"][value="home.hero"]', count: 1, visible: :all)
+      expect(document).to have_no_css('form [name="section"][value="home.about"]', visible: :all)
     end
 
     it "hides retired home controls while keeping their saved content" do
       ContentBlock.find_by!(key: "home.about.body").update!(value_pl: "Zachowany opis")
 
-      get admin_content_blocks_path
+      get admin_content_blocks_path(open: "home.about")
 
       page = Capybara.string(response.body)
       %w[stats process packages audio newsletter].each do |section|
@@ -55,69 +60,71 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
       data = JSON.parse(preview["data-content-blocks-pages-value"])
 
       expect(preview["data-content-blocks-page-value"]).to eq("about")
-      expect(page).to have_css('iframe[title="Podgląd strony"][sandbox="allow-same-origin"][src="/about"]')
+      expect(page).to have_css('iframe[title="Podgląd strony"][sandbox="allow-same-origin"]:not([src])', visible: :all)
+      expect(page).to have_css('#content-preview[hidden]', visible: :all)
       expect(data.dig("about", "en", "url")).to eq("/en/about")
       expect(data.dig("about", "pl", "entries")).to include(include("key" => "about.intro.name", "text" => "Nowa Karola"))
       expect(page).to have_css('[data-preview-section="about.intro"] button', text: "Pokaż na stronie")
     end
 
-    it "gives each section its own form and anchor" do
-      get admin_content_blocks_path
+    it "matches preview text containing HTML entities with visible page text" do
+      get admin_content_blocks_path(open: "about.certifications")
 
-      sections = ContentBlock::Registry.sections.reject(&:admin_hidden?)
-      expect(response.body.scan('name="section"').size).to eq(sections.size)
-      sections.each do |section|
-        expect(response.body).to include(%(id="section-#{section.page.key}-#{section.key}"))
-        expect(response.body).to include(%(href="#section-#{section.page.key}-#{section.key}"))
-      end
+      data = JSON.parse(Capybara.string(response.body).find('[data-controller="content-blocks"]')["data-content-blocks-pages-value"])
+      title = data.dig("about", "en", "entries").find { |entry| entry["key"] == "about.certifications.title" }
+      expect(title["text"]).to eq("Certifications & qualifications")
     end
 
-    it "renders a Trix editor per language for rich fields and a text input for plain ones" do
-      get admin_content_blocks_path
+    it "selects a single section from a page and keeps deep links" do
+      get admin_content_blocks_path(page: "packages")
+      page = Capybara.string(response.body)
+      expect(page).to have_css('form [name="section"][value="packages.collaboration"]', count: 1, visible: :all)
+      expect(page).to have_css('#section-packages-collaboration')
+      expect(page).to have_no_css('#section-home-hero')
 
-      rich = ContentBlock::Registry.fields.count { |field| field.rich? && !field.admin_hidden? && !field.section.admin_hidden? }
+      get admin_content_blocks_path(open: "about.certifications")
+      page = Capybara.string(response.body)
+      expect(page).to have_css('form [name="section"][value="about.certifications"]', count: 1, visible: :all)
+      expect(page).to have_css('#section-about-certifications')
+    end
+
+    it "keeps both languages in the selected form while showing one tab" do
+      get admin_content_blocks_path(open: "home.about", lang: "en")
+
+      rich = ContentBlock::Registry.section("home.about").fields.count { |field| field.rich? && !field.admin_hidden? }
       expect(response.body.scan("<trix-editor").size).to eq(rich * ContentBlock::LOCALES.size)
       expect(response.body).to include(%(name="fields[title][pl]"))
+      expect(response.body).to include(%(name="fields[title][en]"))
+      page = Capybara.string(response.body)
+      expect(page).to have_css('[data-lang="pl"][hidden]', visible: :all)
+      expect(page).to have_css('[data-lang="en"]:not([hidden])', visible: :all)
+      expect(page).to have_css('[name="lang"][value="en"]', visible: :all)
     end
 
-    # A css matcher rather than a regex: the trigger carries
-    # data-action="click->accordion#toggle", and the > in that arrow breaks any
-    # [^>]* attempt to scan within a single tag. Scoped to accordion items
-    # because the tree's page folder is aria-expanded too, and open by design.
-    OPEN_SECTION = '[data-accordion-target="item"][data-state="open"]'
-
-    # Capybara.string because have_css(count:) needs a node, not a raw String
-    def open_sections(body)
-      Capybara.string(body)
-    end
-
-    it "renders every section collapsed by default" do
+    it "selects the first visible home section by default" do
       get admin_content_blocks_path
 
-      expect(open_sections(response.body)).to have_css(OPEN_SECTION, count: 0)
+      expect(response.body).to include(%(data-content-blocks-section-value="home.hero"))
     end
 
-    it "renders the requested section expanded" do
+    it "selects the requested section" do
       get admin_content_blocks_path(open: "home.methodology")
 
-      # opened server-side rather than by javascript: a redirect's anchor does
-      # not survive Turbo following it with fetch
-      expect(open_sections(response.body)).to have_css(OPEN_SECTION, count: 1)
-      expect(response.body).to include(%(data-content-blocks-open-value="section-home-methodology"))
+      expect(response.body).to include(%(data-content-blocks-section-value="home.methodology"))
     end
 
-    it "does not expand a hidden section requested directly" do
+    it "does not select a hidden section requested directly" do
       get admin_content_blocks_path(open: "home.process")
 
-      expect(open_sections(response.body)).to have_css(OPEN_SECTION, count: 0)
-      expect(response.body).not_to include(%(data-content-blocks-open-value="section-home-process"))
+      expect(response.body).to include(%(data-content-blocks-section-value="home.hero"))
+      expect(response.body).not_to include(%(data-content-blocks-section-value="home.process"))
     end
 
     it "ignores an unknown section in ?open=" do
       get admin_content_blocks_path(open: "nope.nope")
 
       expect(response).to have_http_status(:ok)
-      expect(open_sections(response.body)).to have_css(OPEN_SECTION, count: 0)
+      expect(response.body).to include(%(data-content-blocks-section-value="home.hero"))
     end
 
     it "emits no duplicate DOM ids" do
@@ -145,6 +152,14 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
       expect(ContentBlock.find_by(key: "home.hero.title").value_pl).to eq("Tytuł")
       expect(ContentBlock.find_by(key: "home.hero.title").value_en).to eq("Title")
       expect(ContentBlock.find_by(key: "home.hero.subtitle").value_pl).to eq("Podtytuł")
+    end
+
+    it "returns to the English tab after saving from it" do
+      patch admin_content_blocks_path, params: {
+        section: "home.hero", lang: "en", fields: { title: { en: "Title" } }
+      }
+
+      expect(response).to redirect_to(admin_content_blocks_path(open: "home.hero", lang: "en"))
     end
 
     it "saves rich fields as Action Text" do
@@ -237,7 +252,7 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
     end
 
     it "renders a file input rather than a Polish/English pair" do
-      get admin_content_blocks_path
+      get admin_content_blocks_path(open: "home.about")
 
       expect(response.body).to include(%(name="images[photo][file]"))
       expect(response.body).not_to include(%(name="fields[photo][pl]"))

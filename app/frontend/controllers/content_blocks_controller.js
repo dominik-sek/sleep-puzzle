@@ -1,140 +1,223 @@
 import { Controller } from "@hotwired/stimulus";
 
-// Bridges the tree view and the accordions on the content blocks screen.
-//
-// Tree leaves are anchors pointing at "#section-<page>-<section>", which lives
-// inside an accordion item's content. Three things stop that working on its own,
-// all confirmed in the browser:
-//
-//   1. Turbo treats a same-page anchor as a full visit (turbo:click ->
-//      turbo:visit -> turbo:load) and updates the URL via pushState, so
-//      `hashchange` never fires for a click.
-//   2. The target sits inside collapsed content, which the browser cannot
-//      scroll to; opening it means clicking the accordion's own trigger.
-//   3. This controller is on the outer element, so it connects before the
-//      accordion controllers nested inside it - and their connect() resets every
-//      item to closed, silently undoing an early open.
+// One selected section, a searchable navigator, and an optional live preview.
 export default class extends Controller {
-    // Set when the server rendered a section expanded (after saving, or adding or
-    // removing a list item). The accordion is already open in the markup, so this
-    // only has to bring it into view.
-    static values = { open: String, page: String, pages: Object };
-    static targets = ["frame", "pageSelect", "localeSelect", "status"];
+    static values = { section: String, page: String, pages: Object, lang: String };
+    static targets = [
+        "workspace", "preview", "previewButton", "previewButtonLabel", "frame",
+        "pageSelect", "localeSelect", "status", "search", "navigation", "results",
+        "resultCount", "noResults", "searchResult", "editorPage", "languageTab",
+        "localePanel", "langInput", "englishNote", "form"
+    ];
 
     connect() {
-        this.onClick = this.handleClick.bind(this);
-        this.onHashChange = this.handleHashChange.bind(this);
+        this.selectedSection = this.sectionValue;
+        this.previewMatches = new Map();
+        this.previewOpen = false;
+        this.previewEverOpened = false;
+        this.dirty = false;
+        this.saving = false;
+        this.navigationApproved = false;
+        this.initialFormState = this.formSnapshot();
+        // Turbo may restore a snapshot captured with the preview open.
+        this.previewTarget.hidden = true;
+        this.workspaceTarget.dataset.previewOpen = "false";
+        this.previewButtonTarget.setAttribute("aria-expanded", "false");
+        this.previewButtonLabelTarget.textContent = "Podgląd";
+
         this.onInput = this.handleInput.bind(this);
+        this.onClick = this.handleClick.bind(this);
+        this.onBeforeVisit = this.beforeVisit.bind(this);
+        this.onBeforeUnload = this.beforeUnload.bind(this);
         this.onFrameLoad = this.frameLoaded.bind(this);
-        this.previewTargets = new Map();
-        this.selectedSection = this.hasOpenValue ? this.openValue.replace(/^section-/, "").replace("-", ".") : null;
+        this.onTrixInitialize = this.trixInitialized.bind(this);
+        this.onSubmitEnd = this.submitEnded.bind(this);
 
-        this.element.addEventListener("click", this.onClick);
         this.element.addEventListener("input", this.onInput);
+        this.element.addEventListener("change", this.onInput);
         this.element.addEventListener("trix-change", this.onInput);
+        this.element.addEventListener("trix-initialize", this.onTrixInitialize);
+        this.element.addEventListener("click", this.onClick, true);
+        this.element.addEventListener("turbo:submit-end", this.onSubmitEnd);
         this.frameTarget.addEventListener("load", this.onFrameLoad);
-        if (this.frameTarget.contentDocument?.readyState === "complete") this.frameLoaded();
-        // covers editing the anchor in the address bar and back/forward between
-        // two anchors, neither of which reloads the document
-        window.addEventListener("hashchange", this.onHashChange);
-
-        this.revealUntilItSticks(window.location.hash);
-        this.scrollToOpenSection();
-    }
-
-    scrollToOpenSection() {
-        if (!this.hasOpenValue || this.openValue === "") return;
-
-        const target = document.getElementById(this.openValue);
-        if (!target) return;
-
-        requestAnimationFrame(() => {
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+        document.addEventListener("turbo:before-visit", this.onBeforeVisit);
+        window.addEventListener("beforeunload", this.onBeforeUnload);
     }
 
     disconnect() {
-        this.element.removeEventListener("click", this.onClick);
         this.element.removeEventListener("input", this.onInput);
+        this.element.removeEventListener("change", this.onInput);
         this.element.removeEventListener("trix-change", this.onInput);
+        this.element.removeEventListener("trix-initialize", this.onTrixInitialize);
+        this.element.removeEventListener("click", this.onClick, true);
+        this.element.removeEventListener("turbo:submit-end", this.onSubmitEnd);
         this.frameTarget.removeEventListener("load", this.onFrameLoad);
-        window.removeEventListener("hashchange", this.onHashChange);
-        cancelAnimationFrame(this.retryFrame);
+        document.removeEventListener("turbo:before-visit", this.onBeforeVisit);
+        window.removeEventListener("beforeunload", this.onBeforeUnload);
     }
 
-    handleHashChange() {
-        this.revealUntilItSticks(window.location.hash);
+    formSnapshot() {
+        return JSON.stringify([...new FormData(this.formTarget).entries()]
+            .filter(([name]) => !["authenticity_token", "lang"].includes(name))
+            .map(([name, value]) => [name, value instanceof File
+                ? (value.name ? [value.name, value.size, value.lastModified] : null)
+                : value]));
     }
 
-    // Retries across frames because the accordion controllers below may not have
-    // connected yet, and because the rest of the document may still be parsing.
-    revealUntilItSticks(hash, attempts = 30) {
-        if (this.reveal(hash) || attempts <= 0) return;
+    trixInitialized() {
+        // Trix may normalize its hidden field when it starts; that is not an edit.
+        if (!this.dirty) this.initialFormState = this.formSnapshot();
+    }
 
-        this.retryFrame = requestAnimationFrame(() => this.revealUntilItSticks(hash, attempts - 1));
+    handleInput(event) {
+        if (this.formTarget.contains(event.target)) {
+            queueMicrotask(() => { this.dirty = this.formSnapshot() !== this.initialFormState; });
+        }
+        if (event.target.dataset.previewKey) this.updateLiveValues(event.target.dataset.previewKey);
+    }
+
+    confirmDiscard() {
+        return !this.dirty || window.confirm("Masz niezapisane zmiany w tej sekcji. Opuścić ją bez zapisu?");
+    }
+
+    approveNavigation() {
+        this.navigationApproved = true;
+        window.setTimeout(() => { this.navigationApproved = false; }, 2000);
     }
 
     handleClick(event) {
-        const link = event.target.closest('a[href^="#section-"]');
+        const link = event.target.closest("a[href]");
+        if (!link || !this.element.contains(link)) return;
 
-        if (link && this.element.contains(link)) {
-            // keep Turbo out of it; we open and scroll ourselves
-            event.preventDefault();
-            const hash = link.getAttribute("href");
-            this.revealUntilItSticks(hash);
-            const section = document.querySelector(hash)?.dataset.previewSection;
-            if (section) this.selectSection(section);
-            history.replaceState(history.state, "", hash);
-            return;
+        const url = new URL(link.href, window.location.href);
+        if (url.pathname.startsWith("/admin/content_blocks") || url.pathname.startsWith("/admin/content_items")) {
+            this.applyLanguage(url);
+            link.setAttribute("href", url.pathname + url.search + url.hash);
         }
 
-        // A section folder in the tree: let it expand as usual, and reveal the
-        // matching accordion too, since clicking a section is the obvious way to
-        // ask for it. `:scope > div > a` only matches folders whose children are
-        // fields, so clicking a whole page does not jump to its first section.
-        const folder = event.target.closest('button[data-action*="tree-view#toggle"]');
-        if (!folder || !this.element.contains(folder)) return;
+        if (!this.confirmDiscard()) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return;
+        }
+        this.approveNavigation();
+    }
 
-        const content = document.getElementById(folder.getAttribute("aria-controls"));
-        const firstField = content?.querySelector(':scope > div > a[href^="#section-"]');
-        if (firstField) {
-            this.revealUntilItSticks(firstField.getAttribute("href"));
-            const section = document.querySelector(firstField.getAttribute("href"))?.dataset.previewSection;
-            if (section) this.selectSection(section);
+    beforeVisit(event) {
+        if (this.saving || this.navigationApproved || !this.dirty) return;
+        if (!this.confirmDiscard()) event.preventDefault();
+        else this.approveNavigation();
+    }
+
+    beforeUnload(event) {
+        if (this.saving || this.navigationApproved || !this.dirty) return;
+        event.preventDefault();
+        event.returnValue = "";
+    }
+
+    submit() {
+        this.saving = true;
+        this.approveNavigation();
+    }
+
+    submitEnded(event) {
+        if (event.target !== this.formTarget || event.detail.success) return;
+        this.saving = false;
+        this.navigationApproved = false;
+    }
+
+    applyLanguage(url) {
+        if (this.langValue === "en") url.searchParams.set("lang", "en");
+        else url.searchParams.delete("lang");
+    }
+
+    syncLinkLanguages() {
+        for (const link of this.element.querySelectorAll('a[href^="/admin/content_blocks"], a[href^="/admin/content_items"]')) {
+            const url = new URL(link.href, window.location.href);
+            this.applyLanguage(url);
+            link.setAttribute("href", url.pathname + url.search + url.hash);
         }
     }
 
-    // Returns whether the section ended up open, so the caller knows to stop retrying.
-    reveal(hash) {
-        if (!hash || hash.length < 2) return true;
-
-        // Not found is not the same as nothing to do: on first load this
-        // controller connects as soon as the outer element is parsed, before the
-        // accordion items further down the document exist.
-        const target = document.getElementById(decodeURIComponent(hash.slice(1)));
-        if (!target) return false;
-        if (!this.element.contains(target)) return true;
-
-        const item = target.closest('[data-accordion-target="item"]');
-        const trigger = item?.querySelector('[data-accordion-target="trigger"]');
-        if (!trigger) return false;
-
-        const accordionElement = item.closest('[data-controller~="accordion"]');
-        if (!accordionElement) return false;
-        if (!this.application.getControllerForElementAndIdentifier(accordionElement, "accordion")) return false;
-
-        if (trigger.getAttribute("aria-expanded") === "false") {
-            trigger.click();
+    changeEditorPage(event) {
+        if (!this.confirmDiscard()) {
+            event.target.value = this.sectionValue.split(".")[0];
+            return;
         }
+        const url = new URL(window.location.href);
+        url.searchParams.delete("open");
+        url.searchParams.set("page", event.target.value);
+        this.applyLanguage(url);
+        this.approveNavigation();
+        window.Turbo.visit(url.toString());
+    }
 
-        if (trigger.getAttribute("aria-expanded") !== "true") return false;
+    search() {
+        const query = this.normalizeSearch(this.searchTarget.value);
+        this.navigationTarget.hidden = query.length > 0;
+        this.resultsTarget.hidden = query.length === 0;
+        if (!query) return;
 
-        // let the grid-rows transition start before scrolling to the now-open row
-        requestAnimationFrame(() => {
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+        let count = 0;
+        for (const result of this.searchResultTargets) {
+            const matches = this.normalizeSearch(result.dataset.searchText).includes(query);
+            result.hidden = !matches;
+            if (matches) count += 1;
+        }
+        this.resultCountTarget.textContent = count === 1 ? "1 wynik" : `${count} wyników`;
+        this.noResultsTarget.hidden = count > 0;
+    }
 
-        return true;
+    normalizeSearch(text) {
+        return (text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    }
+
+    selectLanguage(event) {
+        const language = event.currentTarget.dataset.lang;
+        if (language === this.langValue) return;
+
+        this.langValue = language;
+        this.langInputTarget.value = language;
+        for (const panel of this.localePanelTargets) panel.hidden = panel.dataset.lang !== language;
+        for (const tab of this.languageTabTargets) {
+            const selected = tab.dataset.lang === language;
+            tab.setAttribute("aria-pressed", String(selected));
+            tab.classList.toggle("bg-accent", selected);
+            tab.classList.toggle("text-ink", selected);
+            tab.classList.toggle("text-tan", !selected);
+        }
+        this.englishNoteTarget.hidden = language !== "en";
+        if (!this.previewEverOpened) this.localeSelectTarget.value = language;
+
+        const url = new URL(window.location.href);
+        this.applyLanguage(url);
+        history.replaceState(history.state, "", url);
+        this.syncLinkLanguages();
+    }
+
+    togglePreview() {
+        if (this.previewOpen) this.closePreview();
+        else this.openPreview();
+    }
+
+    openPreview() {
+        this.previewOpen = true;
+        this.previewTarget.hidden = false;
+        this.workspaceTarget.dataset.previewOpen = "true";
+        this.previewButtonTarget.setAttribute("aria-expanded", "true");
+        this.previewButtonLabelTarget.textContent = "Zamknij podgląd";
+        this.previewEverOpened = true;
+        if (!this.frameTarget.hasAttribute("src")) this.loadPreview();
+        else this.frameLoaded();
+    }
+
+    closePreview() {
+        this.previewOpen = false;
+        this.previewTarget.hidden = true;
+        this.workspaceTarget.dataset.previewOpen = "false";
+        this.previewButtonTarget.setAttribute("aria-expanded", "false");
+        this.previewButtonLabelTarget.textContent = "Podgląd";
+        this.previewButtonTarget.focus();
     }
 
     changePage() {
@@ -147,13 +230,11 @@ export default class extends Controller {
         this.loadPreview();
     }
 
-    showSection(event) {
-        const section = event.currentTarget.closest("[data-preview-section]")?.dataset.previewSection;
-        if (!section) return;
-
-        this.selectSection(section);
+    showSection() {
+        if (!this.previewOpen) this.openPreview();
+        this.selectSection(this.sectionValue);
         if (!window.matchMedia("(min-width: 1024px)").matches) {
-            this.frameTarget.scrollIntoView({ behavior: "smooth", block: "center" });
+            this.previewTarget.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     }
 
@@ -180,28 +261,32 @@ export default class extends Controller {
             return;
         }
 
-        this.previewTargets.clear();
+        this.previewMatches.clear();
         this.statusTarget.textContent = "Ładowanie podglądu…";
         this.frameTarget.src = url;
     }
 
     frameLoaded() {
+        if (!this.frameTarget.hasAttribute("src")) return;
         const doc = this.frameTarget.contentDocument;
         if (!doc?.body) {
             this.statusTarget.textContent = "Nie udało się otworzyć podglądu.";
             return;
         }
 
-        // The iframe has no script permission. Keep its links and forms inert,
-        // while still allowing the owner to scroll through the real page.
-        doc.addEventListener("click", (event) => {
-            if (event.target.closest("a, button")) event.preventDefault();
-        });
-        doc.addEventListener("submit", (event) => event.preventDefault());
+        if (!doc.documentElement.dataset.cmsPreviewReady) {
+            // The iframe has no script permission. Keep its links and forms inert,
+            // while still allowing the owner to scroll through the real page.
+            doc.addEventListener("click", (event) => {
+                if (event.target.closest("a, button")) event.preventDefault();
+            });
+            doc.addEventListener("submit", (event) => event.preventDefault());
 
-        const style = doc.createElement("style");
-        style.textContent = ".cms-preview-highlight { outline: 2px solid #e6a37b !important; outline-offset: 4px; border-radius: 3px; }";
-        doc.head.appendChild(style);
+            const style = doc.createElement("style");
+            style.textContent = ".cms-preview-highlight { outline: 2px solid #e6a37b !important; outline-offset: 4px; border-radius: 3px; }";
+            doc.head.appendChild(style);
+            doc.documentElement.dataset.cmsPreviewReady = "true";
+        }
 
         const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
         const textNodes = [];
@@ -219,7 +304,7 @@ export default class extends Controller {
                 : textNodes.filter((node) => this.normalize(node.textContent) === entry.text);
 
             entry.matches = matches.map((node) => ({ node, original: entry.type === "rich" ? node.innerHTML : node.textContent }));
-            if (entry.key && matches.length) this.previewTargets.set(entry.key, entry);
+            if (entry.key && matches.length) this.previewMatches.set(entry.key, entry);
         }
 
         this.highlightSection();
@@ -257,10 +342,6 @@ export default class extends Controller {
         this.statusTarget.textContent = "Zaznaczono miejsce wybranej sekcji na stronie.";
     }
 
-    handleInput(event) {
-        if (event.target.dataset.previewKey) this.updateLiveValues(event.target.dataset.previewKey);
-    }
-
     inputValue(key, locale) {
         const field = [...this.element.querySelectorAll("[data-preview-key]")]
             .find((input) => input.dataset.previewKey === key && input.dataset.previewLocale === locale);
@@ -285,7 +366,7 @@ export default class extends Controller {
     }
 
     updateLiveValues(key = null) {
-        const entries = key ? [this.previewTargets.get(key)].filter(Boolean) : this.previewTargets.values();
+        const entries = key ? [this.previewMatches.get(key)].filter(Boolean) : this.previewMatches.values();
         for (const entry of entries) {
             const text = this.liveText(entry);
             if (text === entry.text && !entry.liveEdited) continue;

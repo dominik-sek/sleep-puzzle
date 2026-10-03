@@ -15,6 +15,8 @@ module AdminHelper
         active: controller_name == "products" },
       { label: "Treści", href: admin_content_blocks_path, icon: "file-text",
         active: controller_name.in?(%w[content_blocks content_items]) },
+      { label: "Opinie", href: admin_testimonial_invitations_path, icon: "file-text",
+        active: controller_name == "testimonial_invitations" },
       { label: "Kalendarz", href: integrations_google_calendar_path, icon: "calendar-cog",
         active: controller_name == "google_calendar" },
       { label: "Zadania", href: admin_mission_control_jobs_path, icon: "list-checks",
