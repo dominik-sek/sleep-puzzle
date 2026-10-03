@@ -140,7 +140,7 @@ module Testimonial
     end
 
     def quote_size_classes
-      return({ sm: "text-t6", md: "text-[1.05rem]", lg: "text-t4" }.fetch(@size)) if card?
+      return ({ sm: "text-t6", md: "text-[1.05rem]", lg: "text-t4" }.fetch(@size)) if card?
 
       case @size
       when :sm then "text-t6"
