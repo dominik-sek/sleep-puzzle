@@ -1,0 +1,15 @@
+<%= form_with model: [:admin, @block], class: "flex flex-col gap-5" do |form| %>
+  <%= render "admin/shared/form_errors", record: @block %>
+  <%= form.label :all_day do %><%= form.check_box :all_day %> Całe dni<% end %>
+  <p class="text-t6 text-taupe">Daty początku i końca są włącznie. Przy blokadzie całodniowej godziny są pomijane. Aby zablokować godziny, odznacz „Całe dni”. Wszystkie godziny: Warszawa.</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div><%= label_tag :consultation_block_start_date, "Data początku" %><%= date_field_tag "consultation_block[start_date]", @form_values["start_date"], required: true, class: "form-control" %></div>
+    <div><%= label_tag :consultation_block_end_date, "Data końca" %><%= date_field_tag "consultation_block[end_date]", @form_values["end_date"], required: true, class: "form-control" %></div>
+    <div><%= label_tag :consultation_block_start_time, "Godzina początku" %><%= time_field_tag "consultation_block[start_time]", @form_values["start_time"], step: 60, class: "form-control" %></div>
+    <div><%= label_tag :consultation_block_end_time, "Godzina końca" %><%= time_field_tag "consultation_block[end_time]", @form_values["end_time"], step: 60, class: "form-control" %></div>
+  </div>
+  <div><%= form.label :category, "Powód" %><%= form.select :category, ConsultationBlock::CATEGORIES.map { |key, label| [label, key] }, {}, class: "form-control" %></div>
+  <div><%= form.label :note, "Notatka (tylko dla admina)" %><%= form.text_area :note, rows: 3, class: "form-control" %></div>
+  <p class="text-t6 text-taupe">Blokada nie anuluje istniejących rezerwacji. Jeśli obejmie konsultacje, kalendarz pokaże ostrzeżenie i linki do nich.</p>
+  <%= form.submit "Zapisz blokadę", class: "rounded-full bg-accent px-5 py-3 text-ink font-bold cursor-pointer self-start" %>
+<% end %>

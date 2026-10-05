@@ -29,7 +29,7 @@
   </dl>
 
   <%# the two external ids: what to search for in Paddle and Google Calendar when
-      a booking looks wrong. A blank calendar id means the slot is not held. %>
+      a booking looks wrong. Local booking status determines whether the slot is held. %>
   <dl class="grid grid-cols-1 gap-px bg-border-strong rounded-xl border border-border-strong overflow-hidden">
     <div class="bg-surface px-4 py-3 flex flex-col gap-1">
       <dt class="text-t6 uppercase text-taupe">Transakcja Paddle</dt>
@@ -50,7 +50,7 @@
         <% elsif @booking.calendar_event_id.present? %>
           <%= @booking.calendar_event_id %>
         <% else %>
-          <span class="text-taupe font-sans">Brak - termin nie jest zablokowany w kalendarzu</span>
+          <span class="text-taupe font-sans">Brak kopii w Google. Dostępność terminu wynika ze statusu rezerwacji.</span>
         <% end %>
       </dd>
     </div>

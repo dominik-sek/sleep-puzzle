@@ -1,0 +1,43 @@
+<% content_for :title, "Harmonogram konsultacji - Panel" %>
+<div class="p-6 pt-16 sm:p-8 w-full min-w-0 max-w-[900px] flex flex-col gap-6">
+  <%= link_to "← Kalendarz konsultacji", admin_consultation_calendar_path %>
+  <h1 class="font-display text-t2">Harmonogram i ustawienia</h1>
+  <p class="text-tan">Godziny rozpoczęcia konsultacji, według czasu w Warszawie. Każda konsultacja trwa 90 minut. Zmiana harmonogramu nie zmienia istniejących rezerwacji.</p>
+  <%= form_with model: @settings, url: admin_consultation_settings_path, class: "flex flex-col gap-5" do |form| %>
+    <%= render "admin/shared/form_errors", record: @settings %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div><%= form.label :booking_window_months, "Okno rezerwacji (miesiące)", class: "block mb-2" %><%= form.number_field :booking_window_months, min: 1, max: 12, required: true, class: "form-control" %></div>
+      <div><%= form.label :minimum_notice_hours, "Minimalne wyprzedzenie (godziny)", class: "block mb-2" %><%= form.number_field :minimum_notice_hours, min: 0, max: 720, required: true, class: "form-control" %></div>
+    </div>
+    <% (1..7).each do |day| %>
+      <% weekday = day % 7 %>
+      <fieldset class="rounded-xl border border-border bg-surface p-4 flex flex-col gap-3">
+        <legend class="font-bold px-2"><%= I18n.t("date.day_names")[weekday] %></legend>
+        <% @rows.select { |slot| slot.weekday == weekday }.each do |slot| %>
+          <%= form.fields_for :weekly_slots, slot do |fields| %>
+            <div class="flex flex-wrap items-center gap-3">
+              <%= fields.hidden_field :weekday %>
+              <%= fields.label :time_of_day, slot.persisted? ? "Godzina" : "Dodaj godzinę", class: "text-t6" %>
+              <%= fields.time_field :time_of_day, step: 60, class: "form-control w-auto!" %>
+              <% if slot.persisted? %><%= fields.label :_destroy do %><%= fields.check_box :_destroy %> Usuń<% end %><% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </fieldset>
+    <% end %>
+    <p class="text-t6 text-taupe">Dodaj godziny i zapisz. Po zapisaniu pojawi się miejsce na kolejną godzinę w każdym dniu. Pusty dzień oznacza brak konsultacji.</p>
+    <%= form.submit "Zapisz harmonogram", class: "rounded-full bg-accent px-5 py-3 text-ink font-bold cursor-pointer self-start" %>
+  <% end %>
+  <section class="rounded-2xl border border-border bg-surface p-5 flex flex-col gap-4">
+    <h2 class="font-display text-t3">Źródło dostępności</h2>
+    <% if @settings.local_availability? %>
+      <p>Dostępnością zarządza aplikacja. Google Calendar pozostaje kopią rezerwacji i nie blokuje terminów.</p>
+    <% else %>
+      <p>Przed przełączeniem przepisz wszystkie blokady z Google do aplikacji — również urlopy, święta i rezerwacje poza systemem na daty dalsze niż dwa miesiące. Po przełączeniu wydarzenia Google przestaną blokować terminy.</p>
+      <%= form_with url: activate_local_admin_consultation_settings_path, method: :patch, class: "flex flex-col gap-4" do %>
+        <%= label_tag :blocks_migrated do %><%= check_box_tag :blocks_migrated, "1", false, required: true %> Przeniosłam/przeniosłem wszystkie potrzebne blokady z Google.<% end %>
+        <%= submit_tag "Przejdź na dostępność z aplikacji", data: { turbo_confirm: "Wyłączyć odczytywanie blokad Google? Rezerwacje klientów będą korzystać z dostępności w aplikacji." }, class: "rounded-full bg-accent px-5 py-3 text-ink font-bold cursor-pointer self-start" %>
+      <% end %>
+    <% end %>
+  </section>
+</div>

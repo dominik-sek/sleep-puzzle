@@ -118,7 +118,7 @@ RSpec.describe "Admin::Bookings", type: :request do
 
       get admin_booking_path(booking)
 
-      expect(response.body).to include("nie jest zablokowany w kalendarzu")
+      expect(response.body).to include("Dostępność terminu wynika ze statusu rezerwacji")
       expect(response.body).not_to include("calendar/event?eid=")
     end
 

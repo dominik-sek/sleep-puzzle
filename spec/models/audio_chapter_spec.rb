@@ -1,5 +1,28 @@
 require "rails_helper"
 
+# == Schema Information
+#
+# Table name: audio_chapters
+#
+#  id               :bigint           not null, primary key
+#  cdn_path         :string
+#  duration_seconds :integer
+#  position         :integer          default(0), not null
+#  translations     :jsonb            not null
+#  upload_error     :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  product_id       :bigint           not null
+#
+# Indexes
+#
+#  index_audio_chapters_on_product_id                      (product_id)
+#  index_audio_chapters_on_product_id_and_position_and_id  (product_id,position,id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (product_id => products.id)
+#
 RSpec.describe AudioChapter, type: :model do
   it "publishes an audio process only when a ready chapter exists and sums chapter lengths" do
     product = build_product(kind: :audio_process, published: false, cdn_path: nil)

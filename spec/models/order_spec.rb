@@ -6,7 +6,7 @@ require 'rails_helper'
 #
 #  id                    :bigint           not null, primary key
 #  paid_at               :datetime
-#  status                :integer          default(0), not null
+#  status                :integer          default("pending"), not null
 #  token                 :string           not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null

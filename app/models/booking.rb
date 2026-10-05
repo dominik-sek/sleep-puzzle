@@ -5,9 +5,10 @@
 #  id                    :bigint           not null, primary key
 #  confirmed_at          :datetime
 #  email                 :string           default(""), not null
+#  ends_at               :datetime
 #  name                  :string
 #  starts_at             :datetime
-#  status                :integer          default(0), not null
+#  status                :integer          default("pending"), not null
 #  token                 :string           not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
@@ -53,6 +54,8 @@ class Booking < ApplicationRecord
     I18n.t("bookings.statuses.#{status}", locale: locale, default: status.to_s)
   end
 
+  before_validation :set_consultation_end, on: :create
+
   validates :name, presence: true
   validates :starts_at, presence: true
   validates :email, presence: true
@@ -73,7 +76,11 @@ class Booking < ApplicationRecord
   # The unique index on paddle_transaction_id is what actually keeps redelivered
   # webhooks from confirming twice, so treat a violation as "already handled".
   def confirm_payment!(transaction_id)
-    update!(status: :confirmed, confirmed_at: Time.current, paddle_transaction_id: transaction_id)
+    ConsultationSetting.current.with_lock do
+      reload
+      return false if paddle_transaction_id.present?
+      update!(status: :confirmed, confirmed_at: Time.current, paddle_transaction_id: transaction_id)
+    end
     broadcast_status
     true
   rescue ActiveRecord::RecordNotUnique
@@ -81,11 +88,20 @@ class Booking < ApplicationRecord
   end
 
   def fail_payment!(status)
-    update!(status: status)
+    ConsultationSetting.current.with_lock do
+      reload
+      return false if confirmed?
+      update!(status: status)
+    end
     broadcast_status
+    true
   end
 
   private
+
+  def set_consultation_end
+    self.ends_at ||= starts_at + SlotComparatorService::SLOT_DURATION if starts_at
+  end
 
   # the buyer is sitting on bookings#show waiting for exactly this
   def broadcast_status

@@ -1,5 +1,22 @@
 require 'rails_helper'
 
+# == Schema Information
+#
+# Table name: integrations
+#
+#  id            :bigint           not null, primary key
+#  access_token  :text
+#  expires_at    :datetime
+#  refresh_token :text
+#  service_name  :string           not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  calendar_id   :string
+#
+# Indexes
+#
+#  index_integrations_on_service_name  (service_name) UNIQUE
+#
 RSpec.describe Integration do
   describe ".google_calendar_id" do
     it "returns the calendar picked in the panel" do

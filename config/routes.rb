@@ -85,6 +85,12 @@ Rails.application.routes.draw do
   # `bin/rails 'admin:promote[email]'`
   namespace :admin do
     root "dashboard#index"
+    resource :consultation_calendar, only: [ :show ], controller: "consultation_calendar"
+    resource :consultation_settings, only: [ :edit, :update ], controller: "consultation_settings" do
+      patch :activate_local, on: :collection
+    end
+    resources :consultation_blocks, except: [ :index, :show ]
+    resources :consultation_slots, except: [ :index, :show ]
     resources :bookings, only: [ :index, :show ], param: :token
     # by token like the public side, so the panel and a customer's own link name
     # the same order the same way

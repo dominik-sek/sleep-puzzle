@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_03_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -79,11 +79,52 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_010000) do
     t.string "token", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.datetime "ends_at"
     t.index ["package_id"], name: "index_bookings_on_package_id"
     t.index ["paddle_transaction_id"], name: "index_bookings_on_paddle_transaction_id", unique: true
     t.index ["starts_at", "status"], name: "index_bookings_on_starts_at_and_status"
     t.index ["token"], name: "index_bookings_on_token", unique: true
     t.index ["user_id"], name: "index_bookings_on_user_id"
+  end
+
+  create_table "consultation_blocks", force: :cascade do |t|
+    t.datetime "starts_at", null: false
+    t.datetime "ends_at", null: false
+    t.boolean "all_day", default: true, null: false
+    t.string "category", default: "time_off", null: false
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["starts_at", "ends_at"], name: "index_consultation_blocks_on_starts_at_and_ends_at"
+    t.check_constraint "ends_at > starts_at", name: "consultation_block_period"
+  end
+
+  create_table "consultation_settings", force: :cascade do |t|
+    t.integer "booking_window_months", default: 2, null: false
+    t.integer "minimum_notice_hours", default: 24, null: false
+    t.boolean "local_availability", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.check_constraint "booking_window_months >= 1 AND booking_window_months <= 12 AND minimum_notice_hours >= 0 AND minimum_notice_hours <= 720", name: "consultation_settings_limits"
+    t.check_constraint "id = 1", name: "consultation_settings_singleton"
+  end
+
+  create_table "consultation_slots", force: :cascade do |t|
+    t.datetime "starts_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["starts_at"], name: "index_consultation_slots_on_starts_at", unique: true
+  end
+
+  create_table "consultation_weekly_slots", force: :cascade do |t|
+    t.bigint "consultation_setting_id", null: false
+    t.integer "weekday", null: false
+    t.integer "minute_of_day", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["consultation_setting_id"], name: "index_consultation_weekly_slots_on_consultation_setting_id"
+    t.check_constraint "weekday >= 0 AND weekday <= 6 AND minute_of_day >= 0 AND minute_of_day <= 1439", name: "weekly_slot_time"
+    t.unique_constraint ["weekday", "minute_of_day"], deferrable: :deferred, name: "unique_consultation_weekly_times"
   end
 
   create_table "content_blocks", force: :cascade do |t|
@@ -429,12 +470,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_010000) do
     t.string "locale"
     t.text "quote"
     t.string "author"
-    t.string "author_title"
     t.datetime "consented_at"
     t.datetime "submitted_at"
     t.bigint "published_content_item_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "author_title"
     t.index ["published_content_item_id"], name: "index_testimonial_invitations_on_published_content_item_id"
     t.index ["status"], name: "index_testimonial_invitations_on_status"
     t.index ["token"], name: "index_testimonial_invitations_on_token", unique: true
@@ -463,6 +504,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_010000) do
   add_foreign_key "audio_chapters", "products"
   add_foreign_key "bookings", "packages"
   add_foreign_key "bookings", "users"
+  add_foreign_key "consultation_weekly_slots", "consultation_settings"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "products"
   add_foreign_key "orders", "users"

@@ -6,7 +6,7 @@ RSpec.describe AdminHelper, type: :helper do
       item = helper.admin_sidebar_items.find { |i| i[:href] == integrations_google_calendar_path }
 
       expect(item).to be_present
-      expect(item[:label]).to eq("Kalendarz")
+      expect(item[:label]).to eq("Google Calendar")
     end
 
     # It is the one nav entry pointing outside the Admin:: namespace, so the
@@ -16,7 +16,7 @@ RSpec.describe AdminHelper, type: :helper do
 
       active = helper.admin_sidebar_items.select { |i| i[:active] }
 
-      expect(active.map { |i| i[:label] }).to eq([ "Kalendarz" ])
+      expect(active.map { |i| i[:label] }).to eq([ "Google Calendar" ])
     end
 
     it "leaves it inactive elsewhere" do

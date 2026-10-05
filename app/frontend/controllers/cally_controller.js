@@ -14,6 +14,8 @@ export default class extends Controller {
                       "summary", "summaryPackage", "summarySlot", "summaryPrice", "summaryDuration"]
     static values = {
         slotLength: String,
+        from: String,
+        to: String,
         availableDates: Array,
         noSlotsLabel: String,
         selectedDate: String,
@@ -46,16 +48,9 @@ export default class extends Controller {
     }
     // All dates are expected in ISO-8601 format (YYYY-MM-DD).
     setCalendarDefaults(){
-        const now = dayjs();
-        let todayFormatted = now.format('YYYY-MM-DD')
-        let twoMonthsFromNow = now.add(2, 'month')
-        let twoMonthsFromNowFormatted = twoMonthsFromNow.format('YYYY-MM-DD')
-
-        this.today = todayFormatted
-        // no day is selected up front - the user picks one, and until then the hours
-        // panel shows a prompt instead of today's slots
-        this.calendarDateTarget.min = todayFormatted // earliest date to be selected
-        this.calendarDateTarget.max = twoMonthsFromNowFormatted // latest ^
+        this.today = this.fromValue
+        this.calendarDateTarget.min = this.fromValue
+        this.calendarDateTarget.max = this.toValue
 
         // Open on the first month that actually has something in it, so the last
         // days of a month don't render as a wall of ghosts with one live day and

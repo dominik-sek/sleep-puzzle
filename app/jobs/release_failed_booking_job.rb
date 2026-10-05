@@ -16,7 +16,7 @@ class ReleaseFailedBookingJob < ApplicationJob
     # by the buyer closing the overlay or an earlier delivery of the same webhook
     return unless booking&.pending?
 
-    booking.fail_payment!(status)
+    return unless booking.fail_payment!(status)
     BookingCalendarService.call(booking: booking).release
     BookingMailer.with(booking: booking).payment_failed.deliver_later
     Rails.logger.info("Released booking #{booking.id} as #{status}")

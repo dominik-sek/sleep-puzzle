@@ -1,38 +1,48 @@
 class SlotComparatorService < ApplicationService
-  WEEKLY_SCHEDULE = {
-    1 => [ [ "08:15", "09:45" ] ],                    # Mon
-    2 => [ [ "08:15", "09:45" ] ],                    # Tue
-    3 => [ [ "08:15", "09:45" ], [ "20:30", "22:00" ] ], # Wed (+ evening)
-    4 => [ [ "08:15", "09:45" ], [ "14:30", "16:00" ] ], # Thu
-    5 => [ [ "08:15", "09:45" ], [ "14:30", "16:00" ] ] # Fri
-  }.freeze
+  SLOT_DURATION = 90.minutes
 
-  SCHEDULE_LENGTH = 2.months
-  SLOT_DURATION = 1.5.hours
-
-  def initialize(busy_periods:)
+  def initialize(busy_periods: [], from: nil, to: nil, settings: ConsultationSetting.current, public_window: true)
+    @settings = settings
+    @from = from || settings.booking_dates.first
+    @to = to || settings.booking_dates.last
     @busy_periods = busy_periods
+    @public_window = public_window
   end
 
   def call
-    schedule_blocks.reject { |block| busy?(block) }
+    busy = @busy_periods + local_busy_periods
+    schedule_blocks.reject do |block|
+      (@public_window && (block.begin < Time.current + @settings.minimum_notice_hours.hours || !@settings.booking_dates.cover?(block.begin.to_date))) ||
+        block.begin <= Time.current || busy.any? { |period| overlap?(block, period) }
+    end
   end
 
-  private
-
   def schedule_blocks
-    schedule_dates.flat_map do |date|
-      WEEKLY_SCHEDULE.fetch(date.wday, []).map do |starts_at, ends_at|
-        Time.zone.parse("#{date} #{starts_at}")...Time.zone.parse("#{date} #{ends_at}")
+    (weekly_blocks + ConsultationSlot.where(starts_at: @from.beginning_of_day...(@to + 1).beginning_of_day).map { |slot| slot.starts_at...slot.ends_at })
+      .uniq { |block| block.begin }.sort_by(&:begin)
+  end
+
+  def weekly_blocks
+    weekly = @settings.weekly_slots.reject(&:marked_for_destruction?).group_by(&:weekday)
+    (@from..@to).flat_map do |date|
+      weekly.fetch(date.wday, []).filter_map do |slot|
+        starts_at = Time.zone.parse("#{date.iso8601} #{slot.time_of_day}")
+        next unless starts_at.strftime("%H:%M") == slot.time_of_day
+        starts_at...(starts_at + SLOT_DURATION)
       end
     end
   end
 
-  def schedule_dates
-    Date.current..SCHEDULE_LENGTH.from_now.to_date
+  private
+
+  def local_busy_periods
+    from = @from.beginning_of_day
+    to = (@to + 2).beginning_of_day
+    ConsultationBlock.overlapping(from, to).map { |block| block.starts_at...block.ends_at } +
+      Booking.where(status: [ :pending, :confirmed ]).where("starts_at < ? AND ends_at > ?", to, from).map { |booking| booking.starts_at...booking.ends_at }
   end
 
-  def busy?(block)
-    @busy_periods.any? { |busy| block.begin < busy.end && busy.begin < block.end }
+  def overlap?(first, second)
+    first.begin < second.end && second.begin < first.end
   end
 end

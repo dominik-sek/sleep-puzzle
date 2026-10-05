@@ -83,7 +83,7 @@ class GoogleCalendarService < ApplicationService
       page = @service.list_events(
         calendar_id,
         time_min: Time.current.beginning_of_day.iso8601,
-        time_max: SlotComparatorService::SCHEDULE_LENGTH.from_now.end_of_day.iso8601,
+        time_max: (ConsultationSetting.current.booking_dates.last + 2).beginning_of_day.iso8601,
         single_events: true,
         order_by: "startTime",
         max_results: 250,
@@ -132,5 +132,7 @@ class GoogleCalendarService < ApplicationService
 
   def google_calendar_authorizer
     AuthorizeCalendarService.call
+  rescue ArgumentError => error
+    raise NotConnected, "Google Calendar OAuth configuration is unavailable (#{error.message})"
   end
 end

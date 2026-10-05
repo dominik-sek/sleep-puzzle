@@ -51,7 +51,7 @@ class BookingsController < ApplicationController
                     status: :unprocessable_entity
     end
 
-    if @booking.save
+    if ReserveConsultationService.call(booking: @booking)
       # The checkout payload needs the persisted id and the booking's own URL, so
       # it cannot be prepared before the save. What it can do is come before the
       # calendar hold: a slot is only taken off the public calendar once there is
@@ -92,14 +92,16 @@ class BookingsController < ApplicationController
   def abandon
     booking = current_user.bookings.find_by!(token: params[:token])
     payment = BookingPaymentCheckService.call(booking: booking)
-    cleared = clearable?(booking, payment)
-
-    if cleared
-      # drop the hold first: release nils calendar_event_id on the row, so doing it the
-      # other way round would leave an orphaned event nothing knows how to find
-      BookingCalendarService.call(booking: booking).release
-      booking.destroy!
-      Rails.logger.info("Cleared abandoned booking #{booking.id} - checkout closed without payment")
+    cleared = false
+    ConsultationSetting.current.with_lock do
+      booking.reload
+      cleared = clearable?(booking, payment)
+      if cleared
+        # Remove the Google copy before deleting its event id with the booking.
+        BookingCalendarService.call(booking: booking).release
+        booking.destroy!
+        Rails.logger.info("Cleared abandoned booking #{booking.id} - checkout closed without payment")
+      end
     end
 
     # always says something: the slot disappeared from the calendar when the booking was
@@ -205,7 +207,13 @@ class BookingsController < ApplicationController
   def combined_starts_at
     return nil if booking_params[:date].blank? || booking_params[:hour].blank?
 
-    Time.zone.parse("#{booking_params[:date]} #{booking_params[:hour]}")
+    date = booking_params[:date].to_s
+    hour = booking_params[:hour].to_s
+    return nil unless date.match?(/\A\d{4}-\d{2}-\d{2}\z/) && hour.match?(/\A(?:[01]\d|2[0-3]):[0-5]\d\z/)
+
+    Date.iso8601(date)
+    parsed = Time.zone.parse("#{date} #{hour}")
+    parsed if parsed.strftime("%H:%M") == hour
   rescue ArgumentError
     nil
   end

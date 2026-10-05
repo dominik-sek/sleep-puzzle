@@ -37,7 +37,7 @@ RSpec.describe "Bookings", type: :request do
 
     it "restores a selected available slot after sign-in" do
       date = Date.current.next_occurring(:monday).iso8601
-      hour = SlotComparatorService::WEEKLY_SCHEDULE.fetch(Date.iso8601(date).wday).first.first
+      hour = ConsultationSetting.current.weekly_slots.where(weekday: Date.iso8601(date).wday).order(:minute_of_day).first.time_of_day
 
       get bookings_path(date: date, hour: hour)
 
@@ -139,7 +139,7 @@ RSpec.describe "Bookings", type: :request do
 
     def booking_params(pkg = package)
       { booking: { name: "Marta", email: user.email, package_id: pkg.id,
-                   date: 1.week.from_now.to_date.to_s, hour: "08:15" } }
+                   date: Date.current.next_occurring(:monday).to_s, hour: "08:15" } }
     end
 
     it "asks for a new slot when a malformed date is submitted" do

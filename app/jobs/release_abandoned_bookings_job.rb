@@ -11,7 +11,7 @@ class ReleaseAbandonedBookingsJob < ApplicationJob
 
   def perform
     Booking.pending.where(created_at: ..ABANDON_AFTER.ago).find_each do |booking|
-      booking.fail_payment!(:canceled)
+      next unless booking.fail_payment!(:canceled)
       BookingCalendarService.call(booking: booking).release
       Rails.logger.info("Released abandoned booking #{booking.id}")
     rescue => e

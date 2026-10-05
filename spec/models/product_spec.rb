@@ -4,20 +4,22 @@ require 'rails_helper'
 #
 # Table name: products
 #
-#  id                 :bigint           not null, primary key
-#  audio_upload_error :string
-#  category           :integer
-#  cdn_path           :string
-#  icon               :string
-#  kind               :integer
-#  length_minutes     :integer
-#  position           :integer          default(0), not null
-#  preview_cdn_path   :string
-#  published          :boolean          default(FALSE), not null
-#  translations       :jsonb            not null
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  paddle_price_id    :string
+#  id                   :bigint           not null, primary key
+#  audio_upload_error   :string
+#  category             :integer
+#  cdn_path             :string
+#  icon                 :string
+#  kind                 :integer
+#  length_minutes       :integer
+#  position             :integer          default(0), not null
+#  preview_cdn_path     :string
+#  published            :boolean          default(FALSE), not null
+#  trailer_cdn_path     :string
+#  trailer_upload_error :string
+#  translations         :jsonb            not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  paddle_price_id      :string
 #
 RSpec.describe Product, type: :model do
   describe "translated fields" do

@@ -1,5 +1,31 @@
 require "rails_helper"
 
+# == Schema Information
+#
+# Table name: staged_media_uploads
+#
+#  id           :bigint           not null, primary key
+#  byte_size    :bigint           not null
+#  chunk_count  :integer          not null
+#  completed_at :datetime
+#  filename     :string           not null
+#  target_type  :string           not null
+#  token        :string           not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  target_id    :bigint           not null
+#  user_id      :bigint           not null
+#
+# Indexes
+#
+#  index_staged_media_uploads_on_target_type_and_target_id  (target_type,target_id)
+#  index_staged_media_uploads_on_token                      (token) UNIQUE
+#  index_staged_media_uploads_on_user_id                    (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#
 RSpec.describe StagedMediaUpload, type: :model do
   it "never builds a disk path from a malformed stored token" do
     upload = described_class.new(token: "../../outside", target_type: "Product", filename: "intro.mp4",

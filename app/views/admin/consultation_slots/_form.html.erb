@@ -1,0 +1,7 @@
+<%= form_with model: [:admin, @slot], class: "flex flex-col gap-5" do |form| %>
+  <%= render "admin/shared/form_errors", record: @slot %>
+  <p class="text-tan">Dodatkowa konsultacja trwa 90 minut. Możesz dodać ją na dowolną przyszłą datę. Klient zobaczy ją, gdy wejdzie w okno rezerwacji. Blokady nadal obowiązują.</p>
+  <div><%= label_tag :consultation_slot_date, "Data" %><%= date_field_tag "consultation_slot[date]", @date, required: true, class: "form-control" %></div>
+  <div><%= label_tag :consultation_slot_hour, "Godzina rozpoczęcia (Warszawa)" %><%= time_field_tag "consultation_slot[hour]", @hour, required: true, step: 60, class: "form-control" %></div>
+  <%= form.submit "Zapisz termin", class: "rounded-full bg-accent px-5 py-3 text-ink font-bold cursor-pointer self-start" %>
+<% end %>

@@ -20,10 +20,10 @@ class BookingCalendarService < ApplicationService
       summary: summary,
       description: description,
       starts_at: @booking.starts_at,
-      ends_at: @booking.starts_at + SlotComparatorService::SLOT_DURATION
+      ends_at: @booking.ends_at
     )
     @booking.update!(calendar_event_id: event.id)
-  rescue Google::Apis::Error, GoogleCalendarService::NotConnected => e
+  rescue Google::Apis::Error, GoogleCalendarService::NotConnected, Google::Auth::AuthorizationError, Signet::AuthorizationError => e
     log(e, "create")
   end
 
@@ -35,7 +35,7 @@ class BookingCalendarService < ApplicationService
     return create if @booking.calendar_event_id.blank?
 
     calendar.patch_event(event_id: @booking.calendar_event_id, summary: summary, description: description)
-  rescue Google::Apis::Error, GoogleCalendarService::NotConnected => e
+  rescue Google::Apis::Error, GoogleCalendarService::NotConnected, Google::Auth::AuthorizationError, Signet::AuthorizationError => e
     log(e, "update")
   end
 
@@ -53,7 +53,7 @@ class BookingCalendarService < ApplicationService
     end
 
     @booking.update!(calendar_event_id: nil)
-  rescue Google::Apis::Error, GoogleCalendarService::NotConnected => e
+  rescue Google::Apis::Error, GoogleCalendarService::NotConnected, Google::Auth::AuthorizationError, Signet::AuthorizationError => e
     log(e, "delete")
   end
 

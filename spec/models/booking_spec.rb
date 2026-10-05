@@ -7,9 +7,10 @@ require 'rails_helper'
 #  id                    :bigint           not null, primary key
 #  confirmed_at          :datetime
 #  email                 :string           default(""), not null
+#  ends_at               :datetime
 #  name                  :string
 #  starts_at             :datetime
-#  status                :integer          default(0), not null
+#  status                :integer          default("pending"), not null
 #  token                 :string           not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
