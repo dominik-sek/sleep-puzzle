@@ -15,15 +15,19 @@ RSpec.describe "Managing consultation availability", type: :system do
   end
 
   after do
+    page.driver.browser.execute_cdp("Emulation.clearDeviceMetricsOverride") if @mobile_emulation
     Warden.test_reset!
     travel_back
   end
 
   it "edits the schedule, blocks a day, adds an exceptional appointment and publishes it in PL and EN" do
     visit edit_admin_consultation_settings_path
+    # Time objects let Capybara set native time values without locale-dependent keystrokes.
     within(find("fieldset", text: I18n.t("date.day_names")[1])) do
-      fill_in "Godzina", with: "10:00"
-      fill_in "Dodaj godzinę", with: "12:00"
+      fill_in "Godzina", with: Time.zone.parse("2026-10-05 10:00")
+      expect(find_field("Godzina").value).to eq("10:00")
+      fill_in "Dodaj godzinę", with: Time.zone.parse("2026-10-05 12:00")
+      expect(find_field("Dodaj godzinę").value).to eq("12:00")
     end
     fill_in "Okno rezerwacji (miesiące)", with: "4"
     click_button "Zapisz harmonogram"
@@ -36,7 +40,8 @@ RSpec.describe "Managing consultation availability", type: :system do
     expect(page).to have_content("Prywatny urlop")
 
     visit new_admin_consultation_slot_path(date: "2026-10-17")
-    fill_in "Godzina rozpoczęcia (Warszawa)", with: "11:00"
+    fill_in "Godzina rozpoczęcia (Warszawa)", with: Time.zone.parse("2026-10-05 11:00")
+    expect(find_field("Godzina rozpoczęcia (Warszawa)").value).to eq("11:00")
     click_button "Zapisz termin"
     expect(page).to have_content("Dodatkowe terminy")
 
@@ -48,6 +53,7 @@ RSpec.describe "Managing consultation availability", type: :system do
     visit admin_consultation_calendar_path(date: "2026-10-17")
     page.driver.browser.manage.window.resize_to(1440, 1000)
     page.save_screenshot(Rails.root.join("tmp", "consultation-calendar-desktop.png"))
+    @mobile_emulation = true
     page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride", width: 390, height: 844, deviceScaleFactor: 1, mobile: true)
     expect(page.evaluate_script("document.documentElement.scrollWidth <= window.innerWidth")).to be true
     page.save_screenshot(Rails.root.join("tmp", "consultation-calendar-mobile.png"))
