@@ -1,15 +1,18 @@
 module Admin
   class ConsultationSlotsController < BaseController
+    include ConsultationCalendarResponses
     before_action :load_slot, only: [ :edit, :update, :destroy ]
 
     def new
       @slot = ConsultationSlot.new
       @date = params[:date].presence || Date.current.iso8601
+      dialog_form(:slot)
     end
 
     def edit
       @date = @slot.starts_at.to_date.iso8601
       @hour = @slot.starts_at.strftime("%H:%M")
+      dialog_form(:slot)
     end
 
     def create
@@ -23,7 +26,7 @@ module Admin
 
     def destroy
       ConsultationSetting.current.with_lock { @slot.destroy! }
-      redirect_to admin_consultation_calendar_path, notice: "Usunięto dodatkowy termin. Istniejące rezerwacje pozostają bez zmian."
+      calendar_changed(date: @slot.starts_at.to_date.iso8601, message: "Usunięto dodatkowy termin. Istniejące rezerwacje pozostają bez zmian.")
     end
 
     private
@@ -40,9 +43,13 @@ module Admin
         @slot.save
       end
       if saved
-        redirect_to admin_consultation_calendar_path(date: @date), notice: "Zapisano dodatkowy termin."
+        calendar_changed(date: @date, message: "Zapisano dodatkowy termin.")
       else
-        render template, status: :unprocessable_entity
+        if turbo_frame_request?
+          render "admin/consultation_calendar/form", locals: { resource: :slot }, layout: false, status: :unprocessable_entity
+        else
+          render template, status: :unprocessable_entity
+        end
       end
     end
 

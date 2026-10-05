@@ -1,0 +1,33 @@
+<%= turbo_frame_tag "consultation_calendar_dialog" do %>
+  <% date = @calendar.date; context = { calendar_date: params[:calendar_date].presence || @calendar.month.iso8601, dialog_date: date.iso8601 } %>
+  <div class="p-5 flex flex-col gap-4">
+    <h2 tabindex="-1" class="font-display text-t3"><%= l(date, format: :long) %></h2>
+    <p class="text-t6 text-taupe">Godziny: Warszawa. Konsultacja trwa 90 minut.</p>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to "Zablokuj dzień lub godziny", new_admin_consultation_block_path(context.merge(date: date.iso8601)), class: "rounded-full bg-accent px-4 py-2 text-ink font-bold" %>
+      <%= link_to "Dodaj termin", new_admin_consultation_slot_path(context.merge(date: date.iso8601)), class: "rounded-full border border-border-input px-4 py-2" %>
+    </div>
+    <section><h3 class="font-bold mb-2">Godziny konsultacji</h3>
+      <% slots = @calendar.slots.fetch(date, []) %>
+      <% if slots.empty? %><p class="text-taupe text-t6">Brak terminów w harmonogramie.</p><% end %>
+      <% slots.each do |slot| %><p class="text-t6"><%= slot.begin.strftime("%H:%M") %>–<%= slot.end.strftime("%H:%M") %> · <%= @calendar.slot_state(slot) %></p><% end %>
+    </section>
+    <% @calendar.bookings_on(date).each do |booking| %>
+      <div class="rounded-lg border border-border p-3 flex flex-col gap-2"><%= link_to "#{booking.starts_at.strftime('%H:%M')}–#{booking.ends_at.strftime('%H:%M')} · #{booking.name}", admin_booking_path(booking), data: { turbo_frame: "_top" } %><%= admin_status_badge(booking.status, booking.status_label) %></div>
+    <% end %>
+    <% @calendar.blocks_on(date).each do |block| %>
+      <article class="rounded-lg border border-border p-3 flex flex-col gap-2">
+        <strong class="text-orange-400"><%= block.category_label %></strong>
+        <p class="text-t6"><%= block.all_day? ? "#{l(block.starts_at.to_date)} — #{l(block.ends_at.to_date - 1)} (całe dni)" : "#{l(block.starts_at, format: :long)} — #{l(block.ends_at, format: :long)}" %></p>
+        <% if block.note.present? %><p class="text-t6 text-taupe"><%= block.note %></p><% end %>
+        <div class="flex gap-4"><%= link_to "Edytuj blokadę", edit_admin_consultation_block_path(block, context) %><%= button_to "Usuń blokadę", admin_consultation_block_path(block), method: :delete, params: context, data: { turbo_confirm: "Usunąć blokadę?" }, class: "text-orange-400 cursor-pointer" %></div>
+      </article>
+    <% end %>
+    <% @calendar.extras_on(date).each do |slot| %>
+      <article class="rounded-lg border border-border p-3 flex flex-col gap-2">
+        <strong>Dodatkowy termin <%= slot.starts_at.strftime("%H:%M") %></strong>
+        <div class="flex gap-4"><%= link_to "Edytuj termin", edit_admin_consultation_slot_path(slot, context) %><%= button_to "Usuń termin", admin_consultation_slot_path(slot), method: :delete, params: context, data: { turbo_confirm: "Usunąć dodatkowy termin? Istniejące rezerwacje pozostaną bez zmian." }, class: "text-orange-400 cursor-pointer" %></div>
+      </article>
+    <% end %>
+  </div>
+<% end %>

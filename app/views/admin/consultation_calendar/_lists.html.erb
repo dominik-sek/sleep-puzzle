@@ -1,0 +1,29 @@
+<%= turbo_frame_tag "consultation_calendar_lists", class: "flex flex-col gap-6" do %>
+  <section class="flex flex-col gap-3">
+    <h2 class="font-display text-t3">Blokady — wszystkie przyszłe daty</h2>
+    <% if calendar.future_blocks.empty? %><p class="text-taupe">Nie ma blokad.</p><% end %>
+    <% calendar.future_blocks.each do |block| %>
+      <article class="rounded-xl border border-border bg-surface p-4 flex flex-col gap-2">
+        <div class="flex flex-wrap justify-between gap-3">
+          <div><strong><%= block.category_label %></strong> · <%= block.all_day? ? "#{l(block.starts_at.to_date)} — #{l(block.ends_at.to_date - 1)} (całe dni)" : "#{l(block.starts_at, format: :long)} — #{l(block.ends_at, format: :long)}" %><% if block.note.present? %><p class="text-taupe"><%= block.note %></p><% end %></div>
+          <div class="flex items-center gap-4"><%= link_to "Edytuj", edit_admin_consultation_block_path(block, dialog_date: block.starts_at.to_date.iso8601), data: { action: "click->consultation-calendar#openForm" } %><%= button_to "Usuń", admin_consultation_block_path(block), method: :delete, params: { calendar_date: calendar.month.iso8601 }, data: { turbo_confirm: "Usunąć blokadę?" }, class: "text-orange-400 cursor-pointer" %></div>
+        </div>
+        <% conflicts = block.conflicting_bookings %>
+        <% if conflicts.any? %>
+          <div role="alert" class="text-yellow-300">Uwaga: blokada obejmuje istniejące konsultacje. Rezerwacje pozostają aktywne.
+            <% conflicts.each do |booking| %><div><%= link_to "#{l(booking.starts_at, format: :long)} · #{booking.name}", admin_booking_path(booking), data: { turbo_frame: "_top" } %></div><% end %>
+          </div>
+        <% end %>
+      </article>
+    <% end %>
+  </section>
+  <section class="flex flex-col gap-3">
+    <h2 class="font-display text-t3">Dodatkowe terminy — wszystkie przyszłe daty</h2>
+    <% if calendar.extra_slots.empty? %><p class="text-taupe">Nie ma dodatkowych terminów.</p><% end %>
+    <% calendar.extra_slots.each do |slot| %>
+      <div class="rounded-xl border border-border bg-surface p-4 flex flex-wrap items-center justify-between gap-3">
+        <span><%= l(slot.starts_at, format: :long) %></span><div class="flex items-center gap-4"><%= link_to "Edytuj", edit_admin_consultation_slot_path(slot, dialog_date: slot.starts_at.to_date.iso8601), data: { action: "click->consultation-calendar#openForm" } %><%= button_to "Usuń", admin_consultation_slot_path(slot), method: :delete, params: { calendar_date: calendar.month.iso8601 }, data: { turbo_confirm: "Usunąć dodatkowy termin? Istniejące rezerwacje pozostaną bez zmian." }, class: "text-orange-400 cursor-pointer" %></div>
+      </div>
+    <% end %>
+  </section>
+<% end %>

@@ -1,11 +1,13 @@
 module Admin
   class ConsultationBlocksController < BaseController
+    include ConsultationCalendarResponses
     before_action :load_block, only: [ :edit, :update, :destroy ]
 
     def new
       @block = ConsultationBlock.new(all_day: true, category: "time_off")
       @form_values = { "start_date" => params[:date].presence || Date.current.iso8601,
                        "end_date" => params[:date].presence || Date.current.iso8601 }
+      dialog_form(:block)
     end
 
     def edit
@@ -14,6 +16,7 @@ module Admin
         "end_date" => (@block.all_day? ? @block.ends_at.to_date - 1 : @block.ends_at.to_date).iso8601,
         "start_time" => @block.starts_at.strftime("%H:%M"), "end_time" => @block.ends_at.strftime("%H:%M")
       }
+      dialog_form(:block)
     end
 
     def create
@@ -27,7 +30,21 @@ module Admin
 
     def destroy
       ConsultationSetting.current.with_lock { @block.destroy! }
-      redirect_to admin_consultation_calendar_path, notice: "Usunięto blokadę."
+      calendar_changed(date: @block.starts_at.to_date.iso8601, message: "Usunięto blokadę.")
+    end
+
+    def new_bulk
+      @batch = ConsultationBlockBatch.new(dates: params.permit(dates: []).fetch(:dates, []))
+      render :bulk, layout: !turbo_frame_request?
+    end
+
+    def bulk
+      @batch = ConsultationBlockBatch.new(params.require(:consultation_block_batch).permit(:all_day, :start_time, :end_time, :category, :note, dates: []))
+      if @batch.save
+        calendar_changed(date: @batch.dates.first, message: "Zapisano blokady dla #{@batch.dates.size} dni.", conflicts: @batch.conflicting_bookings)
+      else
+        render :bulk, layout: !turbo_frame_request?, status: :unprocessable_entity
+      end
     end
 
     private
@@ -44,9 +61,13 @@ module Admin
         @block.save
       end
       if saved
-        redirect_to admin_consultation_calendar_path(date: @block.starts_at.to_date.iso8601), notice: "Zapisano blokadę."
+        calendar_changed(date: @block.starts_at.to_date.iso8601, message: "Zapisano blokadę.", conflicts: @block.conflicting_bookings.to_a)
       else
-        render template, status: :unprocessable_entity
+        if turbo_frame_request?
+          render "admin/consultation_calendar/form", locals: { resource: :block }, layout: false, status: :unprocessable_entity
+        else
+          render template, status: :unprocessable_entity
+        end
       end
     end
 

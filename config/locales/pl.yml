@@ -1,6 +1,8 @@
 pl:
   activemodel:
     attributes:
+      consultation_block_batch:
+        category: "Powód"
       contact_message:
         name: "Imię i nazwisko"
         email: "Adres e-mail"

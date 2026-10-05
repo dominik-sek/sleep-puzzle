@@ -1,0 +1,9 @@
+<div id="consultation_calendar_notice" aria-live="polite">
+  <% if message %><p role="status" class="rounded-xl border border-accent bg-surface p-4"><%= message %></p><% end %>
+  <% if conflicts.any? %>
+    <div role="alert" class="rounded-xl border border-yellow-400/30 bg-surface p-4 text-yellow-300 mt-3">
+      <p>Uwaga: blokady obejmują istniejące konsultacje. Rezerwacje pozostają aktywne.</p>
+      <% conflicts.each do |booking| %><div><%= link_to "#{l(booking.starts_at, format: :long)} · #{booking.name}", admin_booking_path(booking), data: { turbo_frame: "_top" } %></div><% end %>
+    </div>
+  <% end %>
+</div>

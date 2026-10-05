@@ -1,0 +1,36 @@
+<%= turbo_frame_tag "consultation_calendar_month", data: { action: "turbo:frame-load->consultation-calendar#monthLoaded" }, class: "flex flex-col gap-4 min-w-0" do %>
+  <div data-consultation-calendar-target="month" data-month-date="<%= calendar.month.iso8601 %>" class="flex flex-wrap items-center gap-3">
+    <%= link_to "← Poprzedni miesiąc", admin_consultation_calendar_path(date: calendar.month.prev_month.iso8601), class: "rounded-lg border border-border-input px-3 py-2" %>
+    <h2 class="font-display text-t3"><%= l(calendar.month, format: "%B %Y") %></h2>
+    <%= link_to "Następny miesiąc →", admin_consultation_calendar_path(date: calendar.month.next_month.iso8601), class: "rounded-lg border border-border-input px-3 py-2" %>
+    <%= form_with url: admin_consultation_calendar_path, method: :get, class: "flex flex-wrap items-center gap-2" do %>
+      <%= label_tag :date, "Przejdź do daty", class: "text-t6" %>
+      <%= date_field_tag :date, calendar.date, required: true, class: "form-control w-auto!" %>
+      <%= submit_tag "Pokaż", class: "rounded-lg bg-accent px-3 py-2 text-ink cursor-pointer" %>
+    <% end %>
+  </div>
+  <p class="text-t6 text-tan">Wolny · Blokada · Oczekuje na płatność · Potwierdzona. Okno klientów: <%= calendar.settings.booking_window_months %> mies., minimum <%= calendar.settings.minimum_notice_hours %> godz. wyprzedzenia.</p>
+  <div class="grid grid-cols-7 gap-1 min-w-0" aria-label="Kalendarz miesiąca">
+    <% %w[Pon Wt Śr Czw Pt Sob Nd].each do |name| %><div class="text-t6 text-taupe py-2 text-center xl:text-left"><%= name %></div><% end %>
+    <% calendar.grid_dates.each do |date| %>
+      <% bookings = calendar.bookings_on(date); blocks = calendar.blocks_on(date); slots = calendar.slots.fetch(date, []) %>
+      <% summary = [l(date, format: :long), ("Blokada" if blocks.any?), ("Potwierdzona konsultacja" if bookings.any?(&:confirmed?)), ("Oczekuje na płatność" if bookings.any?(&:pending?)), ("Wolny termin" if slots.any? { |slot| calendar.slot_state(slot) == "Wolny" })].compact.join(". ") %>
+      <button type="button" data-date="<%= date.iso8601 %>" data-consultation-calendar-target="day" data-action="consultation-calendar#dayClicked"
+              aria-label="<%= summary %>" aria-haspopup="dialog" aria-pressed="false"
+              class="consultation-calendar-day min-w-0 min-h-16 xl:min-h-28 rounded-lg border border-border bg-surface p-1 xl:p-2 text-left cursor-pointer hover:border-accent focus-visible:outline-2 focus-visible:outline-accent <%= 'opacity-60' if date.month != calendar.month.month %>">
+        <span class="font-bold block text-center xl:text-left"><%= date.day %></span>
+        <span class="flex flex-wrap justify-center gap-1 mt-1 xl:hidden">
+          <% if bookings.any?(&:confirmed?) %><span class="size-2 rounded-full bg-emerald-400" aria-hidden="true"></span><span class="sr-only">Potwierdzona konsultacja.</span><% end %>
+          <% if bookings.any?(&:pending?) %><span class="size-2 rounded-full bg-yellow-400" aria-hidden="true"></span><span class="sr-only">Oczekuje na płatność.</span><% end %>
+          <% if blocks.any? %><span class="size-2 rounded-full bg-orange-400" aria-hidden="true"></span><span class="sr-only">Blokada.</span><% end %>
+          <% if slots.any? { |slot| calendar.slot_state(slot) == "Wolny" } %><span class="size-2 rounded-full bg-tan" aria-hidden="true"></span><span class="sr-only">Wolny termin.</span><% end %>
+        </span>
+        <span class="hidden xl:flex flex-col gap-1 mt-1 text-t6">
+          <% bookings.each do |booking| %><span class="<%= booking.confirmed? ? 'text-emerald-300' : 'text-yellow-300' %>"><%= booking.starts_at.strftime("%H:%M") %> · <%= booking.confirmed? ? "Potwierdzona" : "Oczekuje" %></span><% end %>
+          <% if blocks.any? %><span class="text-orange-400">Blokada (<%= blocks.size %>)</span><% end %>
+          <% slots.each do |slot| %><% state = calendar.slot_state(slot); next unless %w[Wolny Miniony].include?(state) %><span class="text-tan"><%= slot.begin.strftime("%H:%M") %> · <%= state %></span><% end %>
+        </span>
+      </button>
+    <% end %>
+  </div>
+<% end %>

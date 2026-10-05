@@ -1,0 +1,28 @@
+<%= turbo_frame_tag "consultation_calendar_dialog" do %>
+  <div class="p-5 flex flex-col gap-4">
+    <h2 tabindex="-1" class="font-display text-t3">Zablokuj zaznaczone dni</h2>
+    <%= form_with model: @batch, url: bulk_admin_consultation_blocks_path, class: "flex flex-col gap-4", data: { controller: "consultation-block-form" } do |form| %>
+      <%= hidden_field_tag :calendar_date, params[:calendar_date] %>
+      <%= render "admin/shared/form_errors", record: @batch %>
+      <div class="rounded-xl border border-border p-3 max-h-36 overflow-y-auto">
+        <p class="font-bold mb-2">Wybrane daty (<%= Array(@batch.dates).uniq.size %>)</p>
+        <div class="flex flex-wrap gap-2 text-t6">
+          <% Array(@batch.dates).uniq.sort.each do |date| %>
+            <%= hidden_field_tag "consultation_block_batch[dates][]", date %>
+            <span class="rounded-lg border border-border px-2 py-1"><%= date %></span>
+          <% end %>
+        </div>
+      </div>
+      <%= form.label :all_day do %><%= form.check_box :all_day, data: { consultation_block_form_target: "allDay", action: "change->consultation-block-form#updateHours" } %> Całe dni<% end %>
+      <p class="text-t6 text-taupe">Odznacz „Całe dni”, aby zablokować te same godziny na każdej wybranej dacie. Godziny: Warszawa, w obrębie jednego dnia.</p>
+      <div class="grid grid-cols-2 gap-3">
+        <div><%= form.label :start_time, "Godzina początku" %><%= form.time_field :start_time, step: 60, class: "form-control disabled:opacity-40", data: { consultation_block_form_target: "time" } %></div>
+        <div><%= form.label :end_time, "Godzina końca" %><%= form.time_field :end_time, step: 60, class: "form-control disabled:opacity-40", data: { consultation_block_form_target: "time" } %></div>
+      </div>
+      <div><%= form.label :category, "Powód" %><%= form.select :category, ConsultationBlock::CATEGORIES.map { |key, label| [label, key] }, {}, class: "form-control" %></div>
+      <div><%= form.label :note, "Notatka (tylko dla admina)" %><%= form.text_area :note, rows: 3, class: "form-control" %></div>
+      <p class="text-t6 text-taupe">Istniejące konsultacje pozostaną aktywne. Kalendarz pokaże ostrzeżenie o kolizjach.</p>
+      <%= form.submit "Zapisz blokady", class: "rounded-full bg-accent px-5 py-3 text-ink font-bold cursor-pointer self-start" %>
+    <% end %>
+  </div>
+<% end %>

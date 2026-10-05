@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "consultation_calendar_month", partial: "admin/consultation_calendar/month", locals: { calendar: @calendar } %>
+<%= turbo_stream.replace "consultation_calendar_lists", partial: "admin/consultation_calendar/lists", locals: { calendar: @calendar } %>
+<%= turbo_stream.replace "consultation_calendar_notice", partial: "admin/consultation_calendar/notice", locals: { message: @message, conflicts: @conflicts } %>

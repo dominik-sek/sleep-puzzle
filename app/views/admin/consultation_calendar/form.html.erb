@@ -1,0 +1,8 @@
+<%= turbo_frame_tag "consultation_calendar_dialog" do %>
+  <% date = params[:dialog_date].presence || (resource == :block ? @form_values["start_date"] : @date) %>
+  <div class="p-5 flex flex-col gap-4">
+    <%= link_to "← Szczegóły dnia", day_admin_consultation_calendar_path(date: date, calendar_date: params[:calendar_date]) %>
+    <h2 tabindex="-1" class="font-display text-t3"><%= resource == :block ? "Blokada" : "Dodatkowy termin" %></h2>
+    <%= render "admin/consultation_#{resource == :block ? 'blocks' : 'slots'}/form" %>
+  </div>
+<% end %>

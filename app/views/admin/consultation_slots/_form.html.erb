@@ -1,4 +1,8 @@
 <%= form_with model: [:admin, @slot], class: "flex flex-col gap-5" do |form| %>
+  <% if turbo_frame_request? %>
+    <%= hidden_field_tag :calendar_date, params[:calendar_date] %>
+    <%= hidden_field_tag :dialog_date, params[:dialog_date] %>
+  <% end %>
   <%= render "admin/shared/form_errors", record: @slot %>
   <p class="text-tan">Dodatkowa konsultacja trwa 90 minut. Możesz dodać ją na dowolną przyszłą datę. Klient zobaczy ją, gdy wejdzie w okno rezerwacji. Blokady nadal obowiązują.</p>
   <div><%= label_tag :consultation_slot_date, "Data" %><%= date_field_tag "consultation_slot[date]", @date, required: true, class: "form-control" %></div>
