@@ -59,8 +59,9 @@ RSpec.describe "Interactive consultation calendar", type: :system do
     day("2026-11-02").click(:shift)
     expect(page).to have_content("Zaznaczone dni: 4")
     click_link "← Poprzedni miesiąc"
-    expect(day("2026-10-30")["aria-pressed"]).to eq("true")
-    expect(day("2026-10-31")["aria-pressed"]).to eq("true")
+    expect(page).to have_css('#consultation_calendar_month [data-month-date="2026-10-01"]')
+    expect(page).to have_css('button[data-date="2026-10-30"][aria-pressed="true"]')
+    expect(page).to have_css('button[data-date="2026-10-31"][aria-pressed="true"]')
     day("2026-10-12").click
     expect(page).to have_content("Zaznaczone dni: 5")
     click_button "Wyczyść"
@@ -70,7 +71,7 @@ RSpec.describe "Interactive consultation calendar", type: :system do
     click_link "Harmonogram i ustawienia"
     visit admin_consultation_calendar_path
     expect(page).to have_button("Zaznacz dni", exact: true)
-    expect(day("2026-10-12")["aria-pressed"]).to eq("false")
+    expect(page).to have_css('button[data-date="2026-10-12"][aria-pressed="false"]')
   end
 
   it "resizes Shift ranges around a stable anchor and supports deselecting ranges" do
@@ -81,15 +82,15 @@ RSpec.describe "Interactive consultation calendar", type: :system do
     expect(page).to have_content("Zaznaczone dni: 6")
     day("2026-10-14").click(:shift)
     expect(page).to have_content("Zaznaczone dni: 4")
-    expect(day("2026-10-16")["aria-pressed"]).to eq("false")
+    expect(page).to have_css('button[data-date="2026-10-16"][aria-pressed="false"]')
     day("2026-10-10").click(:shift)
     expect(page).to have_content("Zaznaczone dni: 4")
-    expect(day("2026-10-14")["aria-pressed"]).to eq("false")
-    expect(day("2026-10-07")["aria-pressed"]).to eq("true")
+    expect(page).to have_css('button[data-date="2026-10-14"][aria-pressed="false"]')
+    expect(page).to have_css('button[data-date="2026-10-07"][aria-pressed="true"]')
     day("2026-10-10").click
     day("2026-10-12").click(:shift)
     expect(page).to have_content("Zaznaczone dni: 1")
-    expect(day("2026-10-12")["aria-pressed"]).to eq("false")
+    expect(page).to have_css('button[data-date="2026-10-12"][aria-pressed="false"]')
   end
 
   it "supports date navigation, all-day controls, back, close and reopening the same day" do
