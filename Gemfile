@@ -113,7 +113,7 @@ gem "rails_semantic_logger"
 
 gem "pay", "~> 12.1"
 
-gem "paddle", "~> 2.9"
+gem "paddle", "~> 3.0"
 
 # Error tracking and request tracing. Inert without SENTRY_DSN, so development
 # and CI never phone home; see config/initializers/sentry.rb.
