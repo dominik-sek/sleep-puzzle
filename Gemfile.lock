@@ -301,7 +301,7 @@ GEM
     ostruct (0.6.3)
     paddle (3.0)
       faraday (>= 2.14.3, < 3)
-    pagy (43.6.3)
+    pagy (43.7.0)
       json
       uri
       yaml
@@ -710,7 +710,7 @@ CHECKSUMS
   os (1.1.4) sha256=57816d6a334e7bd6aed048f4b0308226c5fb027433b67d90a9ab435f35108d3f
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
   paddle (3.0) sha256=e5e5b1e04f4367bdbd2f5e0d8084d44bf345ae5cc51bcff8f00f75d97641d960
-  pagy (43.6.3) sha256=3b7cd5b5b08e975b85cb48c1e7b729d90125a46c9ac14bd830fde1a8c6719a85
+  pagy (43.7.0) sha256=877fd7f531eeb7a406b8046dfafb81b499e2b4352c976ce116e0a4909e82fd3d
   parallel (2.2.0) sha256=e1059c5fd7b649558a0aec38a769f06a42942bdb40503d005a59c352fe011cd8
   parser (3.3.12.0) sha256=21a6d7f755d5a24dfbdc6e6b772e4e879a52e7631a88bc5a3a134606052c9828
   pay (12.2.0) sha256=87e1d7c0362a2ccce5d1882370e52b3fd581f0fd94a66ebcb48296ba2d378c7c
