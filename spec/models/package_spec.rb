@@ -68,6 +68,23 @@ RSpec.describe Package, type: :model do
     end
   end
 
+  describe "card copy" do
+    it "moves a long summary into the details without changing the stored copy" do
+      package = build_package
+      text = "a" * (Package::CARD_SUMMARY_MAX_LENGTH + 1)
+      package.assign_translation(:for_whom, :pl, text)
+
+      expect(package.card_summary).to be_nil
+      expect(package.for_whom).to eq(text)
+    end
+
+    it "allows old records with no new fields" do
+      package = create_package
+      expect(package.highlights).to eq([])
+      expect(package.organization).to be_nil
+    end
+  end
+
   describe "validations" do
     it "requires a Paddle price id" do
       package = build_package(paddle_price_id: nil)

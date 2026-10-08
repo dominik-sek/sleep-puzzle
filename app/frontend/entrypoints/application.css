@@ -840,3 +840,19 @@ html.consultation-calendar-modal-open { overflow: hidden; }
   outline: 2px dashed var(--color-accent);
   outline-offset: -5px;
 }
+
+/* Package details keep the heading, close control and booking action visible. */
+html.package-details-modal-open { overflow: hidden; }
+.package-details-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  padding: 0;
+  width: min(800px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+}
+.package-details-dialog[open] { display: flex; flex-direction: column; }
+.package-details-scroll { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.package-details-dialog::backdrop { background: rgb(0 0 0 / 65%); }

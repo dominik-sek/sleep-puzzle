@@ -1,11 +1,35 @@
 module PackagesHelper
+  def package_details_id(package)
+    "package-details-#{package.id}"
+  end
+
+  def package_shared_body
+    content_block("packages.shared.body") if content_blocks_by_key["packages.shared.body"]&.value_for.present?
+  end
+
+  def package_copy_warning(kind, value)
+    if kind == "summary"
+      return "Opis ma #{value.to_s.length} znaków. Zalecane maksimum: #{Package::CARD_SUMMARY_MAX_LENGTH}. Pełny tekst pozostanie w szczegółach." if value.to_s.length > Package::CARD_SUMMARY_MAX_LENGTH
+    else
+      entries = value.to_s.lines.map(&:strip).reject(&:empty?)
+      warnings = []
+      warnings << "Wpisano #{entries.size} wyróżników. Karta pokaże pierwsze #{Package::CARD_HIGHLIGHTS_LIMIT}, pozostałe będą w szczegółach." if entries.size > Package::CARD_HIGHLIGHTS_LIMIT
+      warnings << "Skróć wyróżniki do #{Package::CARD_HIGHLIGHT_MAX_LENGTH} znaków każdy; nie przenoś tu pełnych zasad współpracy." if entries.any? { |entry| entry.length > Package::CARD_HIGHLIGHT_MAX_LENGTH }
+      return warnings.join(" ")
+    end
+    ""
+  end
+
   # The same join as ProductsHelper#product_price_label: Paddle owns the money
   # (see Purchasable), so the amount is read back from the price catalogue rather
   # than stored here. Returns nil when Paddle is unreachable or no longer knows
   # the id - the card then shows the package as unavailable and drops its booking
   # button, because a package we cannot price is a package we cannot sell.
   def package_price_label(package)
-    PaddlePriceCatalogService.find(package.paddle_price_id)&.formatted_amount
+    @package_price_labels ||= {}
+    @package_price_labels.fetch(package.id) do
+      @package_price_labels[package.id] = PaddlePriceCatalogService.find(package.paddle_price_id)&.formatted_amount
+    end
   end
 
   # The comparison was originally uploaded inside the introduction's rich text.

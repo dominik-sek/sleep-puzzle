@@ -1,7 +1,6 @@
 <%#
-  One package. `core` and `extra` are translated lists, so they read back as
-  arrays and each section simply disappears when the owner has not filled it in -
-  a package with no add-ons should not render an empty "Dodatkowo" heading.
+  A compact overview; full benefits, add-ons and organization live in the
+  modal. Old records without highlights still have all their details.
 
   The price comes from Paddle rather than from us (see Purchasable), so it can be
   missing - archived in Paddle, or Paddle unreachable. The card still renders,
@@ -35,37 +34,22 @@
         </p>
       </div>
 
-      <% if package.for_whom.present? %>
+      <% if package.card_summary.present? %>
         <div class="flex flex-col gap-1.5">
           <span class="text-t6 uppercase text-taupe"><%= content_block("packages.card.for_whom") %></span>
-          <p class="text-t5 text-tan"><%= package.for_whom %></p>
+          <p class="text-t5 text-tan break-words"><%= package.card_summary %></p>
         </div>
       <% end %>
 
-      <% if package.core.any? %>
+      <% if package.card_highlights.any? %>
         <div class="flex flex-col gap-2">
-          <span class="text-t6 uppercase text-taupe"><%= content_block("packages.card.core") %></span>
+          <span class="text-t6 uppercase text-taupe"><%= content_block("packages.card.highlights") %></span>
 
           <ul class="flex flex-col gap-2 list-none p-0 m-0">
-            <% package.core.each do |benefit| %>
+            <% package.card_highlights.each do |benefit| %>
               <li class="flex items-start gap-2 text-t5 text-cream">
                 <%= icon "circle-check", class: "size-4 shrink-0 mt-1 text-accent" %>
-                <span><%= benefit %></span>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
-
-      <% if package.extra.any? %>
-        <div class="flex flex-col gap-2">
-          <span class="text-t6 uppercase text-taupe"><%= content_block("packages.card.extra") %></span>
-
-          <ul class="flex flex-col gap-2 list-none p-0 m-0">
-            <% package.extra.each do |addon| %>
-              <li class="flex items-start gap-2 text-t5 text-tan">
-                <%= icon "astroid", class: "size-3.5 shrink-0 mt-1.5 text-accent-coral" %>
-                <span><%= addon %></span>
+                <span class="min-w-0 break-words"><%= benefit %></span>
               </li>
             <% end %>
           </ul>
@@ -75,6 +59,10 @@
       <%# mt-auto pins the button to the bottom, so the CTAs line up across a row
           of cards whose lists are different lengths %>
       <div class="mt-auto pt-2 flex flex-col gap-2">
+        <%= button_tag content_block("packages.card.details"), type: "button",
+                       aria: { label: "#{content_block('packages.card.details')} - #{package.name}", controls: package_details_id(package), haspopup: "dialog" },
+                       data: { action: "click->package-details#reveal" },
+                       class: "inline-flex min-h-12 w-full cursor-pointer items-center justify-center rounded-full border border-border-input px-6 py-3 text-t5 font-bold text-cream transition-colors duration-100 hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent" %>
         <% if price_label %>
           <%# aria_label carries the package name. The visible label is the owner's
               copy and is the same words on every card, so a screen reader tabbing

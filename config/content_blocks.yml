@@ -310,6 +310,18 @@ packages:
     card:
       label: Etykiety na kartach
       fields:
+        highlights:
+          label: Nagłówek krótkich wyróżników
+          type: plain
+          default:
+            pl: "W skrócie"
+            en: "At a glance"
+        details:
+          label: Link do szczegółów
+          type: plain
+          default:
+            pl: "Poznaj szczegóły"
+            en: "Explore the details"
         for_whom:
           label: Nagłówek „dla kogo”
           type: plain
@@ -352,6 +364,45 @@ packages:
           default:
             pl: "Zapytaj o ten pakiet"
             en: "Ask about this package"
+    details:
+      label: Szczegóły pakietów
+      fields:
+        close:
+          label: Przycisk zamknięcia okna
+          type: plain
+          default:
+            pl: "Zamknij"
+            en: "Close"
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Szczegóły współpracy"
+            en: "Support package details"
+        organization:
+          label: Przygotowanie i kontakt
+          type: plain
+          default:
+            pl: "Przygotowanie i kontakt"
+            en: "Preparation and contact"
+        more_highlights:
+          label: Wyróżniki poza kartą
+          type: plain
+          default:
+            pl: "Pozostałe wyróżniki"
+            en: "More highlights"
+    shared:
+      label: Wspólne zasady współpracy
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "W każdym pakiecie"
+            en: "In every package"
+        body:
+          label: Zasady wspólne dla wszystkich pakietów
+          type: rich
     comparison:
       label: Porównanie pod pakietami
       fields:

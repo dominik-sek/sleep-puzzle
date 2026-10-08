@@ -93,6 +93,18 @@ RSpec.describe "Admin::Packages", type: :request do
   describe "GET /admin/packages/:id/edit" do
     before { sign_in admin }
 
+    it "shows editorial guidance and warnings without blocking an old record" do
+      package = create_package
+      package.assign_translation(:for_whom, :pl, "a" * 221)
+      package.assign_translation_list(:highlights, :pl, Array.new(6, "Długi wyróżnik"))
+      package.save!
+      get edit_admin_package_path(package)
+
+      expect(response.body).to include("Na karcie", "Pełne szczegóły", "Opis ma 221 znaków", "Wpisano 6 wyróżników")
+      expect(response.body).to include('id="record-highlights-en"', 'id="record-organization-pl"')
+      expect(response.body).not_to include('id="record-highlights-en">Długi wyróżnik')
+    end
+
     it "prefills each language separately, without falling back" do
       package = create_package(name: "Szybka ulga")
 
@@ -108,6 +120,19 @@ RSpec.describe "Admin::Packages", type: :request do
 
   describe "POST /admin/packages" do
     before { sign_in admin }
+
+    it "saves highlights and organization in both languages without truncating" do
+      highlights = (1..6).map { |n| "Wyróżnik #{n}" }
+      post admin_packages_path, params: package_params(translations: {
+        "highlights" => { "pl" => highlights.join("\n"), "en" => "Sleep plan\nDaily support" },
+        "organization" => { "pl" => "Przygotowanie\n\nGodziny kontaktu", "en" => "Contact hours" }
+      })
+
+      expect(Package.last.highlights).to eq(highlights)
+      expect(I18n.with_locale(:en) { Package.last.highlights }).to eq([ "Sleep plan", "Daily support" ])
+      expect(Package.last.organization).to eq("Przygotowanie\n\nGodziny kontaktu")
+      expect(I18n.with_locale(:en) { Package.last.organization }).to eq("Contact hours")
+    end
 
     it "creates a package with both languages" do
       expect { post admin_packages_path, params: package_params }.to change(Package, :count).by(1)

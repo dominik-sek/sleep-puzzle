@@ -68,6 +68,53 @@ RSpec.describe "Packages", type: :request do
       expect(response.body).to include("Dodatkowo", "Dodatkowa konsultacja 30 min")
     end
 
+    it "keeps old benefits in a closed modal rather than on the card" do
+      package = package_with_benefits(name: "Szybka ulga")
+      package.assign_translation(:for_whom, :pl, "Długi opis. " * 40)
+      package.save!
+      get packages_path
+
+      document = Capybara.string(response.body)
+      card = document.find("#package_#{package.id}")
+      expect(card).not_to have_text("1h konsultacja startowa")
+      expect(card).not_to have_text("Długi opis.")
+      expect(card).to have_css("button[aria-controls='package-details-#{package.id}'][aria-haspopup='dialog']", text: "Poznaj szczegóły")
+      expect(document).to have_css("dialog#package-details-#{package.id}:not([open])")
+      details = document.find("#package-details-#{package.id}", visible: :all)
+      expect(details.text(:all)).to include("1h konsultacja startowa", "Długi opis.")
+    end
+
+    it "shows only five highlights on the card and preserves the remaining ones" do
+      package = package_with_benefits
+      package.assign_translation_list(:highlights, :pl, (1..6).map { |n| "Wyróżnik #{n}" })
+      package.assign_translation(:organization, :pl, "Prześlij dzienniczek.\n\nKontakt przez Signal.")
+      package.save!
+      get packages_path
+
+      document = Capybara.string(response.body)
+      card = document.find("#package_#{package.id}")
+      expect(card).to have_css("li", count: 5)
+      expect(card).not_to have_text("Wyróżnik 6")
+      details = document.find("#package-details-#{package.id}", visible: :all)
+      expect(details.text(:all)).to include("Wyróżnik 6")
+      expect(details).to have_css("p", text: "Kontakt przez Signal.", visible: :all)
+    end
+
+    it "shows a single introduction and keeps editable shared terms inside the modal" do
+      package = create_package
+      ContentBlock.create!(key: "packages.hero.subtitle", body_pl: "Drugi opis")
+      ContentBlock.create!(key: "packages.collaboration.body", body_pl: "Krótki wstęp")
+      ContentBlock.create!(key: "packages.shared.body", body_pl: "Dożywotni dostęp do grupy.")
+      get packages_path
+
+      expect(response.body).to include("Krótki wstęp", "Dożywotni dostęp do grupy.")
+      expect(response.body).not_to include("Drugi opis")
+      document = Capybara.string(response.body)
+      expect(document).not_to have_css("#package-shared", visible: :all)
+      details = document.find("#package-details-#{package.id}", visible: :all)
+      expect(details.text(:all)).to include("W każdym pakiecie", "Dożywotni dostęp do grupy.")
+    end
+
     it "shows an existing comparison upload below the package cards" do
       create_package(name: "Szybka ulga")
       blob = ActiveStorage::Blob.create_and_upload!(
@@ -85,6 +132,7 @@ RSpec.describe "Packages", type: :request do
       expect(page).to have_css("#package-comparison [data-controller='lightbox'] a[data-pswp-src][data-pswp-width][data-pswp-height]")
       expect(page).to have_no_css(".trix-copy.max-w-2xl img")
       expect(response.body.index("Szybka ulga")).to be < response.body.index('id="package-comparison"')
+      expect(response.body.index('id="package-comparison"')).to be < response.body.index('<dialog')
       expect(response.body).to include("Opis współpracy")
     end
 
@@ -177,6 +225,18 @@ RSpec.describe "Packages", type: :request do
       get packages_path
 
       expect(response.body).to include("Pakiety pojawią się tutaj wkrótce")
+    end
+
+    it "renders translated highlights and organization, with Polish fallback" do
+      package = create_package(name: "Pakiet", name_en: "Package")
+      package.assign_translation_list(:highlights, :pl, [ "Plan snu" ])
+      package.assign_translation_list(:highlights, :en, [ "Sleep plan" ])
+      package.assign_translation(:organization, :pl, "Godziny kontaktu")
+      package.save!
+      get packages_path(locale: :en)
+
+      expect(response.body).to include("Sleep plan", "Preparation and contact", "Godziny kontaktu", "Explore the details")
+      expect(response.body).not_to include("Plan snu")
     end
 
     it "renders the English copy for a translated package" do

@@ -19,7 +19,21 @@ class Package < ApplicationRecord
   # before the copy became bilingual; keeping them in the same store means there
   # is one place a package's words live, rather than one translatable place and
   # one that is not.
-  translates :name, :for_whom, lists: %i[core extra]
+  CARD_SUMMARY_MAX_LENGTH = 220
+  CARD_HIGHLIGHTS_LIMIT = 5
+  CARD_HIGHLIGHT_MAX_LENGTH = 140
+
+  translates :name, :for_whom, :organization, lists: %i[highlights core extra]
+
+  # Keep legacy paragraphs available in the details rather than clipping them
+  # into a sentence that might omit a condition of the offer.
+  def card_summary
+    for_whom if for_whom.to_s.length <= CARD_SUMMARY_MAX_LENGTH
+  end
+
+  def card_highlights
+    highlights.first(CARD_HIGHLIGHTS_LIMIT)
+  end
 
   has_many :bookings, dependent: :restrict_with_error
 

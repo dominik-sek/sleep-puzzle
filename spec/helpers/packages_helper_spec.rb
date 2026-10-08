@@ -11,5 +11,14 @@ require 'rails_helper'
 #   end
 # end
 RSpec.describe PackagesHelper, type: :helper do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "warns only when a summary exceeds the recommended length" do
+    expect(helper.package_copy_warning("summary", "a" * 220)).to eq("")
+    expect(helper.package_copy_warning("summary", "a" * 221)).to include("221 znaków", "szczegółach")
+  end
+
+  it "counts nonempty highlights and warns about long entries" do
+    expect(helper.package_copy_warning("highlights", "Plan\n\nWsparcie")).to eq("")
+    expect(helper.package_copy_warning("highlights", Array.new(6, "Plan").join("\n"))).to include("6 wyróżników")
+    expect(helper.package_copy_warning("highlights", "x" * 141)).to include("140 znaków")
+  end
 end

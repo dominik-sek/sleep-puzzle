@@ -32,12 +32,20 @@
 
         <% case type %>
         <% when :textarea %>
-          <%= text_area_tag name, value, id: dom_id, rows: 4, class: "form-control" %>
+          <%= text_area_tag name, value, id: dom_id, rows: 4, class: "form-control",
+                            data: { package_copy_kind: local_assigns[:copy_kind] },
+                            aria: { describedby: local_assigns[:copy_kind] ? "#{dom_id}-warning" : nil } %>
         <% when :list %>
           <%= text_area_tag name, value, id: dom_id, rows: 4, class: "form-control",
-                            placeholder: "Jedna pozycja w linii" %>
+                            placeholder: "Jedna pozycja w linii",
+                            data: { package_copy_kind: local_assigns[:copy_kind] },
+                            aria: { describedby: local_assigns[:copy_kind] ? "#{dom_id}-warning" : nil } %>
         <% else %>
           <%= text_field_tag name, value, id: dom_id, class: "form-control" %>
+        <% end %>
+        <% if local_assigns[:copy_kind] %>
+          <% warning = package_copy_warning(copy_kind, value) %>
+          <p id="<%= dom_id %>-warning" data-copy-warning class="text-t6 text-accent-coral m-0" role="status" aria-live="polite" <%= "hidden" if warning.blank? %>><%= warning %></p>
         <% end %>
       </div>
     <% end %>

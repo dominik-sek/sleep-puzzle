@@ -1,6 +1,7 @@
 <% content_for :title, page_title(t("nav.packages")) %>
 <% collaboration_body, embedded_comparison = package_collaboration_parts %>
-<div class="min-h-screen flex flex-col items-center">
+<% shared_body = package_shared_body %>
+<div class="min-h-screen flex flex-col items-center" data-controller="package-details">
   <%= render Section::Component.new(
     background: :ink,
     align: :center
@@ -9,10 +10,9 @@
       <h1 class="text-t1 font-display font-bold text-cream">
         <%= content_block("packages.hero.title") %>
       </h1>
-      <div class="text-t4 text-tan max-w-2xl">
-        <%= content_block("packages.hero.subtitle") %>
+      <div class="trix-copy text-t4 text-tan max-w-2xl">
+        <%= collaboration_body.presence || content_block("packages.hero.subtitle") %>
       </div>
-      <div class="trix-copy max-w-2xl"><%= collaboration_body %></div>
     </div>
 
     <% if @packages.any? %>
@@ -51,11 +51,15 @@
     <% end %>
   <% end %>
 
+  <% @packages.each do |package| %>
+    <%= render "packages/details", package: package, shared_body: shared_body %>
+  <% end %>
+
   <% testimonials = content_items("testimonials.entries").select { |item| item["quote"].present? && item["author"].present? } %>
   <%= render "shared/testimonials", testimonials: testimonials %>
 
   <% unless user_signed_in? %>
-    <section id="calendar" class="w-full scroll-mt-24 bg-ink px-5 py-16">
+    <section id="calendar" tabindex="-1" class="w-full scroll-mt-24 bg-ink px-5 py-16 outline-none">
       <div class="mx-auto flex max-w-[1240px] flex-col gap-6">
         <div class="max-w-2xl">
           <h2 class="font-display text-t2 font-bold text-cream"><%= t("offers.calendar_title") %></h2>

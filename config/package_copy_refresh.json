@@ -1,0 +1,238 @@
+{
+  "packages": [
+    {
+      "label": "1. ELASTYCZNY + AUDIOPROCES",
+      "duration": 2,
+      "expected": {
+        "for_whom": {
+          "pl": "Chcesz poukładać rytm dnia, usypianie i nocne pobudki we własnym tempie? Wybierz ten pakiet, jeśli chcesz działać samodzielnie z audioprocesem i indywidualnym planem, a moje wsparcie wykorzystać w wybranych momentach - dwa tygodnie kontaktu lub cztery rozmowy w ciągu 3 miesięcy."
+        },
+        "highlights": {
+          "pl": null
+        },
+        "core": {
+          "pl": [
+            "Około 2 h konsultacji startowej - przyglądamy się Waszej sytuacji, odpowiadam na Wasze pytania i ustalamy, od czego zacząć oraz jak wprowadzać kolejne zmiany. Wartość: 350 zł.",
+            "Dożywotni dostęp do audioprocesu „Idź już spać” -pomaga Wam zrozumieć sen dziecka i daje konkretne wskazówki, dzięki którym wiele zmian możecie wprowadzać samodzielnie, we własnym tempie. Wartość: 497 zł.",
+            "Indywidualny plan podzielony na tygodnie - konkretne kroki, cele i proponowana kolejność działania, również na czas pomiędzy tygodniami wsparcia.",
+            "Dwa tygodnie wsparcia do wykorzystania w ciągu 3 miesięcy od konsultacji - możecie wykorzystać je razem, rozdzielić przerwą lub zamienić na cztery rozmowy 30 minut każda, zależnie od Waszych potrzeb.",
+            "Codzienny kontakt przez WhatsApp w aktywnych tygodniach wsparcia, od poniedziałku do soboty - omawiamy, jak idą zmiany, wyjaśniamy wątpliwości i dopasowujemy dalsze kroki.",
+            "1 dzień + wieczór indywidualnego wsparcia online podczas usypiania - w ustalonym czasie jestem do Waszej wyłącznej dyspozycji.",
+            "Rozmowa podsumowująca 45min na zakończenie współpracy.",
+            "Jak organizujemy współpracę?",
+            "Tygodnie wsparcia oraz rozmowy umawiamy z co najmniej tygodniowym wyprzedzeniem. Przed każdym z nich przesyłacie aktualny dzienniczek snu z 7 dni, żebym mogła dopasować dalsze kroki do Waszej obecnej sytuacji.",
+            "W aktywnych tygodniach wsparcia rano przesyłacie podsumowanie nocy, a wieczorem podsumowanie dnia. Dzięki temu mogę na bieżąco oceniać, jak sprawdzają się wprowadzane zmiany.",
+            "Jeśli rozdzielacie tygodnie wsparcia przerwą, raz w tygodniu przesyłacie wiadomość lub e-mail z aktualną sytuacją - dzięki temu wiem, co się u Was dzieje.",
+            "Na wiadomości WhatsApp odpowiadam w trzech przedziałach: 8:30–10:30, 14:30–15:00 i 19:00–20:30, od poniedziałku do soboty."
+          ]
+        },
+        "extra": {
+          "pl": [
+            "Rozmowa ratunkowa 30 minut - do wykorzystania w ciągu 3 miesięcy po zakończeniu współpracy. Wartość: 150 zł.",
+            "Dożywotni dostęp do grupy na Telegramie - wzajemne wsparcie rodziców i kontakt ze mną w grupie."
+          ]
+        },
+        "organization": {
+          "pl": null
+        }
+      },
+      "replacement": {
+        "for_whom": {
+          "pl": "Dla rodziców, którzy chcą działać samodzielnie z audioprocesem i korzystać ze wsparcia w wybranych momentach."
+        },
+        "highlights": {
+          "pl": [
+            "Około 2 h konsultacji startowej i indywidualny plan.",
+            "Dożywotni dostęp do audioprocesu „Idź już spać”.",
+            "2 tygodnie wsparcia lub 4 rozmowy po 30 min — w ciągu 3 miesięcy od konsultacji.",
+            "1 dzień + wieczór indywidualnego wsparcia online przy usypianiu.",
+            "45-minutowa rozmowa podsumowująca."
+          ]
+        },
+        "core": {
+          "pl": [
+            "Około 2 h konsultacji startowej: omawiamy Waszą sytuację i pytania, ustalamy pierwsze kroki oraz kolejność zmian. Wartość: 350 zł.",
+            "Dożywotni dostęp do audioprocesu „Idź już spać”, ze wskazówkami do samodzielnej pracy we własnym tempie. Wartość: 497 zł.",
+            "Indywidualny plan podzielony na tygodnie: kroki, cele i kolejność działania, również na przerwy między tygodniami wsparcia.",
+            "2 tygodnie wsparcia do wykorzystania w ciągu 3 miesięcy od konsultacji. Możecie wykorzystać je razem, rozdzielić przerwą lub zamienić na 4 rozmowy po 30 minut.",
+            "Codzienny kontakt przez WhatsApp od poniedziałku do soboty w aktywnych tygodniach wsparcia: omawiamy postępy i dopasowujemy kolejne kroki.",
+            "1 dzień + wieczór indywidualnego wsparcia online podczas usypiania. W ustalonym czasie jestem do Waszej wyłącznej dyspozycji.",
+            "45-minutowa rozmowa podsumowująca na zakończenie współpracy."
+          ]
+        },
+        "extra": {
+          "pl": [
+            "Rozmowa ratunkowa 30 minut - do wykorzystania w ciągu 3 miesięcy po zakończeniu współpracy. Wartość: 150 zł."
+          ]
+        },
+        "organization": {
+          "pl": "Tygodnie wsparcia oraz rozmowy umawiamy z co najmniej tygodniowym wyprzedzeniem. Przed każdym z nich przesyłacie aktualny dzienniczek snu z 7 dni.\n\nW aktywnych tygodniach wsparcia odpowiadam na WhatsApp od poniedziałku do soboty w godzinach 8:30–10:30, 14:30–15:00 i 19:00–20:30.\n\nJeśli rozdzielacie tygodnie wsparcia przerwą, raz w tygodniu przesyłacie wiadomość lub e-mail z aktualną sytuacją."
+        }
+      }
+    },
+    {
+      "label": "2. SPOKOJNY RYTM",
+      "duration": 5,
+      "expected": {
+        "for_whom": {
+          "pl": "Chcesz poukładać rytm dnia, usypianie i nocne pobudki z regularnym prowadzeniem krok po kroku? To pakiet do wprowadzania i utrwalania zmian: 5 tygodni codziennego wsparcia oraz dwa wieczory wspólnej pracy nad usypianiem."
+        },
+        "highlights": {
+          "pl": null
+        },
+        "core": {
+          "pl": [
+            "5 tygodni współpracy + dodatkowy tydzień przygotowań",
+            "Nie musicie czekać do konsultacji, żeby zrobić pierwszy krok!",
+            "Już tydzień przed jej terminem otrzymujecie indywidualny plan i konkretne wskazówki, co zacząć wprowadzać. Macie czas, żeby spokojnie się z nim zapoznać, wypróbować nowy rytm dnia i zebrać pierwsze obserwacje.",
+            "Dzięki temu podczas konsultacji omawiamy już Wasze pierwsze doświadczenia i jeszcze dokładniej dopasowujemy plan. Po spotkaniu zaczynamy pełne 5 tygodni wspólnej pracy - tydzień przygotowań dostajecie dodatkowo!",
+            "Co otrzymujecie w pakiecie?",
+            "Indywidualny plan jeszcze przed konsultacją - przygotowany na podstawie Waszego kwestionariusza i dzienniczka snu, z propozycją rytmu dnia oraz zaleceniami na początek.",
+            "1,5-godzinną konsultację startową - omawiamy Waszą sytuację, pytania i pierwsze doświadczenia z planem. Dopracowujemy kolejne kroki, uwzględniając potrzeby dziecka i Wasze możliwości.",
+            "Zaktualizowany plan w ciągu 24 godzin po konsultacji - żebyście mogli od razu kontynuować wprowadzanie zmian.",
+            "E-book o śnie, dostępny wyłącznie dla rodziców po moich konsultacjach - do którego możecie wracać, kiedy potrzebujecie przypomnieć sobie najważniejsze informacje.",
+            "5 tygodni codziennego wsparcia - najpierw skupiamy się na wprowadzaniu zmian, a następnie na ich utrwalaniu. Tempo poszczególnych etapów dopasowujemy do Waszej rodziny.",
+            "2 wieczory indywidualnego wsparcia online podczas usypiania - w ustalonym czasie jestem do Waszej wyłącznej dyspozycji.",
+            "Dodatkową 30-minutową rozmowę do wykorzystania podczas współpracy - kiedy potrzebujecie spokojnie omówić pytania lub kolejne kroki.",
+            "Rozmowę podsumowującą na zakończenie współpracy - omawiamy postępy i wskazówki na dalszy czas.",
+            "Jak się przygotowujecie?",
+            "Najpóźniej 2 tygodnie przed konsultacją przesyłacie wypełniony kwestionariusz i dzienniczek snu z 7 dni. Na ich podstawie przygotowuję plan, który otrzymujecie tydzień przed spotkaniem.",
+            "W dodatkowym tygodniu przygotowań zaczynacie pracę nad rytmem dnia, rutyną i nowymi nawykami okołosennymi, zgodnie z otrzymanymi zaleceniami.",
+            "Jak wygląda kontakt podczas 5 tygodni wsparcia?",
+            "Jesteśmy w kontakcie przez komunikator Signal od poniedziałku do soboty. Na wiadomości odpowiadam w godzinach 8:30–10:30, 13:30–15:00 oraz 19:00–20:30.",
+            "Rano przesyłacie podsumowanie nocy, a wieczorem podsumowanie dnia. Dzięki temu wiem, co się u Was dzieje, jak dziecko reaguje na zmiany i co potrzebuje dopracowania.",
+            "Pytania możecie przesyłać również w ciągu dnia- odpowiadam na nie w podanych godzinach."
+          ]
+        },
+        "extra": {
+          "pl": [
+            "Rozmowa ratunkowa 30 minut - do wykorzystania w ciągu 3 miesięcy po zakończeniu współpracy.",
+            "Dożywotni dostęp do grupy na Telegramie - wsparcie innych rodziców i kontakt ze mną w grupie."
+          ]
+        },
+        "organization": {
+          "pl": null
+        }
+      },
+      "replacement": {
+        "for_whom": {
+          "pl": "Dla rodziców, którzy chcą wprowadzać i utrwalać zmiany z regularnym prowadzeniem krok po kroku."
+        },
+        "highlights": {
+          "pl": [
+            "5 tygodni codziennego wsparcia + dodatkowy tydzień przygotowań.",
+            "Indywidualny plan przed spotkaniem i konsultacja startowa 1,5 h.",
+            "2 wieczory indywidualnego wsparcia online przy usypianiu.",
+            "Dodatkowa rozmowa 30 min podczas współpracy.",
+            "E-book o śnie i rozmowa podsumowująca."
+          ]
+        },
+        "core": {
+          "pl": [
+            "5 tygodni codziennego wsparcia po konsultacji oraz dodatkowy tydzień przygotowań przed spotkaniem. Wprowadzamy i utrwalamy zmiany w tempie dopasowanym do Waszej rodziny.",
+            "Indywidualny plan tydzień przed konsultacją, na podstawie kwestionariusza i dzienniczka snu: propozycja rytmu dnia i zalecenia na początek.",
+            "Konsultacja startowa 1,5 h: omawiamy Waszą sytuację, pytania i pierwsze doświadczenia z planem, a następnie dopracowujemy kolejne kroki.",
+            "Zaktualizowany plan w ciągu 24 godzin po konsultacji.",
+            "E-book o śnie, dostępny wyłącznie dla rodziców po moich konsultacjach.",
+            "2 wieczory indywidualnego wsparcia online podczas usypiania. W ustalonym czasie jestem do Waszej wyłącznej dyspozycji.",
+            "Dodatkowa 30-minutowa rozmowa do wykorzystania podczas współpracy.",
+            "Rozmowa podsumowująca na zakończenie współpracy: postępy i wskazówki na dalszy czas."
+          ]
+        },
+        "extra": {
+          "pl": [
+            "Rozmowa ratunkowa 30 minut - do wykorzystania w ciągu 3 miesięcy po zakończeniu współpracy."
+          ]
+        },
+        "organization": {
+          "pl": "Najpóźniej 2 tygodnie przed konsultacją przesyłacie kwestionariusz i dzienniczek snu z 7 dni. Plan otrzymujecie tydzień przed spotkaniem. W dodatkowym tygodniu przygotowań zaczynacie pracę nad rytmem dnia, rutyną i nawykami okołosennymi zgodnie z zaleceniami.\n\nPodczas 5 tygodni wsparcia jesteśmy w kontakcie przez Signal od poniedziałku do soboty. Odpowiadam w godzinach 8:30–10:30, 13:30–15:00 i 19:00–20:30. Pytania możecie przesyłać także w ciągu dnia; odpowiadam w podanych godzinach."
+        }
+      }
+    },
+    {
+      "label": "3. SYSTEM RODZINY",
+      "duration": 7,
+      "expected": {
+        "for_whom": {
+          "pl": "Chcesz poukładać rytm dnia, usypianie i nocne pobudki z dłuższym wsparciem i możliwością powrotu po pomoc? Otrzymujesz prowadzenie jak w pakiecie nr 2, rozszerzone do 7 tygodni, z trzema wieczorami usypiania i większą liczbą rozmów. Jeśli osiągniecie cele wcześniej, niewykorzystane tygodnie zachowasz na później - do 6 miesięcy od konsultacji."
+        },
+        "highlights": {
+          "pl": null
+        },
+        "core": {
+          "pl": [
+            "7 tygodni współpracy + dodatkowy tydzień przygotowań",
+            "Nie musicie czekać do konsultacji, żeby zrobić pierwszy krok!",
+            "Już tydzień przed jej terminem otrzymujecie indywidualny plan i konkretne wskazówki, co zacząć wprowadzać. Macie czas, żeby spokojnie się z nim zapoznać, wypróbować nowy rytm dnia i zebrać pierwsze obserwacje.",
+            "Dzięki temu podczas konsultacji omawiamy już Wasze pierwsze doświadczenia i jeszcze dokładniej dopasowujemy plan. Po spotkaniu zaczynamy pełne 7 tygodni wspólnej pracy - tydzień przygotowań dostajecie dodatkowo!",
+            "Co otrzymujecie w pakiecie?",
+            "Indywidualny plan jeszcze przed konsultacją - przygotowany na podstawie Waszego kwestionariusza i dzienniczka snu, z propozycją rytmu dnia oraz zaleceniami na początek.",
+            "1,5-godzinną konsultację startową z możliwością wyboru terminu wieczornego - spotkanie może zacząć się najpóźniej o 20:30. Omawiamy Waszą sytuację, pytania i pierwsze doświadczenia z planem. Dopracowujemy kolejne kroki, uwzględniając potrzeby dziecka i Wasze możliwości.",
+            "Zaktualizowany plan w ciągu 24 godzin po konsultacji - żebyście mogli od razu kontynuować wprowadzanie zmian.",
+            "7 tygodni codziennego wsparcia - wspólnie wprowadzamy i utrwalamy zmiany. Tempo oraz kolejne kroki dopasowujemy do potrzeb Waszej rodziny.",
+            "3 wieczory indywidualnego wsparcia online podczas usypiania - w ustalonym czasie jestem do Waszej wyłącznej dyspozycji.",
+            "3 dodatkowe rozmowy po 20 minut do wykorzystania podczas współpracy - kiedy potrzebujecie spokojnie omówić pytania lub kolejne kroki.",
+            "Audio-usypianki - do wykorzystania podczas wieczornego wyciszenia i jako element Waszej rutyny przed snem.",
+            "Rozmowę podsumowującą 45min na zakończenie współpracy - omawiamy postępy i wskazówki na dalszy czas.",
+            "Osiągniecie swoje cele wcześniej? Pozostałe tygodnie możecie zachować i wykorzystać później:",
+            "Jeśli nie potrzebujecie już bieżącego wsparcia, możecie zamrozić niewykorzystane tygodnie i wrócić do mnie, kiedy ponownie będziecie potrzebować pomocy. Macie na ich wykorzystanie 6 miesięcy od konsultacji startowej.",
+            "To możliwość dostępna wyłącznie w pakiecie „System rodziny”.",
+            "Jak się przygotowujecie?",
+            "Najpóźniej 2 tygodnie przed konsultacją przesyłacie wypełniony kwestionariusz i dzienniczek snu z 7 dni. Na ich podstawie przygotowuję plan, który otrzymujecie tydzień przed spotkaniem.",
+            "W dodatkowym tygodniu przygotowań zaczynacie pracę nad rytmem dnia, rutyną i nowymi nawykami okołosennymi, zgodnie z otrzymanymi zaleceniami.",
+            "Jak wygląda kontakt podczas współpracy?",
+            "W aktywnych tygodniach wsparcia jesteśmy w kontakcie przez komunikator Signal od poniedziałku do soboty. Na wiadomości odpowiadam w godzinach 8:30–10:30, 13:30–15:00 oraz 19:00–20:30.",
+            "Rano przesyłacie podsumowanie nocy, a wieczorem podsumowanie dnia. Dzięki temu wiem, co się u Was dzieje, jak dziecko reaguje na zmiany i co potrzebuje dopracowania.",
+            "Pytania możecie przesyłać również w ciągu dnia - odpowiadam na nie w podanych godzinach.",
+            "Jeśli wracacie do niewykorzystanych tygodni wsparcia, termin umawiamy z co najmniej tygodniowym wyprzedzeniem. Przed powrotem przesyłacie aktualny dzienniczek snu z 7 dni, żebym mogła dopasować dalsze kroki do Waszej obecnej sytuacji."
+          ]
+        },
+        "extra": {
+          "pl": [
+            "Rozmowa ratunkowa 45 minut - do wykorzystania w ciągu 6 miesięcy po zakończeniu współpracy.",
+            "Dożywotni dostęp do grupy na Telegramie - wsparcie innych rodziców i kontakt ze mną w grupie."
+          ]
+        },
+        "organization": {
+          "pl": null
+        }
+      },
+      "replacement": {
+        "for_whom": {
+          "pl": "Dla rodziców, którzy potrzebują dłuższego prowadzenia i możliwości powrotu po wsparcie, gdy znów będzie potrzebne."
+        },
+        "highlights": {
+          "pl": [
+            "7 tygodni codziennego wsparcia + dodatkowy tydzień przygotowań.",
+            "Konsultacja startowa 1,5 h, także z terminem wieczornym.",
+            "3 wieczory indywidualnego wsparcia online przy usypianiu.",
+            "3 dodatkowe rozmowy po 20 min i audio-usypianki.",
+            "Niewykorzystane tygodnie można zachować — do 6 miesięcy od konsultacji."
+          ]
+        },
+        "core": {
+          "pl": [
+            "7 tygodni codziennego wsparcia po konsultacji oraz dodatkowy tydzień przygotowań przed spotkaniem. Wprowadzamy i utrwalamy zmiany w tempie dopasowanym do Waszej rodziny.",
+            "Indywidualny plan tydzień przed konsultacją, na podstawie kwestionariusza i dzienniczka snu: propozycja rytmu dnia i zalecenia na początek.",
+            "Konsultacja startowa 1,5 h, z możliwością terminu wieczornego i rozpoczęcia najpóźniej o 20:30. Omawiamy sytuację, pytania i pierwsze doświadczenia z planem oraz dopracowujemy kolejne kroki.",
+            "Zaktualizowany plan w ciągu 24 godzin po konsultacji.",
+            "3 wieczory indywidualnego wsparcia online podczas usypiania. W ustalonym czasie jestem do Waszej wyłącznej dyspozycji.",
+            "3 dodatkowe rozmowy po 20 minut do wykorzystania podczas współpracy.",
+            "Audio-usypianki do wieczornego wyciszenia i rutyny przed snem.",
+            "45-minutowa rozmowa podsumowująca na zakończenie współpracy: postępy i wskazówki na dalszy czas.",
+            "Jeśli osiągniecie cele wcześniej i nie potrzebujecie bieżącego wsparcia, możecie zamrozić niewykorzystane tygodnie i wrócić po pomoc. Termin ich wykorzystania: 6 miesięcy od konsultacji startowej. Ta możliwość dotyczy wyłącznie pakietu „System rodziny”."
+          ]
+        },
+        "extra": {
+          "pl": [
+            "Rozmowa ratunkowa 45 minut - do wykorzystania w ciągu 6 miesięcy po zakończeniu współpracy."
+          ]
+        },
+        "organization": {
+          "pl": "Najpóźniej 2 tygodnie przed konsultacją przesyłacie kwestionariusz i dzienniczek snu z 7 dni. Plan otrzymujecie tydzień przed spotkaniem. W dodatkowym tygodniu przygotowań zaczynacie pracę nad rytmem dnia, rutyną i nawykami okołosennymi zgodnie z zaleceniami.\n\nW aktywnych tygodniach wsparcia jesteśmy w kontakcie przez Signal od poniedziałku do soboty. Odpowiadam w godzinach 8:30–10:30, 13:30–15:00 i 19:00–20:30. Pytania możecie przesyłać także w ciągu dnia; odpowiadam w podanych godzinach.\n\nPowrót do niewykorzystanych tygodni umawiamy z co najmniej tygodniowym wyprzedzeniem. Przed powrotem przesyłacie aktualny dzienniczek snu z 7 dni."
+        }
+      }
+    }
+  ],
+  "shared_body_pl": "<div>W każdym pakiecie otrzymujecie dożywotni dostęp do grupy na Telegramie: wsparcie innych rodziców i kontakt ze mną w grupie.</div><div>W aktywnych tygodniach wsparcia rano przesyłacie podsumowanie nocy, a wieczorem podsumowanie dnia. Na tej podstawie oceniam reakcje dziecka na zmiany i dopasowuję kolejne kroki. Terminy i zasady kontaktu znajdziecie w szczegółach wybranego pakietu.</div>"
+}
