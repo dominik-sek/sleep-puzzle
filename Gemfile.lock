@@ -579,9 +579,9 @@ DEPENDENCIES
   omniauth
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
-  paddle (~> 2.10)
+  paddle (= 2.10)
   pagy
-  pay (~> 12.2)
+  pay (= 12.2.0)
   pg (~> 1.7)
   pghero
   propshaft

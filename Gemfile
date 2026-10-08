@@ -111,10 +111,10 @@ gem "googleauth", "~> 1.17"
 
 gem "rails_semantic_logger"
 
-gem "pay", "~> 12.2"
-
-# Pay 12.2 requires Paddle 2.x; update both together before moving to Paddle 3.
-gem "paddle", "~> 2.10"
+# Keep this tested pair pinned. Pay 12.2 rejects Paddle 3 at Rails boot.
+# Upgrade both manually, then verify tests and production assets:precompile.
+gem "pay", "12.2.0"
+gem "paddle", "2.10"
 
 # Error tracking and request tracing. Inert without SENTRY_DSN, so development
 # and CI never phone home; see config/initializers/sentry.rb.
