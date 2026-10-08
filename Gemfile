@@ -7,7 +7,7 @@ gem "propshaft"
 # Use Vite for JS/CSS bundling [https://vite-ruby.netlify.app/]
 gem "vite_rails"
 # Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
+gem "pg", "~> 1.7"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
@@ -111,9 +111,9 @@ gem "googleauth", "~> 1.17"
 
 gem "rails_semantic_logger"
 
-gem "pay", "~> 12.1"
+gem "pay", "~> 12.2"
 
-gem "paddle", "~> 2.9"
+gem "paddle", "~> 3.0"
 
 # Error tracking and request tracing. Inert without SENTRY_DSN, so development
 # and CI never phone home; see config/initializers/sentry.rb.
