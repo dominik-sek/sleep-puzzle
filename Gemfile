@@ -113,7 +113,8 @@ gem "rails_semantic_logger"
 
 gem "pay", "~> 12.2"
 
-gem "paddle", "~> 3.0"
+# Pay 12.2 requires Paddle 2.x; update both together before moving to Paddle 3.
+gem "paddle", "~> 2.10"
 
 # Error tracking and request tracing. Inert without SENTRY_DSN, so development
 # and CI never phone home; see config/initializers/sentry.rb.

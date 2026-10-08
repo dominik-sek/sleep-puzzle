@@ -5,6 +5,10 @@ updates:
   schedule:
     interval: weekly
   open-pull-requests-limit: 10
+  # Pay 12.2 requires Paddle 2.x. Upgrade Pay before allowing a new Paddle major.
+  ignore:
+  - dependency-name: paddle
+    update-types: ["version-update:semver-major"]
 - package-ecosystem: github-actions
   directory: "/"
   schedule:
