@@ -7,15 +7,11 @@
 # closed either - so the transaction is found the same way the webhook finds the
 # booking, through custom_data.booking_id on this buyer's Paddle customer.
 class BookingPaymentCheckService < ApplicationService
-  # Paddle statuses that mean nobody has committed money: a checkout that was opened
-  # (draft), had a card presented and turned down (ready), or was given up on
-  # (canceled). Deliberately a safe-list - a status Paddle adds later reads as paid, so
-  # it can never become the reason a booking is deleted from under a real payment.
   UNCOMMITTED_STATUSES = %w[draft ready canceled].freeze
+  PAID_STATUSES = %w[paid completed].freeze
+  UNCOMMITTED_PAYMENT_STATUSES = %w[error canceled dropped action_required].freeze
 
-  # newest first and one page deep: the transaction in question was opened seconds ago,
-  # so it is on the first page however long the buyer's history gets
-  LIST_PARAMS = { per_page: 50, order_by: "created_at[DESC]" }.freeze
+  LIST_PARAMS = { per_page: 30, order_by: "created_at[DESC]" }.freeze
 
   def initialize(booking:)
     @booking = booking
@@ -29,9 +25,7 @@ class BookingPaymentCheckService < ApplicationService
 
   # True only when Paddle confirms nothing has been paid.
   #
-  # Anything that stops us establishing that answers false, deliberately: a wrong
-  # "unpaid" deletes a booking somebody paid for, while a wrong "paid" only leaves the
-  # slot held until ReleaseAbandonedBookingsJob sweeps it.
+  # Unknown or in-flight payment states retain the hold without claiming payment.
   def unpaid?
     return false if transactions.nil?
 
@@ -39,7 +33,9 @@ class BookingPaymentCheckService < ApplicationService
   end
 
   def paid?
-    Array(transactions).any? { |transaction| !uncommitted?(transaction) }
+    Array(transactions).any? do |transaction|
+      PAID_STATUSES.include?(transaction.status) || Array(transaction.payments).any? { |payment| payment.status == "captured" }
+    end
   end
 
   # Whether a card was actually presented and turned down. Paddle keeps every attempt on
@@ -54,7 +50,8 @@ class BookingPaymentCheckService < ApplicationService
   private
 
   def uncommitted?(transaction)
-    UNCOMMITTED_STATUSES.include?(transaction.status)
+    UNCOMMITTED_STATUSES.include?(transaction.status) &&
+      Array(transaction.payments).all? { |payment| UNCOMMITTED_PAYMENT_STATUSES.include?(payment.status) }
   end
 
   # nil when Paddle couldn't be asked at all; [] when it simply has nothing for this
@@ -68,15 +65,32 @@ class BookingPaymentCheckService < ApplicationService
   def fetch_transactions
     return nil if customer_id.blank?
 
-    Paddle::Transaction.list(customer_id: customer_id, **LIST_PARAMS)
-                       .select { |transaction| for_this_booking?(transaction) }
+    # Paddle's collection does not paginate automatically. A missing transaction
+    # on the first page must not be mistaken for proof that nothing was paid.
+    params = LIST_PARAMS.merge(customer_id: customer_id, "created_at[GTE]": @booking.created_at.iso8601)
+    matches = []
+    loop do
+      page = Paddle::Transaction.list(**params).to_a
+      matches.concat(page.select { |transaction| for_this_booking?(transaction) })
+      break if page.size < LIST_PARAMS[:per_page]
+
+      cursor = page.last.id
+      raise "Paddle pagination did not advance" if cursor.blank? || cursor == params[:after]
+      params[:after] = cursor
+    end
+    matches
   rescue StandardError => e
     Rails.logger.error("Could not check Paddle for payments against booking #{@booking.id}: #{e.class}: #{e.message}")
     nil
   end
 
   def for_this_booking?(transaction)
-    transaction.custom_data&.booking_id.to_s == @booking.id.to_s
+    return false unless transaction.custom_data&.booking_id.to_s == @booking.id.to_s
+    token = transaction.custom_data&.booking_token
+    return token == @booking.token if token.present?
+
+    # Retain compatibility with checkouts opened before tokens were added.
+    transaction.created_at.present? && Time.iso8601(transaction.created_at) >= @booking.created_at - 1.second
   end
 
   def customer_id

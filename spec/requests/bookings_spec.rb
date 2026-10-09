@@ -35,6 +35,12 @@ RSpec.describe "Bookings", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    it "opens the refund policy outside the booking frame" do
+      get bookings_path
+      link = Nokogiri::HTML(response.body).at_css("turbo-frame#booking_form a[href='/refunds']")
+      expect(link["data-turbo-frame"]).to eq("_top")
+    end
+
     it "restores a selected available slot after sign-in" do
       date = Date.current.next_occurring(:monday).iso8601
       hour = ConsultationSetting.current.weekly_slots.where(weekday: Date.iso8601(date).wday).order(:minute_of_day).first.time_of_day
@@ -257,5 +263,33 @@ RSpec.describe "Bookings", type: :request do
 
       expect(Booking.exists?(booking.id)).to be(true)
     end
+
+    it "retains an unknown payment without a false payment or release message" do
+      allow(BookingPaymentCheckService).to receive(:call).and_return(check(declined: true, unpaid: false))
+      delete abandon_booking_path(booking), as: :turbo_stream
+      expect(booking.reload).to be_pending
+      expect(response.body).to include("Nie mamy jeszcze potwierdzenia statusu płatności")
+      expect(response.body).not_to include("Płatność została zaksięgowana", "Termin nie został zarezerwowany")
+    end
+
+    it "retains the calendar event for retry while releasing the local slot after a Google outage" do
+      allow(BookingPaymentCheckService).to receive(:call).and_return(check)
+      booking.update!(calendar_event_id: "google_pending")
+      allow(BookingCalendarService).to receive(:call).and_call_original
+      allow(GoogleCalendarService).to receive(:call).and_raise(GoogleCalendarService::NotConnected)
+      expect { delete abandon_booking_path(booking), as: :turbo_stream }.to have_enqueued_job(SyncBookingCalendarJob).with(booking.id)
+      expect(booking.reload).to be_canceled
+      expect(booking.calendar_event_id).to eq("google_pending")
+      expect(booking).to be_calendar_sync_pending
+      expect(response.body).to include("termin jest znów dostępny")
+    end
+  end
+
+  it "does not show an unused refund status after successful payment" do
+    sign_in user
+    booking = user.bookings.create!(package: create_package, name: "Marta", email: user.email, starts_at: 1.month.from_now,
+      status: :confirmed, confirmed_at: Time.current, paddle_transaction_id: "txn_confirmed")
+    get booking_path(booking)
+    expect(response.body).not_to include("Stan zwrotu", "Brak zwrotu")
   end
 end

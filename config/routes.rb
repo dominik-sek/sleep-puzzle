@@ -89,6 +89,7 @@ Rails.application.routes.draw do
   # `bin/rails 'admin:promote[email]'`
   namespace :admin do
     root "dashboard#index"
+    resource :refunds, only: :show
     resource :consultation_calendar, only: [ :show ], controller: "consultation_calendar" do
       get :day, on: :collection
     end

@@ -193,4 +193,52 @@ RSpec.describe "Contacts", type: :request do
       expect(response.body).to include("Podaj imię i nazwisko")
     end
   end
+
+  describe "an audio refund request" do
+    let(:user) { User.create!(email: "refund-contact@example.com", password: "password123") }
+    let(:product) { create_product(name: "Bajka o sowie") }
+    let(:order) { user.orders.create!(status: :paid, paddle_transaction_id: "txn_refund", order_items: [ OrderItem.new(product: product) ]) }
+    let(:item) { order.order_items.sole }
+
+    it "prefills the buyer's own purchase without sending a message on page load" do
+      sign_in user
+      expect { get contact_path(order_item_id: item.id) }.not_to have_enqueued_mail(ContactMailer, :new_message)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Zgłoś zwrot", "Bajka o sowie", "txn_refund", order.token, user.email)
+      expect(response.body).to include("nie musisz podawać powodu")
+    end
+
+    it "keeps the request available after playback or a refund for complaints" do
+      sign_in user
+      item.update!(first_played_at: Time.current, refunded_at: Time.current)
+      get contact_path(order_item_id: item.id)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "does not expose another customer's purchase" do
+      item
+      sign_in User.create!(email: "other-refund@example.com", password: "password123")
+      get contact_path(order_item_id: item.id)
+      expect(response).to have_http_status(:not_found)
+      expect(response.body).not_to include('id="contact_message_body"')
+    end
+
+    it "requires signing in before showing purchase details" do
+      get contact_path(order_item_id: item.id)
+      expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it "does not offer an unpaid order as a purchase to refund" do
+      sign_in user
+      order.update!(status: :pending)
+      get contact_path(order_item_id: item.id)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "prefills the English message on the English page" do
+      sign_in user
+      get contact_path(locale: :en, order_item_id: item.id)
+      expect(response.body).to include("Request a refund", "I would like a refund for the recording", "txn_refund")
+    end
+  end
 end

@@ -41,6 +41,7 @@ export default class extends Controller {
     // fetching Paddle.js is a round trip, so the element can go away before the
     // overlay would have opened
     #disconnected = false;
+    #abandoning = false;
 
     // loadPaddle re-emits Paddle.js' single global callback as `paddle:event`
     #onPaddleEvent = (event) => {
@@ -142,7 +143,8 @@ export default class extends Controller {
     // its slot, an order holding the emptied cart - and walking away from it produces
     // no webhook at all, so nothing else would tell the server it never sold.
     async #abandon() {
-        if (!this.hasAbandonUrlValue) return;
+        if (!this.hasAbandonUrlValue || this.#abandoning) return;
+        this.#abandoning = true;
 
         try {
             const response = await fetch(this.abandonUrlValue, {

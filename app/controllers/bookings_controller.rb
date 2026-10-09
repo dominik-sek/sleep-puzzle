@@ -103,7 +103,12 @@ class BookingsController < ApplicationController
       if cleared
         # Remove the Google copy before deleting its event id with the booking.
         BookingCalendarService.call(booking: booking).release
-        booking.destroy!
+        # Keep failed calendar deletions retryable: the retry needs the event id.
+        if booking.calendar_sync_pending?
+          booking.update!(status: :canceled, canceled_at: Time.current)
+        else
+          booking.destroy!
+        end
         Rails.logger.info("Cleared abandoned booking #{booking.id} - checkout closed without payment")
       end
     end
@@ -140,7 +145,7 @@ class BookingsController < ApplicationController
   def abandon_notice(cleared:, payment:)
     if payment.paid?
       [ :notice, booking_message("paid") ]
-    elsif payment.declined?
+    elsif cleared && payment.declined?
       [ :alert, booking_message("declined") ]
     elsif cleared
       [ :warning, booking_message("released") ]
@@ -171,7 +176,7 @@ class BookingsController < ApplicationController
       items: [ { priceId: booking.package.paddle_price_id, quantity: 1 } ],
       customer_id: current_user.payment_processor.api_record.id,
       # the transaction.completed webhook reads this back to find the booking
-      custom_data: { booking_id: booking.id.to_s },
+      custom_data: { booking_id: booking.id.to_s, booking_token: booking.token },
       # Paddle closes the overlay and sends the buyer here once payment succeeds.
       # Must be absolute, and _url picks up the tunnel host in development.
       success_url: booking_url(booking),

@@ -51,10 +51,12 @@
             <dt class="text-tan text-t5"><%= content_block("refunds.notifications.booking_status") %></dt>
             <dd class="text-cream text-t5"><%= booking.status_label %></dd>
           </div>
-          <div class="flex justify-between gap-4">
-            <dt class="text-tan text-t5"><%= content_block("refunds.notifications.refund_status") %></dt>
-            <dd class="text-cream text-t5"><%= booking.refund_label %></dd>
-          </div>
+          <% if booking.canceled_at? || booking.refund_adjustments.exists? %>
+            <div class="flex justify-between gap-4">
+              <dt class="text-tan text-t5"><%= content_block("refunds.notifications.refund_status") %></dt>
+              <dd class="text-cream text-t5"><%= booking.refund_label %></dd>
+            </div>
+          <% end %>
         </dl>
       <% end %>
     <% end %>

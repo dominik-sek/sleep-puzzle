@@ -13,6 +13,22 @@ class ContactsController < ApplicationController
 
   def show
     @contact_message = ContactMessage.new
+    return if params[:order_item_id].blank?
+    authenticate_user!
+    return if performed?
+
+    item = OrderItem.joins(:order).merge(current_user.orders.paid).includes(:order, :product).find(params[:order_item_id])
+    @refund_request = true
+    details = {
+      "product" => item.product.name,
+      "order" => item.order.token,
+      "transaction" => item.order.paddle_transaction_id.presence || "—",
+      "date" => I18n.l((item.order.paid_at || item.order.created_at).to_date, format: :default)
+    }
+    @contact_message = ContactMessage.new(
+      name: current_user.full_name, email: current_user.email,
+      body: helpers.content_block("refunds.requests.message").gsub(/%\{(product|order|transaction|date)\}/) { details.fetch(Regexp.last_match(1)) }
+    )
   end
 
   def create

@@ -9,6 +9,8 @@ module AdminHelper
         active: controller_name == "bookings" },
       { label: "Zamówienia", href: admin_orders_path, icon: "credit-card",
         active: controller_name == "orders" },
+      { label: "Obsługa zwrotów", href: admin_refunds_path, icon: "file-text",
+        active: controller_name == "refunds" },
       { label: "Pakiety", href: admin_packages_path, icon: "package",
         active: controller_name == "packages" },
       { label: "Produkty", href: admin_products_path, icon: "audio-lines",

@@ -186,6 +186,13 @@ export default class extends Controller {
         if (consent) {
             consent.required = `${this.selectedDate}T${this.selectedTime}` < consent.dataset.earlyServiceCutoff
             consent.setAttribute("aria-required", String(consent.required))
+            this.element.querySelector("[data-early-consent-details]").open = consent.required || consent.checked
+            for (const marker of ["required-hint", "required-label"]) {
+                this.element.querySelector(`[data-early-${marker}]`).hidden = !consent.required
+            }
+            for (const marker of ["later-hint", "optional-label"]) {
+                this.element.querySelector(`[data-early-${marker}]`).hidden = consent.required
+            }
         }
         this.slotFormTarget.hidden = false
         if (this.hasBookingLinkTarget) {

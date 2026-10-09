@@ -115,4 +115,9 @@
       classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
     ) %>
   <% end %>
+  <% if order.paid? %>
+    <p class="mt-4 text-t6">
+      <%= link_to content_block("refunds.requests.button"), refunds_path(anchor: "request-refund"), data: { turbo_frame: "_top" }, class: "inline-flex items-center min-h-11 text-accent" %>
+    </p>
+  <% end %>
 <% end %>

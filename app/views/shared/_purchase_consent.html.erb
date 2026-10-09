@@ -1,12 +1,22 @@
 <% snapshot = RefundPolicySnapshot.build(kind) %>
+<% early_required = kind == :booking && local_assigns[:starts_at].present? && starts_at < Time.current + 14.days %>
 <%= hidden_field_tag field_prefix ? "#{field_prefix}[policy_token]" : "policy_token", RefundPolicySnapshot.token(kind, snapshot: snapshot) %>
 <div class="my-5 text-t6 text-tan space-y-3">
+  <% if kind == :booking %>
+    <p data-early-required-hint <%= "hidden" unless early_required %>><%= content_block("refunds.checkout.booking_hint") %></p>
+    <p data-early-later-hint <%= "hidden" if early_required %>><%= content_block("refunds.checkout.booking_later_hint") %></p>
+    <details data-early-consent-details <%= "open" if early_required || local_assigns[:checked] %>>
+      <summary class="cursor-pointer py-2 text-accent">
+        <span data-early-required-label <%= "hidden" unless early_required %>><%= content_block("refunds.checkout.booking_required_label") %></span>
+        <span data-early-optional-label <%= "hidden" if early_required %>><%= content_block("refunds.checkout.booking_optional_label") %></span>
+      </summary>
+  <% end %>
   <label class="flex items-start gap-3 cursor-pointer">
-    <%= check_box_tag field_prefix ? "#{field_prefix}[early_service_consent]" : "digital_content_consent", "1", local_assigns.fetch(:checked, false), required: kind == :audio,
+    <%= check_box_tag field_prefix ? "#{field_prefix}[early_service_consent]" : "digital_content_consent", "1", local_assigns.fetch(:checked, false), required: kind == :audio || early_required,
           data: (kind == :booking ? { early_service_cutoff: (Time.current + 14.days).strftime("%Y-%m-%dT%H:%M") } : {}),
           class: "mt-1 size-5 shrink-0 accent-accent" %>
     <span><%= snapshot.fetch("consent") %></span>
   </label>
-  <% if kind == :booking %><p><%= content_block("refunds.checkout.booking_hint") %></p><% end %>
-  <%= link_to t("refunds.link"), refunds_path, class: "inline-block py-2 text-accent hover:text-accent-hover" %>
+  <% if kind == :booking %></details><% end %>
+  <%= link_to t("refunds.link"), refunds_path, data: { turbo_frame: "_top" }, class: "inline-block py-2 text-accent hover:text-accent-hover" %>
 </div>

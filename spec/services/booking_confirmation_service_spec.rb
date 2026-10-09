@@ -59,4 +59,20 @@ RSpec.describe BookingConfirmationService do
     expect { described_class.call(event: event(booking_id: nil)) }.not_to raise_error
     expect(booking.reload).to be_pending
   end
+
+  it "ignores a checkout for a different booking token" do
+    link_paddle_customer(user)
+    payload = event(booking_id: booking.id)
+    payload.custom_data.booking_token = "different-token"
+    described_class.call(event: payload)
+    expect(booking.reload).to be_pending
+  end
+
+  it "ignores a legacy payment predating the booking" do
+    link_paddle_customer(user)
+    payload = event(booking_id: booking.id)
+    payload.created_at = 1.day.ago.iso8601
+    described_class.call(event: payload)
+    expect(booking.reload).to be_pending
+  end
 end

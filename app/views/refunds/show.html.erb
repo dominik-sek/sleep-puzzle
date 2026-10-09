@@ -10,9 +10,13 @@
         </section>
       <% end %>
     </div>
-    <div class="flex flex-wrap gap-6 mt-8 text-accent">
-      <%= link_to content_block("refunds.hero.contact"), instagram_contact_url, rel: "noopener", target: "_blank" %>
-      <%= link_to content_block("refunds.hero.paddle"), "https://paddle.net", rel: "noopener", target: "_blank" %>
-    </div>
+    <section id="request-refund" class="mt-8 scroll-mt-24 rounded-2xl border border-border-strong bg-surface p-5">
+      <h2 class="text-t5 font-bold text-accent mb-2"><%= content_block("refunds.requests.title") %></h2>
+      <p class="text-t6 text-tan leading-relaxed whitespace-pre-line"><%= content_block("refunds.requests.body") %></p>
+      <div class="flex flex-wrap gap-6 mt-4 text-accent">
+        <%= link_to content_block("refunds.hero.contact"), contact_path, data: { turbo_frame: "_top" }, class: "inline-flex items-center min-h-11" %>
+        <%= link_to content_block("refunds.hero.paddle"), "https://paddle.net", rel: "noopener", target: "_blank", class: "inline-flex items-center min-h-11" %>
+      </div>
+    </section>
   </div>
 <% end %>

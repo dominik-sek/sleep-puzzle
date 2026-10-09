@@ -1,0 +1,48 @@
+<% content_for :title, "Obsługa zwrotów - Panel" %>
+<div class="p-6 sm:p-8 max-w-[900px] space-y-6 text-t6 text-tan">
+  <div>
+    <h1 class="font-display text-t2 text-cream mb-3">Jak obsłużyć zwrot</h1>
+    <p>Klient zgłasza sprawę przez formularz, kontakt bezpośredni lub Paddle. Rezerwację zmieniasz tutaj, a pieniądze zwracasz w Paddle. Samo odwołanie spotkania nie zleca zwrotu.</p>
+  </div>
+  <section class="rounded-xl border border-border-strong bg-surface p-5 space-y-3">
+    <h2 class="text-t5 font-bold text-cream">1. Znajdź zakup i zapisz zgłoszenie</h2>
+    <p>Otwórz <%= link_to "Rezerwacje", admin_bookings_path %> albo <%= link_to "Zamówienia", admin_orders_path %>. Sprawdź klienta, produkt, datę zakupu i identyfikator „Transakcja Paddle” (txn_…). To ten identyfikator wyszukasz w Paddle.</p>
+    <p>Przy konsultacji wpisz rzeczywisty czas otrzymania zgłoszenia, powód i osobę odwołującą. Liczy się czas zgłoszenia klienta, a nie czas, w którym otwierasz panel.</p>
+  </section>
+  <section class="rounded-xl border border-border-strong bg-surface p-5 space-y-3">
+    <h2 class="text-t5 font-bold text-cream">2. Odwołaj konsultację lub zmień termin</h2>
+    <p>W szczegółach rezerwacji użyj „Odwołaj konsultację”. Termin zwalnia się od razu, a przyszłe wydarzenie jest usuwane z Google Calendar. Nie czekaj na zwrot pieniędzy. Przy awarii Google aplikacja ponawia synchronizację; sprawdź komunikat i <%= link_to "Zadania", admin_mission_control_jobs_path %>.</p>
+    <p>Jeśli klient wybiera inny termin, użyj „Zmień termin”. System sprawdzi dostępność, zachowa płatność i wyśle potwierdzenie. Nie zlecaj wtedy zwrotu, jeśli zakup ma pozostać opłacony.</p>
+  </section>
+  <section class="rounded-xl border border-border-strong bg-surface p-5 space-y-3">
+    <h2 class="text-t5 font-bold text-cream">3. Ustal rozliczenie konsultacji lub pakietu</h2>
+    <ul class="list-disc pl-5 space-y-2">
+      <li>Pojedyncza konsultacja: zgłoszenie co najmniej 24 godziny przed początkiem daje pełny zwrot. Dokładnie 24 godziny też spełniają ten warunek.</li>
+      <li>Późne odwołanie lub nieobecność: rozpatrz zgłoszenie indywidualnie, uwzględnij prawa ustawowe i ewentualny wyjątek. System nie nalicza potrąceń.</li>
+      <li>Odwołanie przez Karolę: ustal z klientem nowy termin albo zwrot za niewykonaną usługę.</li>
+      <li>Rozpoczęty pakiet: zakończ dalszą współpracę i w „Rozliczenie pakietu” zapisz wykonane czynności oraz uzasadnienie kwoty. Rozlicz rzeczywistą pracę, bez jednego procentu dla wszystkich pakietów.</li>
+    </ul>
+    <p>Sprawdź zapisaną zgodę i potwierdzenie e-mail. Bez zgody nie rozpoczynaj przygotowań ani wsparcia w pierwszych 14 dniach. Koniec konsultacji nie oznacza wykonania całego pakietu. Zasady umowne nie ograniczają prawa do odstąpienia ani reklamacji.</p>
+  </section>
+  <section class="rounded-xl border border-border-strong bg-surface p-5 space-y-3">
+    <h2 class="text-t5 font-bold text-cream">4. Sprawdź zwrot audio</h2>
+    <p>W zamówieniu wybierz właściwą pozycję i sprawdź datę zakupu, zgodę, potwierdzenie e-mail oraz pierwsze zarejestrowane odtworzenie. Przyjmujemy zwrot bez powodu w ciągu 14 dni, jeśli klient nie rozpoczął odsłuchu.</p>
+    <p>„Strumień wydany” nie oznacza odsłuchu. „Brak zarejestrowanego odtworzenia” oznacza brak zdarzenia z przeglądarki. Nie odrzucaj reklamacji automatycznie z powodu odsłuchu; rozpatrz sytuację i prawa klienta. Wcześniejsze zakupy mogą nie mieć zapisanej zgody.</p>
+  </section>
+  <section class="rounded-xl border border-border-strong bg-surface p-5 space-y-3">
+    <h2 class="text-t5 font-bold text-cream">5. Zleć zwrot w Paddle</h2>
+    <ol class="list-decimal pl-5 space-y-2">
+      <li>Otwórz właściwe konto Paddle: sandbox dla testów, live dla prawdziwych zakupów.</li>
+      <li>Wejdź w Transactions i wyszukaj zapisany identyfikator txn_…. Sprawdź klienta i kupione pozycje.</li>
+      <li>Otwórz opłaconą transakcję i wybierz Refund. Wybierz powód i kwotę dla właściwych pozycji. Przy wielu nagraniach nie zwracaj przypadkiem całego koszyka.</li>
+      <li>Przejdź przez Continue, sprawdź podsumowanie i wybierz Request refund. Zapamiętaj identyfikator korekty adj_….</li>
+    </ol>
+    <p>„Zwrot oczekuje na zatwierdzenie” nie oznacza wypłaty. Nie zlecaj tej samej kwoty drugi raz, gdy korekta czeka na decyzję. <%= link_to "Instrukcja Paddle", "https://developer.paddle.com/build/transactions/create-transaction-adjustments/", target: "_blank", rel: "noopener" %>.</p>
+  </section>
+  <section class="rounded-xl border border-border-strong bg-surface p-5 space-y-3">
+    <h2 class="text-t5 font-bold text-cream">6. Sprawdź wynik w Sleep Puzzle</h2>
+    <p>Po webhookach adjustment.created i adjustment.updated odśwież zakup. W „Rozliczenie zwrotów” zobaczysz status, kwotę i historię. Zwrot częściowy kwoty pozostawia dostęp do audio. Pełny zwrot pozycji odbiera dostęp z tego zakupu; inny niezwrócony zakup tego samego nagrania nadal daje dostęp. Wydane wcześniej adresy audio mogą działać do sześciu godzin.</p>
+    <p>Zwrot nie odwołuje aktywnej rezerwacji. Jeśli panel wyróżnia taki przypadek, wyjaśnij go z klientem i wykonaj właściwą zmianę rezerwacji osobno. Przy braku aktualizacji sprawdź dostarczenie webhooka w Paddle oraz zadania aplikacji.</p>
+    <p>Poinformuj klienta o decyzji i dalszych krokach. Nie obiecuj, że pieniądze wróciły na konto tylko dlatego, że zgłoszenie zostało przyjęte.</p>
+  </section>
+</div>

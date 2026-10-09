@@ -1,5 +1,6 @@
 <section class="rounded-xl border border-border-strong bg-surface p-5 space-y-3">
   <h2 class="text-t5 font-bold text-cream">Rozliczenie zwrotów</h2>
+  <%= link_to "Instrukcja obsługi zwrotu →", admin_refunds_path, class: "inline-flex min-h-11 items-center text-t6 text-accent", data: { turbo_frame: "_top" } %>
   <p class="text-t6 text-tan"><%= record.refund_label %></p>
   <% if record.is_a?(Booking) && record.status.in?(%w[pending confirmed]) && record.refund_adjustments.approved.exists? %>
     <p class="text-accent text-t6" role="status">Zwrot dotyczy aktywnej rezerwacji. Sprawdź, czy klient odwołuje spotkanie, czy płatność dotyczy innego rozliczenia.</p>

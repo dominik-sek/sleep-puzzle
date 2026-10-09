@@ -43,6 +43,14 @@ class PaddleTransactionService < ApplicationService
     # else's record - only the customer Paddle actually charged may act on it.
     return log("#{label} #{found.id} does not belong to Paddle customer #{event.customer_id}") unless payer?(found)
 
+    token = event.custom_data&.public_send("#{label}_token")
+    return log("#{label} #{found.id} has a different checkout token") if token.present? && token != found.token
+    # Legacy checkouts only carried a numeric id; exclude transactions predating
+    # this record (e.g. an id reused after restoring a database).
+    if event.created_at.present? && Time.iso8601(event.created_at) < found.created_at - 1.second
+      return log("#{label} #{found.id} was created after this transaction")
+    end
+
     found
   end
 

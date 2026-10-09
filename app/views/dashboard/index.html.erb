@@ -135,6 +135,9 @@
                               class: "font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
                 </p>
               <% end %>
+              <%= link_to content_block("refunds.requests.button"), contact_path(order_item_id: @purchase_items.fetch(product.id).id),
+                          class: "inline-flex items-center min-h-11 mt-2 py-2 text-t6 text-accent hover:text-accent-hover",
+                          data: { turbo_frame: "_top" } %>
             </div>
           <% end %>
         </div>

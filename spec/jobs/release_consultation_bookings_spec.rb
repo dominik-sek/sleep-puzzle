@@ -10,6 +10,7 @@ RSpec.describe "Releasing local consultation reservations" do
     @booking = Booking.create!(user: @user, package: create_package, name: "Marta", email: @user.email,
       starts_at: Time.zone.parse("2026-10-12 08:15"), created_at: 2.hours.ago, calendar_event_id: "old-google-copy")
     allow(GoogleCalendarService).to receive(:call).and_raise(GoogleCalendarService::NotConnected)
+    allow(BookingPaymentCheckService).to receive(:call).and_return(instance_double(BookingPaymentCheckService, unpaid?: true))
   end
   after { travel_back }
 
@@ -28,6 +29,13 @@ RSpec.describe "Releasing local consultation reservations" do
     ReleaseFailedBookingJob.perform_now(@booking.id, "payment_failed")
     expect(@booking.reload).to be_payment_failed
     expect(available).to include(@booking.starts_at)
+  end
+
+  it "retains a pending appointment when Paddle cannot confirm nonpayment" do
+    allow(BookingPaymentCheckService).to receive(:call).and_return(instance_double(BookingPaymentCheckService, unpaid?: false))
+    ReleaseAbandonedBookingsJob.perform_now
+    expect(@booking.reload).to be_pending
+    expect(available).not_to include(@booking.starts_at)
   end
 
   it "never releases a confirmed booking from an old pending object" do
