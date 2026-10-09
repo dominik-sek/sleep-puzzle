@@ -1,5 +1,5 @@
 <% if product.trailerable? %>
-  <div class="mt-6">
+  <div class="<%= 'mt-6' if local_assigns.fetch(:spacing, true) %>">
     <h2 class="mb-3 font-display text-t3 font-bold text-cream"><%= t('products.trailer') %></h2>
     <video controls preload="none" playsinline class="aspect-video w-full rounded-2xl bg-black"
            src="<%= trailer_product_path(product) %>"
