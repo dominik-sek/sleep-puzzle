@@ -119,4 +119,37 @@ RSpec.describe SandboxPurchaseCleanup do
     expect { purge }.to raise_error(described_class::UnsafeCleanup, /subskrypcje/)
     expect(Order.exists?(order.id)).to be(true)
   end
+
+  it "can explicitly skip a disconnected Google calendar and reports the retained event identifiers" do
+    skipping = described_class.new(email: user.email, skip_google_calendar: true)
+    allow(BookingCalendarService).to receive(:call).and_raise(GoogleCalendarService::NotConnected)
+    preview = skipping.preview
+    expect(preview[:skip_google_calendar]).to be(true)
+    expect(preview[:calendar_events]).to eq([ [ booking.id, "test_event", booking.starts_at ] ])
+    expect(skipping.purge!(confirmation: preview[:confirmation])).to include(bookings: 1, orders: 1)
+    expect(BookingCalendarService).not_to have_received(:call)
+    user.reload
+    expect(user.orders).to be_empty
+    expect(user.bookings).to be_empty
+    expect(user.reload).to be_admin
+    expect(Product.exists?(product.id)).to be(true)
+  end
+
+  it "requires a new preview when the Google cleanup mode changes" do
+    skipping = described_class.new(email: user.email, skip_google_calendar: true)
+    expect { skipping.purge!(confirmation: cleanup.preview[:confirmation]) }
+      .to raise_error(described_class::UnsafeCleanup, /CONFIRM/)
+    expect { cleanup.purge!(confirmation: skipping.preview[:confirmation]) }
+      .to raise_error(described_class::UnsafeCleanup, /CONFIRM/)
+    expect(Booking.exists?(booking.id)).to be(true)
+  end
+
+  it "still verifies sandbox transactions before deletion when Google is skipped" do
+    skipping = described_class.new(email: user.email, skip_google_calendar: true)
+    allow(Paddle::Transaction).to receive(:retrieve).with(id: "txn_audio").and_return(Paddle::Transaction.new(id: "txn_audio", customer_id: "ctm_other"))
+    expect { skipping.purge!(confirmation: skipping.preview[:confirmation]) }
+      .to raise_error(described_class::UnsafeCleanup, /nie należy/)
+    expect(Order.exists?(order.id)).to be(true)
+    expect(Booking.exists?(booking.id)).to be(true)
+  end
 end

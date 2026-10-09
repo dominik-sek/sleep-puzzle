@@ -3,10 +3,11 @@
 class SandboxPurchaseCleanup
   class UnsafeCleanup < StandardError; end
 
-  def initialize(email:)
+  def initialize(email:, skip_google_calendar: false)
     raise UnsafeCleanup, "Podaj EMAIL konkretnego konta." if email.blank?
 
     @user = User.find_by!(email: email.to_s.strip.downcase)
+    @skip_google_calendar = skip_google_calendar == true
   end
 
   def preview
@@ -18,6 +19,9 @@ class SandboxPurchaseCleanup
       counts: scopes.transform_values(&:count),
       bookings: @user.bookings.order(:id).pluck(:id, :status, :starts_at, :calendar_event_id),
       orders: @user.orders.order(:id).pluck(:id, :status, :paddle_transaction_id),
+      skip_google_calendar: @skip_google_calendar,
+      calendar_events: @user.bookings.where.not(calendar_event_id: [ nil, "" ]).order(:id)
+        .pluck(:id, :calendar_event_id, :starts_at),
       confirmation: fingerprint(scopes)
     }
   end
@@ -40,8 +44,10 @@ class SandboxPurchaseCleanup
 
         # Do not lose event identifiers on a Google failure. Strict release raises
         # and rolls back database changes; repeated Google deletions are idempotent.
-        @user.bookings.where.not(calendar_event_id: [ nil, "" ]).find_each do |booking|
-          BookingCalendarService.call(booking: booking, strict: true).release
+        unless @skip_google_calendar
+          @user.bookings.where.not(calendar_event_id: [ nil, "" ]).find_each do |booking|
+            BookingCalendarService.call(booking: booking, strict: true).release
+          end
         end
 
         scopes.each_value(&:delete_all)
@@ -82,7 +88,9 @@ class SandboxPurchaseCleanup
 
   def fingerprint(scopes)
     rows = scopes.transform_values { |scope| scope.order(:id).pluck(:id, :updated_at) }
-    Digest::SHA256.hexdigest({ user_id: @user.id, customers: customers.order(:id).pluck(:id, :processor_id), rows: rows }.to_json)
+    data = { user_id: @user.id, customers: customers.order(:id).pluck(:id, :processor_id), rows: rows }
+    data[:skip_google_calendar] = true if @skip_google_calendar
+    Digest::SHA256.hexdigest(data.to_json)
   end
 
   def verify_sandbox_records!(scopes)
