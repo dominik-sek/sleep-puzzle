@@ -118,7 +118,41 @@ RSpec.describe "Integrations::GoogleCalendar", type: :request do
       get integrations_google_calendar_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Nie udało się pobrać listy kalendarzy")
+      expect(response.body).to include("Połącz ponownie", "Połącz konto Google ponownie")
+    end
+
+    [ Signet::AuthorizationError, Google::Auth::AuthorizationError ].each do |error_class|
+      it "offers reconnection when #{error_class} occurs during the API request" do
+        integration = Integration.create!(service_name: Integration::GOOGLE_CALENDAR, calendar_id: "work@example.com")
+        authorizer = instance_double(Google::Auth::WebUserAuthorizer,
+          get_credentials: instance_double(Google::Auth::UserRefreshCredentials))
+        api = instance_double(Google::Apis::CalendarV3::CalendarService, :authorization= => nil)
+        allow(AuthorizeCalendarService).to receive(:call).and_return(authorizer)
+        allow(Google::Apis::CalendarV3::CalendarService).to receive(:new).and_return(api)
+        allow(GoogleCalendarService).to receive(:call).and_call_original
+        allow(api).to receive(:list_calendar_lists).with(min_access_role: "writer")
+          .and_raise(error_class.new('invalid_grant: Token has been expired or revoked.'))
+
+        get integrations_google_calendar_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("Połącz ponownie", "Połącz konto Google ponownie", "Odłącz kalendarz")
+        expect(response.body).not_to include("Połączono")
+        expect(response.parsed_body.at_css("a[href='#{connect_integrations_google_calendar_path}']")).to be_present
+        expect(integration.reload.calendar_id).to eq("work@example.com")
+      end
+    end
+
+    it "allows retrying a temporary API failure without requiring reconnection" do
+      Integration.create!(service_name: Integration::GOOGLE_CALENDAR, calendar_id: "work@example.com")
+      allow(GoogleCalendarService).to receive(:call).and_return(calendar)
+      allow(calendar).to receive(:writable_calendars).and_raise(Google::Apis::ServerError.new("unavailable"))
+
+      get integrations_google_calendar_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Nie udało się pobrać listy kalendarzy", "Połączono")
+      expect(response.body).not_to include("Połącz ponownie")
     end
 
     it "does not call Google before the account is connected" do

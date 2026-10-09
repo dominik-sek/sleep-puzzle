@@ -83,7 +83,13 @@ class Integrations::GoogleCalendarController < ApplicationController
   # about that than about a call to Google that failed.
   def writable_calendars
     GoogleCalendarService.call.writable_calendars
-  rescue GoogleCalendarService::NotConnected, Google::Apis::Error => e
+  # Refreshing happens during the API request too, not just when credentials
+  # are loaded. Google::Auth::AuthorizationError inherits from Signet's error.
+  rescue GoogleCalendarService::NotConnected, Signet::AuthorizationError => e
+    Rails.logger.warn("Google Calendar connection is unavailable: #{e.message}")
+    @reconnect_required = true
+    nil
+  rescue Google::Apis::Error => e
     Rails.logger.warn("Could not list Google calendars: #{e.message}")
     nil
   end
