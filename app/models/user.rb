@@ -30,7 +30,7 @@ class User < ApplicationRecord
   has_many :staged_media_uploads, dependent: :destroy
   # what the dashboard's audio library reads: every product this user has paid
   # for, deduplicated, so buying the same story twice lists it once
-  has_many :purchased_products, -> { distinct.merge(Order.paid) },
+  has_many :purchased_products, -> { distinct.merge(Order.paid).merge(OrderItem.accessible) },
            through: :orders, source: :products
 
   # Paid for, as far as the buyer is concerned, but Paddle's
@@ -58,6 +58,10 @@ class User < ApplicationRecord
 
   # Owns it outright: the payment is confirmed and the file can be streamed.
   # This is the ownership question - use #claimed? for the selling question.
+  def accessible_order_items
+    OrderItem.joins(:order).accessible.where(orders: { user_id: id, status: Order.statuses.fetch("paid") })
+  end
+
   def purchased?(product)
     purchased_products.exists?(id: product.id)
   end

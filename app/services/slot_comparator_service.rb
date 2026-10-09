@@ -1,12 +1,13 @@
 class SlotComparatorService < ApplicationService
   SLOT_DURATION = 90.minutes
 
-  def initialize(busy_periods: [], from: nil, to: nil, settings: ConsultationSetting.current, public_window: true)
+  def initialize(busy_periods: [], from: nil, to: nil, settings: ConsultationSetting.current, public_window: true, excluding_booking_id: nil)
     @settings = settings
     @from = from || settings.booking_dates.first
     @to = to || settings.booking_dates.last
     @busy_periods = busy_periods
     @public_window = public_window
+    @excluding_booking_id = excluding_booking_id
   end
 
   def call
@@ -39,7 +40,7 @@ class SlotComparatorService < ApplicationService
     from = @from.beginning_of_day
     to = (@to + 2).beginning_of_day
     ConsultationBlock.overlapping(from, to).map { |block| block.starts_at...block.ends_at } +
-      Booking.where(status: [ :pending, :confirmed ]).where("starts_at < ? AND ends_at > ?", to, from).map { |booking| booking.starts_at...booking.ends_at }
+      Booking.where(status: [ :pending, :confirmed ]).where.not(id: @excluding_booking_id).where("starts_at < ? AND ends_at > ?", to, from).map { |booking| booking.starts_at...booking.ends_at }
   end
 
   def overlap?(first, second)

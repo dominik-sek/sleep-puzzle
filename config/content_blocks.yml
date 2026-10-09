@@ -1329,3 +1329,173 @@ contact:
               en: "Terms of cooperation"
             url:
               pl: "/terms"
+
+refunds:
+  label: Zwroty i odwołania
+  sections:
+    hero:
+      label: "hero"
+      fields:
+        title:
+          label: "Nagłówek"
+          type: plain
+          default:
+            pl: "Zwroty i odwoływanie konsultacji"
+            en: "Refunds and appointment cancellations"
+        contact:
+          label: "Kontakt"
+          type: plain
+          default:
+            pl: "Skontaktuj się z Karolą"
+            en: "Contact Karola"
+        paddle:
+          label: "Link Paddle"
+          type: plain
+          default:
+            pl: "Zgłoś zwrot w Paddle"
+            en: "Request a refund through Paddle"
+    checkout:
+      label: "checkout"
+      fields:
+        audio_consent:
+          label: "Zgoda audio"
+          type: plain
+          default:
+            pl: "Wyrażam zgodę na rozpoczęcie dostarczania zakupionych treści audio przed upływem 14 dni. Przyjmuję do wiadomości, że wraz z rozpoczęciem dostarczania utracę ustawowe prawo do odstąpienia od umowy, po spełnieniu warunków przewidzianych prawem, w tym otrzymaniu potwierdzenia zakupu i zgody."
+            en: "I consent to delivery of the purchased audio content starting before the 14-day period ends. I acknowledge that I will lose the statutory right of withdrawal when delivery starts, once the conditions prescribed by law are met, including receipt of confirmation of the purchase and consent."
+        booking_consent:
+          label: "Zgoda konsultacje"
+          type: plain
+          default:
+            pl: "Żądam rozpoczęcia uzgodnionej usługi, w tym przygotowania i wsparcia, przed upływem 14 dni. Przyjmuję do wiadomości, że po pełnym wykonaniu usługi utracę prawo do odstąpienia od umowy."
+            en: "I expressly request that the agreed service, including preparation and support, starts before the 14-day period ends. I acknowledge that after full performance I will lose the right of withdrawal."
+        booking_hint:
+          label: "Wskazówka"
+          type: plain
+          default:
+            pl: "Zgoda jest potrzebna, jeśli spotkanie lub płatna praca mają rozpocząć się w ciągu pierwszych 14 dni. Bez zgody wybierz późniejszy termin."
+            en: "Consent is needed if the appointment or paid work is to start within the first 14 days. Without consent, choose a later appointment."
+        confirmation_subject:
+          label: "Temat potwierdzenia"
+          type: plain
+          default:
+            pl: "Potwierdzenie zakupu i zasad zwrotów — Sleep Puzzle"
+            en: "Purchase and refund terms confirmation — Sleep Puzzle"
+    notifications:
+      label: "Potwierdzenia i status rezerwacji"
+      fields:
+        data_notice:
+          label: "Informacja o danych zgód i odsłuchu"
+          type: plain
+          default:
+            pl: "Do realizacji zakupów, obsługi zwrotów i reklamacji zapisujemy treść i datę zgód, język i zasady obowiązujące przy zakupie, potwierdzenie wysyłki e-maila, historię zmian rezerwacji i korekt Paddle oraz datę pierwszego wydania strumienia audio i pierwszego odtworzenia zgłoszonego przez przeglądarkę. Zapis odtwarzania służy indywidualnemu rozpatrzeniu sprawy; nie powoduje automatycznej odmowy zwrotu ani reklamacji."
+            en: "To fulfil purchases and handle refunds and complaints, we record consent text and dates, the purchase language and terms, email delivery confirmation, booking changes and Paddle adjustments, and the first audio stream issuance and playback reported by the browser. Playback records support individual review; they do not automatically reject refunds or complaints."
+        canceled_title:
+          label: "Nagłówek odwołania"
+          type: plain
+          default:
+            pl: "Konsultacja została odwołana"
+            en: "Your consultation has been canceled"
+        canceled_body:
+          label: "Treść odwołania"
+          type: plain
+          default:
+            pl: "Termin został zwolniony. Rozliczenie płatności jest obsługiwane osobno."
+            en: "The appointment has been released. Payment settlement is handled separately."
+        change_subject:
+          label: "Temat wiadomości o zmianie"
+          type: plain
+          default:
+            pl: "Zmiana rezerwacji — Sleep Puzzle"
+            en: "Your booking has changed — Sleep Puzzle"
+        no_early_consent:
+          label: "Brak zgody na wcześniejsze rozpoczęcie"
+          type: plain
+          default:
+            pl: "Nie udzielono zgody na rozpoczęcie świadczenia przed upływem 14 dni."
+            en: "No consent was given to begin performance before the 14-day period ends."
+        booking_status:
+          label: "Etykieta stanu rezerwacji"
+          type: plain
+          default:
+            pl: "Stan rezerwacji"
+            en: "Booking status"
+        refund_status:
+          label: "Etykieta stanu zwrotu"
+          type: plain
+          default:
+            pl: "Stan zwrotu"
+            en: "Refund status"
+        paid:
+          label: "Opłacona rezerwacja"
+          type: plain
+          default:
+            pl: "Opłacona"
+            en: "Paid"
+        unpaid:
+          label: "Brak potwierdzenia płatności"
+          type: plain
+          default:
+            pl: "Brak potwierdzonej płatności"
+            en: "No confirmed payment"
+    clauses:
+      label: Zasady zwrotów
+      collection:
+        item_label: Zasada
+        fields:
+          heading:
+            label: Nagłówek
+            type: plain
+          body:
+            label: Treść
+            type: plain
+            multiline: true
+        defaults:
+          - heading:
+              pl: "Prawo odstąpienia od umowy"
+              en: "Right of withdrawal"
+            body:
+              pl: "Konsument oraz przedsiębiorca na prawach konsumenta, w zakresie przewidzianym prawem, może odstąpić od umowy zawartej na odległość bez podania przyczyny w ciągu 14 dni od jej zawarcia. Zasady opisane poniżej nie ograniczają uprawnień ustawowych. Oświadczenie można przekazać Karoli przez kontakt wskazany na stronie lub zgłosić przez Paddle, korzystając z potwierdzenia zakupu albo paddle.net. Nie jest wymagany specjalny formularz."
+              en: "A consumer, including a business customer where consumer rights apply by law, may withdraw from a distance contract without giving a reason within 14 days of its conclusion. The rules below do not restrict statutory rights. Contact Karola using the contact details on the site, or contact Paddle using your purchase confirmation or paddle.net. No particular form is required."
+          - heading:
+              pl: "Odwołanie pojedynczej konsultacji"
+              en: "Canceling an individual consultation"
+            body:
+              pl: "Pojedynczą konsultację można bezkosztowo odwołać co najmniej 24 godziny przed jej rozpoczęciem. Odwołanie w tym terminie uprawnia do pełnego zwrotu opłaty. Liczy się czas otrzymania zgłoszenia. Późniejsze odwołanie lub nieobecność nie daje dodatkowej gwarancji zwrotu poza prawami ustawowymi. Karola rozpatruje zgłoszenie indywidualnie. Przyjęcie odwołania zwalnia termin niezależnie od czasu wypłaty zwrotu."
+              en: "An individual consultation may be canceled free of charge at least 24 hours before it starts, with a full refund. The time your request is received determines the notice period. Later cancellation or non-attendance carries no additional refund guarantee beyond statutory rights. Karola reviews requests individually. Once cancellation is accepted, the appointment is released independently of when the refund is paid."
+          - heading:
+              pl: "Zmiana terminu"
+              en: "Rescheduling"
+            body:
+              pl: "Przełożenie pojedynczej konsultacji zgłoszone co najmniej 24 godziny przed rozpoczęciem jest bezkosztowe. Skontaktuj się z Karolą, aby uzgodnić dostępny termin. Po potwierdzeniu zmiany płatność przechodzi na nowy termin. Późniejsze prośby są rozpatrywane indywidualnie."
+              en: "An individual consultation may be rescheduled free of charge when requested at least 24 hours before it starts. Contact Karola to agree an available appointment. Once confirmed, your payment applies to the new appointment. Later requests are reviewed individually."
+          - heading:
+              pl: "Odwołanie przez Karolę"
+              en: "Cancellation by Karola"
+            body:
+              pl: "Jeżeli Karola odwoła konsultację, możesz wybrać nowy termin albo otrzymać zwrot za niewykonaną usługę."
+              en: "If Karola cancels a consultation, you may choose a new appointment or a refund for the service not provided."
+          - heading:
+              pl: "Rozpoczęcie usługi i zakończenie pakietu"
+              en: "Early performance and ending a support package"
+            body:
+              pl: "Możesz wyraźnie zażądać rozpoczęcia usługi przed upływem 14 dni. Po pełnym wykonaniu uzgodnionej usługi tracisz prawo do odstąpienia, jeżeli przed jej rozpoczęciem wyraziłeś zgodę i przyjąłeś do wiadomości ten skutek. Samo odbycie konsultacji nie oznacza wykonania całego pakietu wsparcia. Przy odstąpieniu przed pełnym wykonaniem usługi rozpoczętej na Twoje żądanie rozlicza się, w zakresie przewidzianym prawem, proporcjonalnie rzeczywiście wykonaną pracę. Przy zakończeniu pakietu uwzględnia się analizę, przygotowanie, konsultacje i udzielone wsparcie; nie stosuje się jednego automatycznego procentu potrącenia."
+              en: "You may expressly request that the service starts before the 14-day period ends. After full performance of the agreed service, the right of withdrawal is lost if you gave prior consent and acknowledged this consequence. Completing an appointment does not necessarily complete a support package. If you withdraw before completion of a service started at your request, work actually performed is charged proportionately as permitted by law. Ending a package takes account of analysis, preparation, consultations and support already provided; there is no automatic fixed deduction."
+          - heading:
+              pl: "Nagrania audio"
+              en: "Audio recordings"
+            body:
+              pl: "Przed zakupem audio wymagamy osobnej zgody na rozpoczęcie dostarczania treści cyfrowych przed upływem 14 dni i przyjęcia informacji o skutkach. Potwierdzenie zakupu, zgody i zasad przesyłamy e-mailem. Dodatkowo przyjmujemy zwrot bez podania przyczyny w ciągu 14 dni od zawarcia umowy, jeżeli nie rozpocząłeś odsłuchu zakupionego produktu. Rozpoczęcie płatnego rozdziału audioprocesu dotyczy całego audioprocesu. Bezpłatne próbki i zwiastuny nie są odsłuchem zakupionego produktu. Utrata ustawowego prawa do odstąpienia wymaga spełnienia wszystkich warunków przewidzianych prawem; sam zapis odtworzenia nie zastępuje zgody ani jej potwierdzenia."
+              en: "Buying audio requires separate consent to begin delivering digital content before the 14-day period ends and acknowledgment of the consequences. We email confirmation of your purchase, consent and terms. Additionally, we accept a refund without a reason within 14 days of the contract if you have not started listening to the purchased product. Starting a paid chapter counts as starting the whole audio process. Free samples and trailers do not count. Loss of statutory withdrawal rights requires all conditions prescribed by law; a playback record does not replace consent or its confirmation."
+          - heading:
+              pl: "Rozliczenie i wypłata zwrotu"
+              en: "Processing refunds"
+            body:
+              pl: "Zwroty płatności obsługuje Paddle. Zgłoszenie możesz przekazać przez potwierdzenie zakupu albo paddle.net. Karola pomaga ustalić zakres niewykonanej usługi. Przy ustawowym odstąpieniu zwrot następuje bez zbędnej zwłoki, nie później niż w ciągu 14 dni od otrzymania oświadczenia. Zwrot odbywa się tym samym sposobem płatności, chyba że uzgodniono inny bez dodatkowych kosztów. Pełny zwrot za produkt audio kończy dostęp z danego zakupu. Sam zwrot pieniędzy nie jest zmianą terminu konsultacji — odwołanie lub przełożenie potwierdzamy osobno."
+              en: "Paddle processes payment refunds. Use your purchase confirmation or paddle.net to submit a request. Karola helps establish the part of the service not provided. Statutory withdrawal refunds are made without undue delay, no later than 14 days after receipt of the withdrawal notice, using the original payment method unless another method is agreed without extra cost. A full refund for an audio product ends access from that purchase. A payment refund does not reschedule an appointment; cancellation or rescheduling is confirmed separately."
+          - heading:
+              pl: "Reklamacje"
+              en: "Complaints"
+            body:
+              pl: "Odsłuch audio lub wykonanie konsultacji nie wyłącza prawa do reklamacji. Jeżeli treść lub usługa jest niezgodna z umową, skontaktuj się z Karolą i opisz problem. Reklamacje konsumentów rozpatrujemy w terminie 14 dni; odpowiedź przesyłamy na trwałym nośniku, np. e-mailem."
+              en: "Listening to audio or receiving a consultation does not remove your right to complain. If content or a service does not conform to the contract, contact Karola and describe the issue. Consumer complaints are reviewed within 14 days and answered on a durable medium, such as email."

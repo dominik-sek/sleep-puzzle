@@ -29,7 +29,14 @@ class OrdersController < ApplicationController
       return redirect_to cart_path, alert: alert
     end
 
+    snapshot = RefundPolicySnapshot.verify(params[:policy_token], kind: :audio)
+    unless ActiveModel::Type::Boolean.new.cast(params[:digital_content_consent]) && snapshot
+      return redirect_to cart_path, alert: t(snapshot ? "refunds.consent_error" : "refunds.policy_expired")
+    end
+
     @order = build_order(cart)
+    @order.legal_snapshot = snapshot
+    @order.consent_accepted_at = Time.current
 
     if @order.save
       @checkout = checkout_for(@order)
@@ -86,7 +93,7 @@ class OrdersController < ApplicationController
   def build_order(cart)
     order = current_user.orders.build(status: :pending)
 
-    cart.lines.each { |line| order.order_items.build(product: line.product) }
+    cart.lines.each { |line| order.order_items.build(product: line.product, paddle_price_id: line.product.paddle_price_id) }
 
     order
   end

@@ -6,6 +6,7 @@ class DashboardController < ApplicationController
   def index
     # deduplicated across orders, and only from orders Paddle has confirmed -
     # see User#purchased_products
+    @purchase_items = current_user.accessible_order_items.order(id: :desc).group_by(&:product_id).transform_values(&:first)
     @products = current_user.purchased_products.includes(:audio_chapters).ordered
 
     # Paid for, webhook not landed. Listed above the library rather than left

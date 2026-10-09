@@ -4,20 +4,27 @@ require 'rails_helper'
 #
 # Table name: bookings
 #
-#  id                    :bigint           not null, primary key
-#  confirmed_at          :datetime
-#  email                 :string           default(""), not null
-#  ends_at               :datetime
-#  name                  :string
-#  starts_at             :datetime
-#  status                :integer          default("pending"), not null
-#  token                 :string           not null
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  calendar_event_id     :string
-#  package_id            :integer          not null
-#  paddle_transaction_id :string
-#  user_id               :bigint           not null
+#  id                          :bigint           not null, primary key
+#  calendar_sync_pending       :boolean          default(FALSE), not null
+#  canceled_at                 :datetime
+#  confirmed_at                :datetime
+#  consent_accepted_at         :datetime
+#  email                       :string           default(""), not null
+#  ends_at                     :datetime
+#  legal_confirmation_sent_at  :datetime
+#  legal_snapshot              :jsonb            not null
+#  name                        :string
+#  paddle_transaction_snapshot :jsonb            not null
+#  settlement_notes            :text
+#  starts_at                   :datetime
+#  status                      :integer          default("pending"), not null
+#  token                       :string           not null
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  calendar_event_id           :string
+#  package_id                  :integer          not null
+#  paddle_transaction_id       :string
+#  user_id                     :bigint           not null
 #
 # Indexes
 #

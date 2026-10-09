@@ -1,0 +1,14 @@
+<h1><%= @snapshot.fetch("subject") %></h1>
+<p><%= @names.join(", ") %></p>
+<p><%= @record.paddle_transaction_id %></p>
+<% if @record.consent_accepted_at %>
+  <p><%= l(@record.consent_accepted_at, format: :long) %></p>
+  <p><%= @snapshot.fetch("consent") %></p>
+<% else %>
+  <p><%= @snapshot.fetch("no_early_consent", t("refunds.no_early_consent")) %></p>
+<% end %>
+<h2><%= @snapshot.fetch("title") %></h2>
+<% @snapshot.fetch("clauses").each do |clause| %>
+  <h3><%= clause.fetch("heading") %></h3>
+  <%= simple_format(clause.fetch("body")) %>
+<% end %>

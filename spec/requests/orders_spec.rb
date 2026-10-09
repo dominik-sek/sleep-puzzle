@@ -13,6 +13,10 @@ RSpec.describe "Orders", type: :request do
       .and_return(double(api_record: double(id: "ctm_123")))
   end
 
+  def consent_params
+    { digital_content_consent: "1", policy_token: RefundPolicySnapshot.token(:audio) }
+  end
+
   def fill_cart(with: product)
     post cart_items_path, params: { product_id: with.id }
   end
@@ -35,7 +39,7 @@ RSpec.describe "Orders", type: :request do
     it "will not open a second checkout for it" do
       post cart_items_path, params: { product_id: product.id }
 
-      expect { post orders_path }.not_to change(Order, :count)
+      expect { post orders_path, params: consent_params }.not_to change(Order, :count)
     end
 
     it "shows it on the account as awaiting rather than missing" do
@@ -81,7 +85,7 @@ RSpec.describe "Orders", type: :request do
     it "sends an anonymous buyer to sign in rather than to Paddle" do
       fill_cart
 
-      post orders_path
+      post orders_path, params: consent_params
 
       expect(response).to redirect_to(new_user_session_path)
       expect(Order.count).to eq(0)
@@ -93,7 +97,7 @@ RSpec.describe "Orders", type: :request do
       it "turns the cart into a pending order" do
         fill_cart
 
-        post orders_path
+        post orders_path, params: consent_params
 
         order = Order.sole
         expect(order).to be_pending
@@ -106,7 +110,7 @@ RSpec.describe "Orders", type: :request do
         fill_cart
         fill_cart(with: other)
 
-        post orders_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        post orders_path, params: consent_params, headers: { "Accept" => "text/vnd.turbo-stream.html" }
 
         expect(response.body).to include("pri_456")
         expect(response.body).to include("pri_789")
@@ -119,7 +123,7 @@ RSpec.describe "Orders", type: :request do
       it "empties the cart once the order exists" do
         fill_cart
 
-        post orders_path
+        post orders_path, params: consent_params
 
         get cart_path
         expect(response.body).to include("Twój koszyk jest pusty")
@@ -136,7 +140,7 @@ RSpec.describe "Orders", type: :request do
         fill_cart(with: owned)
         sign_in user
 
-        post orders_path
+        post orders_path, params: consent_params
 
         # the paid one is the pre-existing purchase; the new order is the pending one
         order = Order.pending.sole
@@ -150,14 +154,14 @@ RSpec.describe "Orders", type: :request do
         user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
           .mark_paid!(transaction_id: "txn_old")
 
-        post orders_path
+        post orders_path, params: consent_params
 
         expect(response).to redirect_to(cart_path)
         expect(Order.pending).to be_empty
       end
 
       it "refuses an empty cart" do
-        post orders_path
+        post orders_path, params: consent_params
 
         expect(response).to redirect_to(cart_path)
         expect(Order.count).to eq(0)
@@ -177,7 +181,7 @@ RSpec.describe "Orders", type: :request do
           end
         end
 
-        post orders_path
+        post orders_path, params: consent_params
 
         expect(Order.count).to eq(0)
         get cart_path
@@ -193,7 +197,7 @@ RSpec.describe "Orders", type: :request do
       other = create_product(name: "Audioproces", paddle_price_id: "pri_789")
       fill_cart
       fill_cart(with: other)
-      post orders_path
+      post orders_path, params: consent_params
       order = Order.sole
 
       delete abandon_order_path(order)
@@ -208,7 +212,7 @@ RSpec.describe "Orders", type: :request do
     # saying "closed" must never delete an order the webhook has already claimed
     it "leaves a paid order alone" do
       fill_cart
-      post orders_path
+      post orders_path, params: consent_params
       order = Order.sole
       order.mark_paid!(transaction_id: "txn_1")
 
@@ -219,7 +223,7 @@ RSpec.describe "Orders", type: :request do
 
     it "does not let one buyer abandon another's order" do
       fill_cart
-      post orders_path
+      post orders_path, params: consent_params
       order = Order.sole
 
       sign_in User.create!(email: "someone@example.com", password: "password123")
@@ -235,7 +239,7 @@ RSpec.describe "Orders", type: :request do
 
     it "says the payment is still being confirmed while the order is pending" do
       fill_cart
-      post orders_path
+      post orders_path, params: consent_params
 
       get order_path(Order.sole)
 
@@ -246,7 +250,7 @@ RSpec.describe "Orders", type: :request do
 
     it "thanks the buyer once the webhook has marked it paid" do
       fill_cart
-      post orders_path
+      post orders_path, params: consent_params
       Order.sole.mark_paid!(transaction_id: "txn_1")
 
       get order_path(Order.sole)
@@ -256,7 +260,7 @@ RSpec.describe "Orders", type: :request do
 
     it "is not readable by another buyer" do
       fill_cart
-      post orders_path
+      post orders_path, params: consent_params
       order = Order.sole
 
       sign_in User.create!(email: "someone@example.com", password: "password123")

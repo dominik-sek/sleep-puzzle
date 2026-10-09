@@ -1,5 +1,8 @@
 <div id="booking_status" class="w-full max-w-xl flex flex-col gap-6 text-center">
-  <% if booking.confirmed? %>
+  <% if booking.canceled_at? %>
+    <h1 class="text-t1 text-cream font-display"><%= content_block("refunds.notifications.canceled_title") %></h1>
+    <p class="text-tan text-t5"><%= content_block("refunds.notifications.canceled_body") %></p>
+  <% elsif booking.confirmed? %>
     <h1 class="text-t1 text-cream font-display"><%= t("bookings.summary.confirmed_title") %></h1>
     <span class="text-tan text-t5">
       <%= t("bookings.summary.confirmed_body") %>
@@ -42,7 +45,15 @@
           </div>
           <div class="flex justify-between gap-4">
             <dt class="text-tan text-t5"><%= t("bookings.summary.payment_status") %></dt>
+            <dd class="text-cream text-t5"><%= content_block(booking.confirmed_at? ? "refunds.notifications.paid" : "refunds.notifications.unpaid") %></dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-tan text-t5"><%= content_block("refunds.notifications.booking_status") %></dt>
             <dd class="text-cream text-t5"><%= booking.status_label %></dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-tan text-t5"><%= content_block("refunds.notifications.refund_status") %></dt>
+            <dd class="text-cream text-t5"><%= booking.refund_label %></dd>
           </div>
         </dl>
       <% end %>

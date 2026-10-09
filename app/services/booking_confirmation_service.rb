@@ -3,7 +3,7 @@ class BookingConfirmationService < PaddleTransactionService
   def call
     # Paddle redelivers on any non-2xx, and Pay retries the job, so the same
     # transaction can arrive more than once
-    return if Booking.exists?(paddle_transaction_id: transaction_id)
+    # A repeated webhook can still need to enqueue a legal confirmation.
 
     # money has changed hands and there is nothing to credit it to - a discarded
     # checkout deletes its booking, so a completion arriving after that needs a human
@@ -13,14 +13,16 @@ class BookingConfirmationService < PaddleTransactionService
     end
 
     if booking.confirm_payment!(transaction_id)
-      BookingCalendarService.call(booking: booking).sync_status
+      BookingCalendarService.call(booking: booking).sync_status unless booking.canceled_at?
       # deliver_later so a mail outage can retry on its own without failing the
       # webhook job and re-running everything above it
-      BookingMailer.with(booking: booking).confirmed.deliver_later
+      BookingMailer.with(booking: booking).confirmed.deliver_later unless booking.canceled_at?
       BookingMailer.with(booking: booking).new_booking.deliver_later
       Rails.logger.info("Confirmed booking #{booking.id} from Paddle transaction #{transaction_id}")
     end
 
+    booking.update!(paddle_transaction_snapshot: PaddleTransactionSnapshotService.snapshot(event)) if booking.paddle_transaction_snapshot.blank?
+    PurchaseConfirmationJob.perform_later("booking", booking.id) if booking.legal_snapshot.present?
     booking
   end
 

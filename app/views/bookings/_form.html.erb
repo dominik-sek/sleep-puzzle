@@ -56,6 +56,11 @@
       <span class="font-display font-bold text-t3 text-cream tabular-nums" data-cally-target="summaryPrice"></span>
     </div>
 
+    <%= render "shared/purchase_consent", kind: :booking, field_prefix: "booking", checked: booking.early_service_consent %>
+    <% if booking.errors[:early_service_consent].any? || booking.errors[:legal_snapshot].any? %>
+      <p class="text-t6 text-red-400" role="alert"><%= (booking.errors[:early_service_consent] + booking.errors[:legal_snapshot]).join(" ") %></p>
+    <% end %>
+
     <%# pill + py-4: every other submit on the site is a pill, and Pill-For-Action
         makes radius the affordance - the one control the whole site funnels
         toward was rendered as "read" at 38px %>

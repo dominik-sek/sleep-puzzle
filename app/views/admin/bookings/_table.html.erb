@@ -2,7 +2,8 @@
   <% table.with_column(label: "Termin") %>
   <% table.with_column(label: "Klient") %>
   <% table.with_column(label: "Pakiet") %>
-  <% table.with_column(label: "Status") %>
+  <% table.with_column(label: "Stan rezerwacji") %>
+  <% table.with_column(label: "Zwrot") %>
   <% table.with_column(label: "Utworzono") %>
 
   <% bookings.each do |booking| %>
@@ -23,6 +24,14 @@
       <% row.with_cell do %>
         <%= admin_status_badge booking.status,
               booking.status_label %>
+      <% end %>
+
+      <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>
+        <% refund_state = booking.refund_state %>
+        <%= t("refunds.states.#{refund_state}") %>
+        <% if booking.status.in?(%w[pending confirmed]) && refund_state.in?(%w[pending_approval partial full]) %>
+          <%= link_to "Sprawdź aktywną rezerwację", admin_booking_path(booking), class: "block text-accent font-bold whitespace-normal" %>
+        <% end %>
       <% end %>
 
       <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>

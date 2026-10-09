@@ -39,6 +39,10 @@ class BookingsController < ApplicationController
       status: :pending,
     )
 
+    @booking.early_service_consent = booking_params[:early_service_consent]
+    @booking.legal_snapshot = RefundPolicySnapshot.verify(booking_params[:policy_token], kind: :booking) || {}
+    @booking.consent_accepted_at = Time.current if @booking.early_service_consent && @booking.legal_snapshot.present?
+
     # Priceable first, and before anything is written. A package Paddle cannot
     # price is a package we cannot sell - the shop and the packages page both
     # enforce that by withholding the buy control, and this surface used to be
@@ -219,6 +223,6 @@ class BookingsController < ApplicationController
   end
 
   def booking_params
-    params.require(:booking).permit(:name, :date, :hour, :package_id)
+    params.require(:booking).permit(:name, :date, :hour, :package_id, :early_service_consent, :policy_token)
   end
 end

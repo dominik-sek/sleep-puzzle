@@ -182,6 +182,11 @@ export default class extends Controller {
         this.resetForm()
         this.dateFieldTarget.value = this.selectedDate
         this.timeFieldTarget.value = this.selectedTime
+        const consent = this.element.querySelector("input[data-early-service-cutoff]")
+        if (consent) {
+            consent.required = `${this.selectedDate}T${this.selectedTime}` < consent.dataset.earlyServiceCutoff
+            consent.setAttribute("aria-required", String(consent.required))
+        }
         this.slotFormTarget.hidden = false
         if (this.hasBookingLinkTarget) {
             const url = new URL(this.bookingLinkTarget.href)

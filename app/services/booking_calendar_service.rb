@@ -1,13 +1,13 @@
 # Keeps the Google Calendar event in step with a booking's payment status, so the
 # calendar itself shows whether a slot is paid for or still waiting.
 #
-# Every method swallows Google::Apis::Error and GoogleCalendarService::NotConnected:
-# the calendar is a side effect of the booking, and neither a calendar outage nor a
-# calendar nobody has connected yet may roll back a payment we've already taken.
-# The booking is the record that matters; the event is a convenience on top of it.
+# Immediate calls record a pending sync and enqueue a retry on Google failures.
+# Strict calls from that job raise so ActiveJob can retry without reverting a
+# booking or payment. The booking is the record that matters.
 class BookingCalendarService < ApplicationService
-  def initialize(booking:)
+  def initialize(booking:, strict: false)
     @booking = booking
+    @strict = strict
   end
 
   # mirrors GoogleCalendarService's own idiom: .call sets up, then you send a verb
@@ -37,6 +37,16 @@ class BookingCalendarService < ApplicationService
     calendar.patch_event(event_id: @booking.calendar_event_id, summary: summary, description: description)
   rescue Google::Apis::Error, GoogleCalendarService::NotConnected, Google::Auth::AuthorizationError, Signet::AuthorizationError => e
     log(e, "update")
+  end
+
+  def sync_schedule
+    return create if @booking.calendar_event_id.blank?
+
+    calendar.patch_event(event_id: @booking.calendar_event_id, summary: summary, description: description,
+      start: Google::Apis::CalendarV3::EventDateTime.new(date_time: @booking.starts_at.iso8601, time_zone: Time.zone.tzinfo.name),
+      end: Google::Apis::CalendarV3::EventDateTime.new(date_time: @booking.ends_at.iso8601, time_zone: Time.zone.tzinfo.name))
+  rescue Google::Apis::Error, GoogleCalendarService::NotConnected, Google::Auth::AuthorizationError, Signet::AuthorizationError => e
+    log(e, "reschedule")
   end
 
   # payment failed or was abandoned - drop the hold so the slot frees up again
@@ -82,6 +92,10 @@ class BookingCalendarService < ApplicationService
   end
 
   def log(error, action)
+    raise error if @strict
+
+    @booking.update!(calendar_sync_pending: true)
+    SyncBookingCalendarJob.perform_later(@booking.id)
     Rails.logger.error("Failed to #{action} Google Calendar event for booking #{@booking.id}: #{error.message}")
     nil
   end

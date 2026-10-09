@@ -33,27 +33,13 @@ class ProductsController < ApplicationController
 
     # 403 rather than 404: the shop lists this product, so its existence is not
     # the secret - the file behind it is
-    head :forbidden and return unless current_user.purchased?(product)
-
-    url = BunnySignedUrlService.call(product.cdn_path)
-
-    # Nothing uploaded, or a deploy that lost the CDN credentials. The dashboard
-    # only draws a player when Product#streamable?, so reaching this is either a
-    # stale page or a hand-typed URL.
-    head :not_found and return if url.nil?
-
-    redirect_to url, allow_other_host: true
+    issue_stream(product, product.cdn_path)
   end
 
   def stream_chapter
     product = Product.audio_process.find(params[:id])
     chapter = product.audio_chapters.ready.find(params[:chapter_id])
-    head :forbidden and return unless current_user.purchased?(product)
-
-    url = BunnySignedUrlService.call(chapter.cdn_path)
-    head :not_found and return unless url
-
-    redirect_to url, allow_other_host: true
+    issue_stream(product, chapter.cdn_path)
   end
 
   def trailer
@@ -82,5 +68,24 @@ class ProductsController < ApplicationController
     head :not_found and return if url.nil?
 
     redirect_to url, allow_other_host: true
+  end
+  private
+
+  def issue_stream(product, path)
+    items = current_user.accessible_order_items.where(product_id: product.id)
+    items = items.where(id: params[:order_item_id]) if params[:order_item_id].present?
+    item = items.order(id: :desc).first
+    return head :forbidden unless item
+
+    item.order.with_lock do
+      item.reload
+      return head :forbidden if item.refunded_at? || !item.order.paid?
+
+      url = BunnySignedUrlService.call(path)
+      return head :not_found unless url
+
+      item.update!(first_stream_issued_at: Time.current) unless item.first_stream_issued_at?
+      redirect_to url, allow_other_host: true
+    end
   end
 end

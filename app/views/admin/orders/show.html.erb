@@ -36,6 +36,9 @@
           <span class="flex-1 min-w-0">
             <%= link_to item.product.name, edit_admin_product_path(item.product), class: "text-t5" %>
             <span class="block text-t6 text-taupe"><%= item.product.kind_label %></span>
+            <span class="block text-t6 text-tan">Strumień wydany: <%= item.first_stream_issued_at ? l(item.first_stream_issued_at, format: :long) : "Brak" %></span>
+            <span class="block text-t6 text-tan">Odtwarzanie: <%= item.first_played_at ? l(item.first_played_at, format: :long) : "Brak zarejestrowanego odtworzenia" %></span>
+            <% if item.refunded_at %><span class="block text-t6 text-accent">Dostęp zakończony po pełnym zwrocie</span><% end %>
           </span>
         </li>
       <% end %>
@@ -57,4 +60,5 @@
       </dd>
     </div>
   </dl>
+  <%= render "admin/shared/refund_details", record: @order %>
 </div>

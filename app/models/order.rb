@@ -4,22 +4,25 @@
 # flipped by the paddle_billing.transaction.completed webhook, looked up by token
 # because the id ends up in a URL handed to Paddle.
 #
-# No amounts here, deliberately: Paddle owns the money (see Purchasable), so an
-# order records *what* was bought and leaves *what it cost* to be read back from
-# Paddle. A total stored here would be a second source of truth that silently
-# goes stale the first time a price changes.
+# Paddle owns catalogue prices (see Purchasable). Its completed transaction
+# snapshot is retained only to reconcile refunds against what was actually paid,
+# never to quote a current price or calculate a new checkout locally.
 # == Schema Information
 #
 # Table name: orders
 #
-#  id                    :bigint           not null, primary key
-#  paid_at               :datetime
-#  status                :integer          default("pending"), not null
-#  token                 :string           not null
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  paddle_transaction_id :string
-#  user_id               :bigint           not null
+#  id                          :bigint           not null, primary key
+#  consent_accepted_at         :datetime
+#  legal_confirmation_sent_at  :datetime
+#  legal_snapshot              :jsonb            not null
+#  paddle_transaction_snapshot :jsonb            not null
+#  paid_at                     :datetime
+#  status                      :integer          default("pending"), not null
+#  token                       :string           not null
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  paddle_transaction_id       :string
+#  user_id                     :bigint           not null
 #
 # Indexes
 #
@@ -32,6 +35,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Order < ApplicationRecord
+  include Refundable
   belongs_to :user
   has_many :order_items, dependent: :destroy
   has_many :products, through: :order_items
@@ -67,7 +71,7 @@ class Order < ApplicationRecord
   # key, and a digital file is only ever bought once per order.
   def paddle_items
     order_items.includes(:product).map do |item|
-      { priceId: item.product.paddle_price_id, quantity: 1 }
+      { priceId: item.paddle_price_id || item.product.paddle_price_id, quantity: 1 }
     end
   end
 

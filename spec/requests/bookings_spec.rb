@@ -139,7 +139,8 @@ RSpec.describe "Bookings", type: :request do
 
     def booking_params(pkg = package)
       { booking: { name: "Marta", email: user.email, package_id: pkg.id,
-                   date: Date.current.next_occurring(:monday).to_s, hour: "08:15" } }
+                   date: Date.current.next_occurring(:monday).to_s, hour: "08:15",
+                   early_service_consent: "1", policy_token: RefundPolicySnapshot.token(:booking) } }
     end
 
     it "asks for a new slot when a malformed date is submitted" do
@@ -181,6 +182,32 @@ RSpec.describe "Bookings", type: :request do
 
       expect(Booking.last).to be_pending
       expect(response.body).to include('target="availability"', 'target="paddle_checkout"')
+    end
+
+    it "requires early-service consent for a slot within the first 14 days" do
+      params = booking_params
+      params[:booking].delete(:early_service_consent)
+      expect { post bookings_path, params: params }.not_to change(Booking, :count)
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include(I18n.t("refunds.booking_consent_error"))
+    end
+
+    it "allows a later appointment without inventing consent" do
+      allow_any_instance_of(BookingsController).to receive(:checkout_for).and_return({ items: [] })
+      params = booking_params
+      params[:booking][:date] = (Date.current + 21.days).next_occurring(:monday).to_s
+      params[:booking].delete(:early_service_consent)
+      expect { post bookings_path, params: params, as: :turbo_stream }.to change(Booking, :count).by(1)
+      expect(Booking.last.consent_accepted_at).to be_nil
+      expect(Booking.last.legal_snapshot["kind"]).to eq("booking")
+    end
+
+    it "rejects a forged policy token even for a later appointment" do
+      params = booking_params
+      params[:booking][:date] = (Date.current + 21.days).next_occurring(:monday).to_s
+      params[:booking][:policy_token] = "forged"
+      expect { post bookings_path, params: params }.not_to change(Booking, :count)
+      expect(response.body).to include(I18n.t("refunds.policy_expired"))
     end
   end
 

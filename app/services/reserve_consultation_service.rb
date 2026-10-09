@@ -10,7 +10,7 @@ class ReserveConsultationService < ApplicationService
       if starts_at && settings.booking_dates.cover?(starts_at.to_date)
         busy = settings.local_availability? ? [] : GoogleCalendarService.call.busy
         available = SlotComparatorService.call(settings: settings, busy_periods: busy, from: starts_at.to_date, to: starts_at.to_date)
-        return @booking.save if available.any? { |slot| slot.begin == starts_at }
+        return @booking.save(context: :checkout) if available.any? { |slot| slot.begin == starts_at }
       end
       @booking.errors.add(:starts_at, :invalid)
       false

@@ -1,0 +1,9 @@
+<h1><%= @copy.fetch("change_subject") %></h1>
+<p><%= @booking.package.name %></p>
+<% if @change.kind == "canceled" %>
+  <h2><%= @copy.fetch("canceled_title") %></h2>
+  <p><%= @copy.fetch("canceled_body") %></p>
+<% else %>
+  <p><%= l(@change.previous_starts_at, format: :long) %> → <%= l(@change.new_starts_at, format: :long) %></p>
+<% end %>
+<p><%= link_to t("refunds.link"), refunds_url %></p>

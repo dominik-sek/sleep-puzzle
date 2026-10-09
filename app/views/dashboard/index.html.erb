@@ -11,6 +11,7 @@
     align: :left
   ) do |section| %>
     <div class="max-w-[1000px] mx-auto w-full">
+      <p class="mb-4 text-t6"><%= link_to t("refunds.link"), refunds_path, class: "text-accent" %></p>
       <div class="mb-10 flex flex-wrap items-center justify-between gap-3.5">
         <div>
           <h1 class="font-display font-bold text-t1 text-cream m-0">
@@ -119,7 +120,9 @@
                 <%= render "dashboard/chapter_playlist", product: product %>
               <% elsif product.streamable? %>
                 <audio controls preload="none" class="mt-3.5 w-full"
-                       src="<%= stream_product_path(product) %>"
+                       src="<%= stream_product_path(product, order_item_id: @purchase_items.fetch(product.id).id) %>"
+                       data-controller="playback" data-action="playing->playback#record"
+                       data-playback-url-value="<%= playback_order_item_path(@purchase_items.fetch(product.id)) %>"
                        aria-label="<%= t('products.player.label', name: product.name) %>"></audio>
               <% else %>
                 <%# Still no control - one with nothing behind it would be a lie -

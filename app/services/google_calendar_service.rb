@@ -35,8 +35,12 @@ class GoogleCalendarService < ApplicationService
   # Transparency is ignored rather than honoured on purpose: an event wrongly
   # treated as busy costs one needlessly blocked slot, which is visible and
   # fixable, while one wrongly treated as free sells a time she is not available.
-  def busy
-    events.filter_map { |event| period(event) }
+  def busy(except_event_id: nil)
+    # Local reservations already block their current time. While a change waits
+    # for Google, its stale event must not keep the previous time unavailable.
+    stale_ids = Booking.where.not(calendar_event_id: nil)
+      .where("status IN (?, ?) OR calendar_sync_pending = TRUE", Booking.statuses[:canceled], Booking.statuses[:payment_failed]).pluck(:calendar_event_id)
+    events.reject { |event| (except_event_id.present? && event.id == except_event_id) || stale_ids.include?(event.id) }.filter_map { |event| period(event) }
   end
 
   def create_event(summary:, starts_at:, ends_at:, description: nil)

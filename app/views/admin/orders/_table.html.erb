@@ -6,6 +6,7 @@
   <% table.with_column(label: "Klient") %>
   <% table.with_column(label: "Pozycje") %>
   <% table.with_column(label: "Status") %>
+  <% table.with_column(label: "Zwrot") %>
   <% table.with_column(label: "Opłacono") %>
 
   <% orders.each do |order| %>
@@ -26,6 +27,10 @@
 
       <% row.with_cell do %>
         <%= admin_status_badge order.status, order.status_label %>
+      <% end %>
+
+      <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>
+        <%= order.refund_label %>
       <% end %>
 
       <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>

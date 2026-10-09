@@ -33,3 +33,9 @@ Pay::Webhooks.delegator.subscribe "paddle_billing.transaction.canceled" do |even
   BookingPaymentFailureService.call(event: event, status: :canceled)
   OrderPaymentFailureService.call(event: event, status: :canceled)
 end
+
+%w[adjustment.created adjustment.updated].each do |type|
+  Pay::Webhooks.delegator.subscribe "paddle_billing.#{type}" do |event|
+    PaddleRefundService.call(event: event)
+  end
+end

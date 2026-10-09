@@ -1,0 +1,17 @@
+en:
+  refunds:
+    link: "Refunds and cancellations"
+    consent_error: "Please consent to early audio delivery and acknowledge its consequences."
+    policy_expired: "Refresh the form to read the current terms."
+    booking_consent_error: "This appointment requires consent to start the service within 14 days. Give consent or select a later appointment."
+    no_early_consent: "No consent was given to begin performance before the 14-day period ends."
+    canceled_title: "Your consultation has been canceled"
+    canceled_body: "The appointment has been released. Payment settlement is handled separately."
+    change_subject: "Your booking has changed — Sleep Puzzle"
+    refunded_audio: "Access ended following a refund"
+    states:
+      none: "No refund"
+      pending_approval: "Refund awaiting approval"
+      partial: "Partial refund"
+      full: "Full refund"
+      rejected: "Refund rejected"

@@ -28,7 +28,8 @@ RSpec.describe ReserveConsultationService do
   end
 
   def new_booking
-    Booking.new(user: @user, package: @package, name: "Marta", email: @user.email, starts_at: @starts_at)
+    Booking.new(user: @user, package: @package, name: "Marta", email: @user.email, starts_at: @starts_at,
+      legal_snapshot: RefundPolicySnapshot.build(:booking), consent_accepted_at: Time.current)
   end
 
   def check_serialized_write

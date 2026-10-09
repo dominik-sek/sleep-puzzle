@@ -4,14 +4,18 @@ require 'rails_helper'
 #
 # Table name: orders
 #
-#  id                    :bigint           not null, primary key
-#  paid_at               :datetime
-#  status                :integer          default("pending"), not null
-#  token                 :string           not null
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  paddle_transaction_id :string
-#  user_id               :bigint           not null
+#  id                          :bigint           not null, primary key
+#  consent_accepted_at         :datetime
+#  legal_confirmation_sent_at  :datetime
+#  legal_snapshot              :jsonb            not null
+#  paddle_transaction_snapshot :jsonb            not null
+#  paid_at                     :datetime
+#  status                      :integer          default("pending"), not null
+#  token                       :string           not null
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  paddle_transaction_id       :string
+#  user_id                     :bigint           not null
 #
 # Indexes
 #

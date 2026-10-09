@@ -72,7 +72,9 @@ RSpec.describe "Admin content editor", type: :system do
   it "keeps the selected section and language while adding and removing a list item" do
     visit admin_content_blocks_path(open: "home.faq", lang: "en")
 
+    previous_count = ContentItem.for_collection("home.faq").count
     click_link "Dodaj: pytanie"
+    expect(page).to have_css('#section-home-faq [id^="item-"][id$="-position"]', count: previous_count + 1)
     expect(page).to have_css('#section-home-faq')
     added = ContentItem.for_collection("home.faq").order(:id).last
     expect(page).to have_css("#item-#{added.id}-position")

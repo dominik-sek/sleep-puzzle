@@ -1,0 +1,17 @@
+pl:
+  refunds:
+    link: "Zwroty i odwołania"
+    consent_error: "Zaznacz zgodę na wcześniejsze dostarczenie audio i zapoznanie się z jej skutkami."
+    policy_expired: "Odśwież formularz, aby zapoznać się z aktualnymi zasadami."
+    booking_consent_error: "Ten termin wymaga zgody na rozpoczęcie usługi przed upływem 14 dni. Wyraź zgodę lub wybierz późniejszy termin."
+    no_early_consent: "Nie udzielono zgody na rozpoczęcie świadczenia przed upływem 14 dni."
+    canceled_title: "Konsultacja została odwołana"
+    canceled_body: "Termin został zwolniony. Rozliczenie płatności jest obsługiwane osobno."
+    change_subject: "Zmiana rezerwacji — Sleep Puzzle"
+    refunded_audio: "Dostęp zakończony po zwrocie"
+    states:
+      none: "Brak zwrotu"
+      pending_approval: "Zwrot oczekuje na zatwierdzenie"
+      partial: "Zwrot częściowy"
+      full: "Zwrot pełny"
+      rejected: "Zwrot odrzucony"

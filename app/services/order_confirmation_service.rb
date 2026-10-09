@@ -9,7 +9,7 @@ class OrderConfirmationService < PaddleTransactionService
   def call
     # Paddle redelivers on any non-2xx, and Pay retries the job, so the same
     # transaction can arrive more than once
-    return if Order.exists?(paddle_transaction_id: transaction_id)
+    # Reconcile again on redelivery, without sending the receipt twice.
 
     # money has changed hands and there is nothing to credit it to - an abandoned
     # checkout deletes its order, so a completion arriving after that needs a human
@@ -18,7 +18,18 @@ class OrderConfirmationService < PaddleTransactionService
       return
     end
 
-    if order.mark_paid!(transaction_id: transaction_id)
+    order.with_lock do
+      if order.paddle_transaction_snapshot.blank?
+        order.update!(paddle_transaction_snapshot: PaddleTransactionSnapshotService.snapshot(event))
+      end
+      PaddleTransactionSnapshotService.map_items!(order)
+      order.mark_paid!(transaction_id: transaction_id)
+      PaddleRefundService.reconcile!(order)
+    end
+    ReconcilePaddleRefundJob.perform_later(transaction_id)
+    PurchaseConfirmationJob.perform_later("order", order.id) if order.legal_snapshot.present?
+
+    if order.paid?
       Rails.logger.info("Marked order #{order.id} paid from Paddle transaction #{transaction_id}")
     end
 

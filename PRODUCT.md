@@ -71,10 +71,12 @@ who can't reach 1:1, 1:1 when they can - rather than a single price point.
 
 ## Capabilities and Constraints
 
-* **No price is stored in this application.** A `Product` or `Package` holds a
+* **No catalogue price is managed in this application.** A `Product` or `Package` holds a
   `paddle_price_id`, and every figure on screen is read back from Paddle. A product
   whose price cannot be read renders with no add button - so any surface showing
   money must have a truthful "price unavailable" state.
+  Completed Paddle transaction snapshots retain what was actually paid solely
+  for refund reconciliation and audit; they never determine a new checkout price.
 * **Paddle is Merchant of Record.** Checkout is Paddle's overlay; there is no
   payment screen of our own, and closing the overlay is reported back by the browser
   so the lines return to the cart.

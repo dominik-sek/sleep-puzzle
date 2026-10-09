@@ -154,5 +154,21 @@ RSpec.describe GoogleCalendarService do
 
       expect(described_class.call.busy).to be_empty
     end
+
+    it "ignores stale copies of canceled and rescheduled bookings, keeping external events busy" do
+      user = User.create!(email: "calendar-copy@example.com", password: "password123")
+      package = create_package
+      [ [ "canceled_event", :canceled, false ], [ "moved_event", :confirmed, true ] ].each do |id, status, pending|
+        user.bookings.create!(name: "Marta", email: user.email, package: package, starts_at: 3.days.from_now,
+          calendar_event_id: id, status: status, calendar_sync_pending: pending)
+      end
+      copies = %w[canceled_event moved_event external_event].map do |id|
+        event = timed("2026-10-12 08:15", "2026-10-12 09:45")
+        event.id = id
+        event
+      end
+      returns(*copies)
+      expect(described_class.call.busy.size).to eq(1)
+    end
   end
 end

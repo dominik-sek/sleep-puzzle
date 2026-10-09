@@ -1,0 +1,46 @@
+<%= render "admin/shared/refund_details", record: @booking %>
+<% if @booking.errors.any? %>
+  <p role="alert" class="text-red-400 text-t6"><%= @booking.errors.full_messages.join(", ") %></p>
+<% end %>
+<% if @booking.calendar_sync_pending? %>
+  <p role="status" class="text-accent text-t6">Zmiana jest zapisana. Synchronizacja kopii w Google Calendar oczekuje na wykonanie; nie blokuje zwolnienia terminu w aplikacji.</p>
+<% end %>
+<% if @booking.status.in?(%w[pending confirmed]) %>
+  <% [ ["Odwołaj konsultację", cancel_admin_booking_path(@booking), false], ["Zmień termin", reschedule_admin_booking_path(@booking), true] ].each do |title, path, reschedule| %>
+    <% next if reschedule && !@booking.confirmed? %>
+    <section class="rounded-xl border border-border-strong bg-surface p-5">
+      <h2 class="text-t5 font-bold text-cream mb-4"><%= title %></h2>
+      <%= form_with url: path, method: :patch, scope: :booking, class: "space-y-4" do |f| %>
+        <div><%= f.label :received_at, "Kiedy otrzymano zgłoszenie? (#{Time.zone.name})", for: "#{reschedule ? 'move' : 'cancel'}_received_at", class: "block text-t6 text-tan mb-2" %><%= f.datetime_local_field :received_at, value: Time.current.strftime("%Y-%m-%dT%H:%M"), required: true, class: "form-control", id: "#{reschedule ? 'move' : 'cancel'}_received_at" %></div>
+        <div><%= f.label :initiator, "Kto zgłasza zmianę?", for: "#{reschedule ? 'move' : 'cancel'}_initiator", class: "block text-t6 text-tan mb-2" %><%= f.select :initiator, [["Klient", "customer"], ["Karola", "owner"]], {}, class: "form-control", id: "#{reschedule ? 'move' : 'cancel'}_initiator" %></div>
+        <div><%= f.label :reason, "Powód", for: "#{reschedule ? 'move' : 'cancel'}_reason", class: "block text-t6 text-tan mb-2" %><%= f.text_area :reason, required: true, class: "form-control", id: "#{reschedule ? 'move' : 'cancel'}_reason" %></div>
+        <% if reschedule %><div><%= f.label :starts_at, "Nowy termin (#{Time.zone.name})", class: "block text-t6 text-tan mb-2" %><%= f.datetime_local_field :starts_at, required: true, class: "form-control" %></div><% end %>
+        <p class="text-t6 text-taupe"><%= reschedule ? "Płatność pozostaje przy rezerwacji. Dostępność nowej godziny sprawdzimy przed zapisem." : "Termin zwolnimy od razu. Kwotę zwrotu ustal i zleć osobno w Paddle; odwołanie nie zleca płatności." %></p>
+        <%= f.submit title, class: "rounded-full bg-accent px-5 py-3 text-ink font-bold cursor-pointer" %>
+      <% end %>
+    </section>
+  <% end %>
+<% end %>
+<section class="rounded-xl border border-border-strong bg-surface p-5 space-y-3">
+  <h2 class="text-t5 font-bold text-cream">Rozliczenie pakietu</h2>
+  <p class="text-t6 text-tan whitespace-pre-line"><%= @booking.settlement_notes %></p>
+  <%= form_with url: settlement_admin_booking_path(@booking), method: :patch, scope: :booking do |f| %>
+    <%= f.label :settlement_notes, "Wykonane czynności i uzasadnienie rozliczenia", class: "block text-t6 text-tan mb-2" %>
+    <%= f.text_area :settlement_notes, required: true, class: "form-control" %>
+    <%= f.submit "Dodaj notatkę", class: "mt-3 rounded-full bg-accent px-5 py-3 text-ink font-bold cursor-pointer" %>
+  <% end %>
+</section>
+<section class="space-y-3">
+  <h2 class="text-t5 font-bold text-cream">Historia zmian</h2>
+  <% @booking.booking_changes.order(created_at: :desc).each do |change| %>
+    <div class="rounded-xl border border-border-strong p-4 text-t6 text-tan">
+      <p><%= change.kind == "canceled" ? "Odwołanie" : "Zmiana terminu" %> · <%= change.initiator == "owner" ? "Karola" : "Klient" %></p>
+      <p>Zgłoszenie: <%= l(change.received_at, format: :long) %></p>
+      <p>Poprzedni termin: <%= l(change.previous_starts_at, format: :long) %></p>
+      <% if change.new_starts_at %><p>Nowy termin: <%= l(change.new_starts_at, format: :long) %></p><% end %>
+      <p><%= change.initiator == "owner" ? "Odwołanie lub zmiana przez Karolę — uzgodnij nowy termin albo zwrot za niewykonaną usługę" : (change.timely? ? "Zgłoszenie co najmniej 24 godziny przed spotkaniem" : "Zgłoszenie później niż 24 godziny przed spotkaniem — rozpatrz indywidualnie") %></p>
+      <p class="whitespace-pre-line"><%= change.reason %></p>
+      <p>Zapisano: <%= l(change.created_at, format: :long) %> · <%= change.admin.email %></p>
+    </div>
+  <% end %>
+</section>

@@ -2,20 +2,27 @@
 #
 # Table name: bookings
 #
-#  id                    :bigint           not null, primary key
-#  confirmed_at          :datetime
-#  email                 :string           default(""), not null
-#  ends_at               :datetime
-#  name                  :string
-#  starts_at             :datetime
-#  status                :integer          default("pending"), not null
-#  token                 :string           not null
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  calendar_event_id     :string
-#  package_id            :integer          not null
-#  paddle_transaction_id :string
-#  user_id               :bigint           not null
+#  id                          :bigint           not null, primary key
+#  calendar_sync_pending       :boolean          default(FALSE), not null
+#  canceled_at                 :datetime
+#  confirmed_at                :datetime
+#  consent_accepted_at         :datetime
+#  email                       :string           default(""), not null
+#  ends_at                     :datetime
+#  legal_confirmation_sent_at  :datetime
+#  legal_snapshot              :jsonb            not null
+#  name                        :string
+#  paddle_transaction_snapshot :jsonb            not null
+#  settlement_notes            :text
+#  starts_at                   :datetime
+#  status                      :integer          default("pending"), not null
+#  token                       :string           not null
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  calendar_event_id           :string
+#  package_id                  :integer          not null
+#  paddle_transaction_id       :string
+#  user_id                     :bigint           not null
 #
 # Indexes
 #
@@ -31,6 +38,11 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Booking < ApplicationRecord
+  include Refundable
+
+  attribute :early_service_consent, :boolean
+  has_many :booking_changes, dependent: :restrict_with_error
+  validate :checkout_consent, on: :checkout
   belongs_to :package
   belongs_to :user
 
@@ -54,7 +66,7 @@ class Booking < ApplicationRecord
     I18n.t("bookings.statuses.#{status}", locale: locale, default: status.to_s)
   end
 
-  before_validation :set_consultation_end, on: :create
+  before_validation :set_consultation_end, if: :new_record?
 
   validates :name, presence: true
   validates :starts_at, presence: true
@@ -79,7 +91,7 @@ class Booking < ApplicationRecord
     ConsultationSetting.current.with_lock do
       reload
       return false if paddle_transaction_id.present?
-      update!(status: :confirmed, confirmed_at: Time.current, paddle_transaction_id: transaction_id)
+      update!(status: canceled_at? ? :canceled : :confirmed, confirmed_at: Time.current, paddle_transaction_id: transaction_id)
     end
     broadcast_status
     true
@@ -90,7 +102,7 @@ class Booking < ApplicationRecord
   def fail_payment!(status)
     ConsultationSetting.current.with_lock do
       reload
-      return false if confirmed?
+      return false if confirmed? || canceled_at?
       update!(status: status)
     end
     broadcast_status
@@ -98,6 +110,13 @@ class Booking < ApplicationRecord
   end
 
   private
+
+  def checkout_consent
+    errors.add(:legal_snapshot, I18n.t("refunds.policy_expired")) if legal_snapshot.blank?
+    if starts_at && starts_at < Time.current + 14.days && !consent_accepted_at?
+      errors.add(:early_service_consent, I18n.t("refunds.booking_consent_error"))
+    end
+  end
 
   def set_consultation_end
     self.ends_at ||= starts_at + SlotComparatorService::SLOT_DURATION if starts_at

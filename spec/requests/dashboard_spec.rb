@@ -100,7 +100,7 @@ RSpec.describe "Dashboard", type: :request do
 
           get dashboard_index_path
 
-          expect(response.body).to include(%(src="#{stream_product_path(product)}"))
+          expect(response.body).to include(%(src="#{stream_product_path(product, order_item_id: user.accessible_order_items.find_by!(product: product).id)}"))
         end
 
         # nothing is fetched from the CDN, and no token is minted, until the buyer

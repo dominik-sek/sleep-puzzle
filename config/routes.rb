@@ -78,6 +78,10 @@ Rails.application.routes.draw do
     # singular for the same reason as `about` above: there is one regulamin. The
     # `controller:` keeps the class name singular too, matching the file.
     resource :terms, only: [ :show ], controller: "terms"
+    resource :refunds, only: [ :show ], controller: "refunds"
+    resources :order_items, only: [] do
+      post :playback, on: :member
+    end
     resource :privacy, only: [ :show ], controller: "privacy"
   end
 
@@ -96,7 +100,11 @@ Rails.application.routes.draw do
       post :bulk, on: :collection
     end
     resources :consultation_slots, except: [ :index, :show ]
-    resources :bookings, only: [ :index, :show ], param: :token
+    resources :bookings, only: [ :index, :show ], param: :token do
+      patch :cancel, on: :member
+      patch :reschedule, on: :member
+      patch :settlement, on: :member
+    end
     # by token like the public side, so the panel and a customer's own link name
     # the same order the same way
     resources :orders, only: [ :index, :show ], param: :token

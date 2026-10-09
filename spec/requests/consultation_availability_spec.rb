@@ -16,7 +16,8 @@ RSpec.describe "Local consultation availability", type: :request do
   after { travel_back }
 
   def reserve(date: "2026-10-12", hour: "08:15")
-    post bookings_path, params: { booking: { name: "Marta", package_id: package.id, date: date, hour: hour } }, as: :turbo_stream
+    post bookings_path, params: { booking: { name: "Marta", package_id: package.id, date: date, hour: hour,
+      early_service_consent: "1", policy_token: RefundPolicySnapshot.token(:booking) } }, as: :turbo_stream
   end
 
   it "works in PL and EN without making a Google availability request" do

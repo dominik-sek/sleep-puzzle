@@ -16,6 +16,7 @@ module Admin::ContentBlocksHelper
     when "shop" then products_path(**options)
     when "cart" then cart_path(**options)
     when "dashboard" then dashboard_index_path(**options)
+    when "refunds" then refunds_path(**options)
     when "terms" then terms_path(**options)
     when "contact" then contact_path(**options)
     end

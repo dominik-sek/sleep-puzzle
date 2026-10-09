@@ -6,6 +6,16 @@ class BookingMailer < ApplicationMailer
     mail to: @booking.email, subject: t("booking_mailer.confirmed.subject")
   end
 
+  def changed
+    @change = params[:change]
+    @booking = @change.booking
+    I18n.with_locale(@booking.legal_snapshot["locale"] || I18n.default_locale) do
+      helper = ApplicationController.new.helpers
+      @copy = %w[change_subject canceled_title canceled_body].index_with { |key| helper.content_block("refunds.notifications.#{key}").to_s }
+      mail to: @booking.email, subject: @copy.fetch("change_subject")
+    end
+  end
+
   # to owner, so a paid session doesn't depend on her watching the calendar
   def new_booking
     @booking = params[:booking]

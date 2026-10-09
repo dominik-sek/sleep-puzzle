@@ -1,0 +1,18 @@
+<% content_for :title, page_title(content_block("refunds.hero.title")) %>
+<%= render Section::Component.new(background: :ink, align: :left) do %>
+  <div class="max-w-[800px] mx-auto w-full">
+    <h1 class="font-display font-bold text-t2 text-cream mb-8"><%= content_block("refunds.hero.title") %></h1>
+    <div class="flex flex-col gap-6">
+      <% content_items("refunds.clauses").each do |clause| %>
+        <section>
+          <h2 class="text-t5 font-bold text-accent mb-2"><%= clause["heading"] %></h2>
+          <p class="text-t6 text-tan leading-relaxed whitespace-pre-line"><%= clause["body"] %></p>
+        </section>
+      <% end %>
+    </div>
+    <div class="flex flex-wrap gap-6 mt-8 text-accent">
+      <%= link_to content_block("refunds.hero.contact"), instagram_contact_url, rel: "noopener", target: "_blank" %>
+      <%= link_to content_block("refunds.hero.paddle"), "https://paddle.net", rel: "noopener", target: "_blank" %>
+    </div>
+  </div>
+<% end %>

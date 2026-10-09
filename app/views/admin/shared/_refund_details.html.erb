@@ -1,0 +1,42 @@
+<section class="rounded-xl border border-border-strong bg-surface p-5 space-y-3">
+  <h2 class="text-t5 font-bold text-cream">Rozliczenie zwrotów</h2>
+  <p class="text-t6 text-tan"><%= record.refund_label %></p>
+  <% if record.is_a?(Booking) && record.status.in?(%w[pending confirmed]) && record.refund_adjustments.approved.exists? %>
+    <p class="text-accent text-t6" role="status">Zwrot dotyczy aktywnej rezerwacji. Sprawdź, czy klient odwołuje spotkanie, czy płatność dotyczy innego rozliczenia.</p>
+  <% end %>
+  <% record.refund_adjustments.each do |adjustment| %>
+    <div class="text-t6 text-tan border-t border-border-strong pt-3">
+      <p class="font-mono break-all"><%= adjustment.paddle_id %></p>
+      <p><%= t("refunds.states.#{adjustment.status}", default: adjustment.status) %> · <%= adjustment.formatted_amount %></p>
+      <p><%= adjustment.payload["reason"] %></p>
+      <details>
+        <summary class="cursor-pointer py-2 text-accent">Historia statusów Paddle</summary>
+        <% adjustment.events.each do |event| %>
+          <p><%= event["updated_at"] %> · <%= t("refunds.states.#{event['status']}", default: event["status"]) %></p>
+        <% end %>
+      </details>
+    </div>
+  <% end %>
+  <% if record.is_a?(Order) && record.refund_adjustments.approved.exists? && record.order_items.any? { |item| item.paddle_transaction_item_id.blank? && !item.refunded_at? } %>
+    <p class="text-accent text-t6" role="status">Sprawdź powiązanie wcześniejszego zakupu z pozycjami Paddle. Synchronizacja pobiera dane transakcji; przy niejednoznacznym powiązaniu dostęp wymaga ręcznej weryfikacji.</p>
+  <% end %>
+  <h3 class="text-t6 font-bold text-cream">Zgoda i potwierdzenie</h3>
+  <% if record.consent_accepted_at %>
+    <p class="text-t6 text-tan"><%= l(record.consent_accepted_at, format: :long) %></p>
+    <p class="text-t6 text-tan">Język: <%= record.legal_snapshot["locale"] %></p>
+    <p class="text-t6 text-tan whitespace-pre-line"><%= record.legal_snapshot["consent"] %></p>
+  <% else %>
+    <p class="text-t6 text-tan">Brak zapisanej zgody. Nie zakładaj, że klient ją udzielił.</p>
+    <% if record.is_a?(Booking) %><p class="text-t6 text-accent">Nie rozpoczynaj przygotowania ani wsparcia przed upływem 14 dni od zawarcia umowy bez zgody klienta.</p><% end %>
+  <% end %>
+  <p class="text-t6 text-tan">Potwierdzenie e-mail: <%= record.legal_confirmation_sent_at ? l(record.legal_confirmation_sent_at, format: :long) : "Brak potwierdzenia wysyłki" %></p>
+  <% if record.legal_snapshot.present? %>
+    <details class="text-t6 text-tan">
+      <summary class="cursor-pointer py-2 text-accent">Zasady zapisane przy zakupie</summary>
+      <% record.legal_snapshot.fetch("clauses", []).each do |clause| %>
+        <h4 class="font-bold mt-3"><%= clause["heading"] %></h4>
+        <p class="whitespace-pre-line"><%= clause["body"] %></p>
+      <% end %>
+    </details>
+  <% end %>
+</section>

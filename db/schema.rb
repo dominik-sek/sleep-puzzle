@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_09_161000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -66,6 +66,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
     t.index ["product_id"], name: "index_audio_chapters_on_product_id"
   end
 
+  create_table "booking_changes", force: :cascade do |t|
+    t.bigint "booking_id", null: false
+    t.bigint "admin_id", null: false
+    t.string "kind", null: false
+    t.string "initiator", null: false
+    t.text "reason", null: false
+    t.datetime "received_at", null: false
+    t.datetime "previous_starts_at", null: false
+    t.datetime "new_starts_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_booking_changes_on_admin_id"
+    t.index ["booking_id"], name: "index_booking_changes_on_booking_id"
+  end
+
   create_table "bookings", force: :cascade do |t|
     t.string "calendar_event_id"
     t.datetime "confirmed_at"
@@ -80,6 +95,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.datetime "ends_at"
+    t.datetime "consent_accepted_at"
+    t.jsonb "legal_snapshot", default: {}, null: false
+    t.datetime "legal_confirmation_sent_at"
+    t.jsonb "paddle_transaction_snapshot", default: {}, null: false
+    t.datetime "canceled_at"
+    t.text "settlement_notes"
+    t.boolean "calendar_sync_pending", default: false, null: false
     t.index ["package_id"], name: "index_bookings_on_package_id"
     t.index ["paddle_transaction_id"], name: "index_bookings_on_paddle_transaction_id", unique: true
     t.index ["starts_at", "status"], name: "index_bookings_on_starts_at_and_status"
@@ -161,7 +183,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
     t.bigint "order_id", null: false
     t.bigint "product_id", null: false
     t.datetime "updated_at", null: false
+    t.string "paddle_price_id"
+    t.string "paddle_transaction_item_id"
+    t.datetime "first_stream_issued_at"
+    t.datetime "first_played_at"
+    t.datetime "refunded_at"
     t.index ["order_id", "product_id"], name: "index_order_items_on_order_id_and_product_id", unique: true
+    t.index ["paddle_transaction_item_id"], name: "index_order_items_on_paddle_transaction_item_id", unique: true
     t.index ["product_id"], name: "index_order_items_on_product_id"
   end
 
@@ -173,6 +201,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
     t.string "token", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.datetime "consent_accepted_at"
+    t.jsonb "legal_snapshot", default: {}, null: false
+    t.datetime "legal_confirmation_sent_at"
+    t.jsonb "paddle_transaction_snapshot", default: {}, null: false
     t.index ["paddle_transaction_id"], name: "index_orders_on_paddle_transaction_id", unique: true
     t.index ["token"], name: "index_orders_on_token", unique: true
     t.index ["user_id"], name: "index_orders_on_user_id"
@@ -186,6 +218,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
     t.boolean "published", default: false, null: false
     t.jsonb "translations", default: {}, null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "paddle_adjustments", force: :cascade do |t|
+    t.string "paddle_id", null: false
+    t.string "transaction_id", null: false
+    t.string "customer_id", null: false
+    t.string "status", null: false
+    t.string "action", null: false
+    t.datetime "paddle_updated_at", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "events", default: [], null: false
+    t.index ["paddle_id"], name: "index_paddle_adjustments_on_paddle_id", unique: true
+    t.index ["transaction_id"], name: "index_paddle_adjustments_on_transaction_id"
   end
 
   create_table "pay_charges", force: :cascade do |t|
@@ -502,6 +549,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audio_chapters", "products"
+  add_foreign_key "booking_changes", "bookings"
+  add_foreign_key "booking_changes", "users", column: "admin_id"
   add_foreign_key "bookings", "packages"
   add_foreign_key "bookings", "users"
   add_foreign_key "consultation_weekly_slots", "consultation_settings"
