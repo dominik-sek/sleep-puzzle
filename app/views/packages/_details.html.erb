@@ -1,3 +1,4 @@
+<% preview = local_assigns.fetch(:preview, false) %>
 <dialog id="<%= package_details_id(package) %>" class="package-details-dialog rounded-2xl border border-border-strong bg-surface text-left text-cream shadow-xl"
         aria-labelledby="<%= package_details_id(package) %>-title"
         data-action="click->package-details#backdrop cancel->package-details#cancel close->package-details#closed keydown->package-details#trapFocus focusin->package-details#focusHeading">
@@ -53,7 +54,8 @@
     <%= render Buttons::Component.new(
       text: price_label ? t("offers.see_times") : content_block("packages.card.unavailable_cta"),
       pill: true, variant: price_label ? :primary : :secondary,
-      href: price_label ? (user_signed_in? ? bookings_path(package_id: package.id) : packages_path(anchor: "calendar")) : instagram_contact_url,
+      href: preview ? nil : (price_label ? (user_signed_in? ? bookings_path(package_id: package.id) : packages_path(anchor: "calendar")) : instagram_contact_url),
+      type: "button", disabled: preview,
       aria_label: "#{price_label ? t('offers.see_times') : content_block('packages.card.unavailable_cta')} - #{package.name}",
       classes: "text-t6! py-4 px-6 font-bold! w-full justify-center"
     ) %>

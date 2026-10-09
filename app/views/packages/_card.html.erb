@@ -12,6 +12,7 @@
   locals: package
 %>
 <% price_label = package_price_label(package) %>
+<% preview = local_assigns.fetch(:preview, false) %>
 
 <%= render Card::Component.new(classes: "grow flex flex-col", stretch_body: true) do |card| %>
   <% card.with_body do %>
@@ -74,12 +75,13 @@
             text: t("offers.see_times"),
             pill: true,
             variant: :primary,
-            href: user_signed_in? ? bookings_path(package_id: package.id) : packages_path(anchor: "calendar"),
+            href: preview ? nil : (user_signed_in? ? bookings_path(package_id: package.id) : packages_path(anchor: "calendar")),
+            type: "button", disabled: preview,
             aria_label: "#{t('offers.see_times')} - #{package.name}",
             classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold! w-full justify-center"
           ) %>
           <%# The booking form still lets a signed-in buyer change this package. %>
-          <p class="text-t6 text-taupe text-center m-0"><%= t(user_signed_in? ? "offers.calendar_intro_signed_in" : "offers.calendar_intro") %></p>
+          <p class="text-t6 text-taupe text-center m-0"><%= t(user_signed_in? && !preview ? "offers.calendar_intro_signed_in" : "offers.calendar_intro") %></p>
         <% else %>
           <%# nothing sellable here: offer the one route that still works rather
               than a button into a checkout that cannot complete %>
@@ -87,7 +89,8 @@
             text: content_block("packages.card.unavailable_cta"),
             pill: true,
             variant: :secondary,
-            href: instagram_contact_url,
+            href: preview ? nil : instagram_contact_url,
+            type: "button", disabled: preview,
             aria_label: "#{content_block('packages.card.unavailable_cta')} - #{package.name}",
             classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold! w-full justify-center"
           ) %>

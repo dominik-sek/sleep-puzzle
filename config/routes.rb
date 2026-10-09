@@ -113,7 +113,9 @@ Rails.application.routes.draw do
     # the price list is shared by both catalogue screens, so refreshing it is one
     # endpoint that returns you to whichever page you asked from
     resource :paddle_prices, only: [ :update ]
-    resources :packages, except: [ :show ]
+    resources :packages, except: [ :show ] do
+      post :preview, on: :collection
+    end
     resources :products, except: [ :show ] do
       resources :audio_chapters, except: [ :index, :show ], controller: "audio_chapters"
     end

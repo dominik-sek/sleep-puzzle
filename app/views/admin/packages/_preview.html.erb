@@ -1,0 +1,4 @@
+<div lang="<%= I18n.locale %>" data-controller="package-details">
+  <%= render "packages/card", package: package, preview: true %>
+  <%= render "packages/details", package: package, shared_body: package_shared_body, preview: true %>
+</div>

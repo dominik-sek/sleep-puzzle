@@ -1,9 +1,16 @@
-<%= form_with model: [ :admin, package ], scope: :record, class: "flex flex-col gap-6",
+<div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] gap-8 items-start"
+     data-controller="package-preview"
+     data-package-preview-url-value="<%= preview_admin_packages_path %>"
+     data-action="input->package-preview#schedule change->package-preview#schedule">
+<%= form_with model: [ :admin, package ], scope: :record, class: "flex min-w-0 flex-col gap-6",
               data: { controller: "package-copy", action: "input->package-copy#refresh",
+                      package_preview_target: "form",
                       package_copy_summary_limit_value: Package::CARD_SUMMARY_MAX_LENGTH,
                       package_copy_highlights_limit_value: Package::CARD_HIGHLIGHTS_LIMIT,
                       package_copy_highlight_length_value: Package::CARD_HIGHLIGHT_MAX_LENGTH } do %>
   <%= render "admin/shared/form_errors", record: package %>
+
+  <a href="#package-preview" class="xl:hidden text-t6 text-accent hover:text-cream">Przejdź do podglądu</a>
 
   <%= render "admin/shared/translated_input", record: package, field: "name",
              label: "Nazwa", type: :text %>
@@ -52,3 +59,29 @@
                 class: "text-t6 text-taupe no-underline hover:text-cream" %>
   </div>
 <% end %>
+
+  <aside id="package-preview" aria-label="Podgląd pakietu"
+         class="min-w-0 flex flex-col gap-4 xl:sticky xl:top-8 xl:max-h-[calc(100dvh-4rem)] xl:overflow-y-auto">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="font-display text-t3 text-cream">Podgląd pakietu</h2>
+      <div class="flex items-center gap-2">
+        <label for="package-preview-locale" class="text-t6 text-taupe">Język</label>
+        <select id="package-preview-locale" class="form-control" data-package-preview-target="locale">
+          <option value="pl">PL</option>
+          <option value="en">EN</option>
+        </select>
+      </div>
+    </div>
+    <p class="text-t6 text-taupe m-0">Zmiany zobaczysz bez zapisywania. Otwórz szczegóły, aby sprawdzić pełną treść.</p>
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <p class="text-t6 text-taupe m-0" role="status" data-package-preview-target="status">Podgląd aktualny</p>
+      <button type="button" data-action="package-preview#refresh"
+              class="text-t6 text-accent cursor-pointer hover:text-cream focus-visible:outline-2 focus-visible:outline-accent">Odśwież podgląd</button>
+    </div>
+    <div data-package-preview-target="content">
+      <% I18n.with_locale(:pl) do %>
+        <%= render "preview", package: package %>
+      <% end %>
+    </div>
+  </aside>
+</div>

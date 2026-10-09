@@ -118,6 +118,78 @@ RSpec.describe "Admin::Packages", type: :request do
     end
   end
 
+  describe "POST /admin/packages/preview" do
+    it "requires an admin session" do
+      post preview_admin_packages_path, params: package_params
+      expect(response).to redirect_to(new_user_session_path)
+
+      sign_in User.create!(email: "reader@example.com", password: "password123")
+      post preview_admin_packages_path, params: package_params
+      expect(response).to redirect_to(root_path)
+    end
+
+    context "as an admin" do
+      before do
+        sign_in admin
+        allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
+      end
+
+      it "renders unsaved copy and a price using the public card and details" do
+        package = create_package(name: "Zapisany pakiet")
+        params = package_params(translations: {
+          "highlights" => { "pl" => (1..6).map { |n| "Wyróżnik #{n}" }.join("\n") },
+          "organization" => { "pl" => "Przygotowanie\n\nKontakt" }
+        })
+
+        expect { post preview_admin_packages_path, params: params }.not_to change(Package, :count)
+
+        expect(response).to have_http_status(:ok)
+        html = Nokogiri::HTML.fragment(response.body)
+        expect(html.at_css("h2").text).to eq("Szybka ulga")
+        expect(html.css("li").map(&:text).map(&:strip)).to include("Wyróżnik 6", "Konsultacja", "Plan snu")
+        expect(html.at_css("dialog").text).to include("Przygotowanie", "Kontakt")
+        expect(html.text).to include("249,00 PLN", "4 tygodnie")
+        expect(html.css("a[href]")).to be_empty
+        expect(html.css("button[disabled]").size).to eq(2)
+        expect(package.reload.name).to eq("Zapisany pakiet")
+      end
+
+      it "previews English with Polish fallback independently for each field" do
+        post preview_admin_packages_path, params: package_params.merge(preview_locale: "en")
+
+        html = Nokogiri::HTML.fragment(response.body)
+        expect(html.at_css("[lang]")["lang"]).to eq("en")
+        expect(html.at_css("h2").text).to eq("Quick relief")
+        expect(html.text).to include("Dla rodziców", "Konsultacja", "4 weeks")
+      end
+
+      it "keeps long copy in the details and escapes submitted markup" do
+        summary = "Pełny opis " * 30
+        post preview_admin_packages_path, params: package_params(translations: {
+          "name" => { "pl" => '<script>alert("preview")</script>' },
+          "for_whom" => { "pl" => summary }
+        }).merge(preview_locale: "unknown")
+
+        html = Nokogiri::HTML.fragment(response.body)
+        expect(html.at_css("[lang]")["lang"]).to eq("pl")
+        expect(html.css("script")).to be_empty
+        expect(html.at_css("h2").text).to include("<script>")
+        expect(html.at_css("dialog").text).to include(summary.strip)
+        html.at_css("dialog").remove
+        expect(html.text).not_to include(summary.strip)
+      end
+
+      it "also renders an incomplete new package without saving or validating it" do
+        expect do
+          post preview_admin_packages_path, params: { record: { duration: "", paddle_price_id: "" } }
+        end.not_to change(Package, :count)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("package-details", "Cena chwilowo niedostępna")
+      end
+    end
+  end
+
   describe "POST /admin/packages" do
     before { sign_in admin }
 
