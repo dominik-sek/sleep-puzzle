@@ -107,6 +107,12 @@ home:
           default:
             pl: "Moja metodologia"
             en: "My approach"
+        summary:
+          label: Krótki opis na stronie głównej
+          type: plain
+          default:
+            pl: "Najpierw poznaję Waszą rodzinę. Potem wspólnie dobieramy małe kroki i tempo zmian. Łączę wiedzę o śnie i rozwoju dziecka z empatią dla całej rodziny — również dla zmęczonego rodzica."
+            en: "I start by getting to know your family. Then we choose small steps and a pace that works for you. I combine knowledge of sleep and child development with empathy for the whole family — tired parents included."
         body:
           label: Treść
           type: rich
@@ -122,6 +128,12 @@ home:
           default:
             pl: "Z czym się nie zgadzam"
             en: "What I don't believe in"
+        summary:
+          label: Krótki opis na stronie głównej
+          type: plain
+          default:
+            pl: "Nie wierzę w jeden schemat dla wszystkich ani w obietnice idealnych nocy. Nie pracuję metodą „wypłacz się”. Szukamy zmian z bliskością, bez presji i z miejscem na Wasze potrzeby."
+            en: "I don’t believe in one routine for every family or promises of perfect nights. I don’t use “cry it out”. We look for changes that preserve closeness, without pressure, and with room for your needs."
         body:
           label: Treść
           type: rich

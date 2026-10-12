@@ -24,8 +24,10 @@ module Lightbox
         super()
         @src = src
         @thumbnail_src = thumbnail_src || src
-        @width = width
-        @height = height
+        if width.to_i.positive? && height.to_i.positive?
+          @width = width.to_i
+          @height = height.to_i
+        end
         @alt = alt || ""
         @caption = caption
         @variant = variant
@@ -74,7 +76,7 @@ module Lightbox
         "absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300"
       end
 
-      attr_reader :src, :thumbnail_src, :alt, :caption
+      attr_reader :src, :thumbnail_src, :alt, :caption, :width, :height
     end
   end
 end

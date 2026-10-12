@@ -1,26 +1,31 @@
 <% content_for :title, page_title(content_block("home.hero.title")) %>
 <%# The previous home layout is retained in _hidden_sections.html.erb for restoration. %>
-<div class="min-h-screen flex flex-col items-center overflow-x-clip">
+<div class="min-h-screen flex flex-col items-center overflow-x-clip [overflow-wrap:anywhere]">
   <%= render Section::Component.new(background: :ink, align: :left) do |section| %>
     <div class="mx-auto grid w-full max-w-[1240px] items-center gap-8 md:grid-cols-[minmax(0,1.4fr)_minmax(260px,0.8fr)]">
-      <div class="flex flex-col items-start gap-5">
+      <div class="min-w-0 flex flex-col items-start gap-5">
         <p class="m-0 text-t5 font-bold text-accent"><%= content_block("home.about.title") %></p>
-        <h1 class="m-0 font-display text-t1 font-bold text-cream"><%= content_block("home.hero.title") %></h1>
+        <h1 class="m-0 text-balance font-display text-t1 font-bold text-cream"><%= content_block("home.hero.title") %></h1>
         <p class="m-0 max-w-2xl text-t4 text-tan"><%= content_block("home.hero.subtitle") %></p>
         <div class="trix-lead max-w-2xl"><%= content_block("home.about.lead") %></div>
       </div>
-      <div>
-        <% portrait = content_image("home.about.photo", alt: "Karola", class: "w-full aspect-square rounded-3xl border border-border-strong object-cover") || content_image("about.intro.photo", alt: "Karola", class: "w-full aspect-square rounded-3xl border border-border-strong object-cover") %>
-        <%= portrait || image_tag("mascot-peach.png", alt: "", class: "w-full aspect-square rounded-3xl border border-border-strong bg-ink-soft object-contain p-8") %>
+      <div class="min-w-0" data-controller="image-fallback">
+        <% portrait_options = { alt: "Karola", class: "w-full aspect-square rounded-3xl border border-border-strong object-cover",
+                                data: { image_fallback_target: "image", action: "error->image-fallback#showFallback" } } %>
+        <% portrait = content_image("home.about.photo", **portrait_options) || content_image("about.intro.photo", **portrait_options) %>
+        <%= portrait %>
+        <%= image_tag "mascot-peach.png", alt: "", hidden: portrait.present?,
+                      class: "w-full aspect-square rounded-3xl border border-border-strong bg-ink-soft object-contain p-8",
+                      data: { image_fallback_target: "fallback" } %>
       </div>
     </div>
   <% end %>
 
-  <section class="w-full bg-ink-soft px-5 py-16" aria-labelledby="help-title">
+  <section class="w-full bg-ink-soft border-y border-border-strong section-padding" aria-labelledby="help-title">
     <div class="mx-auto max-w-[1240px]">
-      <h2 id="help-title" class="mb-8 text-center font-display text-t2 font-bold text-cream"><%= content_block("home.choices.title") %></h2>
+      <h2 id="help-title" class="mb-8 text-center text-balance font-display text-t2 font-bold text-cream"><%= content_block("home.choices.title") %></h2>
       <div class="offer-puzzle-pair grid md:grid-cols-2">
-        <%= link_to audio_process_path, class: "offer-puzzle offer-puzzle--audio group flex min-h-64 flex-col justify-between gap-8 bg-surface p-8 text-cream no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+        <%= link_to audio_process_path, class: "offer-puzzle offer-puzzle--audio group flex min-h-64 flex-col justify-between gap-8 bg-surface p-6 pb-8 sm:p-8 text-cream no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
           <%# Change the SVG path's d= to reshape the joint: mobile first, desktop second. %>
           <svg class="offer-puzzle__joint offer-puzzle__joint--mobile" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
             <path class="offer-puzzle__fill" d="M0 0 H80 V40 H60 C60 51 51 60 40 60 C29 60 20 51 20 40 H0 Z" />
@@ -31,12 +36,12 @@
             <path class="offer-puzzle__seam" d="M40 0 V20 C51 20 60 29 60 40 C60 51 51 60 40 60 V80" />
           </svg>
           <span class="text-t6 font-bold uppercase text-accent"><%= t("offers.audio") %></span>
-          <span class="text-t5"><%= content_block("home.choices.audio") %></span>
+          <span class="text-t5 text-tan"><%= content_block("home.choices.audio") %></span>
           <span class="inline-flex items-center gap-2 text-t5 font-bold text-accent"><%= t("offers.explore") %><%= icon "arrow-right", class: "size-5" %></span>
         <% end %>
-        <%= link_to packages_path, class: "offer-puzzle offer-puzzle--one-to-one group flex min-h-64 flex-col justify-between gap-8 bg-surface p-8 text-cream no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+        <%= link_to packages_path, class: "offer-puzzle offer-puzzle--one-to-one group flex min-h-64 flex-col justify-between gap-8 bg-surface p-6 pb-8 sm:p-8 text-cream no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
           <span class="text-t6 font-bold uppercase text-accent"><%= t("offers.one_to_one") %></span>
-          <span class="text-t5"><%= content_block("home.choices.one_to_one") %></span>
+          <span class="text-t5 text-tan"><%= content_block("home.choices.one_to_one") %></span>
           <span class="inline-flex items-center gap-2 text-t5 font-bold text-accent"><%= t("offers.explore") %><%= icon "arrow-right", class: "size-5" %></span>
         <% end %>
       </div>
@@ -44,15 +49,24 @@
   </section>
 
   <%= render Section::Component.new(background: :ink, align: :left) do |section| %>
-    <div class="mx-auto grid w-full max-w-[1080px] gap-10 md:grid-cols-2">
-      <div>
-        <h2 class="font-display text-t2 font-bold text-cream"><%= content_block("home.methodology.title") %></h2>
-        <div class="trix-copy mt-5"><%= content_block("home.methodology.body") %></div>
-      </div>
-      <div>
-        <h2 class="font-display text-t2 font-bold text-cream"><%= content_block("home.disagree.title") %></h2>
-        <div class="trix-copy mt-5"><%= content_block("home.disagree.body") %></div>
-      </div>
+    <div class="mx-auto grid w-full max-w-[1080px] items-start gap-10 md:grid-cols-2">
+      <% %w[methodology disagree].each do |approach| %>
+        <article class="min-w-0" aria-labelledby="<%= approach %>-title">
+          <h2 id="<%= approach %>-title" class="text-balance font-display text-t2 font-bold text-cream"><%= content_block("home.#{approach}.title") %></h2>
+          <p class="mt-5 text-t5 text-tan leading-relaxed"><%= content_block("home.#{approach}.summary") %></p>
+          <details class="group mt-3">
+            <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-md text-t6 text-accent hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden"
+                     aria-labelledby="<%= approach %>-toggle <%= approach %>-title">
+              <span id="<%= approach %>-toggle">
+                <span class="group-open:hidden"><%= t("home.read_more") %></span>
+                <span class="hidden group-open:inline"><%= t("home.read_less") %></span>
+              </span>
+              <%= icon "chevron-down", class: "size-4 shrink-0 group-open:rotate-180" %>
+            </summary>
+            <div class="trix-copy mt-4"><%= content_block("home.#{approach}.body") %></div>
+          </details>
+        </article>
+      <% end %>
     </div>
   <% end %>
 
@@ -62,9 +76,9 @@
   <% next_background = testimonials.any? ? :ink : :ink_soft %>
   <% faq_items = content_items("home.faq").select { |item| item["question"].present? && item["answer"].present? } %>
   <% if faq_items.any? %>
-    <section class="w-full <%= next_background == :ink ? "bg-ink" : "bg-ink-soft" %> px-5 py-16" aria-labelledby="faq-title">
+    <section class="w-full <%= next_background == :ink ? "bg-ink" : "bg-ink-soft" %> section-padding" aria-labelledby="faq-title">
       <div class="mx-auto max-w-[1080px]">
-        <h2 id="faq-title" class="mb-8 font-display text-t2 font-bold text-cream"><%= content_block("home.faq.title") %></h2>
+        <h2 id="faq-title" class="mb-8 text-balance font-display text-t2 font-bold text-cream"><%= content_block("home.faq.title") %></h2>
         <%= render Accordion::Component.new(variant: :bordered) do |accordion| %>
           <% faq_items.each do |item| %>
             <% accordion.with_item(title: item["question"]) do %>
@@ -78,11 +92,11 @@
   <% end %>
 
   <%= render Section::Component.new(background: next_background, align: :center) do |section| %>
-    <h2 class="font-display text-t2 font-bold text-cream"><%= content_block("home.closing.quote") %></h2>
+    <h2 class="text-balance font-display text-t2 font-bold text-cream"><%= content_block("home.closing.quote") %></h2>
     <p class="text-t4 text-tan"><%= content_block("home.closing.lead") %></p>
     <% section.with_actions do %>
       <%= render Buttons::Component.new(text: t("offers.instagram_cta"), pill: true, variant: :primary,
-                                        href: instagram_contact_url, classes: "py-4 px-7 font-bold!") %>
+                                        href: instagram_contact_url, classes: "py-4 px-7 font-bold! whitespace-normal! text-balance") %>
     <% end %>
   <% end %>
 </div>

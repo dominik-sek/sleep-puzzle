@@ -52,7 +52,10 @@ module Lightbox
     end
 
     def controller_data
-      data = { controller: "lightbox", lightbox_target: "gallery" }
+      data = {
+        controller: "lightbox", lightbox_target: "gallery",
+        lightbox_labels_value: I18n.t("lightbox")
+      }
       data[:lightbox_show_download_button_value] = false unless @show_download_button
       data[:lightbox_show_zoom_indicator_value] = false unless @show_zoom_indicator
       data[:lightbox_show_dots_indicator_value] = false unless @show_dots_indicator

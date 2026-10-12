@@ -94,6 +94,19 @@ RSpec.describe "Bookings", type: :request do
       get bookings_path
 
       expect(response.body).to include(%(data-cally-available-dates-value="[]"))
+      expect(Capybara.string(response.body)).not_to have_css("calendar-date")
+    end
+
+    it "retains the package and requested slot in the retry link" do
+      package = create_package
+      date = Date.current.next_day.iso8601
+      get bookings_path(locale: :en, package_id: package.id, date: date, hour: "10:00")
+
+      retry_link = Capybara.string(response.body).find_link(I18n.t("bookings.calendar.retry", locale: :en))
+      uri = URI.parse(retry_link[:href])
+      expect(uri.path).to eq(bookings_path(locale: :en))
+      expect(uri.fragment).to eq("availability")
+      expect(Rack::Utils.parse_query(uri.query)).to include("package_id" => package.id.to_s, "date" => date, "hour" => "10:00")
     end
 
     # a calendar that is reachable but erroring is the same story for the buyer

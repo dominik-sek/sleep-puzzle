@@ -7,6 +7,7 @@ p0_count: 2
 p1_count: 2
 timestamp: 2026-08-31T09-35-36Z
 slug: app-views-packages
+closed: true
 ---
 Method: dual-agent (A: design review · B: detector + static evidence). Both isolated; A never saw B.
 

@@ -446,7 +446,7 @@ select.form-control:not([multiple]) option {
 calendar-date{
 
   &::part(button) {
-    @apply text-cream bg-transparent border-none shadow-none appearance-none transition-all duration-100 ease-in-out w-10 h-10 rounded-lg
+    @apply text-cream bg-transparent border-none shadow-none appearance-none transition-all duration-100 ease-in-out w-11 h-11 rounded-lg
   }
   &::part(months) {
       @apply text-t5
@@ -476,7 +476,8 @@ calendar-month{
     @apply hidden
   }
   &::part(table){
-    @apply table-fixed w-full border-separate border-spacing-1
+    @apply table-fixed w-full border-separate;
+    border-spacing: 1px;
   }
   &::part(th){
     @apply p-0
@@ -518,9 +519,30 @@ calendar-month{
    &::part(button) above, both Tailwind's aspect-square and responsive variants
    are silently dropped by this pipeline, the same quirk the hover rules hit. */
 calendar-month::part(button) {
+  inline-size: 100%;
+  min-inline-size: 44px;
+  min-block-size: 44px;
   aspect-ratio: 1 / 1;
   height: auto;
   padding: 0;
+}
+
+.booking-calendar-card { padding: 20px 16px; }
+
+@media (min-width: 640px) {
+  .booking-calendar-card { padding: 24px; }
+}
+
+/* Seven 44px days need 308px before gaps. Borrow the page gutters on small
+   phones rather than clipping the last days or overlapping their targets. */
+@media (max-width: 399px) {
+  .booking-calendar-card {
+    width: calc(100% + 40px);
+    margin-inline: -20px;
+    padding-inline: 0;
+    border-inline: 0;
+    border-radius: 0;
+  }
 }
 
 calendar-month[data-paging]::part(button) {
@@ -657,6 +679,11 @@ trix-editor:empty:not(:focus)::before {
 .trix-lead .trix-content {
   @apply text-t4 text-cream;
   line-height: var(--leading-copy);
+}
+
+/* Supporting leads keep the same scale while honoring the container's tone. */
+.trix-lead.text-tan .trix-content {
+  @apply text-tan;
 }
 
 .trix-copy .trix-content {
@@ -856,3 +883,21 @@ html.package-details-modal-open { overflow: hidden; }
 .package-details-dialog[open] { display: flex; flex-direction: column; }
 .package-details-scroll { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 .package-details-dialog::backdrop { background: rgb(0 0 0 / 65%); }
+
+/* Menu state remains immediate for readers who request less motion, including
+   inline transitions used when changing between dropdown panels. */
+@media (prefers-reduced-motion: reduce) {
+  [data-controller~="navbar"] *,
+  .offer-puzzle,
+  .offer-puzzle__seam {
+    transition: none !important;
+  }
+
+  [data-navbar-target="viewport"] {
+    scale: 1 !important;
+  }
+
+  [data-navbar-target="content"] {
+    filter: none !important;
+  }
+}

@@ -28,8 +28,8 @@ panel and the calendar screen are deliberately Polish-only.
 Sleep Puzzle sells Karola's help to families whose sleep has fallen apart, in two
 forms:
 
-* **Consultation packages** - 1:1 work, booked against her real calendar, paid
-  before the slot is held.
+* **Consultation packages** - 1:1 work, booked against her available schedule,
+  temporarily held during checkout and confirmed after payment.
 * **Audio** - "audioprocesy" for parents working on sleep on their own, and
   soothing audio stories for children.
 
@@ -57,9 +57,21 @@ who can't reach 1:1, 1:1 when they can - rather than a single price point.
 * **Two languages, one canonical address per page.** Polish is the bare path;
   English is the same page under `/en`. A block with no English version falls back
   to Polish on purpose - that is content awaiting translation, not a defect.
-* **Booking runs against a real calendar.** A visitor picks a slot, fills a short
-  form, and pays through Paddle's overlay; the confirmed booking writes into the
-  owner's Google Calendar (in Polish, regardless of the buyer's language).
+* **Booking runs against the owner's available schedule.** A signed-in visitor
+  picks a slot, fills a short form, and pays through Paddle's overlay. A pending
+  booking holds the slot while payment is resolved; payment confirmation arrives
+  by webhook. Google Calendar mirrors the booking and its payment status in Polish,
+  regardless of the buyer's language, with retries when calendar sync fails.
+* **Availability can be managed locally.** The owner can edit weekly consultation
+  hours, extra slots, blocked periods, the booking window and minimum notice in the
+  admin panel. Until local availability is explicitly activated, Google busy periods
+  also constrain the schedule. Activation requires confirmation that Google blocks
+  have been transferred; Google then remains a booking copy. These are supported
+  modes, not evidence of which mode is active in production.
+* **Audio has two listening workflows.** Bedtime stories have a single recording
+  and an optional public 30-second sample. Audioprocesses have ordered chapters and
+  an optional public trailer. Full recordings are played from the buyer's dashboard;
+  samples and trailers do not require an account or purchase.
 * **The owner edits copy live.** `config/content_blocks.yml` is the schema: pages →
   sections → fields, typed `plain`, `rich` (Trix) or `image`. Every declared field
   ships with a default, so no section can render blank. **A new public surface that
@@ -80,16 +92,34 @@ who can't reach 1:1, 1:1 when they can - rather than a single price point.
 * **Paddle is Merchant of Record.** Checkout is Paddle's overlay; there is no
   payment screen of our own, and closing the overlay is reported back by the browser
   so the lines return to the cart.
-* **Everything sold is a file or a slot - there are no quantities.** A cart line is
+* **Everything sold is audio access or a slot - there are no quantities.** A cart line is
   only ever added or removed, and anything the buyer already owns is kept out of the
   cart, the order and the total.
-* **A product cannot be published without its audio file.** The validation refuses
-  it and the published scope excludes it, so the shop never offers something there
-  is nothing to deliver for. Products still missing a file are drafts, not listings.
+* **A product cannot be listed without ready audio.** A bedtime story needs its
+  recording; an audioprocess needs at least one ready chapter. Validation and the
+  published scope enforce this, so unfinished uploads do not become empty listings.
 * **Audio is streamed, never handed over.** Files sit on a token-authenticated Bunny
-  pull zone; `/products/:id/stream` checks ownership and redirects to a URL signed
-  for six hours. Uploads are proxied by the app so the write key never reaches a
-  browser.
+  pull zone; story and chapter stream routes check paid, non-refunded access and
+  redirect to URLs signed for six hours. A story sample has its own file and a
+  15-minute signed URL; an audioprocess trailer is separate from its paid chapters.
+  Uploads are proxied by the app so the write key never reaches a browser.
+* **Refund requests are supported; Paddle returns the money.** The dashboard can
+  open a contact form prefilled with an audio purchase's details. Paddle refund
+  adjustments are recorded and reconciled; a full refund for an audio item removes
+  access from that purchase. A partial refund does not automatically remove access.
+  Consultation cancellation, rescheduling and payment settlement are separate admin
+  actions: releasing a slot does not itself issue a refund.
+* **Checkout and playback evidence are retained.** The application snapshots the
+  purchase policy and consent, records consent to early consultation delivery when
+  needed, and records first stream issuance separately from browser-reported first
+  playback. These support individual refund review; playback is not an automatic
+  rejection of a refund or complaint. Future copy must follow the current editable
+  refund policy rather than inventing eligibility rules.
+* **Testimonials are collected with consent and reviewed by the owner.** A private
+  token link lets a recipient submit a quote, chosen signature, optional description
+  and avatar with publication consent. Owner approval publishes it into
+  `testimonials.entries`; the public section renders only entries with a quote and
+  author and disappears when none exist. An invitation is not a published review.
 * **Accounts** are Devise plus Google OAuth. A Google sign-up has **no password**,
   so no account surface may assume one exists.
 * **Deliberately absent, decided against, not to be re-proposed:** a buyer-facing
@@ -116,10 +146,12 @@ who can't reach 1:1, 1:1 when they can - rather than a single price point.
 * **Privacy is a product commitment, not a setting.** A visitor who only reads the
   site makes **no third-party request at all**; the only cookie is our own session,
   so there is no consent banner. No analytics, no tag manager, no ad pixel, no font
-  CDN. Paddle.js loads only when a checkout opens. **Adding any third-party asset,
+  CDN. Paddle.js loads only when a checkout opens. Cloudflare Turnstile loads when
+  a visitor starts interacting with a protected form (or when a rejected submission
+  returns), rather than when a reader simply opens the page. **Adding any third-party asset,
   script, embed or hosted font breaks this and requires an explicit decision** - the
-  one existing exception is a hotlinked Google avatar for users who signed in with
-  Google.
+  passive-reading exception is a hotlinked Google avatar for users who signed in
+  with Google.
 
 ## Evidence on Hand
 
@@ -128,11 +160,18 @@ Real and usable - do not embellish, do not invent more:
 * **Credentials:** OCN Level 6 Sleep Consultant certification (mentored, externally
   assessed exams); Child Care Development qualifications at degree level; Certified
   CBTi Insomnia Therapist.
-* **Experience:** over 20 years supporting children and parents. The home page
-  carries a `stats` collection whose only shipped entry is "20+ lat".
+* **Experience:** over 20 years supporting children and parents. The content schema
+  retains a home-page `stats` collection with a shipped "20+ lat" entry; the current
+  home template does not render that collection.
 * **Owner photo and avatar** exist as content-block image fields and repo assets.
+* **Testimonial publishing infrastructure** exists in
+  `app/models/testimonial_invitation.rb`, `config/content_blocks.yml` and
+  `app/views/shared/_testimonials.html.erb`. The collection ships with no default
+  reviews. Code does not establish that any real testimonials are published; use
+  actual consented, owner-approved content only.
 
-Absent, and **not to be fabricated**: testimonials, named clients, case studies,
+Not established by repository evidence, and **not to be fabricated**: testimonial
+quotes or counts, named clients, case studies,
 press mentions, review scores, success rates, outcome statistics, subscriber or
 customer counts, and any pricing figure not read back from Paddle.
 
@@ -147,8 +186,11 @@ customer counts, and any pricing figure not read back from Paddle.
    urgency mechanics, no scarcity counters, no implied failure as a parent.
 4. **The owner must be able to change any public word herself.** A new surface ships
    with its content-block entries or it is incomplete.
-5. **Privacy holds by default.** No surface introduces a third-party request. The
-   absence of a cookie banner is a feature that must keep being earned.
+5. **Privacy holds by default.** Passive reading introduces no third-party request
+   beyond the recorded Google-avatar exception; checkout and protected forms load
+   their integrations only as needed for the task. Any new third-party integration
+   needs an explicit decision. The absence of a cookie banner is a feature that
+   must keep being earned.
 6. **Never show money or a buy action the system cannot honour.** Prices come from
    Paddle and files must exist; every commerce surface owns its unavailable state.
 

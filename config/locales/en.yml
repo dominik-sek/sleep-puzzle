@@ -28,6 +28,15 @@
 #       enabled: "ON"
 
 en:
+  lightbox:
+    viewer: "Image viewer"
+    close: "Close"
+    zoom: "Zoom in or out"
+    previous: "Previous image"
+    next: "Next image"
+    download: "Download image"
+    go_to_slide: "Go to image %{number}"
+    error: "The image could not load. Close the viewer and try again."
   hello: "Hello world"
   activemodel:
     attributes:
@@ -88,6 +97,7 @@ en:
       available_hours: "Available times"
       pick_a_day: "Pick a day in the calendar to see the times available."
       unavailable: "Online booking is temporarily unavailable - we can't check which times are free right now. Please try again later, or get in touch and we'll arrange a time directly."
+      retry: "Check again"
       no_slots: "There are no free slots in the published calendar. Write to me and we will find something together."
       no_slots_cta: "Write to me"
       previous_month: "Previous month"
@@ -242,6 +252,9 @@ en:
     submitting: "Sending…"
     adding: "Adding…"
     removing: "Removing…"
+  home:
+    read_more: "Read more"
+    read_less: "Show less"
   offers:
     audio: "Audio process"
     one_to_one: "Work together 1:1"
@@ -254,6 +267,7 @@ en:
     continue_booking: "Continue to booking"
     see_times: "See available times"
   nav:
+    skip_to_content: "Skip to content"
     menu: "Menu"
     packages: "Packages"
     about: "About me"

@@ -2,8 +2,8 @@
   <% navbar.with_logo do %>
     <%# root_path, not a literal "/": a hardcoded href drops the locale, so clicking
         the logo on an English page used to land back on the Polish home page %>
-    <%= link_to root_path, class: "flex items-center gap-4 py-2 px-6" do %>
-      <span class="font-display text-t3 text-cream">
+    <%= link_to root_path, class: "min-w-0 max-w-full flex items-center gap-4 py-2 px-3 sm:px-6" do %>
+      <span class="min-w-0 [overflow-wrap:anywhere] font-display text-t3 text-cream">
         sleep.puzzle
       </span>
     <% end %>
@@ -23,7 +23,7 @@
   <% navbar.with_dropdown_content(id: "mobile-menu-content") do %>
     <div class="flex flex-col">
       <% primary_nav_items.each do |item| %>
-        <%= link_to item[:label], item[:href], class: "block rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft hover:text-accent" %>
+        <%= link_to item[:label], item[:href], class: "block rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
       <% end %>
 
       <hr class="my-2 border-border" />
@@ -49,7 +49,7 @@
           <span><%= t("nav.sign_out") %></span>
         <% end %>
       <% else %>
-        <%= link_to t("nav.sign_in"), new_user_session_path, class: "block rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft hover:text-accent" %>
+        <%= link_to t("nav.sign_in"), new_user_session_path, class: "block rounded-md px-3 py-2.5 text-md font-bold text-cream no-underline hover:bg-ink-soft hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
       <% end %>
 
       <% if false # Retained for a future direct booking entry point. %>
@@ -70,7 +70,7 @@
   <% navbar.with_actions do %>
     <%# hidden below sm: these repeat inside the hamburger panel, and side by side
         with it they push the bar wider than the screen %>
-    <li class="ml-2 pl-2 border-l border-border w-full hidden lg:flex gap-2 items-center">
+    <li class="ml-2 pl-2 border-l border-border hidden lg:flex gap-2 items-center">
       <%# same trigger shape as the profile menu beside it, so the two read as a pair %>
       <div class="relative">
         <button type="button"
@@ -82,7 +82,7 @@
                 data-align="end"
                 data-action="click->navbar#toggleMenu pointerenter->navbar#handlePointerEnter pointermove->navbar#handlePointerMove pointerleave->navbar#handlePointerLeave keydown->navbar#handleTriggerKeydown"
                 data-state="closed"
-                class="group flex items-center gap-1.5 rounded-md px-2 py-2 text-sm font-medium text-cream select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                class="group flex min-h-11 items-center gap-1.5 rounded-md px-2 py-2 text-sm font-medium text-cream select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
           <%= locale_flag(I18n.locale) %>
           <span class="uppercase text-t6 font-bold"><%= I18n.locale %></span>
           <%= icon "chevron-down", class: "size-3.5 shrink-0 text-taupe" %>
@@ -99,12 +99,13 @@
         <button type="button"
                 data-navbar-target="trigger"
                 data-content-id="profile-content"
+                aria-label="<%= t("nav.my_account") %>"
                 aria-controls="profile-content"
                 aria-expanded="false"
                 data-align="end"
                 data-action="click->navbar#toggleMenu pointerenter->navbar#handlePointerEnter pointermove->navbar#handlePointerMove pointerleave->navbar#handlePointerLeave keydown->navbar#handleTriggerKeydown"
                 data-state="closed"
-                class="group hover:cursor-pointer flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-cream select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                class="group hover:cursor-pointer flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-cream select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
           <%# Turbo moves this same image node between pages, so a working Google
               photo is not fetched anew on every visit. The ID changes if the
               photo or the fallback initials change. %>
@@ -152,10 +153,10 @@
       <% else %>
         <%= render Buttons::Component.new(
           text: t("nav.sign_in"),
-          href: "/users/sign_in",
+          href: new_user_session_path,
           pill: true,
           variant: :secondary,
-          classes: "hover:cursor-pointer font-bold!"
+          classes: "min-h-11 hover:cursor-pointer font-bold!"
         ) %>
       <% end %>
       <% if false # Retained for a future direct booking entry point. %>

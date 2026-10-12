@@ -50,7 +50,7 @@ module Navbar
     end
 
     def menu_classes
-      base = "m-0 flex list-none items-center gap-1 p-1"
+      base = "m-0 flex flex-wrap list-none items-center justify-center gap-1 p-1"
 
       variant_class = case @variant
       when :bordered
@@ -81,7 +81,7 @@ module Navbar
     end
 
     def mobile_menu_button_classes
-      "group flex items-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-cream select-none " \
+      "group flex min-h-11 min-w-11 items-center justify-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-cream select-none " \
         "hover:bg-ink-soft " \
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     end

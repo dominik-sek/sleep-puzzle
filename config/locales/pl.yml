@@ -1,4 +1,13 @@
 pl:
+  lightbox:
+    viewer: "Podgląd obrazu"
+    close: "Zamknij"
+    zoom: "Powiększ lub pomniejsz"
+    previous: "Poprzedni obraz"
+    next: "Następny obraz"
+    download: "Pobierz obraz"
+    go_to_slide: "Przejdź do obrazu %{number}"
+    error: "Nie udało się wczytać obrazu. Zamknij podgląd i spróbuj ponownie."
   activemodel:
     attributes:
       consultation_block_batch:
@@ -115,6 +124,7 @@ pl:
       available_hours: "Dostępne godziny"
       pick_a_day: "Wybierz dzień w kalendarzu, aby zobaczyć dostępne godziny."
       unavailable: "Rezerwacja online jest chwilowo niedostępna - nie możemy w tej chwili sprawdzić wolnych terminów. Spróbuj ponownie za jakiś czas albo napisz do nas, a ustalimy termin bezpośrednio."
+      retry: "Sprawdź ponownie"
       no_slots: "W udostępnionym kalendarzu nie ma wolnych terminów. Napisz do mnie - poszukamy czegoś razem."
       no_slots_cta: "Napisz do mnie"
       previous_month: "Poprzedni miesiąc"
@@ -237,6 +247,9 @@ pl:
     submitting: "Wysyłanie…"
     adding: "Dodawanie…"
     removing: "Usuwanie…"
+  home:
+    read_more: "Czytaj więcej"
+    read_less: "Zwiń tekst"
   offers:
     audio: "Audioproces"
     one_to_one: "Współpraca 1:1"
@@ -249,6 +262,7 @@ pl:
     continue_booking: "Przejdź do rezerwacji"
     see_times: "Zobacz terminy"
   nav:
+    skip_to_content: "Przejdź do treści"
     menu: "Menu"
     packages: "Pakiety"
     about: "O mnie"

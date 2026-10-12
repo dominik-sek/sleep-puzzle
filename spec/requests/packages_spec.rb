@@ -46,6 +46,20 @@ RSpec.describe "Packages", type: :request do
       expect(response.body).to include(I18n.t("bookings.calendar.unavailable"))
     end
 
+    %i[pl en].each do |locale|
+      it "offers direct calendar recovery in #{locale} without a dead picker" do
+        allow(GoogleCalendarService).to receive(:call).and_raise(GoogleCalendarService::NotConnected)
+        get packages_path(locale: locale == :pl ? nil : locale)
+
+        calendar = Capybara.string(response.body).find("#availability")
+        expect(calendar).to have_link(I18n.t("bookings.calendar.retry", locale: locale), href: packages_path(locale: locale == :pl ? nil : locale, calendar_retry: 1, anchor: "availability"))
+        expect(calendar).to have_css('a[data-turbo="false"]')
+        expect(calendar).to have_link(I18n.t("offers.instagram_cta", locale: locale), href: "https://www.instagram.com/sleep.puzzle/")
+        expect(calendar).not_to have_css("calendar-date")
+        expect(calendar).not_to have_text(I18n.t("bookings.calendar.pick_a_day", locale: locale))
+      end
+    end
+
     it "renders the CMS headings from their declared defaults on an empty database" do
       expect(ContentBlock.count).to eq(0)
 
@@ -122,6 +136,7 @@ RSpec.describe "Packages", type: :request do
         filename: "comparison.png",
         content_type: "image/png"
       )
+      blob.analyze
       attachment = ActionText::Attachment.from_attachable(blob)
       ContentBlock.create!(key: "packages.collaboration.body", body_pl: "<div>Opis współpracy #{attachment.to_html}</div>")
 
@@ -130,7 +145,13 @@ RSpec.describe "Packages", type: :request do
       page = Capybara.string(response.body)
       expect(page).to have_css("#package-comparison img[alt='Porównanie zawartości trzech pakietów współpracy']")
       expect(page).to have_css("#package-comparison [data-controller='lightbox'] a[data-pswp-src][data-pswp-width][data-pswp-height]")
-      expect(page).to have_no_css(".trix-copy.max-w-2xl img")
+      image = page.find("#package-comparison img")
+      expect(image[:src]).to include("/representations/")
+      expect(image[:src]).not_to eq(page.find("#package-comparison a")[:href])
+      expect(image[:width]).to eq("1")
+      expect(image[:height]).to eq("1")
+      expect(image[:decoding]).to eq("async")
+      expect(page).to have_no_css(".trix-lead.max-w-2xl img")
       expect(response.body.index("Szybka ulga")).to be < response.body.index('id="package-comparison"')
       expect(response.body.index('id="package-comparison"')).to be < response.body.index('<dialog')
       expect(response.body).to include("Opis współpracy")
@@ -140,6 +161,7 @@ RSpec.describe "Packages", type: :request do
       create_package(name: "Szybka ulga")
       block = ContentBlock.create!(key: "packages.comparison.image")
       block.image.attach(io: file_fixture("photo.png").open, filename: "comparison.png", content_type: "image/png")
+      block.image.blob.analyze
 
       get packages_path
 
@@ -147,6 +169,8 @@ RSpec.describe "Packages", type: :request do
       page = Capybara.string(response.body)
       expect(page).to have_css("#package-comparison img[alt='Porównanie zawartości trzech pakietów współpracy']")
       expect(page).to have_css("#package-comparison a[data-pswp-src][data-pswp-width][data-pswp-height]")
+      expect(page).to have_css('#package-comparison img[width="1"][height="1"][loading="lazy"]')
+      expect(page.find("#package-comparison img")[:src]).to include("/representations/")
       expect(response.body.index("Szybka ulga")).to be < response.body.index('id="package-comparison"')
     end
 

@@ -20,10 +20,10 @@
       <div class="flex flex-col gap-2">
         <%# break-words: a long Polish compound in a ~370px column would otherwise
             clip against the card's overflow-hidden wrapper rather than wrap %>
-        <h2 class="text-accent! font-display text-t3! break-words"><%= package.name %></h2>
+        <h2 class="text-accent! font-display text-t3! break-words sm:min-h-[2lh]"><%= package.name %></h2>
 
         <% if package.duration %>
-          <span class="text-t6 font-display text-taupe">
+          <span class="text-t5 text-taupe">
             <%= t("packages.duration", count: package.duration) %>
           </span>
         <% end %>
@@ -36,9 +36,9 @@
       </div>
 
       <% if package.card_summary.present? %>
-        <div class="flex flex-col gap-1.5">
+        <div class="flex flex-col gap-2">
           <span class="text-t6 uppercase text-taupe"><%= content_block("packages.card.for_whom") %></span>
-          <p class="text-t5 text-tan break-words"><%= package.card_summary %></p>
+          <p class="text-t5 text-tan break-words text-pretty"><%= package.card_summary %></p>
         </div>
       <% end %>
 
@@ -63,7 +63,7 @@
         <%= button_tag content_block("packages.card.details"), type: "button",
                        aria: { label: "#{content_block('packages.card.details')} - #{package.name}", controls: package_details_id(package), haspopup: "dialog" },
                        data: { action: "click->package-details#reveal" },
-                       class: "inline-flex min-h-12 w-full cursor-pointer items-center justify-center rounded-full border border-border-input px-6 py-3 text-t5 font-bold text-cream transition-colors duration-100 hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent" %>
+                       class: "inline-flex min-h-12 w-full cursor-pointer items-center justify-center rounded-full border border-border-input px-6 py-3 text-t6 font-bold text-cream transition-colors duration-100 hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent" %>
         <% if price_label %>
           <%# aria_label carries the package name. The visible label is the owner's
               copy and is the same words on every card, so a screen reader tabbing
@@ -81,7 +81,7 @@
             classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold! w-full justify-center"
           ) %>
           <%# The booking form still lets a signed-in buyer change this package. %>
-          <p class="text-t6 text-taupe text-center m-0"><%= t(user_signed_in? && !preview ? "offers.calendar_intro_signed_in" : "offers.calendar_intro") %></p>
+          <p class="text-t5 text-taupe text-center text-pretty m-0"><%= t(user_signed_in? && !preview ? "offers.calendar_intro_signed_in" : "offers.calendar_intro") %></p>
         <% else %>
           <%# nothing sellable here: offer the one route that still works rather
               than a button into a checkout that cannot complete %>

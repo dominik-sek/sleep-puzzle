@@ -1,9 +1,9 @@
 <nav class="<%= nav_classes %>" data-controller="navbar">
-  <div class="relative">
+  <div class="relative min-w-0 max-w-full">
     <!-- Menu List -->
     <ul data-navbar-target="menu" class="<%= menu_classes %>">
       <% if logo? %>
-        <li>
+        <li class="min-w-0 max-w-full">
           <%= logo %>
         </li>
       <% end %>

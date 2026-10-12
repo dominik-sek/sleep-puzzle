@@ -21,4 +21,27 @@ RSpec.describe PackagesHelper, type: :helper do
     expect(helper.package_copy_warning("highlights", Array.new(6, "Plan").join("\n"))).to include("6 wyróżników")
     expect(helper.package_copy_warning("highlights", "x" * 141)).to include("140 znaków")
   end
+
+  it "keeps imported remote artwork available when its signed attachment cannot resolve" do
+    source = "https://example.com/comparison.png"
+    allow(helper).to receive(:content_block).with("packages.collaboration.body").and_return(
+      %(<div>Introduction</div><action-text-attachment sgid="stale" content-type="image/png" url="#{source}" width="600" height="800"></action-text-attachment>)
+    )
+
+    body, comparison = helper.package_collaboration_parts
+
+    expect(body).to include("Introduction")
+    expect(body).not_to include("action-text-attachment")
+    expect(comparison).to eq(src: source, thumbnail_src: source, width: 600, height: 800)
+  end
+
+  it "reuses an embedded preview when imported artwork already provides one" do
+    allow(helper).to receive(:content_block).with("packages.collaboration.body").and_return(
+      '<action-text-attachment content-type="image/png" url="/original.png"><img src="/preview.png"></action-text-attachment>'
+    )
+
+    _, comparison = helper.package_collaboration_parts
+
+    expect(comparison).to include(src: "/original.png", thumbnail_src: "/preview.png")
+  end
 end

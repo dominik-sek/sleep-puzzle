@@ -1,6 +1,25 @@
 require "rails_helper"
 
 RSpec.describe "Package card layout", type: :system do
+  it "lets a phone visitor pick a real calendar day" do
+    allow(GoogleCalendarService).to receive(:call).and_return(instance_double(GoogleCalendarService, busy: []))
+    allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
+    2.times do |index|
+      package = build_package(name: "Pakiet #{index + 1}", position: index)
+      package.save!
+    end
+    page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride", width: 320, height: 800, deviceScaleFactor: 1, mobile: false)
+    visit packages_path
+
+    day = find("calendar-month").native.shadow_root.find_elements(css: "button:not([disabled]):not([aria-disabled='true'])").first
+    expect(day).not_to be_nil
+    day.click
+    expect(page).to have_css('[data-cally-target="hoursPanel"]:not([hidden]) button:not(:disabled)')
+    within('[data-cally-target="hoursPanel"]:not([hidden])') { find("button:not(:disabled)", match: :first).click }
+    expect(page).to have_link(I18n.t("offers.continue_booking"))
+    page.driver.browser.execute_cdp("Emulation.clearDeviceMetricsOverride")
+  end
+
   it "keeps three cards and their actions aligned on a laptop" do
     allow(GoogleCalendarService).to receive(:call).and_return(instance_double(GoogleCalendarService, busy: []))
     allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
@@ -11,7 +30,7 @@ RSpec.describe "Package card layout", type: :system do
       package.save!
     end
 
-    page.driver.browser.manage.window.resize_to(900, 900)
+    page.driver.browser.manage.window.resize_to(1200, 900)
     visit packages_path
     expect(page).to have_css('[id^="package_"]', count: 3)
 
@@ -28,7 +47,7 @@ RSpec.describe "Package card layout", type: :system do
     expect(cards.map { |card| card["width"] }.max).to be <= 376
   end
 
-  [ 390, 900, 1440 ].each do |width|
+  [ 320, 390, 768, 900, 1024, 1440 ].each do |width|
     it "keeps realistic package cards compact at #{width}px" do
       allow(GoogleCalendarService).to receive(:call).and_return(instance_double(GoogleCalendarService, busy: []))
       prices = [ "135000", "155000", "190000" ].each_with_index.map { |amount, index| paddle_price(id: "pri_preview_#{index}", amount: amount) }
@@ -59,7 +78,23 @@ RSpec.describe "Package card layout", type: :system do
       expect(dimensions["document"]).to be <= dimensions["viewport"]
       expect(dimensions["viewport"]).to eq(width)
       expect(dimensions["cards"].map { |card| card["height"] }.max).to be < 1200
-      expect(dimensions["cards"].map { |card| card["top"].round }.uniq.size).to eq(width == 390 ? 3 : 1)
+      expected_rows = width < 640 ? 3 : (width < 1024 ? 2 : 1)
+      expect(dimensions["cards"].map { |card| card["top"].round }.uniq.size).to eq(expected_rows)
+      expect(dimensions["cards"].map { |card| card["width"] }.min).to be >= 280
+      calendar_targets = page.evaluate_script(<<~JS)
+        [...document.querySelectorAll('calendar-date, calendar-month')].flatMap(calendar =>
+          [...calendar.shadowRoot.querySelectorAll('button')].map(button => {
+            const rect = button.getBoundingClientRect();
+            return { width: rect.width, height: rect.height, left: rect.left, right: rect.right };
+          }))
+      JS
+      expect(calendar_targets).not_to be_empty
+      calendar_targets.each do |target|
+        expect(target["width"]).to be >= 44
+        expect(target["height"]).to be >= 44
+        expect(target["left"]).to be >= 0
+        expect(target["right"]).to be <= width
+      end
       expect(page).to have_css("dialog:not([open])", count: 3, visible: :all)
       expect(page).not_to have_css("#package-details")
       expect(page).not_to have_css("#package-shared")

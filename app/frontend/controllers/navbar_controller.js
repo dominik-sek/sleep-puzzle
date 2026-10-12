@@ -34,6 +34,8 @@ export default class extends Controller {
         // Setup keyboard listeners
         this.handleKeydown = this.handleKeydown.bind(this);
         document.addEventListener("keydown", this.handleKeydown);
+        this.handleFocusOut = this.handleFocusOut.bind(this);
+        this.element.addEventListener("focusout", this.handleFocusOut);
 
         this.syncTriggerAriaAttributes();
     }
@@ -41,6 +43,7 @@ export default class extends Controller {
     disconnect() {
         document.removeEventListener("click", this.handleClickOutside);
         document.removeEventListener("keydown", this.handleKeydown);
+        this.element.removeEventListener("focusout", this.handleFocusOut);
         if (this.closeTimeout) {
             clearTimeout(this.closeTimeout);
         }
@@ -67,9 +70,14 @@ export default class extends Controller {
             if (!contentId) return;
 
             trigger.setAttribute("aria-controls", contentId);
-            trigger.setAttribute("aria-haspopup", "menu");
+            // These panels contain ordinary navigation links, not ARIA menus.
+            trigger.removeAttribute("aria-haspopup");
             trigger.setAttribute("aria-expanded", this.isOpen && trigger.dataset.state === "open" ? "true" : "false");
         });
+    }
+
+    prefersReducedMotion() {
+        return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     }
 
     isMobileViewport() {
@@ -372,6 +380,15 @@ export default class extends Controller {
         content.classList.remove("hidden");
         content.dataset.state = "open";
 
+        if (this.prefersReducedMotion()) {
+            if (this.hasViewportTarget) {
+                this.positionIndicator(this.getEffectiveTrigger(trigger, contentId));
+                this.viewportTarget.dataset.state = "open";
+            }
+            this.isAnimating = false;
+            return;
+        }
+
         // Store dimensions for potential transitions
         requestAnimationFrame(() => {
             if (content && !content.classList.contains("hidden")) {
@@ -443,6 +460,12 @@ export default class extends Controller {
     }
 
     transitionToMenu(trigger, contentId) {
+        if (this.prefersReducedMotion()) {
+            this.closeMenu(false);
+            this.openMenu(trigger, contentId);
+            return;
+        }
+
         // Store the old content reference BEFORE any cleanup
         const oldContentId = this.currentContentId;
         const newContent = this.contentTargets.find((c) => c.id === contentId);
@@ -745,6 +768,7 @@ export default class extends Controller {
 
     closeMenu(animate = true) {
         if (!this.isOpen) return;
+        animate = animate && !this.prefersReducedMotion();
 
         // Clear any pending transition cleanup
         if (this.transitionTimeout) {
@@ -847,144 +871,48 @@ export default class extends Controller {
         }
     }
 
+    handleFocusOut(event) {
+        if (this.isOpen && (!event.relatedTarget || !this.element.contains(event.relatedTarget))) {
+            // Let native Tab traverse every visible link before leaving navigation.
+            this.closeMenu(false);
+        }
+    }
+
     handleKeydown(event) {
-        // Handle Escape key
-        if (event.key === "Escape" && this.isOpen) {
+        if (!this.isOpen || event.defaultPrevented || !this.element.contains(event.target)) return;
+
+        if (event.key === "Escape") {
             event.preventDefault();
-            const activeTrigger = this.triggerTargets.find((t) => t.dataset.state === "open");
-            this.closeMenu();
-            // Return focus to the active trigger
-            if (activeTrigger) activeTrigger.focus();
+            const activeTrigger = this.triggerTargets.find((trigger) => trigger.dataset.state === "open");
+            this.closeMenu(false);
+            activeTrigger?.focus();
             return;
         }
 
-        // Only handle arrow keys and Tab when menu is open
-        if (!this.isOpen) return;
-
+        // Arrows supplement native Tab; they never intercept keys outside navigation.
         const focusableItems = this.getFocusableItems();
         if (focusableItems.length === 0) return;
-
         const currentIndex = focusableItems.indexOf(document.activeElement);
 
-        // Handle Arrow Down or Arrow Right - next item
         if (event.key === "ArrowDown" || event.key === "ArrowRight") {
             event.preventDefault();
             const nextIndex = currentIndex < focusableItems.length - 1 ? currentIndex + 1 : 0;
             focusableItems[nextIndex].focus();
-        }
-
-        // Handle Arrow Up or Arrow Left - previous item
-        if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+        } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
             event.preventDefault();
             const prevIndex = currentIndex > 0 ? currentIndex - 1 : focusableItems.length - 1;
             focusableItems[prevIndex].focus();
-        }
-
-        // Handle Tab key - close menu and move to next navbar item
-        if (event.key === "Tab" && !event.shiftKey) {
-            event.preventDefault();
-
-            // Get all visible, focusable elements in the navbar menu (not inside dropdown content)
-            const menuElement = this.hasMenuTarget ? this.menuTarget : this.element.querySelector("ul");
-            if (menuElement) {
-                // Only get direct children of the menu, excluding items inside dropdown content
-                const visibleNavItems = Array.from(
-                    menuElement.querySelectorAll(":scope > li > a, :scope > li > buttons"),
-                ).filter((el) => {
-                    // Check if element is visible
-                    const rect = el.getBoundingClientRect();
-                    return rect.width > 0 && rect.height > 0;
-                });
-
-                // Find the currently active trigger (that opened this menu) among visible items
-                // Important: filter triggers to only visible ones to handle responsive layouts
-                const visibleTriggers = this.triggerTargets.filter((t) => {
-                    const rect = t.getBoundingClientRect();
-                    return rect.width > 0 && rect.height > 0 && t.dataset.contentId === this.currentContentId;
-                });
-
-                const currentTrigger = visibleTriggers[0]; // Get the first visible trigger for this content
-
-                this.closeMenu(false); // Close without animation for immediate focus shift
-
-                const currentIndex = currentTrigger ? visibleNavItems.indexOf(currentTrigger) : -1;
-
-                if (currentIndex !== -1 && currentIndex + 1 < visibleNavItems.length) {
-                    // Focus next visible nav item
-                    visibleNavItems[currentIndex + 1].focus();
-                } else {
-                    // If no next item in navbar, tab out to content after navbar
-                    const allFocusable = Array.from(
-                        document.querySelectorAll(
-                            'a[href]:not([disabled]), buttons:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-                        ),
-                    );
-                    const nextElement = allFocusable.find((el) => {
-                        return !this.element.contains(el);
-                    });
-                    if (nextElement) nextElement.focus();
-                }
-            }
-        }
-
-        // Handle Shift+Tab - close menu and move to previous navbar item
-        if (event.key === "Tab" && event.shiftKey) {
-            event.preventDefault();
-
-            // Get all visible, focusable elements in the navbar menu (not inside dropdown content)
-            const menuElement = this.hasMenuTarget ? this.menuTarget : this.element.querySelector("ul");
-            if (menuElement) {
-                // Only get direct children of the menu, excluding items inside dropdown content
-                const visibleNavItems = Array.from(
-                    menuElement.querySelectorAll(":scope > li > a, :scope > li > buttons"),
-                ).filter((el) => {
-                    // Check if element is visible
-                    const rect = el.getBoundingClientRect();
-                    return rect.width > 0 && rect.height > 0;
-                });
-
-                // Find the currently active trigger (that opened this menu) among visible items
-                const visibleTriggers = this.triggerTargets.filter((t) => {
-                    const rect = t.getBoundingClientRect();
-                    return rect.width > 0 && rect.height > 0 && t.dataset.contentId === this.currentContentId;
-                });
-
-                const currentTrigger = visibleTriggers[0]; // Get the first visible trigger for this content
-
-                this.closeMenu(false); // Close without animation for immediate focus shift
-
-                const currentIndex = currentTrigger ? visibleNavItems.indexOf(currentTrigger) : -1;
-
-                if (currentIndex > 0) {
-                    // Focus previous visible nav item
-                    visibleNavItems[currentIndex - 1].focus();
-                } else {
-                    // If at first item in navbar, tab out to content before navbar
-                    const allFocusable = Array.from(
-                        document.querySelectorAll(
-                            'a[href]:not([disabled]), buttons:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-                        ),
-                    );
-                    // Find the last focusable element before the navbar
-                    const navbarStart = this.element.getBoundingClientRect().top;
-                    const navbarElements = Array.from(this.element.querySelectorAll("*"));
-                    const previousElement = allFocusable.reverse().find((el) => {
-                        const rect = el.getBoundingClientRect();
-                        return rect.bottom <= navbarStart || (!navbarElements.includes(el) && !this.element.contains(el));
-                    });
-                    if (previousElement) previousElement.focus();
-                }
-            }
         }
     }
 
     getFocusableItems() {
         if (!this.isOpen) return [];
 
-        const content = this.contentTargets.find((c) => c.id === this.currentContentId);
+        const content = this.contentTargets.find((panel) => panel.id === this.currentContentId);
         if (!content) return [];
 
-        return Array.from(content.querySelectorAll("a[href]:not([disabled]), buttons:not([disabled])"));
+        return Array.from(content.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), [tabindex]'))
+            .filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0);
     }
 
     handleTriggerKeydown(event) {
@@ -1008,6 +936,8 @@ export default class extends Controller {
 
             // Focus first item after menu opens
             requestAnimationFrame(() => {
+                if (!this.element.isConnected || !this.isOpen || this.currentContentId !== contentId || document.activeElement !== trigger) return;
+
                 const focusableItems = this.getFocusableItems();
                 if (focusableItems.length > 0) {
                     focusableItems[0].focus();
@@ -1026,6 +956,8 @@ export default class extends Controller {
 
             // Focus last item after menu opens
             requestAnimationFrame(() => {
+                if (!this.element.isConnected || !this.isOpen || this.currentContentId !== contentId || document.activeElement !== trigger) return;
+
                 const focusableItems = this.getFocusableItems();
                 if (focusableItems.length > 0) {
                     focusableItems[focusableItems.length - 1].focus();

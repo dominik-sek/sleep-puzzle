@@ -40,9 +40,21 @@ module PackagesHelper
     attachment = fragment.at_css('action-text-attachment[content-type^="image/"]')
     source = attachment && (attachment["url"].presence || attachment.at_css("img")&.[]("src"))
     comparison = if source.present?
+      attachable = ActionText::Attachable.from_node(attachment)
+      thumbnail = if attachable.is_a?(ActiveStorage::Blob) && attachable.variable?
+        url_for(attachable.variant(resize_to_limit: [ 800, 1100 ]))
+      else
+        attachment.at_css("img")&.[]("src").presence || source
+      end
+      width = attachment["width"].to_i
+      height = attachment["height"].to_i
+      if attachable.is_a?(ActiveStorage::Blob)
+        width = attachable.metadata["width"].to_i unless width.positive?
+        height = attachable.metadata["height"].to_i unless height.positive?
+      end
       attachment.remove
-      { src: source, thumbnail_src: source,
-        width: attachment["width"].to_i, height: attachment["height"].to_i }
+      { src: source, thumbnail_src: thumbnail,
+        width: width, height: height }
     end
 
     [ fragment.to_html.html_safe, comparison ]

@@ -10,16 +10,14 @@
       <h1 class="text-t1 font-display font-bold text-cream">
         <%= content_block("packages.hero.title") %>
       </h1>
-      <div class="trix-copy text-t4 text-tan max-w-2xl">
+      <div class="trix-lead text-t4 text-tan max-w-2xl text-pretty">
         <%= collaboration_body.presence || content_block("packages.hero.subtitle") %>
       </div>
     </div>
 
     <% if @packages.any? %>
-      <%# Three packages use three explicit columns from tablet width upward, so
-          the last card cannot wrap just because a minimum card width is unmet.
-          One or two packages keep their narrower, centred layout. %>
-      <% layout = { 1 => "sm:grid-cols-1 max-w-[376px]", 2 => "sm:grid-cols-2 max-w-[776px]" }.fetch(@packages.size, "sm:grid-cols-2 md:grid-cols-3 max-w-[1176px]") %>
+      <%# Keep tablet cards readable before fitting three columns on desktop. %>
+      <% layout = { 1 => "sm:grid-cols-1 max-w-[376px]", 2 => "sm:grid-cols-2 max-w-[776px]" }.fetch(@packages.size, "sm:grid-cols-2 lg:grid-cols-3 max-w-[1176px]") %>
       <div class="grid grid-cols-1 items-stretch gap-6 w-full <%= layout %>">
         <% @packages.each do |package| %>
           <%# anchor for the home page's "Zobacz szczegóły"; scroll-mt keeps the
@@ -41,7 +39,7 @@
                                   alt: t("packages.comparison_alt"),
                                   classes: "w-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent" %>
           <% end %>
-          <p class="mt-3 text-center text-t6 text-taupe"><%= t("packages.comparison_hint") %></p>
+          <p class="mt-3 text-center text-t5 text-taupe"><%= t("packages.comparison_hint") %></p>
         </div>
       <% end %>
     <% else %>
@@ -59,11 +57,13 @@
   <%= render "shared/testimonials", testimonials: testimonials %>
 
   <% unless user_signed_in? %>
-    <section id="calendar" tabindex="-1" class="w-full scroll-mt-24 bg-ink px-5 py-16 outline-none">
-      <div class="mx-auto flex max-w-[1240px] flex-col gap-6">
+    <section id="calendar" tabindex="-1" class="w-full scroll-mt-24 bg-ink outline-none">
+      <div class="section-padding mx-auto flex max-w-[1240px] flex-col gap-6">
         <div class="max-w-2xl">
-          <h2 class="font-display text-t2 font-bold text-cream"><%= t("offers.calendar_title") %></h2>
-          <p class="text-t5 text-tan"><%= t("offers.calendar_intro") %></p>
+          <h2 class="font-display text-t2 font-bold text-cream text-balance"><%= t("offers.calendar_title") %></h2>
+          <% unless @calendar_unavailable %>
+            <p class="mt-2 text-t5 text-tan text-pretty"><%= t("offers.calendar_intro") %></p>
+          <% end %>
         </div>
         <%= render "bookings/calendar", availability: @availability,
                    available_dates: @available_dates, unavailable: @calendar_unavailable,
@@ -83,10 +83,10 @@
     align: :center
   ) do |section| %>
     <div class="flex flex-col gap-4 items-center">
-      <h2 class="text-t2 font-display font-bold text-cream">
+      <h2 class="text-t2 font-display font-bold text-cream text-balance">
         <%= content_block("packages.closing.title") %>
       </h2>
-      <p class="text-t4 text-tan max-w-xl m-0">
+      <p class="text-t4 text-tan max-w-xl text-pretty m-0">
         <%= content_block("packages.closing.body") %>
       </p>
     </div>
@@ -101,7 +101,7 @@
           classes: "hover:cursor-pointer text-t6! py-4 px-6 font-bold!"
         ) %>
 
-        <p class="text-t6 text-taupe m-0">
+        <p class="text-t5 text-taupe text-pretty m-0">
           <%= content_block("packages.closing.shop_lead") %>
           <%= link_to content_block("packages.closing.shop_link"), products_path,
                       class: "text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>

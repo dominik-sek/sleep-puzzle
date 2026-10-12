@@ -3,6 +3,13 @@ require 'rails_helper'
 RSpec.describe "Navbar", type: :request do
   let(:user) { User.create!(email: "customer@example.com", password: "password123") }
 
+  it "keeps the English locale when signing in from the desktop header" do
+    get root_path(locale: :en)
+
+    header = Capybara.string(response.body).find("nav")
+    expect(header).to have_link("Log in", href: new_user_session_path(locale: :en))
+  end
+
   describe "the cart control" do
     it "is an icon rather than an emoji" do
       get products_path

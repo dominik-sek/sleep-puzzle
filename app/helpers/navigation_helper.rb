@@ -74,12 +74,14 @@ module NavigationHelper
   # without them that row shrinks to its label while its neighbours fill the panel.
   def profile_menu_item_classes
     "flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-sm font-semibold " \
-      "text-cream no-underline cursor-pointer bg-transparent border-0 hover:bg-ink-soft hover:text-accent"
+      "text-cream no-underline cursor-pointer bg-transparent border-0 hover:bg-ink-soft hover:text-accent " \
+      "min-h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
   end
 
   # The same row, sized for the hamburger panel, where the type is a step larger.
   def mobile_menu_item_classes
     "flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-md font-bold " \
-      "text-cream no-underline cursor-pointer bg-transparent border-0 hover:bg-ink-soft hover:text-accent"
+      "text-cream no-underline cursor-pointer bg-transparent border-0 hover:bg-ink-soft hover:text-accent " \
+      "min-h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
   end
 end

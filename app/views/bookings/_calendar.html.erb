@@ -1,5 +1,5 @@
-<div id="availability" class="relative grid grid-cols-1 md:grid-cols-2 gap-6 w-full"
-     data-controller="cally"
+<div id="availability" class="relative grid grid-cols-1 lg:grid-cols-2 gap-6 w-full"
+     data-controller="<%= "cally" unless local_assigns[:unavailable] %>"
      data-cally-from-value="<%= availability[:from] %>"
      data-cally-to-value="<%= availability[:to] %>"
      data-cally-available-dates-value="<%= available_dates %>"
@@ -15,7 +15,7 @@
   <%# Where the abandon verdict lands. It used to be delivered only as an
       auto-dismissing toast - and "nothing was charged" is the one sentence a
       frightened person most needs to be able to re-read. Empty on a normal load. %>
-  <div id="booking_notice" class="md:col-span-2 empty:hidden"></div>
+  <div id="booking_notice" class="lg:col-span-2 empty:hidden"></div>
 
   <%# Two different nothings. `unavailable` is "we could not read the calendar, so
       we are refusing to guess"; this one is "we read it fine and she is genuinely
@@ -23,7 +23,7 @@
       rendered a fully-ghosted grid and a "pick a day" prompt that could never be
       satisfied, with no explanation and nowhere to go. %>
   <% if !local_assigns[:unavailable] && local_assigns[:no_slots] %>
-    <div role="status" class="md:col-span-2 flex flex-col items-start gap-4 rounded-2xl border border-border-input bg-surface px-5 py-4">
+    <div role="status" class="lg:col-span-2 flex flex-col items-start gap-4 rounded-2xl border border-border-input bg-surface px-5 py-4">
       <p class="text-t5 text-tan m-0"><%= t("bookings.calendar.no_slots") %></p>
       <%= render Buttons::Component.new(
         text: t("bookings.calendar.no_slots_cta"),
@@ -36,12 +36,29 @@
   <% end %>
 
   <% if local_assigns[:unavailable] %>
-    <div role="status" class="md:col-span-2 rounded-2xl border border-border-input bg-surface px-4 py-3 text-t6 leading-relaxed text-cream">
-      <%= t("bookings.calendar.unavailable") %>
+    <% retry_params = request.query_parameters.slice("package_id", "date", "hour").symbolize_keys.merge(anchor: "availability") %>
+    <%# A changed query forces a GET; a fragment-only link would just scroll. %>
+    <% retry_params[:calendar_retry] = request.query_parameters["calendar_retry"].to_s.to_i + 1 %>
+    <% retry_params[:package_id] = booking.package_id if local_assigns[:booking]&.package_id.present? %>
+    <% retry_path = local_assigns[:preview] ? packages_path(retry_params) : bookings_path(retry_params) %>
+    <div class="lg:col-span-2 flex flex-col items-start gap-5 rounded-2xl border border-border-input bg-surface p-5 sm:p-6">
+      <p role="status" class="text-t5 leading-relaxed text-tan m-0 max-w-2xl"><%= t("bookings.calendar.unavailable") %></p>
+      <div class="flex flex-wrap gap-3">
+        <%= render Buttons::Component.new(
+          text: t("bookings.calendar.retry"), href: retry_path,
+          data: { turbo: false }, pill: true,
+          classes: "text-t6! font-bold! py-4 px-6"
+        ) %>
+        <%= render Buttons::Component.new(
+          text: t("offers.instagram_cta"), href: instagram_contact_url,
+          pill: true, variant: :secondary,
+          classes: "text-t6! font-bold! py-4 px-6"
+        ) %>
+      </div>
     </div>
-  <% end %>
+  <% else %>
 
-  <%= render Card::Component.new(classes: "self-start") do %>
+  <%= render Card::Component.new(classes: "booking-calendar-card self-start", padding: :none) do %>
     <calendar-date data-cally-target="calendarDate" data-action="change->cally#dateChanged focusday->cally#monthChanged" class="w-full" format-weekday="short">
       <%# cally renders the year between the arrows and the month above the grid; we collapse
           both into a single "Miesiąc Rok" label filled in by cally_controller %>
@@ -83,7 +100,7 @@
     <div class="flex flex-col gap-5">
       <div>
         <%# starts hidden - cally_controller reveals it once a day is picked %>
-        <%# stacked until lg: the card is half the grid from md up, so a row only
+        <%# stacked until lg: the card is half the grid from lg up, so a row only
             has room for both the date and the count on a real desktop %>
         <%# tabindex="-1" so the controller can move focus here after a day is
             picked; role=status so the same move speaks the date and the count to
@@ -107,7 +124,7 @@
                 text: hour[:hour],
                 disabled: !hour[:available],
                 variant: :secondary,
-                classes: "text-t5! hover:cursor-pointer disabled:text-taupe-dark",
+                classes: "min-h-11 text-t5! hover:cursor-pointer disabled:text-taupe-dark",
                 data: { action: "click->cally#timeSelected", hour: hour[:hour] }
               ) %>
 
@@ -146,4 +163,5 @@
       </div>
     <% end %>
   </div>
+  <% end %>
 </div>
