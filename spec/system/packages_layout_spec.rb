@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Package card layout", type: :system do
+  after do
+    page.driver.browser.execute_cdp("Emulation.clearDeviceMetricsOverride")
+  end
+
   it "lets a phone visitor pick a real calendar day" do
     allow(GoogleCalendarService).to receive(:call).and_return(instance_double(GoogleCalendarService, busy: []))
     allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
@@ -11,13 +15,19 @@ RSpec.describe "Package card layout", type: :system do
     page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride", width: 320, height: 800, deviceScaleFactor: 1, mobile: false)
     visit packages_path
 
+    # Cally renders buttons before the deferred controller applies availability.
+    expect(page).to have_css("calendar-month") do |month|
+      month.evaluate_script(<<~JS)
+        typeof this.closest('calendar-date').isDateDisallowed === 'function' &&
+          Boolean(this.shadowRoot?.querySelector('button[aria-disabled="true"]'))
+      JS
+    end
     day = find("calendar-month").native.shadow_root.find_elements(css: "button:not([disabled]):not([aria-disabled='true'])").first
     expect(day).not_to be_nil
     day.click
     expect(page).to have_css('[data-cally-target="hoursPanel"]:not([hidden]) button:not(:disabled)')
     within('[data-cally-target="hoursPanel"]:not([hidden])') { find("button:not(:disabled)", match: :first).click }
     expect(page).to have_link(I18n.t("offers.continue_booking"))
-    page.driver.browser.execute_cdp("Emulation.clearDeviceMetricsOverride")
   end
 
   it "keeps three cards and their actions aligned on a laptop" do
@@ -123,7 +133,6 @@ RSpec.describe "Package card layout", type: :system do
       within("dialog[open]") { click_button "Zamknij" }
       expect(page).not_to have_css("dialog[open]")
       expect(page.evaluate_script("window.scrollY")).to be_within(1).of(scroll_y)
-      page.driver.browser.execute_cdp("Emulation.clearDeviceMetricsOverride")
     end
   end
 end
