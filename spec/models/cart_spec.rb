@@ -134,6 +134,27 @@ RSpec.describe Cart, type: :model do
   # resolved on read, so nothing has to reach into everyone's session when the
   # owner changes the catalogue
   describe "products that stop being buyable" do
+    it "refuses an incomplete program even when added without the public controller" do
+      program = create_product(kind: :audio_process, expected_chapter_count: 24)
+
+      cart.add(program)
+
+      expect(cart).to be_empty
+      expect(cart.include?(program)).to be(false)
+    end
+
+    it "rechecks program completeness when resolving an older session for checkout" do
+      program = create_product(kind: :audio_process)
+      cart.add(program)
+      expect(cart.count).to eq(1)
+
+      program.update!(expected_chapter_count: 24)
+
+      fresh_cart = described_class.from_session(session)
+      expect(fresh_cart).to be_empty
+      expect(fresh_cart.total_label).to be_nil
+    end
+
     it "drops a product that has been unpublished" do
       cart.add(product)
       product.update!(published: false)

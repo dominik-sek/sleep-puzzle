@@ -7,7 +7,7 @@ module Admin
 
     manages Product,
             label: "produkt",
-            plain_attributes: %i[paddle_price_id kind icon length_minutes cdn_path position published]
+            plain_attributes: %i[paddle_price_id kind icon length_minutes cdn_path position published expected_chapter_count]
 
     private
 

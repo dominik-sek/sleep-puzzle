@@ -98,6 +98,12 @@ who can't reach 1:1, 1:1 when they can - rather than a single price point.
 * **A product cannot be listed without ready audio.** A bedtime story needs its
   recording; an audioprocess needs at least one ready chapter. Validation and the
   published scope enforce this, so unfinished uploads do not become empty listings.
+  Listing an audioprocess is a preview, not proof that the full offer can be sold.
+  New purchases additionally require an owner-set `expected_chapter_count` matching
+  the total chapter count, with every chapter ready. Existing programs are not
+  automatically confirmed from their uploaded files. Missing or incomplete counts
+  suppress purchase actions and are checked again by the cart at checkout, while
+  previews and previously purchased access remain available.
 * **Audio is streamed, never handed over.** Files sit on a token-authenticated Bunny
   pull zone; story and chapter stream routes check paid, non-refunded access and
   redirect to URLs signed for six hours. A story sample has its own file and a

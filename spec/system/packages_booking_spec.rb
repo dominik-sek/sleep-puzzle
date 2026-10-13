@@ -2,14 +2,19 @@ require "rails_helper"
 
 RSpec.describe "Booking from packages", type: :system do
   include Warden::Test::Helpers
+  include ActiveSupport::Testing::TimeHelpers
 
   before do
+    travel_to Time.zone.parse("2026-10-05 07:00")
     allow(GoogleCalendarService).to receive(:call).and_return(instance_double(GoogleCalendarService, busy: []))
     allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
     create_package(name: "Szybka ulga")
   end
 
-  after { Warden.test_reset! }
+  after do
+    Warden.test_reset!
+    travel_back
+  end
 
   def select_first_available_slot
     panel = first('[data-cally-target="hoursPanel"]:has(button:not(:disabled))', visible: :all)

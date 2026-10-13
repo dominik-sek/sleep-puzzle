@@ -4,22 +4,23 @@ require 'rails_helper'
 #
 # Table name: products
 #
-#  id                   :bigint           not null, primary key
-#  audio_upload_error   :string
-#  category             :integer
-#  cdn_path             :string
-#  icon                 :string
-#  kind                 :integer
-#  length_minutes       :integer
-#  position             :integer          default(0), not null
-#  preview_cdn_path     :string
-#  published            :boolean          default(FALSE), not null
-#  trailer_cdn_path     :string
-#  trailer_upload_error :string
-#  translations         :jsonb            not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  paddle_price_id      :string
+#  id                     :bigint           not null, primary key
+#  audio_upload_error     :string
+#  category               :integer
+#  cdn_path               :string
+#  expected_chapter_count :integer
+#  icon                   :string
+#  kind                   :integer
+#  length_minutes         :integer
+#  position               :integer          default(0), not null
+#  preview_cdn_path       :string
+#  published              :boolean          default(FALSE), not null
+#  trailer_cdn_path       :string
+#  trailer_upload_error   :string
+#  translations           :jsonb            not null
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  paddle_price_id        :string
 #
 RSpec.describe Product, type: :model do
   describe "translated fields" do
@@ -53,6 +54,53 @@ RSpec.describe Product, type: :model do
 
       expect(product).not_to be_valid
       expect(product.errors[:name]).to be_present
+    end
+  end
+
+  describe "audio program completeness" do
+    it "requires the owner to declare the full count rather than trusting one upload" do
+      product = create_product(kind: :audio_process, expected_chapter_count: nil)
+
+      expect(product).not_to be_program_complete
+      expect(product).not_to be_purchase_ready
+      expect(Product.published).to include(product)
+    end
+
+    it "accepts a complete declared program, but not a partial or oversized one" do
+      product = create_product(kind: :audio_process, expected_chapter_count: 2)
+      expect(product).not_to be_purchase_ready
+
+      chapter = product.audio_chapters.create!(position: 1, cdn_path: "/audioprocesy/second.mp3",
+                                               translations: { title: { pl: "Drugi rozdział" } })
+      expect(product.reload).to be_purchase_ready
+
+      product.update!(expected_chapter_count: 1)
+      expect(product).not_to be_purchase_ready
+
+      product.update!(expected_chapter_count: 2)
+      chapter.update!(cdn_path: nil)
+      expect(product.reload).not_to be_purchase_ready
+    end
+
+    it "does not offer an unpublished complete program for purchase" do
+      product = create_product(kind: :audio_process, published: false)
+
+      expect(product).to be_program_complete
+      expect(product).not_to be_purchase_ready
+    end
+
+    it "rejects zero, negative, and fractional declared counts" do
+      product = create_product(kind: :audio_process)
+
+      [ 0, -1, "1.5" ].each do |count|
+        product.expected_chapter_count = count
+        expect(product).not_to be_valid
+        expect(product.errors[:expected_chapter_count]).to be_present
+      end
+    end
+
+    it "does not require a program count for bedtime stories" do
+      expect(create_product).to be_purchase_ready
     end
   end
 

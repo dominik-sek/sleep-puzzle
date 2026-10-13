@@ -10,5 +10,6 @@ export default class extends Controller {
         this.storyTarget.classList.toggle("hidden", process);
         this.processTarget.classList.toggle("hidden", !process);
         this.storyTarget.querySelectorAll("input").forEach(input => { input.disabled = process; });
+        this.processTarget.querySelectorAll("input").forEach(input => { input.disabled = !process; });
     }
 }

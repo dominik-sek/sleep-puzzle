@@ -108,10 +108,17 @@
     <% end %>
   </div>
 
-  <p data-product-kind-target="process" class="text-t6 text-taupe m-0">
-    Audioproces: zapisz produkt jako szkic, dodaj chaptery i wgraj audio na ekranie edycji.
-    Opublikuj go po wgraniu co najmniej jednego chapteru.
-  </p>
+  <div data-product-kind-target="process" class="flex flex-col gap-1.5">
+    <%= label_tag "record-expected-chapter-count", "Liczba nagrań w pełnym programie", class: "text-t6 text-cream" %>
+    <%= number_field_tag "record[expected_chapter_count]", product.expected_chapter_count,
+                         id: "record-expected-chapter-count", min: 1, step: 1, class: "form-control",
+                         aria: { describedby: "record-expected-chapter-count-hint" } %>
+    <p id="record-expected-chapter-count-hint" class="text-t6 text-taupe m-0">
+      Podaj liczbę wszystkich nagrań obiecanych w opisie oferty, łącznie z bonusami.
+      Zakup będzie możliwy dopiero, gdy liczba chapterów zgadza się z tą liczbą i każdy ma gotowy plik.
+      Puste pole wstrzymuje nowe zakupy. Opublikowany podgląd i dostęp dotychczasowych kupujących pozostają dostępne.
+    </p>
+  </div>
 
   <%= render "admin/shared/publication_fields", record: product %>
 

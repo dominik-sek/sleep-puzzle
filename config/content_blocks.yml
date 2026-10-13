@@ -1139,6 +1139,12 @@ audio_landing:
           default:
             pl: "Audioproces pojawi się tutaj wkrótce."
             en: "The audio process will appear here soon."
+        incomplete:
+          label: Gdy pełny program nie jest jeszcze gotowy do zakupu
+          type: plain
+          default:
+            pl: "Pełny program nie jest jeszcze dostępny do zakupu. Możesz poznać go tutaj i wrócić później."
+            en: "The full program is not available to buy yet. You can explore it here and come back later."
     details:
       label: Szczegóły
       fields:
@@ -1154,6 +1160,18 @@ audio_landing:
           default:
             pl: "Co obejmuje"
             en: "What is included"
+        includes_more:
+          label: Przycisk rozwinięcia pełnej listy tematów
+          type: plain
+          default:
+            pl: "Zobacz wszystkie tematy"
+            en: "Show all topics"
+        includes_less:
+          label: Przycisk zwinięcia pełnej listy tematów
+          type: plain
+          default:
+            pl: "Zwiń listę tematów"
+            en: "Hide the topics"
 testimonials:
   label: Opinie
   sections:

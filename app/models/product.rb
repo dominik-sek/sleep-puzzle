@@ -2,22 +2,23 @@
 #
 # Table name: products
 #
-#  id                   :bigint           not null, primary key
-#  audio_upload_error   :string
-#  category             :integer
-#  cdn_path             :string
-#  icon                 :string
-#  kind                 :integer
-#  length_minutes       :integer
-#  position             :integer          default(0), not null
-#  preview_cdn_path     :string
-#  published            :boolean          default(FALSE), not null
-#  trailer_cdn_path     :string
-#  trailer_upload_error :string
-#  translations         :jsonb            not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  paddle_price_id      :string
+#  id                     :bigint           not null, primary key
+#  audio_upload_error     :string
+#  category               :integer
+#  cdn_path               :string
+#  expected_chapter_count :integer
+#  icon                   :string
+#  kind                   :integer
+#  length_minutes         :integer
+#  position               :integer          default(0), not null
+#  preview_cdn_path       :string
+#  published              :boolean          default(FALSE), not null
+#  trailer_cdn_path       :string
+#  trailer_upload_error   :string
+#  translations           :jsonb            not null
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  paddle_price_id        :string
 #
 class Product < ApplicationRecord
   include Purchasable
@@ -123,6 +124,21 @@ class Product < ApplicationRecord
 
   validates :kind, presence: true
   validates :length_minutes, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
+  validates :expected_chapter_count, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
+
+  # Publication allows a preview while the owner prepares the program. Selling
+  # it additionally requires the owner-declared full count and every chapter's
+  # current recording. Never infer completeness from the first uploaded file.
+  def program_complete?
+    return false unless audio_process? && expected_chapter_count.to_i.positive?
+
+    chapters = audio_chapters.to_a
+    chapters.size == expected_chapter_count && chapters.all?(&:ready?)
+  end
+
+  def purchase_ready?
+    published? && (bedtime_story? ? cdn_path.present? : program_complete?)
+  end
 
   # Restricted to characters that survive a URL untouched. Bunny signs the path
   # as it appears in the URL, so a name needing percent-encoding would be signed

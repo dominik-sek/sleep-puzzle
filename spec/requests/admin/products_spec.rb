@@ -139,6 +139,32 @@ RSpec.describe "Admin::Products", type: :request do
   describe "PATCH /admin/products/:id" do
     before { sign_in admin }
 
+    it "lets the owner declare the complete program count without enabling a partial program" do
+      product = create_product(kind: :audio_process, expected_chapter_count: nil)
+
+      patch admin_product_path(product), params: { record: { expected_chapter_count: "24" } }
+
+      expect(response).to redirect_to(admin_products_path)
+      expect(product.reload.expected_chapter_count).to eq(24)
+      expect(product).not_to be_purchase_ready
+
+      get edit_admin_product_path(product)
+      page = Capybara.string(response.body)
+      field = page.find_field("Liczba nagrań w pełnym programie")
+      expect(field.value).to eq("24")
+      expect(page).to have_css("##{field[:"aria-describedby"]}", text: "łącznie z bonusami")
+    end
+
+    it "rejects an invalid count and preserves it on the form for correction" do
+      product = create_product(kind: :audio_process)
+
+      patch admin_product_path(product), params: { record: { expected_chapter_count: "0" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(product.reload.expected_chapter_count).to eq(1)
+      expect(Capybara.string(response.body).find_field("Liczba nagrań w pełnym programie").value).to eq("0")
+    end
+
     it "updates the record" do
       product = create_product(name: "Bajka o sowie")
 

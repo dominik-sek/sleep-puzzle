@@ -47,11 +47,11 @@ class Cart
     @lines ||= buyable.map { |product| Line.new(product: product) }
   end
 
-  # In the session, published, and not already claimed - everything the buyer is
+  # In the session, published, complete, and not already claimed - everything the buyer is
   # actually being asked to pay for. `count`, `total_label` and the order all
   # read through this, so a claimed file cannot be counted, totalled or charged.
   def buyable
-    @buyable ||= resolved.reject { |product| claimed?(product) }
+    @buyable ||= resolved.reject { |product| claimed?(product) || !product.purchase_ready? }
   end
 
   # In the session but already paid for. Surfaced rather than silently dropped, so
@@ -83,6 +83,8 @@ class Cart
 
   # Idempotent: a file is either in the cart or it is not.
   def add(product)
+    return self unless product.purchase_ready?
+
     write(product_ids | [ product.id ])
   end
 
@@ -145,11 +147,11 @@ class Cart
 
   private
 
-  # Only published products, resolved on read: something unpublished after it was
-  # added should stop being buyable, without a job reaching into everyone's session.
+  # Resolve current catalogue data on read. #buyable rechecks completeness too,
+  # so a stale session cannot buy a program that is no longer ready.
   def resolved
     @resolved ||= begin
-      products = Product.published.where(id: product_ids).index_by(&:id)
+      products = Product.published.where(id: product_ids).includes(:audio_chapters).index_by(&:id)
 
       product_ids.filter_map { |id| products[id] }
     end

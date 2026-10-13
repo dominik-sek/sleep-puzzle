@@ -32,6 +32,7 @@ module CatalogueHelpers
   def create_product(**attributes)
     build_product(**attributes).tap do |product|
       if product.audio_process? && product.cdn_path.present?
+        product.expected_chapter_count = 1 unless attributes.key?(:expected_chapter_count)
         chapter = product.audio_chapters.build(cdn_path: product.cdn_path, duration_seconds: 600)
         chapter.assign_translation(:title, :pl, "Nagranie")
         chapter.assign_translation(:title, :en, "Recording")

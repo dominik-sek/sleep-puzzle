@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_09_161000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_13_093000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -350,6 +350,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_09_161000) do
     t.datetime "updated_at", null: false
     t.string "trailer_cdn_path"
     t.string "trailer_upload_error"
+    t.integer "expected_chapter_count"
+    t.check_constraint "expected_chapter_count IS NULL OR expected_chapter_count > 0", name: "products_expected_chapter_count_positive"
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|

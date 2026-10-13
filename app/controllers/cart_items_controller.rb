@@ -26,6 +26,10 @@ class CartItemsController < ApplicationController
       return respond_with_cart(alert: "#{@product.name} - płatność za to nagranie jest w trakcie potwierdzania. Pojawi się w Twoim koncie, gdy tylko dostaniemy potwierdzenie.")
     end
 
+    unless @product.purchase_ready?
+      return respond_with_cart(alert: helpers.content_block("audio_landing.hero.incomplete"))
+    end
+
     current_cart.add(@product)
 
     respond_with_cart(notice: "#{@product.name} - dodano do koszyka.")

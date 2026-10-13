@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import "cally"
 import dayjs from "dayjs";
 import "dayjs/locale/pl";
 import "dayjs/locale/en";

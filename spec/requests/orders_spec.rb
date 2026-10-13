@@ -21,6 +21,18 @@ RSpec.describe "Orders", type: :request do
     post cart_items_path, params: { product_id: with.id }
   end
 
+  it "does not open checkout for a program that became incomplete after it was added" do
+    program = create_product(kind: :audio_process)
+    fill_cart(with: program)
+    program.update!(expected_chapter_count: 24)
+    sign_in user
+    expect_any_instance_of(User).not_to receive(:payment_processor)
+
+    expect { post orders_path, params: consent_params }.not_to change(Order, :count)
+
+    expect(response).to redirect_to(cart_path)
+  end
+
   # the whole bug: from the moment the overlay opens until the webhook lands,
   # every commerce surface used to read the order as though it did not exist
   describe "while a payment is in flight" do

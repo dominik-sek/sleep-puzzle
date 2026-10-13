@@ -58,6 +58,8 @@
     aria_label: "#{label} - #{product.name}",
     classes: "hover:cursor-pointer text-t6! font-bold! border-accent! text-accent! hover:bg-accent! hover:text-ink! #{shape}"
   ) %>
+<% elsif !product.purchase_ready? %>
+  <p class="text-t5 text-tan m-0"><%= content_block("audio_landing.hero.incomplete") %></p>
 <% elsif current_cart.include?(product) %>
   <% label = content_block("shop.card.remove") %>
   <%= button_to cart_item_path(product_id: product.id), method: :delete,

@@ -7,6 +7,6 @@ class HomeController < ApplicationController
 
   def index
     @packages = Package.published.ordered.limit(PACKAGES_SHOWN)
-    @products = Product.published.ordered.limit(PRODUCTS_SHOWN)
+    @products = Product.published.includes(:audio_chapters).ordered.limit(PRODUCTS_SHOWN)
   end
 end

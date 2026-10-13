@@ -6,19 +6,22 @@
   siblings that all read `current_cart`, so streaming the button alone left the
   link and the note behind until a reload - which read as them having been dropped.
 
-  Renders nothing at all without a price: Paddle owns the money, and something we
-  cannot price is something we cannot sell (see products/_card).
+  New sales need a current price and a complete program. An incomplete program
+  still renders its unavailable state (or existing-purchase access), so a missing
+  price never hides the explanation for paused sales.
 
   locals: product
 %>
-<%= tag.div id: dom_id(product, :cart_actions), class: "flex flex-col gap-4" do %>
-  <% if product_price_label(product) %>
+<%= tag.div id: dom_id(product, :cart_actions), class: "flex flex-col gap-4",
+      data: { controller: "cart-focus",
+              action: "submit->cart-focus#remember pointerdown@document->cart-focus#cancel keydown@document->cart-focus#cancelOnTab focusin@document->cart-focus#cancelOnFocus turbo:before-stream-render@document->cart-focus#restore" } do %>
+  <% if product_price_label(product) || (product.audio_process? && !product.program_complete?) %>
     <div class="flex flex-wrap gap-2.5">
       <%= render "products/cart_button", product: product, size: :lg %>
 
       <%# only once it is actually in there, so the second button never points at
           an empty cart %>
-      <% if current_cart.include?(product) %>
+      <% if current_cart.include?(product) && product.purchase_ready? %>
         <%# border-input, not taupe-dark: a control boundary has to clear 3:1, and
             taupe-dark measures 2.09 against ink %>
         <%= render Buttons::Component.new(
@@ -31,9 +34,9 @@
       <% end %>
     </div>
 
-    <% if current_cart.include?(product) %>
-      <%# aria-live: this note is swapped in by a turbo stream and nothing moves
-          focus, so without it the confirmation is silent to a screen reader.
+    <% if current_cart.include?(product) && product.purchase_ready? %>
+      <%# aria-live: announce the streamed confirmation while keyboard focus
+          continues on the replacement purchase control.
           A drawn mark, not a ✓ glyph - the glyph renders from the OS fallback. %>
       <p class="flex items-center gap-1.5 text-t6 font-bold text-accent m-0" aria-live="polite">
         <%= icon "circle-check", class: "size-4 shrink-0" %>

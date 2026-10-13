@@ -55,6 +55,7 @@ pl:
         name: "Nazwa (polski)"
       product:
         name: "Nazwa (polski)"
+        expected_chapter_count: "Liczba nagrań w pełnym programie"
     errors:
       models:
         package:

@@ -58,6 +58,18 @@ RSpec.describe "Cart", type: :request do
   end
 
   describe "POST /cart_items" do
+    it "refuses a direct add request for an incomplete program and explains why" do
+      incomplete = create_product(kind: :audio_process, expected_chapter_count: 24)
+
+      post cart_items_path, params: { product_id: incomplete.id },
+           headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      expect(response).to have_http_status(:ok)
+      expect(Cart.from_session(session)).to be_empty
+      expect(response.body).to include("Pełny program nie jest jeszcze dostępny do zakupu")
+      expect(Capybara.string(response.body)).not_to have_button("Dodaj do koszyka")
+    end
+
     it "adds a product and shows it in the badge count" do
       post cart_items_path, params: { product_id: product.id }
 

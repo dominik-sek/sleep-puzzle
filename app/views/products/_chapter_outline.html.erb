@@ -1,7 +1,7 @@
 <% chapters = product.audio_chapters.select(&:ready?) %>
 <% if chapters.any? %>
-  <section class="mt-8" aria-label="<%= t('products.chapters.title') %>
-    <h2 class="font-display text-t3 font-bold text-cream"><%= t('products.chapters.title') %></h2>
+  <section class="mt-8" aria-labelledby="<%= dom_id(product, :chapter_outline_heading) %>">
+    <h2 id="<%= dom_id(product, :chapter_outline_heading) %>" class="font-display text-t3 font-bold text-cream"><%= t('products.chapters.title') %></h2>
     <ol class="mt-4 flex flex-col gap-2 list-none p-0">
       <% chapters.each_with_index do |chapter, index| %>
         <li class="flex items-center justify-between gap-3 rounded-xl border border-border-input bg-surface px-4 py-3 text-t5 text-cream">
