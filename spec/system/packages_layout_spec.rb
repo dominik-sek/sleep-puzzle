@@ -69,18 +69,21 @@ RSpec.describe "Package card layout", type: :system do
       visit packages_path
       expect(page).to have_css('a[aria-label^="Zobacz terminy"]', count: 3)
       dimensions = page.evaluate_script(<<~JS)
-        ({ viewport: window.innerWidth, document: document.documentElement.scrollWidth,
+        ({ viewport: window.innerWidth, contentWidth: document.documentElement.clientWidth,
+           document: document.documentElement.scrollWidth,
            cards: [...document.querySelectorAll('[id^="package_"]')].map(card => {
              const rect = card.getBoundingClientRect();
              return { height: rect.height, top: rect.top, width: rect.width };
            }) })
       JS
-      expect(dimensions["document"]).to be <= dimensions["viewport"]
+      expect(dimensions["document"]).to be <= dimensions["contentWidth"]
       expect(dimensions["viewport"]).to eq(width)
       expect(dimensions["cards"].map { |card| card["height"] }.max).to be < 1200
       expected_rows = width < 640 ? 3 : (width < 1024 ? 2 : 1)
       expect(dimensions["cards"].map { |card| card["top"].round }.uniq.size).to eq(expected_rows)
-      expect(dimensions["cards"].map { |card| card["width"] }.min).to be >= 280
+      # Desktop scrollbars reduce the available width even under phone-sized emulation.
+      scrollbar_width = dimensions["viewport"] - dimensions["contentWidth"]
+      expect(dimensions["cards"].map { |card| card["width"] }.min).to be >= 280 - scrollbar_width
       calendar_targets = page.evaluate_script(<<~JS)
         [...document.querySelectorAll('calendar-date, calendar-month')].flatMap(calendar =>
           [...calendar.shadowRoot.querySelectorAll('button')].map(button => {
@@ -102,7 +105,11 @@ RSpec.describe "Package card layout", type: :system do
       modal_height = width == 390 ? 844 : 900
       page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride", width: width, height: modal_height, deviceScaleFactor: 1, mobile: false)
       second = Package.ordered.second
-      find("button[aria-controls='package-details-#{second.id}']").click
+      opener = find("button[aria-controls='package-details-#{second.id}']")
+      opener.execute_script("this.scrollIntoView({ block: 'center', behavior: 'instant' })")
+      # Compare the same page layout before opening and after closing the dialog.
+      scroll_y = page.evaluate_script("window.scrollY")
+      opener.click
       expect(page).to have_css("#package-details-#{second.id}[open] [data-dialog-heading]:focus")
       within("dialog[open]") { expect(page).to have_text("Telegramie") }
       box = page.evaluate_script("document.querySelector('dialog[open]').getBoundingClientRect().toJSON()")
@@ -111,7 +118,6 @@ RSpec.describe "Package card layout", type: :system do
       expect(box["left"]).to be >= 0
       expect(box["top"]).to be >= 0
       expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= width
-      scroll_y = page.evaluate_script("window.scrollY")
       expect(page.evaluate_script("document.querySelector('dialog[open] .package-details-scroll').scrollHeight > document.querySelector('dialog[open] .package-details-scroll').clientHeight")).to be(true)
       page.save_screenshot(Rails.root.join("tmp/package-copy/details-#{width}.png"))
       within("dialog[open]") { click_button "Zamknij" }

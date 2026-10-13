@@ -67,10 +67,14 @@ RSpec.describe "Package page recovery and image viewer", type: :system do
 
       expect(image.evaluate_script("this.getAttribute('width')")).to eq("4168")
       expect(image.evaluate_script("this.getAttribute('height')")).to eq("4168")
-      geometry = image.evaluate_script("({width: this.getBoundingClientRect().width, height: this.getBoundingClientRect().height})")
-      expect(geometry["width"]).to eq(280)
-      expect(geometry["height"]).to eq(280)
-      expect(page.evaluate_script("document.documentElement.scrollWidth")).to eq(320)
+      geometry = image.evaluate_script(<<~JS)
+        ({ width: this.getBoundingClientRect().width, height: this.getBoundingClientRect().height,
+           contentWidth: document.documentElement.clientWidth })
+      JS
+      # The section has 20px padding on each side; a scrollbar uses additional space.
+      expect(geometry["width"]).to be_within(1).of(geometry["contentWidth"] - 40)
+      expect(geometry["height"]).to be_within(1).of(geometry["width"])
+      expect(page.evaluate_script("document.documentElement.scrollWidth <= document.documentElement.clientWidth")).to be(true)
     end
 
     it "cancels a pending viewer opening with Escape on a slow connection" do

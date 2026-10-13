@@ -42,7 +42,7 @@ RSpec.describe "Front page approach disclosures", type: :system do
       find("#{second} summary").click
       expect(page).to have_css("#{second} .trix-copy", visible: true)
       expect(page).not_to have_css("#{first} details[open]")
-      expect(page.evaluate_script("document.documentElement.scrollWidth")).to eq(390)
+      expect(page.evaluate_script("document.documentElement.scrollWidth <= document.documentElement.clientWidth")).to be(true)
     end
   end
 end
