@@ -1,13 +1,12 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-31T00:00:00Z",
+  "generatedAt": "2026-10-13T06:46:47Z",
   "title": "Design System: Sleep Puzzle",
   "extensions": {
     "colorMeta": {
       "ink": {
         "role": "neutral",
         "displayName": "Ink",
-        "canonical": "#211e1c",
         "tonalRamp": [
           "#0d0c0b",
           "#151312",
@@ -22,7 +21,6 @@
       "ink-soft": {
         "role": "neutral",
         "displayName": "Ink Soft",
-        "canonical": "#26221f",
         "tonalRamp": [
           "#0f0d0c",
           "#171513",
@@ -37,7 +35,6 @@
       "surface": {
         "role": "neutral",
         "displayName": "Surface",
-        "canonical": "#2b2724",
         "tonalRamp": [
           "#110f0e",
           "#1a1816",
@@ -52,7 +49,6 @@
       "surface-dark": {
         "role": "neutral",
         "displayName": "Surface Dark",
-        "canonical": "#1a1817",
         "tonalRamp": [
           "#0a0909",
           "#100f0e",
@@ -67,7 +63,6 @@
       "border": {
         "role": "neutral",
         "displayName": "Hairline",
-        "canonical": "#35302c",
         "tonalRamp": [
           "#141210",
           "#1e1b19",
@@ -82,7 +77,6 @@
       "border-strong": {
         "role": "neutral",
         "displayName": "Piece Edge",
-        "canonical": "#3d3833",
         "tonalRamp": [
           "#171513",
           "#22201d",
@@ -97,7 +91,6 @@
       "border-input": {
         "role": "neutral",
         "displayName": "Field Edge",
-        "canonical": "#80756b",
         "tonalRamp": [
           "#211e1c",
           "#332f2a",
@@ -112,7 +105,6 @@
       "cream": {
         "role": "neutral",
         "displayName": "Cream",
-        "canonical": "#f5f0e8",
         "tonalRamp": [
           "#2e2a24",
           "#4a443b",
@@ -127,7 +119,6 @@
       "tan": {
         "role": "neutral",
         "displayName": "Tan",
-        "canonical": "#cfc7bc",
         "tonalRamp": [
           "#26231f",
           "#3d3833",
@@ -142,7 +133,6 @@
       "taupe": {
         "role": "neutral",
         "displayName": "Taupe",
-        "canonical": "#9b948a",
         "tonalRamp": [
           "#1d1b19",
           "#2f2c28",
@@ -157,7 +147,6 @@
       "taupe-dark": {
         "role": "neutral",
         "displayName": "Taupe Dark",
-        "canonical": "#57504a",
         "tonalRamp": [
           "#100f0e",
           "#1e1c1a",
@@ -172,7 +161,6 @@
       "accent": {
         "role": "primary",
         "displayName": "Lamp Amber",
-        "canonical": "#e2933e",
         "tonalRamp": [
           "#3a2109",
           "#5b3512",
@@ -187,7 +175,6 @@
       "accent-hover": {
         "role": "primary",
         "displayName": "Lamp Amber Bright",
-        "canonical": "#ffb35e",
         "tonalRamp": [
           "#432706",
           "#673d0f",
@@ -202,7 +189,6 @@
       "accent-terracotta": {
         "role": "primary",
         "displayName": "Terracotta",
-        "canonical": "#c97a2e",
         "tonalRamp": [
           "#331c07",
           "#502d0f",
@@ -215,9 +201,8 @@
         ]
       },
       "accent-coral": {
-        "role": "secondary",
+        "role": "primary",
         "displayName": "Coral",
-        "canonical": "#e3987a",
         "tonalRamp": [
           "#3c1f13",
           "#5d3320",
@@ -230,9 +215,8 @@
         ]
       },
       "accent-gold": {
-        "role": "secondary",
+        "role": "primary",
         "displayName": "Gold",
-        "canonical": "#d9a441",
         "tonalRamp": [
           "#372709",
           "#573e12",
@@ -247,7 +231,6 @@
       "gradient-hero": {
         "role": "primary",
         "displayName": "Hero Glow",
-        "canonical": "#c97a2e33",
         "tonalRamp": [
           "#c97a2e0a",
           "#c97a2e14",
@@ -257,6 +240,62 @@
           "#c97a2e66",
           "#c97a2e99",
           "#c97a2ecc"
+        ]
+      },
+      "red-300": {
+        "role": "secondary",
+        "displayName": "Destructive Edge",
+        "tonalRamp": [
+          "oklch(15% 0.114 19.571)",
+          "oklch(25% 0.114 19.571)",
+          "oklch(35% 0.114 19.571)",
+          "oklch(45% 0.114 19.571)",
+          "oklch(55% 0.114 19.571)",
+          "oklch(65% 0.114 19.571)",
+          "oklch(80% 0.114 19.571)",
+          "oklch(95% 0.114 19.571)"
+        ]
+      },
+      "red-400": {
+        "role": "secondary",
+        "displayName": "Field Error",
+        "tonalRamp": [
+          "oklch(15% 0.191 22.216)",
+          "oklch(25% 0.191 22.216)",
+          "oklch(35% 0.191 22.216)",
+          "oklch(45% 0.191 22.216)",
+          "oklch(55% 0.191 22.216)",
+          "oklch(65% 0.191 22.216)",
+          "oklch(80% 0.191 22.216)",
+          "oklch(95% 0.191 22.216)"
+        ]
+      },
+      "red-500": {
+        "role": "secondary",
+        "displayName": "Destructive Hover",
+        "tonalRamp": [
+          "oklch(15% 0.237 25.331)",
+          "oklch(25% 0.237 25.331)",
+          "oklch(35% 0.237 25.331)",
+          "oklch(45% 0.237 25.331)",
+          "oklch(55% 0.237 25.331)",
+          "oklch(65% 0.237 25.331)",
+          "oklch(80% 0.237 25.331)",
+          "oklch(95% 0.237 25.331)"
+        ]
+      },
+      "red-600": {
+        "role": "secondary",
+        "displayName": "Destructive Fill",
+        "tonalRamp": [
+          "oklch(15% 0.245 27.325)",
+          "oklch(25% 0.245 27.325)",
+          "oklch(35% 0.245 27.325)",
+          "oklch(45% 0.245 27.325)",
+          "oklch(55% 0.245 27.325)",
+          "oklch(65% 0.245 27.325)",
+          "oklch(80% 0.245 27.325)",
+          "oklch(95% 0.245 27.325)"
         ]
       }
     },
@@ -279,35 +318,63 @@
       },
       "body": {
         "displayName": "Body",
-        "purpose": "All reading copy. Weight 500, because 400 Quicksand goes thin on ink."
+        "purpose": "Reading copy, duration sentences, booking instructions and image hints."
       },
       "label": {
         "displayName": "Label",
         "purpose": "Micro-labels, button text, footer links, uppercase card eyebrows."
+      },
+      "lead-copy": {
+        "displayName": "Rich Lead",
+        "purpose": "19px introduction inside .trix-lead; 1.75 line height."
+      },
+      "body-copy": {
+        "displayName": "Rich Body",
+        "purpose": "Expanded prose inside .trix-copy; 1.75 line height."
       }
     },
     "shadows": [
       {
-        "name": "overlay",
-        "value": "0 10px 30px rgba(0, 0, 0, 0.45)",
-        "purpose": "The only shadow in the system. Dropdowns, mobile menu, toasts, dialogs - things that genuinely float above the page. Never on an in-page card or button."
+        "name": "overlay-xl",
+        "value": "0 20px 25px -5px rgb(0 0 0 / 10%), 0 8px 10px -6px rgb(0 0 0 / 10%)",
+        "purpose": "Tailwind shadow-xl on overlapping menus, dialogs and processing overlays."
+      },
+      {
+        "name": "field-xs",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 5%)",
+        "purpose": "Tailwind shadow-xs underneath the form control ring."
+      },
+      {
+        "name": "testimonial",
+        "value": "0 12px 36px rgba(0,0,0,0.12)",
+        "purpose": "Existing testimonial-card exception; default Card::Component remains flat."
       }
     ],
     "motion": [
       {
         "name": "state-fast",
-        "value": "100ms ease-in-out",
-        "purpose": "Button hover and active. Feedback, not animation."
+        "value": "100ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Buttons and calendar state feedback."
       },
       {
-        "name": "state-standard",
-        "value": "200ms ease-out",
-        "purpose": "Card and surface state changes, menu open/close."
+        "name": "puzzle-seam",
+        "value": "150ms ease",
+        "purpose": "Joined offer borders and seam stroke; disabled for reduced motion."
       },
       {
-        "name": "state-slow",
-        "value": "300ms ease-in-out",
-        "purpose": "Larger reveals - panels, accordions, image transitions."
+        "name": "menu",
+        "value": "200ms cubic-bezier(0, 0, 0.2, 1)",
+        "purpose": "Navbar panel transition; disabled for reduced motion."
+      },
+      {
+        "name": "accordion",
+        "value": "300ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Shared FAQ accordion; native reading disclosure opens directly."
+      },
+      {
+        "name": "library-arrival",
+        "value": "2.4s ease-out",
+        "purpose": "Dashboard target highlight; only under prefers-reduced-motion: no-preference."
       }
     ],
     "breakpoints": [
@@ -328,8 +395,8 @@
         "value": "1280px"
       },
       {
-        "name": "container",
-        "value": "1240px"
+        "name": "calendar-gutter-borrowing",
+        "value": "400px"
       }
     ]
   },
@@ -338,167 +405,178 @@
       "name": "Primary Pill Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The one 'do the thing' action per screen - book, buy, submit.",
-      "html": "<button class=\"ds-btn-primary\">Umów konsultację</button>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--color-accent, #e2933e); color: var(--color-ink, #211e1c); border: 1px solid rgba(201, 122, 46, 0.3); border-radius: 9999px; padding: 12px 24px; font-family: Quicksand, sans-serif; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.02em; line-height: 1.4; white-space: nowrap; cursor: pointer; transition: background 100ms ease-in-out; } .ds-btn-primary:hover { background: var(--color-accent-hover, #ffb35e); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-accent, #e2933e); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+      "description": "The prominent public action: amber fill, ink text, 16px × 24px padding.",
+      "html": "<button type=\"button\" class=\"ds-button-primary\">Zobacz terminy</button>",
+      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:16px 24px;border:1px solid color-mix(in srgb, var(--color-accent-terracotta, #c97a2e) 30%, transparent);border-radius:9999px;background:var(--color-accent, #e2933e);color:var(--color-ink, #211e1c);font-family:var(--font-sans, Quicksand, sans-serif);font-size:14px;line-height:1.4;font-weight:700;letter-spacing:.02em;cursor:pointer;transition:background-color 100ms cubic-bezier(.4,0,.2,1);}.ds-button-primary:hover:not(:disabled){background:var(--color-accent-hover, #ffb35e);}.ds-button-primary:focus-visible{outline:2px solid var(--color-accent, #e2933e);outline-offset:2px;}.ds-button-primary:disabled{opacity:.5;cursor:not-allowed;}"
     },
     {
       "name": "Secondary Pill Button",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Sits beside a primary without competing for the one lamp.",
-      "html": "<button class=\"ds-btn-secondary\">Zobacz pakiety</button>",
-      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--color-ink-soft, #26221f); color: var(--color-cream, #f5f0e8); border: 1px solid var(--color-taupe-dark, #57504a); border-radius: 9999px; padding: 12px 24px; font-family: Quicksand, sans-serif; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.02em; line-height: 1.4; white-space: nowrap; cursor: pointer; transition: background 100ms ease-in-out; } .ds-btn-secondary:hover { background: var(--color-surface, #2b2724); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--color-accent, #e2933e); outline-offset: 2px; }"
+      "description": "Ink at rest, ink-soft on hover; a visible Field Edge border.",
+      "html": "<button type=\"button\" class=\"ds-button-secondary\">Napisz na Instagramie</button>",
+      "css": ".ds-button-secondary{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:16px 24px;border:1px solid var(--color-border-input, #80756b);border-radius:9999px;background:var(--color-ink, #211e1c);color:var(--color-cream, #f5f0e8);font-family:var(--font-sans, Quicksand, sans-serif);font-size:14px;line-height:1.4;font-weight:700;letter-spacing:.02em;cursor:pointer;transition:background-color 100ms cubic-bezier(.4,0,.2,1);}.ds-button-secondary:hover:not(:disabled){background:var(--color-ink-soft, #26221f);}.ds-button-secondary:focus-visible{outline:2px solid var(--color-accent, #e2933e);outline-offset:2px;}.ds-button-secondary:disabled{opacity:.5;cursor:not-allowed;}"
     },
     {
-      "name": "Ghost Button",
+      "name": "Outline Details Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Transparent details action with a 48px minimum height.",
+      "html": "<button type=\"button\" class=\"ds-button-outline\">Poznaj szczegóły</button>",
+      "css": ".ds-button-outline{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;border:1px solid var(--color-border-input, #80756b);border-radius:9999px;background:transparent;color:var(--color-cream, #f5f0e8);font-family:var(--font-sans, Quicksand, sans-serif);font-size:14px;line-height:1.4;font-weight:700;letter-spacing:.02em;min-height:48px;cursor:pointer;transition:background-color 100ms cubic-bezier(.4,0,.2,1);}.ds-button-outline:hover:not(:disabled){background:var(--color-ink-soft, #26221f);}.ds-button-outline:focus-visible{outline:2px solid var(--color-accent, #e2933e);outline-offset:2px;}.ds-button-outline:disabled{opacity:.5;cursor:not-allowed;}"
+    },
+    {
+      "name": "Ghost Utility Button",
       "kind": "button",
       "refersTo": "button-ghost",
-      "description": "Tertiary and in-card actions. No border, fills to ink-soft on hover.",
-      "html": "<button class=\"ds-btn-ghost\">Anuluj</button>",
-      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: transparent; color: var(--color-cream, #f5f0e8); border: none; border-radius: 8px; padding: 8px 14px; font-family: Quicksand, sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 100ms ease-in-out; } .ds-btn-ghost:hover { background: var(--color-ink-soft, #26221f); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--color-accent, #e2933e); outline-offset: 2px; }"
+      "description": "Compact utility action without a border.",
+      "html": "<button type=\"button\" class=\"ds-button-ghost\">Zamknij</button>",
+      "css": ".ds-button-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border:0;border-radius:8px;background:transparent;color:var(--color-cream, #f5f0e8);font-family:var(--font-sans, Quicksand, sans-serif);font-size:14px;line-height:20px;font-weight:500;cursor:pointer;transition:background-color 100ms cubic-bezier(.4,0,.2,1);}.ds-button-ghost:hover:not(:disabled){background:var(--color-ink-soft, #26221f);}.ds-button-ghost:focus-visible{outline:2px solid var(--color-accent, #e2933e);outline-offset:2px;}.ds-button-ghost:disabled{opacity:.5;cursor:not-allowed;}"
+    },
+    {
+      "name": "Destructive Utility Button",
+      "kind": "button",
+      "refersTo": "button-destructive",
+      "description": "Functional red exception for destructive utility actions.",
+      "html": "<button type=\"button\" class=\"ds-button-destructive\">Usuń</button>",
+      "css": ".ds-button-destructive{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border:1px solid color-mix(in srgb, var(--color-red-300, oklch(80.8% .114 19.571)) 30%, transparent);border-radius:8px;background:var(--color-red-600, oklch(57.7% .245 27.325));color:var(--color-cream, #f5f0e8);font-family:var(--font-sans, Quicksand, sans-serif);font-size:14px;line-height:20px;font-weight:500;cursor:pointer;transition:background-color 100ms cubic-bezier(.4,0,.2,1);}.ds-button-destructive:hover:not(:disabled){background:var(--color-red-500, oklch(63.7% .237 25.331));}.ds-button-destructive:focus-visible{outline:2px solid var(--color-accent, #e2933e);outline-offset:2px;}.ds-button-destructive:disabled{opacity:.5;cursor:not-allowed;}"
     },
     {
       "name": "Card",
       "kind": "card",
       "refersTo": "card",
-      "description": "The system's signature piece: 16px radius, surface fill, one hairline edge, no shadow.",
-      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Pakiet Podstawowy</h3><span class=\"ds-card-meta\">60 minut</span><p class=\"ds-card-body\">Dla rodzin, które potrzebują szybkiej ulgi i jasnego pierwszego kroku.</p></div>",
-      "css": ".ds-card { display: flex; flex-direction: column; gap: 12px; background: var(--color-surface, #2b2724); border: 1px solid var(--color-border-strong, #3d3833); border-radius: 16px; padding: 20px 16px; overflow: hidden; } .ds-card-title { margin: 0; font-family: 'Baloo 2', sans-serif; font-size: 1.625rem; font-weight: 700; line-height: 1.2; color: var(--color-accent, #e2933e); } .ds-card-meta { font-family: 'Baloo 2', sans-serif; font-size: 0.875rem; color: var(--color-taupe, #9b948a); } .ds-card-body { margin: 0; font-family: Quicksand, sans-serif; font-size: 1rem; font-weight: 500; line-height: 1.6; color: var(--color-tan, #cfc7bc); }"
+      "description": "Surface-filled reading piece; 20px × 16px padding on phones, 24px from sm.",
+      "html": "<article class=\"ds-card\"><h2 class=\"ds-card-title\">Współpraca 1:1</h2><p class=\"ds-card-copy\">Poznaj szczegóły współpracy.</p></article>",
+      "css": ".ds-card{background:var(--color-surface, #2b2724);color:var(--color-cream, #f5f0e8);border:1px solid var(--color-border-strong, #3d3833);border-radius:16px;padding:20px 16px;display:flex;flex-direction:column;gap:24px;}.ds-card-title{margin:0;font-family:var(--font-display, \"Baloo 2\", sans-serif);font-size:26px;line-height:1.2;font-weight:700;}.ds-card-copy{margin:0;color:var(--color-tan, #cfc7bc);font-family:var(--font-sans, Quicksand, sans-serif);font-size:16px;line-height:1.6;font-weight:500;}@media(min-width:640px){.ds-card{padding:24px;}}"
     },
     {
       "name": "Text Input",
       "kind": "input",
       "refersTo": "input",
-      "description": "Ink-soft fill with an inset ring rather than a border; the ring thickens to amber on focus.",
-      "html": "<input class=\"ds-input\" type=\"email\" placeholder=\"Twój adres e-mail\">",
-      "css": ".ds-input { display: block; width: 100%; background: var(--color-ink-soft, #26221f); color: var(--color-cream, #f5f0e8); border: 0; border-radius: 8px; padding: 8px 12px; font-family: Quicksand, sans-serif; font-size: 1rem; line-height: 1.5; box-shadow: inset 0 0 0 1px var(--color-border-input, #47413b); outline: none; } .ds-input::placeholder { color: var(--color-taupe, #9b948a); } .ds-input:focus { box-shadow: inset 0 0 0 2px var(--color-accent, #e2933e); } @media (min-width: 640px) { .ds-input { font-size: 0.875rem; } }"
+      "description": "Inset Field Edge ring; body-size text on phones, compact text from sm.",
+      "html": "<label class=\"ds-input-label\" for=\"ds-email\">Adres e-mail</label><input class=\"ds-input\" id=\"ds-email\" type=\"email\" placeholder=\"Adres e-mail\">",
+      "css": ".ds-input-label{display:block;margin-bottom:8px;color:var(--color-tan, #cfc7bc);font-family:var(--font-sans, Quicksand, sans-serif);font-size:14px;font-weight:500;}.ds-input{display:block;width:100%;background:var(--color-ink-soft, #26221f);color:var(--color-cream, #f5f0e8);border:0;border-radius:8px;padding:8px 12px;font-family:var(--font-sans, Quicksand, sans-serif);font-size:16px;line-height:24px;font-weight:400;box-shadow:inset 0 0 0 1px var(--color-border-input, #80756b),0 1px 2px rgb(0 0 0 / 5%);outline:none;}.ds-input::placeholder{color:var(--color-taupe, #9b948a);}.ds-input:focus,.ds-input:focus-visible{box-shadow:inset 0 0 0 2px var(--color-accent, #e2933e);}.ds-input[readonly]{background:var(--color-surface-dark, #1a1817);color:var(--color-tan, #cfc7bc);}.ds-input:disabled{background:var(--color-surface-dark, #1a1817);cursor:not-allowed;}.ds-input[aria-invalid=\"true\"]{box-shadow:inset 0 0 0 1px var(--color-red-400, oklch(70.4% .191 22.216));}@media(min-width:640px){.ds-input{font-size:14px;}}"
     },
     {
       "name": "Navigation Link",
       "kind": "nav",
       "refersTo": "nav-link",
-      "description": "Bar and menu items. 6px radius, fills to ink-soft and goes amber on hover.",
-      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\">Pakiety</a><a class=\"ds-nav-link\" href=\"#\">Sklep</a><a class=\"ds-nav-link\" href=\"#\">O mnie</a></nav>",
-      "css": ".ds-nav { display: flex; align-items: center; gap: 4px; background: var(--color-surface-dark, #1a1817); border-bottom: 1px solid var(--color-border-strong, #3d3833); padding: 8px 12px; } .ds-nav-link { color: var(--color-cream, #f5f0e8); font-family: Quicksand, sans-serif; font-size: 1rem; font-weight: 500; text-decoration: none; border-radius: 6px; padding: 8px; transition: background 100ms ease-in-out, color 100ms ease-in-out; } .ds-nav-link:hover { background: var(--color-ink-soft, #26221f); color: var(--color-accent, #e2933e); } .ds-nav-link:focus-visible { outline: 2px solid var(--color-accent, #e2933e); outline-offset: 2px; }"
+      "description": "Bold primary navigation with a 44px target and amber hover text.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Nawigacja\"><a class=\"ds-nav-link\" href=\"#audioproces\">Audioproces</a><a class=\"ds-nav-link\" href=\"#packages\">Współpraca 1:1</a></nav>",
+      "css": ".ds-nav{display:flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--color-surface-dark, #1a1817);}.ds-nav-link{display:flex;align-items:center;min-height:44px;padding:8px 12px;border-radius:6px;color:var(--color-cream, #f5f0e8);text-decoration:none;font-family:var(--font-sans, Quicksand, sans-serif);font-size:16px;line-height:1.6;font-weight:700;}.ds-nav-link:hover{color:var(--color-accent, #e2933e);}.ds-nav-link:focus-visible{outline:2px solid var(--color-accent, #e2933e);outline-offset:2px;}"
     },
     {
-      "name": "Astroid Bullet List",
+      "name": "Reading Disclosure",
       "kind": "custom",
-      "refersTo": null,
-      "description": "The system's punctuation. Amber four-point mark for primary items, coral for secondary ones.",
-      "html": "<ul class=\"ds-astroid-list\"><li><svg class=\"ds-astroid ds-astroid-primary\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203\"></path></svg><span>20+ lat doświadczenia</span></li><li><svg class=\"ds-astroid ds-astroid-secondary\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203\"></path></svg><span>Nagranie z konsultacji</span></li></ul>",
-      "css": ".ds-astroid-list { display: flex; flex-direction: column; gap: 8px; list-style: none; padding: 0; margin: 0; } .ds-astroid-list li { display: flex; align-items: flex-start; gap: 8px; font-family: Quicksand, sans-serif; font-size: 1rem; font-weight: 500; line-height: 1.6; color: var(--color-cream, #f5f0e8); } .ds-astroid { width: 16px; height: 16px; flex-shrink: 0; margin-top: 4px; } .ds-astroid-primary { color: var(--color-accent, #e2933e); } .ds-astroid-secondary { color: var(--color-accent-coral, #e3987a); }"
+      "refersTo": "disclosure",
+      "description": "Native disclosure with a short body summary and a localized compact trigger.",
+      "html": "<article class=\"ds-reading\"><h2 class=\"ds-reading-title\">Moja metodologia</h2><p class=\"ds-reading-summary\">Najpierw poznaję Waszą rodzinę.</p><details class=\"ds-disclosure\"><summary class=\"ds-disclosure-trigger\"><span class=\"ds-more\">Czytaj więcej</span><span class=\"ds-less\">Czytaj mniej</span><svg class=\"ds-disclosure-chevron\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></summary><div class=\"ds-reading-copy\">Wspólnie dobieramy małe kroki i tempo zmian.</div></details></article>",
+      "css": ".ds-reading{color:var(--color-tan, #cfc7bc);font-family:var(--font-sans, Quicksand, sans-serif);font-size:16px;line-height:1.7;font-weight:500;}.ds-reading-title{margin:0;color:var(--color-cream, #f5f0e8);font-family:var(--font-display, \"Baloo 2\", sans-serif);font-size:clamp(1.75rem,5vw,2.5rem);line-height:1.2;font-weight:700;text-wrap:balance;}.ds-reading-summary{margin:20px 0 0;}.ds-disclosure{margin-top:12px;}.ds-disclosure-trigger{display:inline-flex;align-items:center;gap:8px;min-height:44px;border-radius:6px;cursor:pointer;list-style:none;color:var(--color-accent, #e2933e);font-family:var(--font-sans, Quicksand, sans-serif);font-size:14px;line-height:1.4;font-weight:700;letter-spacing:.02em;}.ds-disclosure-trigger::-webkit-details-marker{display:none;}.ds-disclosure-trigger:hover{color:var(--color-accent-hover, #ffb35e);}.ds-disclosure-trigger:focus-visible{outline:2px solid var(--color-accent, #e2933e);outline-offset:2px;}.ds-less{display:none;}.ds-disclosure[open] .ds-less{display:inline;}.ds-disclosure[open] .ds-more{display:none;}.ds-disclosure[open] .ds-disclosure-chevron{transform:rotate(180deg);}.ds-reading-copy{margin-top:16px;line-height:1.75;}"
     },
     {
-      "name": "Step Numeral",
+      "name": "Joined Offer Pieces",
       "kind": "custom",
-      "refersTo": "step-numeral",
-      "description": "A 64px lamp-amber disc numbering the process steps. Numbering follows display order, never stored.",
-      "html": "<div class=\"ds-step\"><div class=\"ds-step-numeral\">1</div><span class=\"ds-step-title\">Krok pierwszy</span><span class=\"ds-step-body\">Rozmawiamy o Waszej sytuacji.</span></div>",
-      "css": ".ds-step { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; } .ds-step-numeral { display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; flex-shrink: 0; border-radius: 9999px; background: var(--color-accent, #e2933e); color: var(--color-ink, #211e1c); font-family: 'Baloo 2', sans-serif; font-size: 1.625rem; font-weight: 700; line-height: 1.2; } .ds-step-title { font-family: 'Baloo 2', sans-serif; font-size: 1.1875rem; font-weight: 700; color: var(--color-cream, #f5f0e8); } .ds-step-body { font-family: Quicksand, sans-serif; font-size: 1rem; font-weight: 500; line-height: 1.6; color: var(--color-taupe, #9b948a); }"
-    },
-    {
-      "name": "Section Band",
-      "kind": "custom",
-      "refersTo": null,
-      "description": "The page's rhythm unit: full-bleed tonal band, content capped at 1240px. Consecutive bands alternate ink and ink-soft.",
-      "html": "<section class=\"ds-band ds-band-soft\"><div class=\"ds-band-inner\"><h2 class=\"ds-band-title\">Jak wygląda współpraca</h2><p class=\"ds-band-lead\">Każdy pakiet zaczyna się od rozmowy o Waszej sytuacji.</p></div></section>",
-      "css": ".ds-band { width: 100%; background: var(--color-ink, #211e1c); } .ds-band-soft { background: var(--color-ink-soft, #26221f); border-top: 1px solid var(--color-border-strong, #3d3833); border-bottom: 1px solid var(--color-border-strong, #3d3833); } .ds-band-inner { display: flex; flex-direction: column; gap: 16px; max-width: 1240px; margin: 0 auto; padding: clamp(50px, 8vw, 90px) clamp(20px, 4vw, 28px); } .ds-band-title { margin: 0; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.75rem, 5vw, 2.5rem); font-weight: 700; line-height: 1.2; color: var(--color-cream, #f5f0e8); } .ds-band-lead { margin: 0; max-width: 65ch; font-family: Quicksand, sans-serif; font-size: 1.1875rem; font-weight: 400; line-height: 1.7; color: var(--color-tan, #cfc7bc); }"
+      "refersTo": "offer-puzzle",
+      "description": "Two reading links with a real shared SVG puzzle seam; stacked until md.",
+      "html": "<div class=\"ds-puzzle-pair\"><a class=\"ds-puzzle ds-puzzle-audio\" href=\"#audioproces\"><svg class=\"ds-puzzle-joint ds-puzzle-mobile\" viewBox=\"0 0 80 80\" aria-hidden=\"true\"><path class=\"ds-puzzle-fill\" d=\"M0 0 H80 V40 H60 C60 51 51 60 40 60 C29 60 20 51 20 40 H0 Z\"/><path class=\"ds-puzzle-seam\" d=\"M0 40 H20 C20 51 29 60 40 60 C51 60 60 51 60 40 H80\"/></svg><svg class=\"ds-puzzle-joint ds-puzzle-desktop\" viewBox=\"0 0 80 80\" aria-hidden=\"true\"><path class=\"ds-puzzle-fill\" d=\"M0 0 H40 V20 C51 20 60 29 60 40 C60 51 51 60 40 60 V80 H0 Z\"/><path class=\"ds-puzzle-seam\" d=\"M40 0 V20 C51 20 60 29 60 40 C60 51 51 60 40 60 V80\"/></svg><span class=\"ds-puzzle-label\">Audioproces</span><span>Wolisz zacząć po swojemu?</span><span class=\"ds-puzzle-action\">Poznaj szczegóły</span></a><a class=\"ds-puzzle ds-puzzle-one\" href=\"#packages\"><span class=\"ds-puzzle-label\">Współpraca 1:1</span><span>Poznaj szczegóły współpracy.</span><span class=\"ds-puzzle-action\">Poznaj szczegóły</span></a></div>",
+      "css": ".ds-puzzle-pair{display:grid;}.ds-puzzle{position:relative;display:flex;min-height:256px;flex-direction:column;justify-content:space-between;gap:32px;padding:24px 24px 32px;background:var(--color-surface, #2b2724);color:var(--color-tan, #cfc7bc);text-decoration:none;border:1px solid var(--color-border-strong, #3d3833);transition:border-color 150ms ease;font-family:var(--font-sans, Quicksand, sans-serif);font-size:16px;line-height:1.6;font-weight:500;}.ds-puzzle-audio{z-index:1;border-radius:24px 24px 0 0;}.ds-puzzle-one{border-top:0;border-radius:0 0 24px 24px;}.ds-puzzle-label{font-family:var(--font-sans, Quicksand, sans-serif);font-size:14px;line-height:1.4;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--color-accent, #e2933e);}.ds-puzzle-action{font-weight:700;color:var(--color-accent, #e2933e);}.ds-puzzle-joint{position:absolute;z-index:2;width:80px;height:80px;pointer-events:none;}.ds-puzzle-mobile{bottom:-40.5px;left:calc(50% - 40px);}.ds-puzzle-desktop{display:none;}.ds-puzzle-fill{fill:var(--color-surface, #2b2724);}.ds-puzzle-seam{fill:none;stroke:var(--color-border-strong, #3d3833);stroke-width:1;stroke-linejoin:round;transition:stroke 150ms ease;}.ds-puzzle:is(:hover,:focus-visible){border-color:var(--color-accent, #e2933e);}.ds-puzzle:focus-visible{outline:2px solid var(--color-accent, #e2933e);outline-offset:2px;}.ds-puzzle-audio:is(:hover,:focus-visible) .ds-puzzle-seam,.ds-puzzle-pair:has(>.ds-puzzle-one:is(:hover,:focus-visible)) .ds-puzzle-seam{stroke:var(--color-accent, #e2933e);}.ds-puzzle-pair:has(>.ds-puzzle-one:is(:hover,:focus-visible)) .ds-puzzle-audio{border-bottom-color:var(--color-accent, #e2933e);}@media(min-width:640px){.ds-puzzle{padding:32px;}}@media(min-width:768px){.ds-puzzle-pair{grid-template-columns:repeat(2,minmax(0,1fr));}.ds-puzzle-audio{border-radius:24px 0 0 24px;}.ds-puzzle-one{border-top:1px solid var(--color-border-strong, #3d3833);border-left:0;border-radius:0 24px 24px 0;}.ds-puzzle-mobile{display:none;}.ds-puzzle-desktop{display:block;top:calc(50% - 40px);right:-40.5px;}.ds-puzzle-pair:has(>.ds-puzzle-one:is(:hover,:focus-visible)) .ds-puzzle-audio{border-bottom-color:var(--color-border-strong, #3d3833);border-right-color:var(--color-accent, #e2933e);}}@media(prefers-reduced-motion:reduce){.ds-puzzle,.ds-puzzle-seam{transition:none;}}"
     }
   ],
   "narrative": {
     "northStar": "The Piece That Fits",
-    "overview": "The product's name is not decoration - it is the design brief. Karola describes her work as assembling a family's sleep like a puzzle, piece by piece, and the interface is built the same way: from discrete, self-contained, softly-cornered pieces that tessellate into something whole. A package is a piece. A product is a piece. A step in the process is a piece. Nothing floats, nothing is loose, nothing is missing - and when a piece has nothing to say, it is absent rather than empty.\n\nThe material is soft, tactile, generous and playful. The ground is a warm near-black (ink, #211e1c) - brown-leaning, never blue-leaning, never a true black - and every surface above it is another warm neutral a few points lighter. Corners are large (16px on containers) and actions are fully round. Baloo 2's rounded terminals and the mascot's presence set a register that is closer to a well-made soft toy than to a clinical app. The whole thing is lit by exactly one warm light: accent, a lamp amber, which is the only saturated colour in the system.\n\nThis restraint is not minimalism, it is care. The visitor is an exhausted parent reading on a phone in a dark room, and the design's first job is to be legible and calm at that hour. Softness is how competence is expressed here: generous padding, thumb-sized targets, a palette that does not glare, and a single point of light per screen telling them where to go next.",
+    "overview": "The product's name is the design brief. Karola describes her work as assembling a\nfamily's sleep like a puzzle, piece by piece. The interface follows that metaphor:\ndiscrete, softly cornered pieces, generous space, and a visible connection between\nrelated choices. A package, a product and a disclosure each hold a manageable part\nof the story. Empty collections disappear rather than leaving hollow containers.\n\nThe material is soft, tactile, generous and playful. The ground is a warm near-black,\nbrown-leaning rather than blue-leaning, with progressively lighter warm surfaces.\nBaloo 2's rounded terminals and the mascot establish warmth; the owner's portrait\nprovides a human presence. Amber is the dominant light. Cream and tan carry the\nreading, while borders and small accents guide the eye.\n\nThe intended reader is an exhausted parent on a phone in a dark room. Calm,\nlegibility, large targets and short previews are practical accommodations. Long\ncopy remains available through disclosure instead of dominating the first read.",
     "keyCharacteristics": [
-      "Warm near-black ground; brown-neutral throughout, no cool greys, no true black.",
-      "One saturated colour in the entire system: lamp amber. Everything else is a neutral.",
-      "Depth by tonal layering and hairlines, not by shadow.",
-      "Large radii: 16px pieces, fully-round actions.",
-      "Two typefaces, both rounded: Baloo 2 for display, Quicksand for everything read.",
-      "Self-hosted fonts and zero third-party assets - a design constraint, not just an ops one.",
-      "Built phone-first for a tired one-handed reader."
+      "Warm near-black ground with brown neutrals and cream text.",
+      "One dominant amber accent, with related tones for supporting status messages.",
+      "Depth primarily through tonal layering and hairlines.",
+      "Soft containers, pill CTAs and an interlocking puzzle joint.",
+      "Baloo 2 for named headings and prices; Quicksand for reading and controls.",
+      "Self-hosted fonts and assets as a durable privacy constraint.",
+      "Phone-first spacing, disclosure and recovery paths."
     ],
     "rules": [
       {
         "name": "The One Lamp Rule",
-        "body": "There is one light source per screen. Lamp Amber marks the single most important action in a view and the small marks that guide the eye to it - nothing else. Two amber buttons competing in one viewport means one of them is wrong.",
+        "body": "Amber identifies the principal action or choice. A package\nrow may repeat the same booking action on each card; avoid competing action types\nwith equal amber emphasis in the same group.",
         "section": "colors"
       },
       {
         "name": "The Warm Neutral Rule",
-        "body": "Every neutral in this system leans brown. A cool grey (neutral-*, zinc-*, slate-*) or a pure #fff / #000 anywhere in the public site is drift, not a choice.",
+        "body": "Public content surfaces use the warm neutral tokens.\nPure black backdrops and vendor viewer chrome are overlay treatments, not a new\npage palette. Cool-neutral scaffold is not a model for new public components.",
         "section": "colors"
       },
       {
         "name": "The No Dark Mode Rule",
-        "body": "There is no light mode to toggle away from. The system is dark by construction, so dark: variants are meaningless here - a dark: prefix in this codebase is a leftover from the component scaffold, not a feature.",
+        "body": "The public system is dark by construction. Root\n`color-scheme: dark` also styles native controls. Existing scaffold `dark:` classes\ndo not establish a supported light theme.",
         "section": "colors"
       },
       {
         "name": "The Display-For-Names Rule",
-        "body": "Baloo 2 is for things that are named - headings, titles, wordmarks, durations, step titles. Anything the visitor reads as a sentence is Quicksand. Never set a paragraph in Baloo 2.",
+        "body": "Baloo 2 names things: headings, prices and wordmarks.\nQuicksand explains them. A sentence such as \"Support lasts 5 weeks\" is body copy,\nnot a display duration badge.",
         "section": "typography"
       },
       {
         "name": "The Uppercase Ceiling Rule",
-        "body": "Uppercase is only ever applied at Label size, in Taupe, as a category eyebrow. There is no uppercase heading anywhere in this system, and there should not be - Baloo 2's roundness turns hostile at scale in caps.",
+        "body": "Authored category labels use Label size, in taupe or\namber. Keep editorial headings in natural case. Owner-supplied package names can\nretain their existing uppercase spelling; do not silently rewrite their content.",
         "section": "typography"
       },
       {
         "name": "The Two-Language Rule",
-        "body": "Every type decision must survive Polish. Polish words run noticeably longer than their English equivalents, so headline sizes are set in clamp() and no label is allowed to depend on fitting a fixed-width box.",
+        "body": "Every layout must allow Polish expansion and wrapping.\nThe English route can intentionally fall back to Polish owner content. Test the\nactual text instead of assuming a short translated label.",
         "section": "typography"
       },
       {
-        "name": "The Alternating Band Rule",
-        "body": "Consecutive sections alternate ink and ink-soft. Two adjacent sections on the same background is a seam that disappears, and a long page then reads as one undifferentiated scroll.",
+        "name": "The Tonal Band Rule",
+        "body": "Alternate ink and ink-soft to separate distinct page groups.\nOptional sections can change the sequence; adjacent ink sections are valid when\nthey belong to the same flow, as on the package overview and calendar.",
         "section": "layout"
       },
       {
         "name": "The Full-Bleed Band, Capped Content Rule",
-        "body": "Backgrounds always span the viewport; content never exceeds 1240px. A section that constrains its own background is wrong.",
+        "body": "Backgrounds span the viewport; readable\ncontent stays in a capped wrapper with fluid gutters. Avoid horizontal scrolling\nin public reading and purchase paths.",
         "section": "layout"
       },
       {
         "name": "The Flat Page Rule",
-        "body": "In-page surfaces are flat. If a piece needs to feel lifted, raise its tone (ink → surface) or firm up its border - never add a shadow.",
+        "body": "Default in-page pieces use tone and edge to separate content.\nDo not add a drop shadow simply to make a card seem more important. Existing field\nand testimonial exceptions have specific component roles.",
         "section": "elevation"
       },
       {
         "name": "The Glow Is Not A Shadow Rule",
-        "body": "The hero's radial gradient-hero wash is light emitted by the mascot, not depth cast by it. Radial warmth is available as an atmospheric device; it never doubles as an elevation cue.",
+        "body": "The retained hero glow is atmospheric light,\nnot an elevation cue. Do not infer a glow requirement for new sections.",
         "section": "elevation"
       },
       {
         "name": "The Pill-For-Action Rule",
-        "body": "If it is the thing you want the visitor to press, it is a pill. Radius signals affordance in this system: round means do, 16px means read.",
+        "body": "Prominent public CTAs use pills. Smaller menu, disclosure\nand calendar controls retain their own compact form; not every interactive element\nneeds a pill silhouette.",
         "section": "shapes"
       }
     ],
     "dos": [
-      "Do keep every neutral warm and brown-leaning. ink (#211e1c) is the floor of the system; cream (#f5f0e8) is the ceiling.",
-      "Do give each screen exactly one Lamp Amber primary action. Its rarity is what makes it work.",
-      "Do alternate section backgrounds ink / ink-soft down a long page.",
-      "Do reach for the astroid mark instead of a generic bullet - it is the fastest signature in the system.",
-      "Do keep body text at 16px minimum on mobile, and inputs at 16px, so iOS Safari does not zoom on focus.",
-      "Do set headline sizes in clamp() and let labels wrap. Polish runs long.",
-      "Do pin card CTAs with mt-auto so a row of pieces aligns at the bottom.",
-      "Do preserve a visible focus-visible outline in Lamp Amber on every interactive element. WCAG 2.1 AA is binding on this project.",
-      "Do keep fonts and every other asset self-hosted. The site's no-consent-banner position depends on making zero third-party requests.",
-      "Do let Card::Component supply its own edge. Every variant resolves to system tokens (border-strong edge, ink-soft well and footer, border dividers), so a call site writing border-border-strong! is re-stating the default. hoverable: lifts the border rather than casting a shadow, per the Flat Page Rule."
+      "Do keep public surfaces within the warm palette and use amber for clear emphasis.",
+      "Do use the six bundled type levels, with 16px body reading and 14px labels.",
+      "Do apply `trix-lead` or `trix-copy` to rich-text containers for the intended role.",
+      "Do preserve the fluid section gutters, generous spacing and breakpoint-specific grids.",
+      "Do pin overview-card actions to the bottom and let long owner content grow.",
+      "Do keep at least 44px targets for phone navigation and calendar interactions.",
+      "Do preserve visible amber focus, native semantics and meaningful accessible names.",
+      "Do provide readable unavailable states with a concrete recovery action.",
+      "Do reserve image geometry and defer heavy viewer code until it is needed.",
+      "Do preserve the owner's comparison image and use its original for enlargement.",
+      "Do keep fonts and new assets self-hosted, as required by PRODUCT.md's privacy commitment.",
+      "Do distinguish documented component defaults from deliberate, existing exceptions."
     ],
     "donts": [
-      "Don't use Tailwind's cool neutrals (neutral-*, zinc-*, slate-*, gray-*), bg-white, or pure black anywhere on the public site.",
-      "Don't write dark: variants. This system has no light mode; a dark: prefix here is dead code that will never apply.",
-      "Don't use Buttons::Component's style: :fancy variants. They are unconverted scaffold - grey-and-white gradient buttons from a generic component library that bear no relationship to this design system. The :basic variants are the real ones.",
-      "Don't use the bare select, [type=\"checkbox\"] or [type=\"radio\"] styles from application.css on a public page without converting them first. They are still white-on-neutral-300 scaffold and will punch a hole in the warm-dark world.",
-      "Don't add drop shadows to in-page elements. Raise the tone or firm the border.",
-      "Don't set a paragraph in Baloo 2, and don't set an uppercase heading in it at all.",
-      "Don't introduce a second saturated colour. Coral and gold are tints of the one lamp, not new accents.",
-      "Don't use Taupe Dark for anything the visitor needs to read.",
-      "Don't tighten the spacing to fit more above the fold. The low density is the accommodation for the exhausted reader, not slack to be reclaimed.",
-      "Don't add urgency, scarcity, countdowns or red badges to commerce surfaces. The visitor is already frightened; this system never trades on that."
+      "Don't copy cool-neutral scaffold or `style: :fancy` buttons into public surfaces.",
+      "Don't treat retained hidden home sections as the active design.",
+      "Don't add a light theme by scattering `dark:` variants into this dark-only system.",
+      "Don't shrink explanatory paragraphs to Label size or set them in Baloo 2.",
+      "Don't silently change the capitalization or facts in owner-managed content.",
+      "Don't add decorative shadows to default in-page cards.",
+      "Don't use Taupe Dark for text the visitor needs to read.",
+      "Don't shrink calendar targets or hide clipped columns to make a breakpoint fit.",
+      "Don't turn a service failure into a misleading empty or fully booked state.",
+      "Don't remove native image-link recovery when adding a viewer.",
+      "Don't add urgency, scarcity, countdowns or invented review evidence."
     ]
   }
 }

@@ -18,7 +18,11 @@ colors:
   accent-terracotta: "#c97a2e"
   accent-coral: "#e3987a"
   accent-gold: "#d9a441"
-  gradient-hero: "#c97a2e33"
+  gradient-hero: "#C97A2E33"
+  red-300: "oklch(80.8% 0.114 19.571)"
+  red-400: "oklch(70.4% 0.191 22.216)"
+  red-500: "oklch(63.7% 0.237 25.331)"
+  red-600: "oklch(57.7% 0.245 27.325)"
 typography:
   display:
     fontFamily: "Baloo 2, sans-serif"
@@ -51,34 +55,46 @@ typography:
     fontWeight: 700
     lineHeight: 1.4
     letterSpacing: "0.02em"
+  lead-copy:
+    fontFamily: "Quicksand, sans-serif"
+    fontSize: "1.1875rem"
+    fontWeight: 400
+    lineHeight: 1.75
+  body-copy:
+    fontFamily: "Quicksand, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 500
+    lineHeight: 1.75
 rounded:
   md: "6px"
   lg: "8px"
   "2xl": "16px"
+  "3xl": "24px"
   full: "9999px"
 spacing:
   xs: "8px"
   sm: "16px"
   md: "24px"
-  lg: "36px"
+  lg: "32px"
   xl: "48px"
   section: "clamp(50px, 8vw, 90px)"
+  section-compact: "clamp(12px, 2vw, 28px)"
   gutter: "clamp(20px, 4vw, 28px)"
 components:
   button-primary:
     backgroundColor: "{colors.accent}"
     textColor: "{colors.ink}"
     rounded: "{rounded.full}"
-    padding: "12px 24px"
+    padding: "16px 24px"
     typography: "{typography.label}"
   button-primary-hover:
     backgroundColor: "{colors.accent-hover}"
     textColor: "{colors.ink}"
   button-secondary:
-    backgroundColor: "{colors.ink-soft}"
+    backgroundColor: "{colors.ink}"
     textColor: "{colors.cream}"
     rounded: "{rounded.full}"
-    padding: "12px 24px"
+    padding: "16px 24px"
     typography: "{typography.label}"
   button-secondary-hover:
     backgroundColor: "{colors.ink-soft}"
@@ -88,11 +104,25 @@ components:
     textColor: "{colors.cream}"
     rounded: "{rounded.full}"
     padding: "12px 24px"
+  button-outline-hover:
+    backgroundColor: "{colors.ink-soft}"
+    textColor: "{colors.cream}"
   button-ghost:
     backgroundColor: "transparent"
     textColor: "{colors.cream}"
     rounded: "{rounded.lg}"
     padding: "8px 14px"
+  button-ghost-hover:
+    backgroundColor: "{colors.ink-soft}"
+    textColor: "{colors.cream}"
+  button-destructive:
+    backgroundColor: "{colors.red-600}"
+    textColor: "{colors.cream}"
+    rounded: "{rounded.lg}"
+    padding: "8px 14px"
+  button-destructive-hover:
+    backgroundColor: "{colors.red-500}"
+    textColor: "{colors.cream}"
   card:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.cream}"
@@ -103,20 +133,22 @@ components:
     textColor: "{colors.cream}"
     rounded: "{rounded.lg}"
     padding: "8px 12px"
-    typography: "{typography.body}"
   nav-link:
     backgroundColor: "transparent"
     textColor: "{colors.cream}"
     rounded: "{rounded.md}"
-    padding: "8px 8px"
-    typography: "{typography.body}"
-  step-numeral:
-    backgroundColor: "{colors.accent}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.full}"
-    height: "64px"
-    width: "64px"
-    typography: "{typography.title}"
+    padding: "8px 12px"
+    height: "44px"
+  disclosure:
+    backgroundColor: "transparent"
+    textColor: "{colors.accent}"
+    rounded: "{rounded.md}"
+    typography: "{typography.label}"
+  offer-puzzle:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.cream}"
+    rounded: "{rounded.3xl}"
+    padding: "24px"
 ---
 
 # Design System: Sleep Puzzle
@@ -125,362 +157,369 @@ components:
 
 **Creative North Star: "The Piece That Fits"**
 
-The product's name is not decoration - it is the design brief. Karola describes her
-work as assembling a family's sleep like a puzzle, piece by piece, and the interface
-is built the same way: from discrete, self-contained, softly-cornered pieces that
-tessellate into something whole. A package is a piece. A product is a piece. A step
-in the process is a piece. Nothing floats, nothing is loose, nothing is missing -
-and when a piece has nothing to say, it is absent rather than empty.
+The product's name is the design brief. Karola describes her work as assembling a
+family's sleep like a puzzle, piece by piece. The interface follows that metaphor:
+discrete, softly cornered pieces, generous space, and a visible connection between
+related choices. A package, a product and a disclosure each hold a manageable part
+of the story. Empty collections disappear rather than leaving hollow containers.
 
-The material is soft, tactile, generous and playful. The ground is a warm near-black
-(`ink`, #211e1c) - brown-leaning, never blue-leaning, never a true black - and every
-surface above it is another warm neutral a few points lighter. Corners are large
-(16px on containers) and actions are fully round. Baloo 2's rounded terminals and the
-mascot's presence set a register that is closer to a well-made soft toy than to a
-clinical app. The whole thing is lit by exactly one warm light: `accent`, a lamp
-amber, which is the only saturated colour in the system.
+The material is soft, tactile, generous and playful. The ground is a warm near-black,
+brown-leaning rather than blue-leaning, with progressively lighter warm surfaces.
+Baloo 2's rounded terminals and the mascot establish warmth; the owner's portrait
+provides a human presence. Amber is the dominant light. Cream and tan carry the
+reading, while borders and small accents guide the eye.
 
-This restraint is not minimalism, it is care. The visitor is an exhausted parent
-reading on a phone in a dark room, and the design's first job is to be legible and
-calm at that hour. Softness is how competence is expressed here: generous padding,
-thumb-sized targets, a palette that does not glare, and a single point of light per
-screen telling them where to go next.
+The intended reader is an exhausted parent on a phone in a dark room. Calm,
+legibility, large targets and short previews are practical accommodations. Long
+copy remains available through disclosure instead of dominating the first read.
 
 **Key Characteristics:**
 
-- Warm near-black ground; brown-neutral throughout, no cool greys, no true black.
-- One saturated colour in the entire system: lamp amber. Everything else is a neutral.
-- Depth by tonal layering and hairlines, not by shadow.
-- Large radii: 16px pieces, fully-round actions.
-- Two typefaces, both rounded: Baloo 2 for display, Quicksand for everything read.
-- Self-hosted fonts and zero third-party assets - a design constraint, not just an ops one.
-- Built phone-first for a tired one-handed reader.
+- Warm near-black ground with brown neutrals and cream text.
+- One dominant amber accent, with related tones for supporting status messages.
+- Depth primarily through tonal layering and hairlines.
+- Soft containers, pill CTAs and an interlocking puzzle joint.
+- Baloo 2 for named headings and prices; Quicksand for reading and controls.
+- Self-hosted fonts and assets as a durable privacy constraint.
+- Phone-first spacing, disclosure and recovery paths.
+
+This reference describes the current implementation. Sources are the theme and
+utilities in `app/frontend/entrypoints/application.css`, shared ViewComponents,
+and public views. Legacy scaffold and retained hidden sections are distinguished
+from active patterns below. It follows the [DESIGN.md format](https://raw.githubusercontent.com/google-labs-code/design.md/main/docs/spec.md).
 
 ## Colors
 
-A single-accent system: sixteen warm neutrals arranged from near-black to cream,
-lit by one amber. There is no secondary or tertiary accent role - the coral and gold
-below are tints of the same light, not competing voices.
+A single dominant amber sits within a warm neutral ladder. Related coral, gold and
+terracotta tones support meaning; they do not create additional competing brands.
+Token values in the frontmatter are normative.
 
 ### Primary
 
-- **Lamp Amber** (`accent`): The system's one voice. Every primary action, every list
-  marker, every focus ring, every link, and the numerals on the process steps. It is
-  a light source rather than a fill - it appears against ink, never against another
-  saturated colour.
-- **Lamp Amber Bright** (`accent-hover`): The hover and active state of Lamp Amber.
-  Brighter and slightly pinker, so a hovered control reads as *turned up* rather than
-  as a different colour.
-- **Terracotta** (`accent-terracotta`): The deeper, dustier amber used as the hairline
-  border on primary buttons (at 30% alpha) and as the source colour of the hero glow.
-  It bounds the light; it is not a fill colour on its own.
-- **Coral** (`accent-coral`): Reserved for the secondary tier of accent marks - the
-  astroid bullets on a package's "also included" list, which must read as subordinate
-  to the amber check marks above them.
-- **Gold** (`accent-gold`): Declared and available for a warmer, less orange accent
-  moment. Currently unused; use it deliberately or not at all.
+- **Lamp Amber** (`accent`): Primary actions, links, focus outlines, selected calendar
+  dates, check marks and package titles.
+- **Lamp Amber Bright** (`accent-hover`): Brighter hover feedback for actions and links.
+- **Terracotta** (`accent-terracotta`): Primary button hairline at 30% alpha and warning
+  titles. The retained hero glow also derives from this hue.
+- **Coral** (`accent-coral`): Error titles and editorial warnings in the admin tools.
+- **Gold** (`accent-gold`): Success titles in the shared alert component.
+- **Hero Glow** (`gradient-hero`): Declared translucent atmosphere token. Used in the
+  retained, hidden home composition; the active portrait hero has no glow.
 
 ### Neutral
 
-Surfaces, darkest to lightest - the whole depth model lives in this ladder:
+- **Surface Dark** (`surface-dark`): Navbar, footer, dropdowns and inert field fill.
+- **Ink** (`ink`): Page floor, secondary buttons and text on amber.
+- **Ink Soft** (`ink-soft`): Alternating bands, inputs, wells and secondary hover fill.
+- **Surface** (`surface`): Cards, package dialogs and the joined offer pieces.
+- **Hairline** (`border`): Quiet dividers and dropdown edges.
+- **Piece Edge** (`border-strong`): Container boundaries and section-band rules.
+- **Field Edge** (`border-input`): Visible control boundaries, input rings and
+  secondary/outline button edges. Keep container and control edges distinct.
+- **Cream** (`cream`): Primary text and most headings.
+- **Tan** (`tan`): Supporting reading copy.
+- **Taupe** (`taupe`): Readable muted metadata, helper text and placeholders. The
+  footer copyright also uses this token.
+- **Taupe Dark** (`taupe-dark`): Inactive slot text. Avoid it for required reading.
 
-- **Ink** (`ink`): The page. A warm near-black with a brown cast. The default section
-  background and the text colour that sits on amber.
-- **Ink Soft** (`ink-soft`): The alternating section band, and the resting fill of
-  inputs and secondary buttons. Barely a step up from Ink - the difference is felt
-  more than seen, which is the point.
-- **Surface** (`surface`): Cards and pieces. The one surface that reads as lifted
-  off the page.
-- **Surface Dark** (`surface-dark`): The footer and the navbar - the chrome that
-  bookends the page sits *below* it, not above.
+### Functional exceptions
 
-Borders, faint to firm:
-
-- **Hairline** (`border`): Section dividers and the footer's rules. The quietest
-  separation in the system.
-- **Piece Edge** (`border-strong`): The border of every card. This is what makes a
-  piece read as a discrete object against `surface`.
-- **Field Edge** (`border-input`): Input rings, checkboxes, and the outline of
-  secondary pills. The only border meant to be clearly visible, and the value is
-  set by that job: it clears WCAG 1.4.11 (3:1) against all four surfaces, so it
-  is the correct token for a **control boundary** and the wrong one for a
-  container edge or a text colour - those are `border-strong` and `taupe-dark`.
-
-Text, brightest to faintest:
-
-- **Cream** (`cream`): Primary reading colour and every heading on a dark ground.
-  Warm off-white - never `#ffffff`.
-- **Tan** (`tan`): Body copy in a supporting role - subtitles, descriptions, card
-  paragraphs, footer links.
-- **Taupe** (`taupe`): Muted metadata, uppercase micro-labels, durations, placeholders.
-- **Taupe Dark** (`taupe-dark`): Faint text only - the copyright line, the borders of
-  de-emphasised pills. Below body-text contrast; never use it for anything a visitor
-  must read.
+The shared destructive button uses Tailwind's **Red 600**, **Red 500** on hover and
+**Red 300** at 30% alpha on its edge. Form errors use **Red 400** rings. These are
+functional states, not additional marketing accents. Their source OKLCH values are
+preserved in the frontmatter.
 
 ### Named Rules
 
-**The One Lamp Rule.** There is one light source per screen. Lamp Amber marks the
-single most important action in a view and the small marks that guide the eye to it -
-nothing else. Two amber buttons competing in one viewport means one of them is wrong.
+**The One Lamp Rule.** Amber identifies the principal action or choice. A package
+row may repeat the same booking action on each card; avoid competing action types
+with equal amber emphasis in the same group.
 
-**The Warm Neutral Rule.** Every neutral in this system leans brown. A cool grey
-(`neutral-*`, `zinc-*`, `slate-*`) or a pure `#fff` / `#000` anywhere in the public
-site is drift, not a choice.
+**The Warm Neutral Rule.** Public content surfaces use the warm neutral tokens.
+Pure black backdrops and vendor viewer chrome are overlay treatments, not a new
+page palette. Cool-neutral scaffold is not a model for new public components.
 
-**The No Dark Mode Rule.** There is no light mode to toggle away from. The system is
-dark by construction, so `dark:` variants are meaningless here - a `dark:` prefix in
-this codebase is a leftover from the component scaffold, not a feature.
+**The No Dark Mode Rule.** The public system is dark by construction. Root
+`color-scheme: dark` also styles native controls. Existing scaffold `dark:` classes
+do not establish a supported light theme.
 
 ## Typography
 
-**Display Font:** Baloo 2 (with `sans-serif`), variable, weights 400–800
-**Body Font:** Quicksand (with `sans-serif`), variable, weights 300–700
+**Display Font:** Baloo 2, `sans-serif`, variable weights 400–800.
+**Body Font:** Quicksand, `sans-serif`, variable weights 300–700.
 
-Both are self-hosted from `app/frontend/fonts` and subset into `latin` and
-`latin-ext`; the extended subset is mandatory, because Polish needs ą/ć/ę/ł/ń/ś/ź/ż.
+Both are self-hosted from `app/frontend/fonts`, with `font-display: swap` and separate
+latin/latin-ext subsets. Keep the extended subset for Polish characters.
 
-**Character:** Two rounded geometric sans faces, deliberately paired rather than
-contrasted. Baloo 2 is warm, heavy and slightly bouncy - it carries the personality
-and the humour. Quicksand is the same roundness at low contrast and light weight,
-which keeps long Polish sentences readable without the page ever turning severe.
-The pairing has no serif, no condensed face and no monospace: nothing in this system
-is meant to look technical.
+The rounded pairing gives the headings personality without changing register for
+long copy. Font-family is separate from the bundled `text-t1`–`text-t6` utilities;
+headings explicitly opt into `font-display`.
 
 ### Hierarchy
 
-- **Display** (Baloo 2, 700, `clamp(2.25rem, 6vw, 4rem)` / 1.08): The one page title.
-  Hero headlines and page H1s only.
-- **Headline** (Baloo 2, 700, `clamp(1.75rem, 5vw, 2.5rem)` / 1.2): Section headings.
-  The most common large type on the site.
-- **Title** (Baloo 2, 700, 26px / 1.2): Card and subsection titles - a package's name,
-  a product's name, the wordmark in the navbar and footer.
-- **Lead** (Quicksand, 400, 19px / 1.7): The paragraph directly under a Display or
-  Headline. Lighter than body on purpose; it is read at a glance, not studied.
-- **Body** (Quicksand, 500, 16px / 1.6): All reading copy. Medium rather than regular,
-  because 400-weight Quicksand on a dark ground goes thin. Constrain long-form measure
-  to roughly 65–75ch. Long-form prose (the about page) applies `--leading-copy`
-  (1.75) through the `trix-lead` / `trix-copy` modifiers on a rich-text container.
-- **Label** (Quicksand, 700, 14px / 1.4, +0.02em): Micro-labels, footer links, button
-  text, and the uppercase eyebrows on cards ("Dla kogo", "Co otrzymujecie").
+- **Display / t1** (Baloo 2, 700, 36–64px / 1.08): Hero and page titles. Semantic heading
+  level follows the document outline, not the size utility.
+- **Headline / t2** (Baloo 2, 700, 28–40px / 1.2): Section headings.
+- **Title / t3** (Baloo 2, 700, 26px / 1.2): Card names, prices, subsection titles and
+  the wordmark. Prices use tabular numerals.
+- **Lead / t4** (Quicksand, 400, 19px / 1.7): Supporting introductions.
+- **Body / t5** (Quicksand, 500, 16px / 1.6): Summaries, benefits, duration sentences,
+  booking instructions and the comparison-image hint.
+- **Label / t6** (Quicksand, 700, 14px / 1.4, +0.02em): Card categories, compact
+  actions and footer links. Labels are not a substitute for reading text.
+- **Rich lead** (`trix-lead`, 19px / 1.75): Styles the nested `.trix-content` itself.
+  Defaults to cream; `trix-lead text-tan` gives a supporting introduction.
+- **Rich body** (`trix-copy`, 16px / 1.75): Expanded prose. Base `.trix-content` remains
+  body size; paragraphs have a 16px bottom gap except the last paragraph.
+
+Common leads are constrained to `max-w-2xl` (672px), closing prose to `max-w-xl`
+(576px). Aim for a comfortable 65–75 characters in wider reading blocks. Headings
+use balanced wrapping where implemented; `text-pretty` improves prose line endings.
 
 ### Named Rules
 
-**The Display-For-Names Rule.** Baloo 2 is for things that are *named* - headings,
-titles, wordmarks, durations, step titles. Anything the visitor reads as a sentence
-is Quicksand. Never set a paragraph in Baloo 2.
+**The Display-For-Names Rule.** Baloo 2 names things: headings, prices and wordmarks.
+Quicksand explains them. A sentence such as "Support lasts 5 weeks" is body copy,
+not a display duration badge.
 
-**The Uppercase Ceiling Rule.** Uppercase is only ever applied at Label size, in
-Taupe, as a category eyebrow. There is no uppercase heading anywhere in this system,
-and there should not be - Baloo 2's roundness turns hostile at scale in caps.
+**The Uppercase Ceiling Rule.** Authored category labels use Label size, in taupe or
+amber. Keep editorial headings in natural case. Owner-supplied package names can
+retain their existing uppercase spelling; do not silently rewrite their content.
 
-**The Two-Language Rule.** Every type decision must survive Polish. Polish words run
-noticeably longer than their English equivalents, so headline sizes are set in
-`clamp()` and no label is allowed to depend on fitting a fixed-width box.
+**The Two-Language Rule.** Every layout must allow Polish expansion and wrapping.
+The English route can intentionally fall back to Polish owner content. Test the
+actual text instead of assuming a short translated label.
 
 ## Layout
 
-A single centred column, capped at **1240px**, with a horizontal gutter of
-`clamp(20px, 4vw, 28px)`. The page is a vertical stack of full-bleed sections whose
-backgrounds alternate `ink` / `ink-soft`; only the inner content is constrained,
-so the tonal bands run edge to edge and give a long page its rhythm.
+Full-width section backgrounds contain centred content. `Section::Component` caps
+its padded wrapper at 1240px. Its horizontal gutter is fluid (20–28px). Some bespoke
+sections cap the inner column after applying outer padding; follow the relevant
+existing component rather than imposing an identical inner width on every route.
 
-**Vertical rhythm** is carried by three section paddings, and nothing else should
-invent a fourth: standard `clamp(50px, 8vw, 90px)`, compact `clamp(12px, 2vw, 28px)`
-for thin strips like the stats bar, and none for sections that manage their own.
+The three section utilities are standard (50–90px vertical), compact (12–28px) and
+none (horizontal gutters only). Within a section, 8px groups labels and copy, 16px
+joins related content, 24px separates card blocks and grid items, 32px separates
+section children, and 48px creates larger pauses. Use the underlying 4px scale for
+smaller optical adjustments.
 
-**Spacing** follows a 4px base, and in practice six steps do all the work: 8px
-(inside a label group), 16px (between related elements), 24px (between blocks within
-a piece and between cards in a grid), 36px, and 48px for the widest column gaps.
+### Responsive patterns
 
-**Responsive behaviour** is phone-first and mostly binary. Card grids run
-`1 → 2 (md) → 3 (lg)`; two-column layouts stack below `md`; the navbar collapses to
-a hamburger below `lg`. Breakpoints are Tailwind's defaults (sm 640, md 768, lg 1024,
-xl 1280). Where a list is owner-managed and can change length, the row uses `flex-1`
-distribution rather than a fixed column count, so a fourth process step divides the
-row instead of breaking it.
+- Tailwind defaults: `sm` 640px, `md` 768px, `lg` 1024px, `xl` 1280px.
+- Package overview: one column on phones, two from `sm`, three from `lg` when three
+  or more packages exist. One package caps at 376px, two at 776px, and larger sets
+  at 1176px. The grid gap is 24px.
+- Home hero, joined offer choices and paired reading blocks become columns at `md`.
+- Calendar/date and time selection remain stacked until `lg`.
+- The navbar switches to the hamburger presentation below `lg`.
+- Footer columns use `repeat(auto-fit, minmax(180px, 1fr))`; the container remains
+  bounded by the viewport.
 
-**Density is low and deliberate.** Cards are `gap-6` internally, sections are
-`gap-8`. Nothing is packed. This is the single most load-bearing accommodation for
-the tired reader, and tightening it to fit more above the fold is the wrong trade.
+Package cards stretch within a row. Actions sit at the bottom with `mt-auto`; card
+names reserve two title lines from `sm` so duration and price baselines align with
+the current names. Longer owner copy can grow naturally. On narrow phones below
+400px the calendar borrows the 20px page gutters so seven 44px targets fit without
+clipping or shrinking.
 
 ### Named Rules
 
-**The Alternating Band Rule.** Consecutive sections alternate `ink` and `ink-soft`.
-Two adjacent sections on the same background is a seam that disappears, and a long
-page then reads as one undifferentiated scroll.
+**The Tonal Band Rule.** Alternate ink and ink-soft to separate distinct page groups.
+Optional sections can change the sequence; adjacent ink sections are valid when
+they belong to the same flow, as on the package overview and calendar.
 
-**The Full-Bleed Band, Capped Content Rule.** Backgrounds always span the viewport;
-content never exceeds 1240px. A section that constrains its own background is wrong.
+**The Full-Bleed Band, Capped Content Rule.** Backgrounds span the viewport; readable
+content stays in a capped wrapper with fluid gutters. Avoid horizontal scrolling
+in public reading and purchase paths.
 
 ## Elevation & Depth
 
-Depth is **tonal, not cast**. Four warm surfaces stack from `surface-dark` (chrome)
-through `ink` (page) and `ink-soft` (alternate band) to `surface` (pieces), and
-hairline borders - `border-strong` on cards, `border` on dividers - do the actual
-work of separating one thing from another. On a near-black ground a grey drop shadow
-is invisible, so the system does not rely on one.
-
-Shadows survive for exactly one job: **things that float above the page.** Dropdowns,
-the mobile menu panel, toasts and modals may cast, because they genuinely overlap
-content and need to be read as temporarily on top of it. Nothing that sits *in* the
-page - no card, no section, no button - earns a shadow.
+Depth primarily comes from the four warm surfaces and hairline edges. Default cards
+cast no shadow; `hoverable:` firms their border and `clickable:` can change their
+fill. Overlapping menus and dialogs use the shared shadow utilities.
 
 ### Shadow Vocabulary
 
-- **Overlay** (`box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45)`): Menus, dropdowns,
-  toasts, dialogs. Deep and soft enough to separate from ink without a visible edge.
+- **Overlay / shadow-xl** (`0 20px 25px -5px rgb(0 0 0 / 10%), 0 8px 10px -6px rgb(0 0 0 / 10%)`):
+  Dropdowns, package dialogs and the calendar's processing overlay.
+- **Field / shadow-xs** (`0 1px 2px 0 rgb(0 0 0 / 5%)`): Small field depth beneath the
+  inset control ring.
+- **Testimonial** (`0 12px 36px rgba(0,0,0,0.12)`): A subtle existing exception on the
+  testimonial card variant. It does not change the default card treatment.
+
+Package dialogs dim the page with a 65% black backdrop; the staff calendar dialog
+uses 55%. These overlays protect the reading focus. The declared hero glow remains
+in the retained hidden composition; it is not a feature of the active hero.
 
 ### Named Rules
 
-**The Flat Page Rule.** In-page surfaces are flat. If a piece needs to feel lifted,
-raise its tone (`ink` → `surface`) or firm up its border - never add a shadow.
+**The Flat Page Rule.** Default in-page pieces use tone and edge to separate content.
+Do not add a drop shadow simply to make a card seem more important. Existing field
+and testimonial exceptions have specific component roles.
 
-**The Glow Is Not A Shadow Rule.** The hero's radial `gradient-hero` wash is light
-emitted by the mascot, not depth cast by it. Radial warmth is available as an
-atmospheric device; it never doubles as an elevation cue.
+**The Glow Is Not A Shadow Rule.** The retained hero glow is atmospheric light,
+not an elevation cue. Do not infer a glow requirement for new sections.
+
+Motion is feedback: buttons and calendar states use 100ms, the puzzle seam 150ms,
+menus 200ms and the shared accordion 300ms. Native reading disclosures open directly.
+Reduced-motion styles remove navbar and puzzle transitions; custom viewer zoom uses
+the duration resolved by PhotoSwipe, including zero for reduced motion/slow updates.
+The dashboard arrival highlight runs only without a reduced-motion preference.
 
 ## Shapes
 
-The form language is **soft, generous and thumb-friendly** - the silhouette of every
-element should suggest something safe to touch when you are not fully awake.
-
-- **Pieces** (cards, product tiles, package cards) carry a **16px** radius (`2xl`)
-  with a `border-strong` hairline. This is the system's signature shape and the
-  literal expression of the puzzle metaphor.
-- **Actions** are **fully round** (`rounded-full`). Every primary and secondary CTA
-  on the public site is a pill; a square-cornered button is off-system.
-- **Fields and small chrome** use **8px** (`lg`) - inputs, images, the mobile menu's
-  rows. Just enough softening not to read as a rectangle.
-- **Menu rows and nav triggers** use **6px** (`md`), the smallest radius in use.
-- **Marks are circles.** The process-step numerals are 64px amber discs; the mascot,
-  the avatar and the hero glow are all circular.
-
-The one non-round form in the system is the **astroid** - a four-pointed concave
-star used as the accent bullet on stat lists and package add-ons. It is the only
-piece of geometry with points, which is precisely what makes it work as a marker.
+- **Standard pieces**: 16px corners and a Piece Edge hairline.
+- **Portraits and joined offers**: 24px outer corners. The offer pair shares one
+  edge, with an 80px SVG puzzle joint that rotates its layout between stacked and
+  side-by-side presentations.
+- **Public CTAs**: Fully rounded pills. Utility buttons and form controls use 8px
+  corners; navigation and disclosure triggers use 6px corners.
+- **Avatars**: Circular crops with initials or image fallbacks.
+- **Marks**: Lucide check/arrow/chevron icons. The astroid remains in the about-page
+  qualification list and retained home sections, not the current package benefits.
 
 ### Named Rules
 
-**The Pill-For-Action Rule.** If it is the thing you want the visitor to press, it is
-a pill. Radius signals affordance in this system: round means *do*, 16px means *read*.
+**The Pill-For-Action Rule.** Prominent public CTAs use pills. Smaller menu, disclosure
+and calendar controls retain their own compact form; not every interactive element
+needs a pill silhouette.
 
 ## Components
 
 ### Buttons
 
-- **Shape:** Fully round pills (`rounded-full`, 9999px) for public CTAs; 8px
-  (`rounded-lg`) for utility buttons inside dense UI.
-- **Primary:** Lamp Amber fill with Ink text and a Terracotta hairline at 30% alpha
-  (`border border-accent-terracotta/30`), 12px × 24px padding, Label typography at
-  weight 700. This is the "do the thing" button - booking, buying, submitting.
-- **Secondary:** Ink Soft fill, Cream text, Field Edge border. Sits beside a primary
-  without competing with it.
-- **Outline / Ghost:** Transparent, Cream text; ghost drops the border. For tertiary
-  and in-card actions.
-- **Destructive:** Red fill, Cream text. Rare and staff-facing; it is the one place
-  a non-warm hue is permitted, because a delete confirmation should not look cosy.
-- **Hover:** Primary brightens to `accent-hover`; every other variant fills to
-  `ink-soft`. Transitions are 100ms `ease-in-out` - fast, because a hover is feedback,
-  not an animation.
-- **Focus:** `outline-2 outline-offset-2` in Lamp Amber on `:focus-visible`. This is
-  a WCAG requirement in this project, not a nicety; never remove it.
-- **Disabled:** 50% opacity and `not-allowed`. The system has no separate disabled fill.
+Warm, direct controls with a clear emphasis step.
+
+- **Primary:** Amber fill, ink text, Terracotta edge at 30% alpha.
+- **Secondary:** Ink fill, cream text, Field Edge border; ink-soft hover fill.
+- **Outline:** Transparent fill, cream text and Field Edge border; ink-soft on hover.
+- **Ghost:** Transparent with no border; ink-soft on hover.
+- **Destructive:** Red 600 fill, cream text and a Red 300 edge at 30% alpha; Red 500 hover.
+- **Public sizing:** Package and recovery actions use Label typography (14px, 700)
+  with 16px × 24px padding. The package details action uses 12px × 24px and a 48px
+  minimum height. Long closing CTAs can wrap. Preserve at least 44px touch targets.
+- **Utility sizing:** The component's default `md` is 8px × 14px, 14px text at weight
+  500 and 8px corners. Public call sites opt into pills and stronger labels.
+- **Focus:** 2px amber outline, normally offset 2px; the card details trigger uses 4px.
+- **States:** 100ms easing. Disabled native buttons use 50% opacity and `not-allowed`.
+  Loading replaces the icon with a spinner and disables the control. Links retain
+  native navigation semantics; `aria-disabled` alone does not suppress navigation.
 
 ### Cards / Containers
 
-- **Corner Style:** 16px (`rounded-2xl`).
-- **Background:** `surface` - the only element that uses it.
-- **Border:** A single `border-strong` hairline. Together with the tonal step, this
-  is the entire depth treatment.
-- **Shadow Strategy:** None. See Elevation & Depth.
-- **Internal Padding:** 20px × 16px at the default (`md`) size, rising to 24px at
-  `lg`; content inside a card is separated by 24px (`gap-6`).
-- **Behaviour:** Cards in a grid stretch to equal height, and a card's CTA is pinned
-  to the bottom with `mt-auto` so a row of CTAs aligns regardless of how much copy
-  each piece carries. This is what keeps a row reading as one comb rather than a ragged edge.
+Readable pieces with a quiet, firm edge.
+
+Default `Card::Component` uses surface fill, 16px corners and a Piece Edge border.
+A well uses ink-soft. Default body padding is 20px vertically / 16px horizontally
+on phones and 24px on all sides from `sm`; large bodies use 24px then 32px. Footer
+fill is ink-soft, dividers are Hairline. Use the component's edge rather than
+repeating it at call sites. `stretch_body: true` enables equal-height overview cards.
 
 ### Inputs / Fields
 
-- **Style:** Ink Soft fill, no border - an inset `ring-1` in Field Edge instead -
-  8px radius, Cream text, Taupe placeholder, 8px × 12px padding.
-- **Focus:** The ring thickens to `ring-2` in Lamp Amber. The field lights up; it
-  does not move or resize.
-- **Readonly:** Surface Dark fill with Tan text - visibly inert but still selectable,
-  for values that come from the account and cannot be edited.
-- **Error:** Red 400 border and ring. The only non-warm state colour in a form.
-- **Sizing:** 16px on mobile, dropping to 14px at `sm` and above. The mobile size is
-  deliberate - anything under 16px makes iOS Safari zoom the viewport on focus.
+Inset and legible rather than bright white.
+
+`.form-control` uses ink-soft fill, cream text, taupe placeholder, 8px corners,
+8px × 12px padding, a 1px inset Field Edge ring and the small field shadow. Focus
+thickens the ring to 2px amber. Text is 16px/24px on phones, 14px/24px from `sm`.
+Readonly uses surface-dark and tan; disabled also uses surface-dark. Errors use a
+Red 400 ring. `select.form-control` follows this palette; bare scaffold selects,
+checkboxes and radios are not canonical public patterns.
 
 ### Navigation
 
-- **Bar:** Surface Dark with a `border-strong` bottom hairline, sticky. The wordmark
-  `sleep.puzzle` is set in Title-size Baloo 2 in Cream.
-- **Items:** Body-size Quicksand in Cream, 6px radius, filling to `ink-soft` on hover.
-- **Mobile:** Below `lg` the items collapse into a hamburger panel; the panel repeats
-  every bar action (cart, account, language, sign-out) so nothing is reachable only on
-  desktop, and it ends with a full-width primary pill for the booking CTA.
-- **Footer:** Surface Dark, a `repeat(auto-fit, minmax(180px, 1fr))` grid so the link
-  columns pack themselves from one column to four without named breakpoints. Column
-  headings are uppercase Label in Lamp Amber; links are Label in Tan, going amber on hover.
+Compact chrome with the same access at every width.
 
-### Astroid Bullet (signature)
+The sticky navbar and footer use surface-dark. The wordmark is Title-size Baloo 2.
+Desktop primary links use bold Quicksand with 44px minimum height, 6px corners,
+8px × 12px padding and amber hover text. The cart remains in the bar on phones;
+the hamburger contains primary links, language and account actions. A direct
+booking pill is retained in hidden markup, not currently rendered. Dropdowns have
+keyboard access, Escape dismissal and focus return, and honour reduced motion.
+Locale flags are local SVGs alongside readable language names.
 
-The four-pointed concave star (`astroid.svg`), rendered at 14–16px in Lamp Amber for
-primary marks and Coral for secondary ones. It is the system's punctuation: it opens
-each stat in the home page strip and each add-on in a package card. Use it where a
-generic disc bullet would go; it is the cheapest way for a new surface to read as
-part of this system.
+Footer headings are uppercase Label in amber. Links keep at least 44px targets and
+visible focus outlines; supporting links use tan, and copyright uses readable taupe.
 
-### Step Numeral (signature)
+### Joined Offer Pieces (signature)
 
-A 64px Lamp Amber disc with the step's number in Ink at Title size, centred above a
-step title and description. The numbering follows display order rather than being
-stored, so the owner can reorder or add a step in the admin panel without renumbering
-anything.
+Two surface-filled links join through a real SVG puzzle seam. Outer corners are
+24px; the shared edge is a single hairline. Stacked on phones, side by side from
+`md`, with 24px padding rising to 32px from `sm`. Hover or keyboard focus lights the
+active piece and shared seam in amber. Decoration is `aria-hidden` and ignores
+pointer input. Reduced motion keeps the same emphasis without transitions.
+
+### Reading Disclosure
+
+A short Body summary leads into native `details`/`summary` for longer prose. The
+14px amber trigger has a 44px minimum height, a chevron, visible keyboard focus and
+localized read-more/read-less labels. Its accessible name includes the section
+heading. Expanded content uses `trix-copy`; native disclosure remains usable
+without custom JavaScript. The separate FAQ uses the shared button-based accordion
+with `aria-expanded` and a labelled content region.
+
+### Package Details Dialog
+
+The overview remains compact while the full benefits and shared prose are retained.
+The native modal caps at 800px or viewport width minus 32px, and at viewport height
+minus 32px. Header/close and footer/action stay visible while the body scrolls.
+Horizontal insets are 20px on phones and 28px from `sm` across all three regions.
+Body blocks are separated by 24px; long list items by 12px. The package title names
+the dialog, receives initial focus, and Escape restores focus and page scroll.
+
+### Calendar and Recovery
+
+Calendar arrows, day cells and time slots have at least 44px targets. Days are
+square; today gets a Field Edge ring, selection is amber with ink text, disallowed
+days are muted. Month paging suppresses cell transitions to avoid false fades.
+An unavailable schedule replaces the calendar with a readable status and direct
+retry/contact actions. Retry performs a fresh GET and preserves the selected
+package/date/hour. A successfully read schedule with no slots has a separate state;
+do not represent an unavailable service as a fully booked calendar.
+
+### Image Geometry and Viewer
+
+Reserve image geometry before loading. Lightbox thumbnails include intrinsic
+width/height and asynchronous decoding; local comparison images use an 800×1100
+bounding-box variant without changing their aspect ratio. The comparison remains
+the owner's image, in a 640px maximum-width wrapper, with a Body-size enlargement
+hint. Do not replace it with a generic table during refinement.
+
+PhotoSwipe JavaScript and CSS load only when an image is opened. Pending opens show
+busy/wait state and can be cancelled with Escape; a missing viewer chunk falls
+back to the original image link. Viewer controls and errors are localized, and the
+custom zoom honours reduced motion. Keep the full original available for zoom.
+Portrait and avatar failures use existing mascot or initials fallbacks.
+
+Retained home stats, mascot glow and process-step discs are restoration material,
+not active signature components to copy into new screens.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** keep every neutral warm and brown-leaning. `ink` (#211e1c) is the floor of
-  the system; `cream` (#f5f0e8) is the ceiling.
-- **Do** give each screen exactly one Lamp Amber primary action. Its rarity is what
-  makes it work.
-- **Do** alternate section backgrounds `ink` / `ink-soft` down a long page.
-- **Do** reach for the astroid mark instead of a generic bullet - it is the fastest
-  signature in the system.
-- **Do** keep body text at 16px minimum on mobile, and inputs at 16px, so iOS Safari
-  does not zoom on focus.
-- **Do** set headline sizes in `clamp()` and let labels wrap. Polish runs long.
-- **Do** pin card CTAs with `mt-auto` so a row of pieces aligns at the bottom.
-- **Do** preserve a visible `focus-visible` outline in Lamp Amber on every interactive
-  element. WCAG 2.1 AA is binding on this project.
-- **Do** let `Card::Component` supply its own edge. Every variant now resolves to
-  system tokens (`border-strong` edge, `ink-soft` well and footer, `border`
-  dividers), so a call site that writes `border-border-strong!` is re-stating the
-  default and should drop it. `hoverable:` lifts the border to `border-input`
-  rather than casting a shadow, per the Flat Page Rule.
-- **Do** keep fonts and every other asset self-hosted. The site's no-consent-banner
-  position depends on making zero third-party requests.
+- **Do** keep public surfaces within the warm palette and use amber for clear emphasis.
+- **Do** use the six bundled type levels, with 16px body reading and 14px labels.
+- **Do** apply `trix-lead` or `trix-copy` to rich-text containers for the intended role.
+- **Do** preserve the fluid section gutters, generous spacing and breakpoint-specific grids.
+- **Do** pin overview-card actions to the bottom and let long owner content grow.
+- **Do** keep at least 44px targets for phone navigation and calendar interactions.
+- **Do** preserve visible amber focus, native semantics and meaningful accessible names.
+- **Do** provide readable unavailable states with a concrete recovery action.
+- **Do** reserve image geometry and defer heavy viewer code until it is needed.
+- **Do** preserve the owner's comparison image and use its original for enlargement.
+- **Do** keep fonts and new assets self-hosted, as required by PRODUCT.md's privacy commitment.
+- **Do** distinguish documented component defaults from deliberate, existing exceptions.
 
 ### Don't:
 
-- **Don't** use Tailwind's cool neutrals (`neutral-*`, `zinc-*`, `slate-*`, `gray-*`),
-  `bg-white`, or pure black anywhere on the public site.
-- **Don't** write `dark:` variants. This system has no light mode; a `dark:` prefix
-  here is dead code that will never apply.
-- **Don't** use `Buttons::Component`'s `style: :fancy` variants. They are unconverted
-  scaffold - grey-and-white gradient buttons from a generic component library that
-  bear no relationship to this design system. The `:basic` variants are the real ones.
-- **Don't** use the bare `select`, `[type="checkbox"]` or `[type="radio"]` styles from
-  `application.css` on a public page without converting them first. They are still
-  white-on-neutral-300 scaffold and will punch a hole in the warm-dark world.
-- **Don't** add drop shadows to in-page elements. Raise the tone or firm the border.
-- **Don't** set a paragraph in Baloo 2, and don't set an uppercase heading in it at all.
-- **Don't** introduce a second saturated colour. Coral and gold are tints of the one
-  lamp, not new accents.
-- **Don't** use Taupe Dark for anything the visitor needs to read.
-- **Don't** tighten the spacing to fit more above the fold. The low density is the
-  accommodation for the exhausted reader, not slack to be reclaimed.
-- **Don't** add urgency, scarcity, countdowns or red badges to commerce surfaces. The
-  visitor is already frightened; this system never trades on that.
+- **Don't** copy cool-neutral scaffold or `style: :fancy` buttons into public surfaces.
+- **Don't** treat retained hidden home sections as the active design.
+- **Don't** add a light theme by scattering `dark:` variants into this dark-only system.
+- **Don't** shrink explanatory paragraphs to Label size or set them in Baloo 2.
+- **Don't** silently change the capitalization or facts in owner-managed content.
+- **Don't** add decorative shadows to default in-page cards.
+- **Don't** use Taupe Dark for text the visitor needs to read.
+- **Don't** shrink calendar targets or hide clipped columns to make a breakpoint fit.
+- **Don't** turn a service failure into a misleading empty or fully booked state.
+- **Don't** remove native image-link recovery when adding a viewer.
+- **Don't** add urgency, scarcity, countdowns or invented review evidence.
