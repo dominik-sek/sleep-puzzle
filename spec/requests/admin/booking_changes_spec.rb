@@ -6,7 +6,7 @@ RSpec.describe "Admin booking changes", type: :request do
   let(:user) { User.create!(email: "client@example.com", password: "password123") }
   let(:package) { create_package }
   let(:slot) { SlotComparatorService.call(settings: ConsultationSetting.current).first.begin }
-  let(:booking) { user.bookings.create!(name: "Marta", email: user.email, package: package, starts_at: slot, status: :confirmed, confirmed_at: Time.current, consent_accepted_at: Time.current, paddle_transaction_id: "txn_booking") }
+  let(:booking) { user.bookings.create!(name: "Marta", email: user.email, package: package, starts_at: slot, status: :confirmed, confirmed_at: Time.current, consent_accepted_at: Time.current, paddle_transaction_id: "txn_booking", legal_snapshot: RefundPolicySnapshot.build(:booking)) }
 
   before do
     ConsultationSetting.current.update!(local_availability: true)
@@ -19,7 +19,7 @@ RSpec.describe "Admin booking changes", type: :request do
 
   it "releases a timely cancellation immediately without a Paddle refund" do
     booking
-    travel_to slot - 24.hours do
+    travel_to slot - 14.days do
       patch cancel_admin_booking_path(booking), params: fields
       expect(response).to redirect_to(admin_booking_path(booking))
       expect(booking.reload).to be_canceled
@@ -27,6 +27,8 @@ RSpec.describe "Admin booking changes", type: :request do
       expect(booking.paddle_transaction_id).to eq("txn_booking")
       expect(booking.refund_state).to eq("none")
       expect(booking.booking_changes.sole).to be_timely
+      get admin_booking_path(booking)
+      expect(response.body).to include("Zgłoszenie co najmniej 14 dni przed spotkaniem")
       expect(SlotComparatorService.call.map(&:begin)).to include(slot)
       expect(SyncBookingCalendarJob).to have_been_enqueued.with(booking.id)
     end
@@ -34,12 +36,24 @@ RSpec.describe "Admin booking changes", type: :request do
 
   it "records late cancellation without automatic deductions" do
     booking
-    travel_to slot - 23.hours do
+    travel_to slot - 14.days + 1.second do
       patch cancel_admin_booking_path(booking), params: fields
       expect(response).to redirect_to(admin_booking_path(booking))
       expect(booking.reload).to be_canceled
       expect(booking.booking_changes.sole).not_to be_timely
       expect(booking.refund_state).to eq("none")
+    end
+  end
+
+  it "marks a rescheduling request at exactly 48 hours as timely" do
+    booking
+    target = SlotComparatorService.call.map(&:begin).find { |start| start != slot }
+    travel_to slot - 48.hours do
+      patch reschedule_admin_booking_path(booking), params: fields.deep_merge(booking: { starts_at: target.iso8601 })
+      expect(response).to redirect_to(admin_booking_path(booking))
+      expect(booking.booking_changes.sole).to be_timely
+      get admin_booking_path(booking)
+      expect(response.body).to include("Zgłoszenie co najmniej 48 godzin przed spotkaniem")
     end
   end
 

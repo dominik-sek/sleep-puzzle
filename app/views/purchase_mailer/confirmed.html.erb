@@ -8,6 +8,7 @@
   <p><%= @snapshot.fetch("no_early_consent", t("refunds.no_early_consent")) %></p>
 <% end %>
 <h2><%= @snapshot.fetch("title") %></h2>
+<% if @snapshot["scope"].present? %><p><%= @snapshot["scope"] %></p><% end %>
 <% @snapshot.fetch("clauses").each do |clause| %>
   <h3><%= clause.fetch("heading") %></h3>
   <%= simple_format(clause.fetch("body")) %>

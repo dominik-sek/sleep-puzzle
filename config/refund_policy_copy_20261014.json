@@ -1,0 +1,102 @@
+{
+  "blocks": [
+    {
+      "key": "refunds.hero.title",
+      "locale": "pl",
+      "expected": "Zwroty i odwoływanie konsultacji",
+      "replacement": "Zwroty i odwołania"
+    },
+    {
+      "key": "refunds.hero.title",
+      "locale": "en",
+      "expected": "Refunds and appointment cancellations",
+      "replacement": "Refunds and cancellations"
+    }
+  ],
+  "items": [
+    {
+      "collection": "terms.clauses",
+      "field": "body",
+      "locale": "pl",
+      "expected": "Niniejszy regulamin określa zasady korzystania z konsultacji, pakietów wsparcia oraz materiałów audio dostępnych w ramach Sleep Puzzle.",
+      "replacement": "Niniejszy regulamin określa zasady korzystania z konsultacji, pakietów wsparcia 1:1 oraz wszystkich produktów cyfrowych oferowanych przez Sleep Puzzle."
+    },
+    {
+      "collection": "terms.clauses",
+      "field": "body",
+      "locale": "en",
+      "expected": "These terms set out the rules for using consultations, support packages and audio materials available through Sleep Puzzle.",
+      "replacement": "These terms set out the rules for consultations, 1:1 support packages and all digital products offered by Sleep Puzzle."
+    },
+    {
+      "collection": "terms.clauses",
+      "field": "body",
+      "locale": "pl",
+      "expected": "Usługi obejmują konsultacje 1:1, pakiety wsparcia (Szybka ulga, Spokojny rytm, System rodziny) oraz sprzedaż audioprocesów i bajek audio dostępnych po zalogowaniu na koncie klienta.",
+      "replacement": "Oferta obejmuje konsultacje i pakiety wsparcia 1:1 oraz wszystkie produkty cyfrowe dostępne w Sleep Puzzle, w tym audioprocesy i bajki audio. Szczegółowy zakres współpracy lub zawartość produktu są opisane na stronie danej oferty."
+    },
+    {
+      "collection": "terms.clauses",
+      "field": "body",
+      "locale": "en",
+      "expected": "Services include 1:1 consultations, support packages (Quick Relief, Steady Rhythm, Family System) and the sale of audio processes and audio stories available after logging into a customer account.",
+      "replacement": "The offer includes consultations and 1:1 support packages, as well as all digital products available through Sleep Puzzle, including audio processes and bedtime stories. The scope of support or product contents is described on the individual offer page."
+    },
+    {
+      "collection": "terms.clauses",
+      "field": "body",
+      "locale": "pl",
+      "expected": "Rezerwacji terminu konsultacji dokonuje się poprzez kalendarz dostępny na stronie. Płatności za pakiety i produkty audio obsługiwane są przez zewnętrznego operatora płatności Paddle.",
+      "replacement": "Rezerwacji terminu konsultacji dokonuje się poprzez kalendarz dostępny na stronie. Płatności za pakiety wsparcia 1:1 i produkty cyfrowe obsługiwane są przez zewnętrznego operatora płatności Paddle."
+    },
+    {
+      "collection": "terms.clauses",
+      "field": "body",
+      "locale": "en",
+      "expected": "Consultation slots are booked via the calendar on the site. Payments for packages and audio products are handled by the third-party payment provider Paddle.",
+      "replacement": "Consultation slots are booked via the calendar on the site. Payments for 1:1 support packages and digital products are handled by the third-party payment provider Paddle."
+    },
+    {
+      "collection": "terms.clauses",
+      "field": "body",
+      "locale": "pl",
+      "expected": "Zmiana lub odwołanie terminu możliwe jest z odpowiednim wyprzedzeniem - szczegółowe zasady zostaną ustalone indywidualnie przy zawieraniu współpracy.",
+      "replacement": "Odwołanie pojedynczej konsultacji zgłoszone co najmniej 14 dni przed jej rozpoczęciem uprawnia do pełnego zwrotu opłaty. Bezkosztowa zmiana terminu jest możliwa po wcześniejszym uzgodnieniu z Karolą, przy zgłoszeniu co najmniej 48 godzin przed rozpoczęciem. Szczegółowe zasady są opisane w polityce zwrotów i odwołań. Nie ograniczają one ustawowego prawa do odstąpienia od umowy ani reklamacji."
+    },
+    {
+      "collection": "terms.clauses",
+      "field": "body",
+      "locale": "en",
+      "expected": "Rescheduling or cancelling is possible with reasonable notice - detailed rules are agreed individually when starting cooperation.",
+      "replacement": "Canceling an individual consultation at least 14 days before it starts entitles you to a full refund. Free rescheduling is possible by prior agreement with Karola when requested at least 48 hours before the appointment. Details are set out in the refunds and cancellations policy. These rules do not restrict statutory withdrawal or complaint rights."
+    },
+    {
+      "collection": "refunds.clauses",
+      "field": "body",
+      "locale": "pl",
+      "expected": "Pojedynczą konsultację można bezkosztowo odwołać co najmniej 24 godziny przed jej rozpoczęciem. Odwołanie w tym terminie uprawnia do pełnego zwrotu opłaty. Liczy się czas otrzymania zgłoszenia. Późniejsze odwołanie lub nieobecność nie daje dodatkowej gwarancji zwrotu poza prawami ustawowymi. Karola rozpatruje zgłoszenie indywidualnie. Przyjęcie odwołania zwalnia termin niezależnie od czasu wypłaty zwrotu.",
+      "replacement": "Pojedynczą konsultację można bezkosztowo odwołać co najmniej 14 dni przed jej rozpoczęciem. Odwołanie w tym terminie uprawnia do pełnego zwrotu opłaty. Liczy się czas otrzymania zgłoszenia. Jest to termin liczony przed konsultacją, odrębny od ustawowego prawa do odstąpienia od umowy w ciągu 14 dni od jej zawarcia. Późniejsze odwołanie lub nieobecność nie daje dodatkowej gwarancji zwrotu poza prawami ustawowymi. Karola rozpatruje zgłoszenie indywidualnie. Przyjęcie odwołania zwalnia termin niezależnie od czasu wypłaty zwrotu."
+    },
+    {
+      "collection": "refunds.clauses",
+      "field": "body",
+      "locale": "en",
+      "expected": "An individual consultation may be canceled free of charge at least 24 hours before it starts, with a full refund. The time your request is received determines the notice period. Later cancellation or non-attendance carries no additional refund guarantee beyond statutory rights. Karola reviews requests individually. Once cancellation is accepted, the appointment is released independently of when the refund is paid.",
+      "replacement": "An individual consultation may be canceled free of charge at least 14 days before it starts, with a full refund. The time your request is received determines the notice period. This period is measured before the appointment and is separate from the statutory right to withdraw within 14 days of concluding the contract. Later cancellation or non-attendance carries no additional refund guarantee beyond statutory rights. Karola reviews requests individually. Once cancellation is accepted, the appointment is released independently of when the refund is paid."
+    },
+    {
+      "collection": "refunds.clauses",
+      "field": "body",
+      "locale": "pl",
+      "expected": "Przełożenie pojedynczej konsultacji zgłoszone co najmniej 24 godziny przed rozpoczęciem jest bezkosztowe. Skontaktuj się z Karolą, aby uzgodnić dostępny termin. Po potwierdzeniu zmiany płatność przechodzi na nowy termin. Późniejsze prośby są rozpatrywane indywidualnie.",
+      "replacement": "Przełożenie pojedynczej konsultacji zgłoszone co najmniej 48 godzin przed rozpoczęciem jest bezkosztowe i wymaga wcześniejszego uzgodnienia z Karolą. Skontaktuj się z Karolą, aby ustalić dostępny termin. Po potwierdzeniu zmiany płatność przechodzi na nowy termin. Późniejsze prośby są rozpatrywane indywidualnie."
+    },
+    {
+      "collection": "refunds.clauses",
+      "field": "body",
+      "locale": "en",
+      "expected": "An individual consultation may be rescheduled free of charge when requested at least 24 hours before it starts. Contact Karola to agree an available appointment. Once confirmed, your payment applies to the new appointment. Later requests are reviewed individually.",
+      "replacement": "An individual consultation may be rescheduled free of charge when requested at least 48 hours before it starts, by prior agreement with Karola. Contact Karola to agree an available appointment. Once confirmed, your payment applies to the new appointment. Later requests are reviewed individually."
+    }
+  ]
+}

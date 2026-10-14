@@ -1070,26 +1070,26 @@ terms:
               pl: "1. Postanowienia ogólne"
               en: "1. General provisions"
             body:
-              pl: "Niniejszy regulamin określa zasady korzystania z konsultacji, pakietów wsparcia oraz materiałów audio dostępnych w ramach Sleep Puzzle."
-              en: "These terms set out the rules for using consultations, support packages and audio materials available through Sleep Puzzle."
+              pl: "Niniejszy regulamin określa zasady korzystania z konsultacji, pakietów wsparcia 1:1 oraz wszystkich produktów cyfrowych oferowanych przez Sleep Puzzle."
+              en: "These terms set out the rules for consultations, 1:1 support packages and all digital products offered by Sleep Puzzle."
           - heading:
               pl: "2. Zakres usług"
               en: "2. Scope of services"
             body:
-              pl: "Usługi obejmują konsultacje 1:1, pakiety wsparcia (Szybka ulga, Spokojny rytm, System rodziny) oraz sprzedaż audioprocesów i bajek audio dostępnych po zalogowaniu na koncie klienta."
-              en: "Services include 1:1 consultations, support packages (Quick Relief, Steady Rhythm, Family System) and the sale of audio processes and audio stories available after logging into a customer account."
+              pl: "Oferta obejmuje konsultacje i pakiety wsparcia 1:1 oraz wszystkie produkty cyfrowe dostępne w Sleep Puzzle, w tym audioprocesy i bajki audio. Szczegółowy zakres współpracy lub zawartość produktu są opisane na stronie danej oferty."
+              en: "The offer includes consultations and 1:1 support packages, as well as all digital products available through Sleep Puzzle, including audio processes and bedtime stories. The scope of support or product contents is described on the individual offer page."
           - heading:
               pl: "3. Rezerwacje i płatności"
               en: "3. Bookings and payments"
             body:
-              pl: "Rezerwacji terminu konsultacji dokonuje się poprzez kalendarz dostępny na stronie. Płatności za pakiety i produkty audio obsługiwane są przez zewnętrznego operatora płatności Paddle."
-              en: "Consultation slots are booked via the calendar on the site. Payments for packages and audio products are handled by the third-party payment provider Paddle."
+              pl: "Rezerwacji terminu konsultacji dokonuje się poprzez kalendarz dostępny na stronie. Płatności za pakiety wsparcia 1:1 i produkty cyfrowe obsługiwane są przez zewnętrznego operatora płatności Paddle."
+              en: "Consultation slots are booked via the calendar on the site. Payments for 1:1 support packages and digital products are handled by the third-party payment provider Paddle."
           - heading:
               pl: "4. Odwołanie i zmiana terminu"
               en: "4. Rescheduling and cancellations"
             body:
-              pl: "Zmiana lub odwołanie terminu możliwe jest z odpowiednim wyprzedzeniem - szczegółowe zasady zostaną ustalone indywidualnie przy zawieraniu współpracy."
-              en: "Rescheduling or cancelling is possible with reasonable notice - detailed rules are agreed individually when starting cooperation."
+              pl: "Odwołanie pojedynczej konsultacji zgłoszone co najmniej 14 dni przed jej rozpoczęciem uprawnia do pełnego zwrotu opłaty. Bezkosztowa zmiana terminu jest możliwa po wcześniejszym uzgodnieniu z Karolą, przy zgłoszeniu co najmniej 48 godzin przed rozpoczęciem. Szczegółowe zasady są opisane w polityce zwrotów i odwołań. Nie ograniczają one ustawowego prawa do odstąpienia od umowy ani reklamacji."
+              en: "Canceling an individual consultation at least 14 days before it starts entitles you to a full refund. Free rescheduling is possible by prior agreement with Karola when requested at least 48 hours before the appointment. Details are set out in the refunds and cancellations policy. These rules do not restrict statutory withdrawal or complaint rights."
           - heading:
               pl: "5. Charakter wsparcia"
               en: "5. Nature of support"
@@ -1370,8 +1370,14 @@ refunds:
           label: "Nagłówek"
           type: plain
           default:
-            pl: "Zwroty i odwoływanie konsultacji"
-            en: "Refunds and appointment cancellations"
+            pl: "Zwroty i odwołania"
+            en: "Refunds and cancellations"
+        scope:
+          label: "Zakres zasad"
+          type: plain
+          default:
+            pl: "Zasady dotyczą pakietów wsparcia 1:1 oraz wszystkich produktów cyfrowych oferowanych przez Sleep Puzzle, w tym audioprocesów i bajek audio."
+            en: "These rules apply to 1:1 support packages and all digital products offered by Sleep Puzzle, including audio processes and bedtime stories."
         contact:
           label: "Kontakt"
           type: plain
@@ -1542,14 +1548,14 @@ refunds:
               pl: "Odwołanie pojedynczej konsultacji"
               en: "Canceling an individual consultation"
             body:
-              pl: "Pojedynczą konsultację można bezkosztowo odwołać co najmniej 24 godziny przed jej rozpoczęciem. Odwołanie w tym terminie uprawnia do pełnego zwrotu opłaty. Liczy się czas otrzymania zgłoszenia. Późniejsze odwołanie lub nieobecność nie daje dodatkowej gwarancji zwrotu poza prawami ustawowymi. Karola rozpatruje zgłoszenie indywidualnie. Przyjęcie odwołania zwalnia termin niezależnie od czasu wypłaty zwrotu."
-              en: "An individual consultation may be canceled free of charge at least 24 hours before it starts, with a full refund. The time your request is received determines the notice period. Later cancellation or non-attendance carries no additional refund guarantee beyond statutory rights. Karola reviews requests individually. Once cancellation is accepted, the appointment is released independently of when the refund is paid."
+              pl: "Pojedynczą konsultację można bezkosztowo odwołać co najmniej 14 dni przed jej rozpoczęciem. Odwołanie w tym terminie uprawnia do pełnego zwrotu opłaty. Liczy się czas otrzymania zgłoszenia. Jest to termin liczony przed konsultacją, odrębny od ustawowego prawa do odstąpienia od umowy w ciągu 14 dni od jej zawarcia. Późniejsze odwołanie lub nieobecność nie daje dodatkowej gwarancji zwrotu poza prawami ustawowymi. Karola rozpatruje zgłoszenie indywidualnie. Przyjęcie odwołania zwalnia termin niezależnie od czasu wypłaty zwrotu."
+              en: "An individual consultation may be canceled free of charge at least 14 days before it starts, with a full refund. The time your request is received determines the notice period. This period is measured before the appointment and is separate from the statutory right to withdraw within 14 days of concluding the contract. Later cancellation or non-attendance carries no additional refund guarantee beyond statutory rights. Karola reviews requests individually. Once cancellation is accepted, the appointment is released independently of when the refund is paid."
           - heading:
               pl: "Zmiana terminu"
               en: "Rescheduling"
             body:
-              pl: "Przełożenie pojedynczej konsultacji zgłoszone co najmniej 24 godziny przed rozpoczęciem jest bezkosztowe. Skontaktuj się z Karolą, aby uzgodnić dostępny termin. Po potwierdzeniu zmiany płatność przechodzi na nowy termin. Późniejsze prośby są rozpatrywane indywidualnie."
-              en: "An individual consultation may be rescheduled free of charge when requested at least 24 hours before it starts. Contact Karola to agree an available appointment. Once confirmed, your payment applies to the new appointment. Later requests are reviewed individually."
+              pl: "Przełożenie pojedynczej konsultacji zgłoszone co najmniej 48 godzin przed rozpoczęciem jest bezkosztowe i wymaga wcześniejszego uzgodnienia z Karolą. Skontaktuj się z Karolą, aby ustalić dostępny termin. Po potwierdzeniu zmiany płatność przechodzi na nowy termin. Późniejsze prośby są rozpatrywane indywidualnie."
+              en: "An individual consultation may be rescheduled free of charge when requested at least 48 hours before it starts, by prior agreement with Karola. Contact Karola to agree an available appointment. Once confirmed, your payment applies to the new appointment. Later requests are reviewed individually."
           - heading:
               pl: "Odwołanie przez Karolę"
               en: "Cancellation by Karola"

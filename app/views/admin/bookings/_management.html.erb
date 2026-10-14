@@ -38,7 +38,7 @@
       <p>Zgłoszenie: <%= l(change.received_at, format: :long) %></p>
       <p>Poprzedni termin: <%= l(change.previous_starts_at, format: :long) %></p>
       <% if change.new_starts_at %><p>Nowy termin: <%= l(change.new_starts_at, format: :long) %></p><% end %>
-      <p><%= change.initiator == "owner" ? "Odwołanie lub zmiana przez Karolę — uzgodnij nowy termin albo zwrot za niewykonaną usługę" : (change.timely? ? "Zgłoszenie co najmniej 24 godziny przed spotkaniem" : "Zgłoszenie później niż 24 godziny przed spotkaniem — rozpatrz indywidualnie") %></p>
+      <p><%= change.initiator == "owner" ? "Odwołanie lub zmiana przez Karolę — uzgodnij nowy termin albo zwrot za niewykonaną usługę" : (change.timely? ? "Zgłoszenie co najmniej #{change.notice_label} przed spotkaniem" : "Zgłoszenie później niż #{change.notice_label} przed spotkaniem — rozpatrz indywidualnie") %></p>
       <p class="whitespace-pre-line"><%= change.reason %></p>
       <p>Zapisano: <%= l(change.created_at, format: :long) %> · <%= change.admin.email %></p>
     </div>

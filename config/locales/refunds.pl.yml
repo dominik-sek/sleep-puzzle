@@ -9,6 +9,17 @@ pl:
     canceled_body: "Termin został zwolniony. Rozliczenie płatności jest obsługiwane osobno."
     change_subject: "Zmiana rezerwacji — Sleep Puzzle"
     refunded_audio: "Dostęp zakończony po zwrocie"
+    notice:
+      days:
+        one: "%{count} dzień"
+        few: "%{count} dni"
+        many: "%{count} dni"
+        other: "%{count} dni"
+      hours:
+        one: "%{count} godzina"
+        few: "%{count} godziny"
+        many: "%{count} godzin"
+        other: "%{count} godziny"
     states:
       none: "Brak zwrotu"
       pending_approval: "Zwrot oczekuje na zatwierdzenie"

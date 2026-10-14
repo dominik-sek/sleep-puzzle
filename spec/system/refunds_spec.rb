@@ -65,7 +65,7 @@ RSpec.describe "Refunds on mobile", type: :system do
       click_link "Zwroty i odwołania"
     end
     expect(page).to have_current_path(refunds_path)
-    expect(page).to have_css("h1", text: "Zwroty i odwoływanie konsultacji")
+    expect(page).to have_css("h1", text: "Zwroty i odwołania")
     expect(page).not_to have_text("Content missing")
   end
 

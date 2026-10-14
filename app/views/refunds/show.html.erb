@@ -2,6 +2,7 @@
 <%= render Section::Component.new(background: :ink, align: :left) do %>
   <div class="max-w-[800px] mx-auto w-full">
     <h1 class="font-display font-bold text-t2 text-cream mb-8"><%= content_block("refunds.hero.title") %></h1>
+    <p class="text-t6 text-tan leading-relaxed mb-8"><%= content_block("refunds.hero.scope") %></p>
     <div class="flex flex-col gap-6">
       <% content_items("refunds.clauses").each do |clause| %>
         <section>

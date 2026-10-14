@@ -6,11 +6,16 @@ RSpec.describe PurchaseConfirmationJob do
 
   it "sends the saved policy only once, even after the policy changes" do
     saved = order.legal_snapshot["consent"]
+    saved_scope = order.legal_snapshot["scope"]
     ContentBlock.create!(key: "refunds.checkout.audio_consent", value_pl: "Nowa zgoda")
+    ContentBlock.create!(key: "refunds.hero.scope", value_pl: "Zakres zmieniony po zakupie")
     expect { 2.times { described_class.perform_now("order", order.id) } }.to change { ActionMailer::Base.deliveries.size }.by(1)
     expect(order.reload.legal_confirmation_sent_at).to be_present
     expect(ActionMailer::Base.deliveries.last.text_part.body.decoded).to include(saved)
+    expect(ActionMailer::Base.deliveries.last.text_part.body.decoded).to include(saved_scope)
+    expect(ActionMailer::Base.deliveries.last.html_part.body.decoded).to include(saved_scope)
     expect(ActionMailer::Base.deliveries.last.text_part.body.decoded).not_to include("Nowa zgoda")
+    expect(ActionMailer::Base.deliveries.last.text_part.body.decoded).not_to include("Zakres zmieniony po zakupie")
   end
 
   it "does not invent consent or send a new confirmation for legacy purchases" do

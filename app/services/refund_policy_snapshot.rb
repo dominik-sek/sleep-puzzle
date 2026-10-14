@@ -9,6 +9,8 @@ class RefundPolicySnapshot
         "locale" => locale.to_s,
         "consent" => helper.content_block("refunds.checkout.#{kind}_consent", locale: locale).to_s,
         "title" => helper.content_block("refunds.hero.title", locale: locale).to_s,
+        "scope" => helper.content_block("refunds.hero.scope", locale: locale).to_s,
+        "booking_notice_periods" => BookingChange::NOTICE_PERIODS.deep_dup,
         "subject" => helper.content_block("refunds.checkout.confirmation_subject", locale: locale).to_s,
         "no_early_consent" => helper.content_block("refunds.notifications.no_early_consent", locale: locale).to_s,
         "clauses" => helper.content_items("refunds.clauses", locale: locale)

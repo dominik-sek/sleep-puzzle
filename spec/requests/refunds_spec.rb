@@ -8,12 +8,12 @@ RSpec.describe "Refunds and consent", type: :request do
   it "renders both languages and editable policy copy" do
     get refunds_path
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include("24 godziny", "paddle.net")
+    expect(response.body).to include("14 dni przed", "48 godzin", "pakietów wsparcia 1:1", "wszystkich produktów cyfrowych", "paddle.net")
     ContentBlock.create!(key: "refunds.hero.title", value_pl: "Moje zasady", value_en: "My terms")
     get refunds_path
     expect(response.body).to include("Moje zasady")
     get refunds_path(locale: :en)
-    expect(response.body).to include("My terms", "24 hours")
+    expect(response.body).to include("My terms", "14 days before", "48 hours", "all digital products")
   end
 
   it "rejects checkout without consent and preserves the basket" do

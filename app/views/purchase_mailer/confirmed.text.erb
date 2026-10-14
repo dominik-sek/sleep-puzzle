@@ -10,6 +10,7 @@
 <% end %>
 
 <%= @snapshot.fetch("title") %>
+<%= @snapshot["scope"] %>
 <% @snapshot.fetch("clauses").each do |clause| %>
 
 <%= clause.fetch("heading") %>
