@@ -1,5 +1,31 @@
 require "rails_helper"
 
+# == Schema Information
+#
+# Table name: booking_changes
+#
+#  id                 :bigint           not null, primary key
+#  initiator          :string           not null
+#  kind               :string           not null
+#  new_starts_at      :datetime
+#  previous_starts_at :datetime         not null
+#  reason             :text             not null
+#  received_at        :datetime         not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  admin_id           :bigint           not null
+#  booking_id         :bigint           not null
+#
+# Indexes
+#
+#  index_booking_changes_on_admin_id    (admin_id)
+#  index_booking_changes_on_booking_id  (booking_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (admin_id => users.id)
+#  fk_rails_...  (booking_id => bookings.id)
+#
 RSpec.describe BookingChange do
   let(:user) { User.create!(email: "notice-period@example.com", password: "password123") }
   let(:booking) do

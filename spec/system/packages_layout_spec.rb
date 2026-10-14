@@ -1,33 +1,63 @@
 require "rails_helper"
 
 RSpec.describe "Package card layout", type: :system do
+  include ActiveSupport::Testing::TimeHelpers
+
   after do
     page.driver.browser.execute_cdp("Emulation.clearDeviceMetricsOverride")
+    page.driver.browser.execute_cdp("Emulation.setCPUThrottlingRate", rate: 1)
+    page.driver.browser.execute_cdp("Emulation.setTimezoneOverride", timezoneId: "")
   end
 
-  it "lets a phone visitor pick a real calendar day" do
-    allow(GoogleCalendarService).to receive(:call).and_return(instance_double(GoogleCalendarService, busy: []))
-    allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
-    2.times do |index|
-      package = build_package(name: "Pakiet #{index + 1}", position: index)
-      package.save!
-    end
-    page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride", width: 320, height: 800, deviceScaleFactor: 1, mobile: false)
-    visit packages_path
+  [ "2026-10-05", "2026-10-31", "2026-12-31" ].each do |date|
+    it "lets a phone visitor pick a real calendar day on #{date}" do
+      travel_to Time.zone.parse("#{date} 07:00") do
+        allow(GoogleCalendarService).to receive(:call).and_return(instance_double(GoogleCalendarService, busy: []))
+        allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price ])
+        2.times do |index|
+          package = build_package(name: "Pakiet #{index + 1}", position: index)
+          package.save!
+        end
+        page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride", width: 320, height: 800, deviceScaleFactor: 1, mobile: false)
+        page.driver.browser.execute_cdp("Emulation.setCPUThrottlingRate", rate: 6)
+        page.driver.browser.execute_cdp("Emulation.setTimezoneOverride", timezoneId: "UTC")
+        visit packages_path
 
-    # Cally renders buttons before the deferred controller applies availability.
-    expect(page).to have_css("calendar-month") do |month|
-      month.evaluate_script(<<~JS)
-        typeof this.closest('calendar-date').isDateDisallowed === 'function' &&
-          Boolean(this.shadowRoot?.querySelector('button[aria-disabled="true"]'))
-      JS
+        # A raw "first enabled button" can belong to an intermediate month render.
+        # Choose a date from server availability and wait for its actual day cell.
+        available_date = JSON.parse(find("#availability")["data-cally-available-dates-value"]).first
+        expect(available_date).to be_present
+        label = page.evaluate_script(<<~JS, available_date)
+          new Intl.DateTimeFormat('pl', { month: 'long', day: 'numeric', timeZone: 'UTC' })
+            .format(new Date(arguments[0] + 'T00:00:00Z'))
+        JS
+        expect(page).to have_css("calendar-month", wait: 5) do |month|
+          month.evaluate_script(<<~JS, available_date, label)
+            (() => {
+              const calendar = this.closest('calendar-date');
+              const day = this.shadowRoot?.querySelector(`button[aria-label="${arguments[1]}"]`);
+              return calendar.focusedDate === arguments[0] && calendar.locale === 'pl' &&
+                Boolean(this.shadowRoot?.querySelector('button[aria-disabled="true"]')) &&
+                day && !day.disabled && day.getAttribute('aria-disabled') !== 'true';
+            })()
+          JS
+        end
+        day = find("calendar-month").native.shadow_root.find_element(css: %(button[aria-label="#{label}"]:not([disabled]):not([aria-disabled='true'])))
+        day.click
+        selected_panel = %([data-cally-target="hoursPanel"][data-date="#{available_date}"]:not([hidden]))
+        expect(page).to have_css("#{selected_panel} button:not(:disabled)")
+        expect(page.evaluate_script("document.querySelector('calendar-date').value")).to eq(available_date)
+        hour = nil
+        within(selected_panel) do
+          button = find("button:not(:disabled)", match: :first)
+          hour = button["data-hour"]
+          button.click
+        end
+        href = URI.parse(find_link(I18n.t("offers.continue_booking"))[:href])
+        expect(href.path).to eq(bookings_path)
+        expect(Rack::Utils.parse_query(href.query)).to include("date" => available_date, "hour" => hour)
+      end
     end
-    day = find("calendar-month").native.shadow_root.find_elements(css: "button:not([disabled]):not([aria-disabled='true'])").first
-    expect(day).not_to be_nil
-    day.click
-    expect(page).to have_css('[data-cally-target="hoursPanel"]:not([hidden]) button:not(:disabled)')
-    within('[data-cally-target="hoursPanel"]:not([hidden])') { find("button:not(:disabled)", match: :first).click }
-    expect(page).to have_link(I18n.t("offers.continue_booking"))
   end
 
   it "keeps three cards and their actions aligned on a laptop" do
