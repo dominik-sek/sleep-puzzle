@@ -22,7 +22,7 @@
         <% @packages.each do |package| %>
           <%# anchor for the home page's "Zobacz szczegóły"; scroll-mt keeps the
               card clear of the navbar when it is jumped to %>
-          <div id="<%= dom_id(package) %>" class="scroll-mt-24 flex min-w-0 flex-col">
+          <div id="<%= dom_id(package) %>" tabindex="-1" aria-labelledby="<%= dom_id(package, :title) %>" class="package-overview scroll-mt-24 flex min-w-0 flex-col rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
             <%= render "packages/card", package: package %>
           </div>
         <% end %>

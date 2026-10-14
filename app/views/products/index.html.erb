@@ -2,10 +2,19 @@
 <div class="min-h-screen flex flex-col items-center">
   <%= render Section::Component.new(background: :ink, align: :left) do %>
     <div class="mx-auto w-full max-w-[1240px]">
-      <div class="min-w-0">
-        <h1 class="mb-2.5 font-display text-t1 font-bold text-cream"><%= content_block("shop.hero.title") %></h1>
-        <p class="m-0 max-w-[70ch] text-t5 text-tan"><%= content_block("shop.hero.subtitle") %></p>
+      <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+        <h1 class="min-w-0 font-display text-t1 font-bold text-cream"><%= content_block("shop.hero.title") %></h1>
+        <%= render "shared/cart_pill" %>
       </div>
+      <p class="mt-2.5 max-w-[70ch] text-t4 text-tan"><%= content_block("shop.hero.subtitle") %></p>
+
+      <% unless user_signed_in? %>
+        <p class="mt-2 text-t6 text-taupe">
+          <%= content_block("shop.hero.returning") %>
+          <%= link_to t("nav.sign_in"), new_user_session_path,
+                      class: "inline-flex min-h-11 items-center rounded-md font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+        </p>
+      <% end %>
 
       <nav aria-label="<%= t('products.browse_categories') %>" class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
         <%= link_to t("offers.audio"), "#audio-processes", class: "inline-flex min-h-11 items-center rounded-md py-2 text-t5 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
@@ -34,32 +43,18 @@
           </section>
         <% end %>
 
-        <div>
-          <p id="audio-delivery-label" class="text-t6 font-bold text-cream"><%= t("products.audio_delivery") %></p>
-          <dl aria-labelledby="audio-delivery-label" class="mt-3 grid max-w-xl gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))]">
-            <%= render "products/delivery_specs" %>
-          </dl>
-          <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
-            <% unless user_signed_in? %>
-              <p class="m-0 text-t6 text-taupe">
-                <%= content_block("shop.hero.returning") %>
-                <%= link_to t("nav.sign_in"), new_user_session_path,
-                            class: "inline-flex min-h-11 items-center rounded-md font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
-              </p>
-            <% end %>
-            <%= render "shared/cart_pill" %>
-          </div>
-        </div>
-
         <% if @packages.any? %>
           <section id="packages" tabindex="-1" aria-labelledby="packages-title" class="scroll-mt-24 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
             <h2 id="packages-title" class="mb-6 font-display text-t2 font-bold text-cream"><%= t("offers.one_to_one") %></h2>
             <div class="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))]">
               <% @packages.each do |package| %>
-                <%= link_to packages_path(anchor: dom_id(package)), class: "flex min-w-0 flex-col gap-3 rounded-2xl border border-border-strong bg-surface p-6 text-cream no-underline hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
-                  <span class="font-display text-t3 font-bold [overflow-wrap:anywhere]"><%= package.name %></span>
-                  <span class="text-t5 text-tan"><%= package.for_whom %></span>
-                  <span class="mt-auto pt-3 text-t5 font-bold text-accent"><%= t("offers.see_times") %> →</span>
+                <%= link_to packages_path(anchor: dom_id(package)),
+                            data: { turbo: false },
+                            aria: { label: "#{content_block('shop.collections.packages_link')} — #{package.name}" },
+                            class: "flex min-w-0 flex-col gap-3 rounded-2xl border border-border-strong bg-surface p-6 text-cream no-underline hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+                  <h3 class="font-display text-t3 font-bold [overflow-wrap:anywhere]"><%= package.name %></h3>
+                  <span class="text-t5 text-tan [overflow-wrap:anywhere]"><%= package.for_whom %></span>
+                  <span class="mt-auto pt-3 text-t5 font-bold text-accent"><%= content_block("shop.collections.packages_link") %> <span aria-hidden="true">→</span></span>
                 <% end %>
               <% end %>
             </div>

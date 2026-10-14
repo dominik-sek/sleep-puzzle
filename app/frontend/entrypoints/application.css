@@ -199,6 +199,16 @@
   to   { border-color: var(--color-accent); background-color: var(--color-surface); }
 }
 
+/* Preserve the package chosen in the shop across the page handoff. The fragment
+   is shareable and works without JavaScript; text makes the cue independent of color. */
+.package-overview:target > div {
+  border-color: var(--color-accent);
+}
+
+.package-overview:target .package-selection-label {
+  display: block;
+}
+
 /* Forms */
 
 label,

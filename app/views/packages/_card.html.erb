@@ -20,7 +20,8 @@
       <div class="flex flex-col gap-2">
         <%# break-words: a long Polish compound in a ~370px column would otherwise
             clip against the card's overflow-hidden wrapper rather than wrap %>
-        <h2 class="text-accent! font-display text-t3! break-words sm:min-h-[2lh]"><%= package.name %></h2>
+        <h2 id="<%= dom_id(package, :title) %>" class="text-accent! font-display text-t3! break-words sm:min-h-[2lh]"><%= package.name %></h2>
+        <p class="package-selection-label hidden m-0 text-t6 font-bold text-accent"><%= content_block("packages.card.selected") %></p>
 
         <% if package.duration %>
           <span class="text-t5 text-taupe">

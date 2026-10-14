@@ -322,6 +322,12 @@ packages:
     card:
       label: Etykiety na kartach
       fields:
+        selected:
+          label: Wskazanie pakietu wybranego w sklepie
+          type: plain
+          default:
+            pl: "Wybrany pakiet"
+            en: "Selected package"
         highlights:
           label: Nagłówek krótkich wyróżników
           type: plain
@@ -694,6 +700,12 @@ shop:
           default:
             pl: "Zobacz wszystkie bajki"
             en: "See all audio stories"
+        packages_link:
+          label: Odnośnik do szczegółów pakietu
+          type: plain
+          default:
+            pl: "Zobacz pakiet"
+            en: "View package"
         processes_empty:
           label: Brak opublikowanych audioprocesów
           type: plain

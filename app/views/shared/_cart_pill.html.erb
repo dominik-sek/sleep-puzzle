@@ -5,8 +5,8 @@
     updating only whichever came first. The cart_items streams target both. %>
 <%= tag.div id: "cart_pill", class: "contents" do %>
   <%= link_to cart_path,
-        class: "flex items-center gap-2.5 rounded-[26px] border border-border-strong bg-surface px-5.5 py-3.5 text-t6 font-bold text-cream no-underline hover:border-accent hover:text-accent" do %>
-    <%= icon "shopping-bag", class: "size-4.5 shrink-0" %>
+        class: "inline-flex min-h-11 shrink-0 items-center gap-2.5 rounded-full border border-border-strong bg-surface px-5.5 py-3.5 text-t6 font-bold text-cream no-underline hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+    <%= icon "shopping-bag", class: "size-4.5 shrink-0", aria: { hidden: true } %>
     <span><%= content_block("cart.hero.title") %> (<%= current_cart.count %>)</span>
   <% end %>
 <% end %>

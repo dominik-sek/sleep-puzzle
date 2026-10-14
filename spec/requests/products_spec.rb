@@ -3,13 +3,33 @@ require 'rails_helper'
 RSpec.describe "Products", type: :request do
   describe "GET /products" do
     it "lists published 1:1 packages beside audio products" do
-      create_package(name: "Wspólna droga")
+      package = create_package(name: "Wspólna droga")
       create_package(name: "Ukryty", published: false)
 
       get products_path
 
-      expect(response.body).to include("Wspólna droga", "#{packages_path}#package_")
+      page = Capybara.string(response.body)
+      expect(page).to have_link("Zobacz pakiet", href: packages_path(anchor: "package_#{package.id}"))
+      expect(page).to have_css("#packages h3", text: "Wspólna droga")
+      expect(page).not_to have_css("#packages", text: "Zobacz terminy")
       expect(response.body).not_to include("Ukryty")
+    end
+
+    it "keeps delivery details on the product page rather than the shop" do
+      get products_path
+
+      page = Capybara.string(response.body)
+      expect(page).not_to have_css("main dl")
+      expect(page).not_to have_text("Odsłuch online, bez pobierania")
+      expect(page).not_to have_text("Bezterminowy, w Twoim koncie")
+    end
+
+    it "uses the English package label and keeps the details link in that locale" do
+      package = create_package(name: "Support")
+
+      get products_path(locale: :en)
+
+      expect(Capybara.string(response.body)).to have_link("View package", href: packages_path(locale: :en, anchor: "package_#{package.id}"))
     end
 
     it "lists the published products with their Paddle price" do
