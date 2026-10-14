@@ -20,7 +20,13 @@ RSpec.describe "Product detail reading order", type: :system do
         product = instance_variable_get("@#{variant}")
         visit product_path(product)
 
-        expect(page).to have_css(".product-identity h1", text: product.name)
+        expect(page).to have_css("h1", text: product.name)
+        if product.audio_process?
+          expect(page.evaluate_script("document.querySelector('main h1').getBoundingClientRect().bottom <= document.querySelector('.product-identity').getBoundingClientRect().top")).to be(true)
+          expect(page.find(".product-media dl")).to have_text("FORMAT")
+          expect(page.find(".product-media dl")).to have_text("DOSTĘP")
+          expect(page.find(".product-identity")).not_to have_css("p", text: "Audioproces", exact_text: true)
+        end
         expect(page.evaluate_script("document.querySelector('.product-media').getBoundingClientRect().top >= document.querySelector('.product-identity').getBoundingClientRect().bottom - 1")).to be(true)
         expect(page.evaluate_script("document.documentElement.scrollWidth <= innerWidth")).to be(true)
         back = find("main a", text: product.audio_process? ? "Wróć do audioprocesów" : "Wróć do bajek audio")
@@ -36,6 +42,7 @@ RSpec.describe "Product detail reading order", type: :system do
       visit product_path(@program)
 
       expect(page.evaluate_script("document.querySelector('.product-media').getBoundingClientRect().right <= document.querySelector('.product-identity').getBoundingClientRect().left")).to be(true)
+      expect(page.evaluate_script("document.querySelector('main h1').getBoundingClientRect().bottom <= Math.min(document.querySelector('.product-media').getBoundingClientRect().top, document.querySelector('.product-identity').getBoundingClientRect().top)")).to be(true)
       expect(page.evaluate_script("document.documentElement.scrollWidth <= innerWidth")).to be(true)
     end
   end

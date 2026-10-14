@@ -1,6 +1,5 @@
 <% if product.trailerable? %>
   <div data-controller="media-preview" class="<%= 'mt-6' if local_assigns.fetch(:spacing, true) %>">
-    <h2 class="mb-3 font-display text-t3 font-bold text-cream [overflow-wrap:anywhere]"><%= t('products.trailer') %></h2>
     <video controls preload="none" playsinline width="1280" height="720"
            class="aspect-video w-full rounded-2xl bg-black object-contain focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
            src="<%= trailer_product_path(product) %>"

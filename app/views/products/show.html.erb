@@ -17,12 +17,19 @@
       </nav>
 
       <% has_trailer = @product.trailerable? %>
+      <% if @product.audio_process? %>
+        <h1 class="mt-6.5 mb-0 font-display text-t1 font-bold text-cream text-pretty [overflow-wrap:anywhere]">
+          <%= @product.name %>
+        </h1>
+      <% end %>
       <div class="mt-6.5 grid grid-cols-1 items-start gap-7 md:grid-cols-2 md:gap-12">
         <div class="product-identity flex min-w-0 flex-col gap-4 md:order-2">
-          <h1 class="m-0 font-display text-t1 font-bold text-cream text-pretty [overflow-wrap:anywhere]">
-            <%= @product.name %>
-          </h1>
-          <p class="m-0 text-t6 text-taupe"><%= @product.kind_label %></p>
+          <% unless @product.audio_process? %>
+            <h1 class="m-0 font-display text-t1 font-bold text-cream text-pretty [overflow-wrap:anywhere]">
+              <%= @product.name %>
+            </h1>
+            <p class="m-0 text-t6 text-taupe"><%= @product.kind_label %></p>
+          <% end %>
 
           <% if @product.description.present? %>
             <p class="m-0 text-t4 text-tan text-pretty [overflow-wrap:anywhere]"><%= @product.description %></p>
@@ -43,12 +50,14 @@
 
           <%= render "products/cart_actions", product: @product %>
 
-          <dl class="mt-3 grid gap-3 border-t border-border pt-5.5 [grid-template-columns:repeat(auto-fit,minmax(120px,1fr))]">
-            <% if @product.length_label %>
-              <%= render "products/spec_item", label: content_block("shop.product.length"), value: @product.length_label %>
-            <% end %>
-            <%= render "products/delivery_specs" %>
-          </dl>
+          <% if @product.length_label || !@product.audio_process? %>
+            <dl class="mt-3 grid gap-3 border-t border-border pt-5.5 [grid-template-columns:repeat(auto-fit,minmax(120px,1fr))]">
+              <% if @product.length_label %>
+                <%= render "products/spec_item", label: content_block("shop.product.length"), value: @product.length_label %>
+              <% end %>
+              <%= render "products/delivery_specs" unless @product.audio_process? %>
+            </dl>
+          <% end %>
         </div>
 
         <%# DOM order stays identity first for both media states. Desktop places
@@ -59,6 +68,11 @@
           <% else %>
             <div class="flex aspect-video items-center justify-center rounded-3xl border border-border-strong bg-linear-[135deg,var(--color-border-strong),var(--color-ink)] text-[110px] md:aspect-square"
                  aria-hidden="true"><%= @product.display_icon %></div>
+          <% end %>
+          <% if @product.audio_process? %>
+            <dl class="mt-6 grid gap-4 border-t border-border pt-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))]">
+              <%= render "products/delivery_specs" %>
+            </dl>
           <% end %>
         </div>
       </div>
