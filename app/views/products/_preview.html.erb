@@ -1,4 +1,4 @@
-<% if product.previewable? && !current_user&.purchased?(product) %>
+<% if product.previewable? && !product_purchased?(product) %>
   <div data-controller="media-preview" class="flex min-w-0 flex-col gap-2">
     <span class="text-t6 text-taupe"><%= content_block("shop.product.preview") %></span>
     <audio controls preload="none" class="w-full min-w-0 max-w-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"

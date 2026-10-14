@@ -37,14 +37,16 @@ RSpec.describe BookingChange do
     described_class.new(booking: booking, kind: kind, received_at: received_at, previous_starts_at: starts_at)
   end
 
-  it "includes the exact 14-day cancellation boundary and excludes later requests" do
-    cutoff = booking.starts_at - 14.days
+  it "includes the exact 48-hour cancellation boundary and excludes later requests" do
+    cutoff = booking.starts_at - 48.hours
     expect(change("canceled", received_at: cutoff)).to be_timely
     expect(change("canceled", received_at: cutoff + 1.second)).not_to be_timely
-    expect(change("canceled", received_at: cutoff).notice_label).to eq("14 dni")
+    expect(change("canceled", received_at: cutoff).notice_label).to eq("48 godzin")
   end
 
-  it "uses calendar days across daylight saving changes" do
+  it "preserves calendar days for purchases with the previous 14-day cancellation policy" do
+    booking.legal_snapshot["booking_notice_periods"]["canceled"] = { "amount" => 14, "unit" => "days" }
+    booking.save!
     Time.use_zone("Europe/Warsaw") do
       slot = Time.zone.parse("2026-11-05 12:00")
       cutoff = slot - 14.days
@@ -54,12 +56,24 @@ RSpec.describe BookingChange do
     end
   end
 
-  it "uses a separate 48-hour rescheduling boundary" do
+  it "uses the same 48-hour boundary for rescheduling" do
     cutoff = booking.starts_at - 48.hours
     expect(change("rescheduled", received_at: cutoff)).to be_timely
     expect(change("rescheduled", received_at: cutoff + 1.second)).not_to be_timely
     expect(change("rescheduled", received_at: cutoff).notice_label).to eq("48 godzin")
-    expect(change("canceled", received_at: cutoff)).not_to be_timely
+    expect(change("canceled", received_at: cutoff)).to be_timely
+  end
+
+  it "counts 48 elapsed hours across a daylight saving change for both operations" do
+    Time.use_zone("Europe/Warsaw") do
+      slot = Time.zone.parse("2026-10-26 12:00")
+      cutoff = slot - 48.hours
+      expect(cutoff).not_to eq(slot - 2.days)
+      %w[canceled rescheduled].each do |kind|
+        expect(change(kind, received_at: cutoff, starts_at: slot)).to be_timely
+        expect(change(kind, received_at: cutoff + 1.second, starts_at: slot)).not_to be_timely
+      end
+    end
   end
 
   it "keeps the previous 24-hour rule for purchases with an older saved policy" do

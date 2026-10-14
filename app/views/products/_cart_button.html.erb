@@ -22,7 +22,7 @@
 <% shape = size == :lg ? "py-4 px-6.5" : "py-4 px-5 w-full" %>
 <% shape += " max-w-full whitespace-normal! [overflow-wrap:anywhere]" %>
 
-<% if current_user&.awaiting_payment?(product) %>
+<% if product_awaiting_payment?(product) %>
   <%# Paid for, and Paddle has not confirmed it yet. This branch is the whole
       point: without it the button read "Dodaj do koszyka" for something the
       buyer had just been charged for, and pressing it charged them again.
@@ -43,7 +43,7 @@
     aria_label: "#{label} - #{product.name}",
     classes: "hover:cursor-pointer text-t6! font-bold! border-border-input! text-tan! hover:text-cream! #{shape}"
   ) %>
-<% elsif current_user&.purchased?(product) %>
+<% elsif product_purchased?(product) %>
   <%# bought already, and a digital file is bought once - so this leads to where
       it actually is rather than offering to sell it again. The server refuses the
       add too; this is the half the buyer can see. %>

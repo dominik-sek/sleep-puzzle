@@ -125,3 +125,31 @@ RSpec.describe "Story samples and collection navigation", type: :system do
     expect(page).to have_current_path(stories_path(locale: :en))
   end
 end
+
+RSpec.describe "Stories shop return target", type: :system do
+  before do
+    allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price(id: "pri_456") ])
+  end
+
+  after { page.driver.browser.execute_cdp("Emulation.clearDeviceMetricsOverride") }
+
+  [ nil, :en ].each do |locale|
+    [ :empty, :populated ].each do |state|
+      it "keeps the #{locale || :pl} shop link at least 44 by 44 pixels in the #{state} collection" do
+        create_product if state == :populated
+
+        [ 320, 390, 1440 ].each do |width|
+          page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride",
+            width: width, height: 844, deviceScaleFactor: 1, mobile: false)
+          visit stories_path(locale: locale)
+
+          link = find("main a[href='#{products_path(locale: locale)}']", text: locale ? "Shop" : "Sklep")
+          rect = link.native.rect
+          expect(rect.width).to be >= 44
+          expect(rect.height).to be >= 44
+          expect(page.evaluate_script("document.documentElement.scrollWidth <= innerWidth")).to be(true)
+        end
+      end
+    end
+  end
+end

@@ -26,7 +26,7 @@
 #
 class BookingChange < ApplicationRecord
   NOTICE_PERIODS = {
-    "canceled" => { "amount" => 14, "unit" => "days" },
+    "canceled" => { "amount" => 48, "unit" => "hours" },
     "rescheduled" => { "amount" => 48, "unit" => "hours" }
   }.freeze
   LEGACY_NOTICE_PERIOD = { "amount" => 24, "unit" => "hours" }.freeze

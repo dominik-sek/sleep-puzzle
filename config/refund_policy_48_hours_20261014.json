@@ -1,0 +1,30 @@
+[
+  {
+    "collection": "terms.clauses",
+    "field": "body",
+    "locale": "pl",
+    "expected": "Odwołanie pojedynczej konsultacji zgłoszone co najmniej 14 dni przed jej rozpoczęciem uprawnia do pełnego zwrotu opłaty. Bezkosztowa zmiana terminu jest możliwa po wcześniejszym uzgodnieniu z Karolą, przy zgłoszeniu co najmniej 48 godzin przed rozpoczęciem. Szczegółowe zasady są opisane w polityce zwrotów i odwołań. Nie ograniczają one ustawowego prawa do odstąpienia od umowy ani reklamacji.",
+    "replacement": "Odwołanie pojedynczej konsultacji zgłoszone co najmniej 48 godzin przed jej rozpoczęciem uprawnia do pełnego zwrotu opłaty. Bezkosztowa zmiana terminu jest możliwa po wcześniejszym uzgodnieniu z Karolą, przy zgłoszeniu co najmniej 48 godzin przed rozpoczęciem. Szczegółowe zasady są opisane w polityce zwrotów i odwołań. Nie ograniczają one ustawowego prawa do odstąpienia od umowy ani reklamacji."
+  },
+  {
+    "collection": "terms.clauses",
+    "field": "body",
+    "locale": "en",
+    "expected": "Canceling an individual consultation at least 14 days before it starts entitles you to a full refund. Free rescheduling is possible by prior agreement with Karola when requested at least 48 hours before the appointment. Details are set out in the refunds and cancellations policy. These rules do not restrict statutory withdrawal or complaint rights.",
+    "replacement": "Canceling an individual consultation at least 48 hours before it starts entitles you to a full refund. Free rescheduling is possible by prior agreement with Karola when requested at least 48 hours before the appointment. Details are set out in the refunds and cancellations policy. These rules do not restrict statutory withdrawal or complaint rights."
+  },
+  {
+    "collection": "refunds.clauses",
+    "field": "body",
+    "locale": "pl",
+    "expected": "Pojedynczą konsultację można bezkosztowo odwołać co najmniej 14 dni przed jej rozpoczęciem. Odwołanie w tym terminie uprawnia do pełnego zwrotu opłaty. Liczy się czas otrzymania zgłoszenia. Jest to termin liczony przed konsultacją, odrębny od ustawowego prawa do odstąpienia od umowy w ciągu 14 dni od jej zawarcia. Późniejsze odwołanie lub nieobecność nie daje dodatkowej gwarancji zwrotu poza prawami ustawowymi. Karola rozpatruje zgłoszenie indywidualnie. Przyjęcie odwołania zwalnia termin niezależnie od czasu wypłaty zwrotu.",
+    "replacement": "Pojedynczą konsultację można bezkosztowo odwołać co najmniej 48 godzin przed jej rozpoczęciem. Odwołanie w tym terminie uprawnia do pełnego zwrotu opłaty. Liczy się czas otrzymania zgłoszenia. Jest to termin liczony przed konsultacją, odrębny od ustawowego prawa do odstąpienia od umowy w ciągu 14 dni od jej zawarcia. Późniejsze odwołanie lub nieobecność nie daje dodatkowej gwarancji zwrotu poza prawami ustawowymi. Karola rozpatruje zgłoszenie indywidualnie. Przyjęcie odwołania zwalnia termin niezależnie od czasu wypłaty zwrotu."
+  },
+  {
+    "collection": "refunds.clauses",
+    "field": "body",
+    "locale": "en",
+    "expected": "An individual consultation may be canceled free of charge at least 14 days before it starts, with a full refund. The time your request is received determines the notice period. This period is measured before the appointment and is separate from the statutory right to withdraw within 14 days of concluding the contract. Later cancellation or non-attendance carries no additional refund guarantee beyond statutory rights. Karola reviews requests individually. Once cancellation is accepted, the appointment is released independently of when the refund is paid.",
+    "replacement": "An individual consultation may be canceled free of charge at least 48 hours before it starts, with a full refund. The time your request is received determines the notice period. This period is measured before the appointment and is separate from the statutory right to withdraw within 14 days of concluding the contract. Later cancellation or non-attendance carries no additional refund guarantee beyond statutory rights. Karola reviews requests individually. Once cancellation is accepted, the appointment is released independently of when the refund is paid."
+  }
+]

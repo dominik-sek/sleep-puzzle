@@ -19,7 +19,7 @@ RSpec.describe "Admin booking changes", type: :request do
 
   it "releases a timely cancellation immediately without a Paddle refund" do
     booking
-    travel_to slot - 14.days do
+    travel_to slot - 48.hours do
       patch cancel_admin_booking_path(booking), params: fields
       expect(response).to redirect_to(admin_booking_path(booking))
       expect(booking.reload).to be_canceled
@@ -28,7 +28,7 @@ RSpec.describe "Admin booking changes", type: :request do
       expect(booking.refund_state).to eq("none")
       expect(booking.booking_changes.sole).to be_timely
       get admin_booking_path(booking)
-      expect(response.body).to include("Zgłoszenie co najmniej 14 dni przed spotkaniem")
+      expect(response.body).to include("Zgłoszenie co najmniej 48 godzin przed spotkaniem")
       expect(SlotComparatorService.call.map(&:begin)).to include(slot)
       expect(SyncBookingCalendarJob).to have_been_enqueued.with(booking.id)
     end
@@ -36,7 +36,7 @@ RSpec.describe "Admin booking changes", type: :request do
 
   it "records late cancellation without automatic deductions" do
     booking
-    travel_to slot - 14.days + 1.second do
+    travel_to slot - 48.hours + 1.second do
       patch cancel_admin_booking_path(booking), params: fields
       expect(response).to redirect_to(admin_booking_path(booking))
       expect(booking.reload).to be_canceled

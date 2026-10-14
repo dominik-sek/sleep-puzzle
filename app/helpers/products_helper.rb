@@ -3,6 +3,20 @@ module ProductsHelper
     product.audio_process? ? audio_process_path : stories_path
   end
 
+  def product_purchased?(product)
+    return false unless current_user
+    return current_user.purchased?(product) unless @products
+
+    catalogue_purchase_states.fetch(:paid).include?(product.id)
+  end
+
+  def product_awaiting_payment?(product)
+    return false unless current_user
+    return current_user.awaiting_payment?(product) unless @products
+
+    catalogue_purchase_states.fetch(:pending).include?(product.id)
+  end
+
   # Use whole, owner-written opening paragraphs as the overview. Lists, media,
   # headings and longer prose remain intact in the native disclosure below it.
   def audio_includes_parts(product)
@@ -42,5 +56,21 @@ module ProductsHelper
   # unavailable rather than guessing at a number.
   def product_price_label(product)
     PaddlePriceCatalogService.find(product.paddle_price_id)&.formatted_amount
+  end
+
+  private
+
+  # Collection actions expose every rendered product in @products, including
+  # both groups in the shop. Share two scoped lookups across cards and samples.
+  # This view-context cache lasts one request; detail pages and cart streams
+  # continue to use the model checks above, as do purchase/stream authorization.
+  def catalogue_purchase_states
+    @catalogue_purchase_states ||= begin
+      ids = @products.map(&:id)
+      {
+        paid: current_user.purchased_products.where(id: ids).pluck(:id).to_set,
+        pending: current_user.awaiting_products.where(id: ids).pluck(:id).to_set
+      }
+    end
   end
 end
