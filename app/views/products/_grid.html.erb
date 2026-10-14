@@ -1,0 +1,7 @@
+<%# Cap each collection independently; a singleton must not fill a desktop row. %>
+<% grid_cap = { 1 => "sm:max-w-[320px]", 2 => "sm:max-w-[664px]", 3 => "sm:max-w-[1008px]" }[products.size] %>
+<div class="grid gap-6 <%= grid_cap %> [grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))]">
+  <% products.each do |product| %>
+    <%= render "products/card", product: product, heading: local_assigns.fetch(:heading, :h2), samples: local_assigns.fetch(:samples, false) %>
+  <% end %>
+</div>

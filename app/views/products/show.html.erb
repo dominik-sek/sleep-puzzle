@@ -1,53 +1,36 @@
 <% content_for :title, page_title(@product.name) %>
-<%# The product's introduction or icon beside the buy column, then the
-    prose and the "co dostajesz" bullets, then three other products.
-
-    Every section below the fold is skipped when the owner has not filled it in -
-    a product with no long description and no bullets renders as just the top
-    half rather than as empty headings. %>
+<%# One shared purchase area, followed by the appropriate product-kind details.
+    Optional content never creates empty headings. %>
 <div class="min-h-screen flex flex-col items-center">
   <%= render Section::Component.new(
     background: :ink,
     align: :left
   ) do |section| %>
     <div class="max-w-[1080px] mx-auto w-full">
-      <%= link_to products_path, class: "group inline-flex items-center gap-1.5 py-2 text-t6 font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
-        <%= icon "arrow-left", class: "size-3.5 shrink-0 transition-transform duration-100 group-hover:-translate-x-0.5" %>
-        <%= content_block("shop.product.back") %>
-      <% end %>
+      <% collection_key = @product.audio_process? ? "processes" : "stories" %>
+      <nav aria-label="<%= t('products.category_navigation') %>" class="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <%= link_to product_collection_path(@product), class: "group inline-flex min-h-11 min-w-11 items-center gap-1.5 py-3 text-t6 font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+          <%= icon "arrow-left", class: "size-3.5 shrink-0 transition-transform duration-100 group-hover:-translate-x-0.5" %>
+          <%= content_block("shop.product.back_#{collection_key}") %>
+        <% end %>
+        <%= link_to t("nav.shop"), products_path, class: "inline-flex min-h-11 items-center rounded-md py-3 text-t6 font-bold text-tan no-underline hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+      </nav>
 
       <% has_trailer = @product.trailerable? %>
       <div class="mt-6.5 grid grid-cols-1 items-start gap-7 md:grid-cols-2 md:gap-12">
-        <% unless has_trailer %>
-          <div class="flex aspect-square items-center justify-center rounded-3xl border border-border-strong bg-linear-[135deg,var(--color-border-strong),var(--color-ink)] text-[110px]"
-               aria-hidden="true">
-            <%= @product.display_icon %>
-          </div>
-        <% end %>
-
-        <div class="flex min-w-0 flex-col gap-4 <%= 'md:order-2' if has_trailer %>">
-          <span class="text-t6 uppercase text-taupe">
-            <%= @product.kind_label %>
-          </span>
-
-          <h1 class="font-display font-bold text-t1 text-cream text-pretty m-0">
+        <div class="product-identity flex min-w-0 flex-col gap-4 md:order-2">
+          <h1 class="m-0 font-display text-t1 font-bold text-cream text-pretty [overflow-wrap:anywhere]">
             <%= @product.name %>
           </h1>
+          <p class="m-0 text-t6 text-taupe"><%= @product.kind_label %></p>
 
           <% if @product.description.present? %>
-            <p class="text-t4 text-tan text-pretty m-0"><%= @product.description %></p>
+            <p class="m-0 text-t4 text-tan text-pretty [overflow-wrap:anywhere]"><%= @product.description %></p>
           <% end %>
 
           <% price_label = product_price_label(@product) %>
 
-          <div class="mt-1 flex items-baseline gap-3.5">
-            <span class="font-display font-bold text-t2 text-cream tabular-nums">
-              <%= price_label || content_block("shop.card.unavailable") %>
-            </span>
-            <% if @product.length_label %>
-              <span class="text-t6 font-semibold text-taupe"><%= @product.length_label %></span>
-            <% end %>
-          </div>
+          <p class="mt-1 font-display text-t2 font-bold text-cream tabular-nums"><%= price_label || content_block("shop.card.unavailable") %></p>
 
           <%# Between the price and the ask: after the reason to want it, before
               the commitment. Skipped for someone who already owns the recording -
@@ -56,16 +39,7 @@
               preload="none" so a page view costs no bandwidth, and the native
               control rather than a custom transport so keyboard and screen-reader
               behaviour come for free. %>
-          <% if @product.previewable? && !current_user&.purchased?(@product) %>
-            <div class="flex flex-col gap-2">
-              <span class="text-t6 uppercase text-taupe">
-                <%= content_block("shop.product.preview") %>
-              </span>
-              <audio controls preload="none" class="w-full"
-                     src="<%= preview_product_path(@product) %>"
-                     aria-label="<%= t('products.player.preview_label', name: @product.name) %>"></audio>
-            </div>
-          <% end %>
+          <%= render "products/preview", product: @product %>
 
           <%= render "products/cart_actions", product: @product %>
 
@@ -73,52 +47,32 @@
             <% if @product.length_label %>
               <%= render "products/spec_item", label: content_block("shop.product.length"), value: @product.length_label %>
             <% end %>
-            <%= render "products/spec_item", label: content_block("shop.product.format"),
-                       value: content_block("shop.product.format_value") %>
-            <%= render "products/spec_item", label: content_block("shop.product.access"),
-                       value: content_block("shop.product.access_value") %>
+            <%= render "products/delivery_specs" %>
           </dl>
         </div>
 
-        <%# Keep the purchase before the film in the reading order on phones;
-            desktop places the film in the left column instead of the icon. %>
-        <% if has_trailer %>
-          <div class="min-w-0 md:order-1">
+        <%# DOM order stays identity first for both media states. Desktop places
+            supporting media in the left column; phones keep it below the offer. %>
+        <div class="product-media min-w-0 md:order-1">
+          <% if has_trailer %>
             <%= render "products/trailer", product: @product, spacing: false %>
-          </div>
-        <% end %>
-      </div>
-
-      <%= render "products/chapter_outline", product: @product if @product.audio_process? %>
-
-      <% if @product.long_description.present? || @product.includes_content.present? %>
-        <div class="mt-11 md:mt-16 grid gap-7 md:gap-12 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
-          <% if @product.long_description.present? %>
-            <div>
-              <h2 class="mb-3.5 font-display font-bold text-t3 text-cream">
-                <%= content_block("shop.product.about") %>
-              </h2>
-              <%# a product with no bullets leaves this column alone in the grid,
-                  and the measure ran past 100ch. 70ch is the system's ceiling. %>
-              <p class="text-t5 leading-[1.75] text-tan text-pretty m-0 max-w-[70ch]"><%= @product.long_description %></p>
-            </div>
-          <% end %>
-
-          <% if @product.includes_content.present? %>
-            <div>
-              <h2 class="mb-3.5 font-display font-bold text-t3 text-cream">
-                <%= content_block("shop.product.includes") %>
-              </h2>
-              <div class="product-includes"><%= @product.includes_content %></div>
-            </div>
+          <% else %>
+            <div class="flex aspect-video items-center justify-center rounded-3xl border border-border-strong bg-linear-[135deg,var(--color-border-strong),var(--color-ink)] text-[110px] md:aspect-square"
+                 aria-hidden="true"><%= @product.display_icon %></div>
           <% end %>
         </div>
+      </div>
+
+      <% if @product.audio_process? %>
+        <%= render "products/audio_process_details", product: @product %>
+      <% else %>
+        <%= render "products/bedtime_story_details", product: @product %>
       <% end %>
 
       <% if @also.any? %>
-        <div class="mt-12 md:mt-20 border-t border-border pt-9">
-          <h2 class="mb-5.5 font-display font-bold text-t3 text-cream">
-            <%= content_block("shop.product.more") %>
+        <section aria-labelledby="related-products-title" class="mt-12 md:mt-20 border-t border-border pt-9">
+          <h2 id="related-products-title" class="mb-5.5 font-display font-bold text-t3 text-cream [overflow-wrap:anywhere]">
+            <%= content_block("shop.product.more_#{collection_key}") %>
           </h2>
 
           <%# capped like the shop grid: a catalogue of two leaves exactly one tile
@@ -129,7 +83,7 @@
               <%= render "products/also_card", product: other %>
             <% end %>
           </div>
-        </div>
+        </section>
       <% end %>
     </div>
   <% end %>

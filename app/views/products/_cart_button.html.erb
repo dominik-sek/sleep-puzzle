@@ -20,6 +20,7 @@
 <%# w-full on the grid: the card stacks price over button, so the button
     fills the card rather than sitting beside a price it cannot fit next to %>
 <% shape = size == :lg ? "py-4 px-6.5" : "py-4 px-5 w-full" %>
+<% shape += " max-w-full whitespace-normal! [overflow-wrap:anywhere]" %>
 
 <% if current_user&.awaiting_payment?(product) %>
   <%# Paid for, and Paddle has not confirmed it yet. This branch is the whole
@@ -69,6 +70,9 @@
         class: "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-border-input bg-ink text-cream font-bold text-t6 cursor-pointer transition-all duration-100 ease-in-out select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent #{shape}" do %>
     <%= label %>
   <% end %>
+<% elsif !product_price_label(product) %>
+  <%= link_to content_block("shop.card.unavailable_cta"), instagram_contact_url,
+              class: "inline-flex min-h-11 items-center rounded-md py-2 text-t6 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
 <% else %>
   <% label = content_block("shop.card.add") %>
   <%= form_with url: cart_items_path, class: "contents" do |form| %>

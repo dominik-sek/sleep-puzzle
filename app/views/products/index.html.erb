@@ -1,82 +1,71 @@
 <% content_for :title, page_title(t("nav.shop")) %>
-<%# The design's Sklep: a left-aligned heading with the cart pill opposite it, not
-    the centred hero the other catalogue screens use. %>
 <div class="min-h-screen flex flex-col items-center">
-  <%= render Section::Component.new(
-    background: :ink,
-    align: :left
-  ) do |section| %>
-    <div class="max-w-[1240px] mx-auto w-full">
-      <div class="flex flex-wrap items-end justify-between gap-4 mb-11">
-        <div>
-          <h1 class="text-t1 font-display font-bold text-cream mb-2.5">
-            <%= content_block("shop.hero.title") %>
-          </h1>
-          <p class="text-t5 text-tan max-w-[520px] m-0">
-            <%= content_block("shop.hero.subtitle") %>
-          </p>
-
-          <%# signed out, nothing here can tell that a visitor already owns a
-              recording - Cart#owned? needs an owner - so a returning buyer would
-              otherwise add and pay for a file they have. Ask them to sign in. %>
-          <% unless user_signed_in? %>
-            <p class="mt-3 text-t6 text-taupe m-0">
-              <%= content_block("shop.hero.returning") %>
-              <%= link_to t("nav.sign_in"), new_user_session_path,
-                          class: "font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
-            </p>
-          <% end %>
-        </div>
-
-        <%= render "shared/cart_pill" %>
+  <%= render Section::Component.new(background: :ink, align: :left) do %>
+    <div class="mx-auto w-full max-w-[1240px]">
+      <div class="min-w-0">
+        <h1 class="mb-2.5 font-display text-t1 font-bold text-cream"><%= content_block("shop.hero.title") %></h1>
+        <p class="m-0 max-w-[70ch] text-t5 text-tan"><%= content_block("shop.hero.subtitle") %></p>
       </div>
 
-      <% if @products.any? %>
-        <%# auto-fit rather than fixed breakpoints, as the design has it: the grid
-            fits as many 240px cards as the row has room for and the tracks share
-            what is left. With too few cards to fill a row there is nothing to share
-            with, and one product used to stretch a tile across the whole 1240px, so
-            the grid is capped at what those cards want: 320px each plus the gaps.
-            The cap belongs on the grid, not the track - a definite track max would
-            cut a full row from four columns to three. %>
-        <% shop_cap = { 1 => "sm:max-w-[320px]", 2 => "sm:max-w-[664px]", 3 => "sm:max-w-[1008px]" }[@products.size] %>
-        <div class="grid gap-6 <%= shop_cap %> [grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))]">
-          <% @products.each do |product| %>
-            <%= render "products/card", product: product %>
-          <% end %>
-        </div>
-      <% elsif @packages.empty? %>
-        <%# an empty shop used to be one sentence with nowhere to go. The rung
-            above the catalogue is the consultations, so that is the way out. %>
-        <div class="flex flex-col items-start gap-5">
-          <p class="text-t4 text-tan max-w-2xl m-0">
-            <%= content_block("shop.empty.body") %>
-          </p>
-          <%= render Buttons::Component.new(
-            text: content_block("shop.empty.cta"),
-            href: packages_path,
-            pill: true,
-            variant: :secondary,
-            classes: "hover:cursor-pointer text-t6! font-bold! py-4 px-6"
-          ) %>
-        </div>
-      <% end %>
+      <nav aria-label="<%= t('products.browse_categories') %>" class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+        <%= link_to t("offers.audio"), "#audio-processes", class: "inline-flex min-h-11 items-center rounded-md py-2 text-t5 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+        <%= link_to t("offers.stories"), "#stories", class: "inline-flex min-h-11 items-center rounded-md py-2 text-t5 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+        <% if @packages.any? %>
+          <%= link_to t("offers.one_to_one"), "#packages", class: "inline-flex min-h-11 items-center rounded-md py-2 text-t5 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+        <% end %>
+      </nav>
 
-      <% if @packages.any? %>
-        <div class="mt-16">
-          <h2 class="mb-7 font-display text-t2 font-bold text-cream"><%= t("offers.one_to_one") %></h2>
-          <div class="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))]">
-            <% @packages.each do |package| %>
-              <%= link_to packages_path(anchor: dom_id(package)), class: "flex flex-col gap-3 rounded-2xl border border-border-strong bg-surface p-6 text-cream no-underline hover:border-accent" do %>
-                <span class="text-t6 font-bold uppercase text-accent"><%= t("offers.one_to_one") %></span>
-                <span class="font-display text-t3 font-bold"><%= package.name %></span>
-                <span class="text-t5 text-tan"><%= package.for_whom %></span>
-                <span class="mt-auto pt-3 text-t5 font-bold text-accent"><%= t("offers.see_times") %> →</span>
+      <% grouped_products = @products.group_by(&:kind) %>
+      <div class="mt-8 flex flex-col gap-12">
+        <% [ [ "audio_process", "audio-processes", "audio", "processes" ], [ "bedtime_story", "stories", "stories", "stories" ] ].each do |kind, anchor, label, copy| %>
+          <% products = grouped_products.fetch(kind, []) %>
+          <section id="<%= anchor %>" tabindex="-1" aria-labelledby="<%= anchor %>-title" class="scroll-mt-24 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+            <h2 id="<%= anchor %>-title" class="font-display text-t2 font-bold text-cream"><%= t("offers.#{label}") %></h2>
+            <p class="mt-3 max-w-[70ch] text-t5 text-tan"><%= content_block("shop.collections.#{copy}_intro") %></p>
+            <%= link_to content_block("shop.collections.#{copy}_link"), kind == "audio_process" ? audio_process_path : stories_path,
+                        class: "mt-2 inline-flex min-h-11 items-center rounded-md py-2 text-t6 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+            <div class="mt-4">
+              <% if products.any? %>
+                <%= render "products/grid", products: products, heading: :h3 %>
+              <% else %>
+                <p class="text-t5 text-taupe"><%= content_block("shop.collections.#{copy}_empty") %></p>
               <% end %>
+            </div>
+          </section>
+        <% end %>
+
+        <div>
+          <p id="audio-delivery-label" class="text-t6 font-bold text-cream"><%= t("products.audio_delivery") %></p>
+          <dl aria-labelledby="audio-delivery-label" class="mt-3 grid max-w-xl gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))]">
+            <%= render "products/delivery_specs" %>
+          </dl>
+          <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+            <% unless user_signed_in? %>
+              <p class="m-0 text-t6 text-taupe">
+                <%= content_block("shop.hero.returning") %>
+                <%= link_to t("nav.sign_in"), new_user_session_path,
+                            class: "inline-flex min-h-11 items-center rounded-md font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+              </p>
             <% end %>
+            <%= render "shared/cart_pill" %>
           </div>
         </div>
-      <% end %>
+
+        <% if @packages.any? %>
+          <section id="packages" tabindex="-1" aria-labelledby="packages-title" class="scroll-mt-24 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+            <h2 id="packages-title" class="mb-6 font-display text-t2 font-bold text-cream"><%= t("offers.one_to_one") %></h2>
+            <div class="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))]">
+              <% @packages.each do |package| %>
+                <%= link_to packages_path(anchor: dom_id(package)), class: "flex min-w-0 flex-col gap-3 rounded-2xl border border-border-strong bg-surface p-6 text-cream no-underline hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+                  <span class="font-display text-t3 font-bold [overflow-wrap:anywhere]"><%= package.name %></span>
+                  <span class="text-t5 text-tan"><%= package.for_whom %></span>
+                  <span class="mt-auto pt-3 text-t5 font-bold text-accent"><%= t("offers.see_times") %> →</span>
+                <% end %>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+      </div>
     </div>
   <% end %>
 </div>

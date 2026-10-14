@@ -1,0 +1,6 @@
+<%# Shared values for both audio kinds, on collection and product pages.
+    Keep these owner-editable facts in the same CMS fields everywhere. %>
+<%= render "products/spec_item", label: content_block("shop.product.format"),
+           value: content_block("shop.product.format_value") %>
+<%= render "products/spec_item", label: content_block("shop.product.access"),
+           value: content_block("shop.product.access_value") %>

@@ -38,6 +38,9 @@ RSpec.describe AudioChapter, type: :model do
                                    translations: { "title" => { "pl" => "Dalej" } })
     expect(product.update(published: true)).to be(true)
     expect(Product.published).to include(product)
+    expect(product.length_label).to be_nil
+
+    product.update!(expected_chapter_count: 2)
     expect(product.length_label).to eq("3 min")
   end
 

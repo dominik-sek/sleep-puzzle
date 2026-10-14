@@ -17,7 +17,7 @@ class ProductsController < ApplicationController
   # rendering a page that cannot be bought.
   def show
     @product = Product.published.includes(:audio_chapters).find(params[:id])
-    @also = Product.published.includes(:audio_chapters).ordered.where.not(id: @product.id).limit(ALSO_LIMIT)
+    @also = Product.published.includes(:audio_chapters).ordered.where(kind: @product.kind).where.not(id: @product.id).limit(ALSO_LIMIT)
   end
 
   # Hands a buyer their own copy. /dashboard renders a player pointed here, and

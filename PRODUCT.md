@@ -72,6 +72,18 @@ who can't reach 1:1, 1:1 when they can - rather than a single price point.
   and an optional public 30-second sample. Audioprocesses have ordered chapters and
   an optional public trailer. Full recordings are played from the buyer's dashboard;
   samples and trailers do not require an account or purchase.
+* **Audio is a growing catalogue.** `/audio-processes` lists all published
+  audioprocesses; each program and bedtime story keeps its own `/products/:id`
+  sales page. A collection must never silently select only the first program.
+  Incomplete programs remain discoverable as previews, with sales paused and
+  no partial duration presented as the full program length.
+  `/stories` lists published bedtime stories, with optional public samples on
+  its cards. Both collections return to their shared product-detail pages and
+  recommend only other recordings of the same kind. The shop groups audio under
+  `#audio-processes`, `#stories` and `#packages`, with audio access facts before
+  the 1:1 offers. Navigation exposes plural Audioprocesy and Bajki audio; category
+  anchors remain useful with an honest empty state before new titles are published.
+  Delivery and access facts share the same editable fields on every audio surface.
 * **The owner edits copy live.** `config/content_blocks.yml` is the schema: pages →
   sections → fields, typed `plain`, `rich` (Trix) or `image`. Every declared field
   ships with a default, so no section can render blank. **A new public surface that

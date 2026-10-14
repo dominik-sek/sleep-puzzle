@@ -34,6 +34,7 @@ class Product < ApplicationRecord
   # set.
   has_one_attached :audio_upload
   has_one_attached :trailer_upload
+  has_one_attached :trailer_poster
   has_rich_text :includes_pl
   has_rich_text :includes_en
 
@@ -169,6 +170,8 @@ class Product < ApplicationRecord
   # whole "Długość" slot out rather than printing a unit with no number
   def length_label
     minutes = if audio_process?
+      return unless program_complete?
+
       seconds = audio_chapters.ready.sum(:duration_seconds)
       (seconds / 60.0).ceil if seconds.positive?
     else
@@ -197,6 +200,11 @@ class Product < ApplicationRecord
 
   def trailerable?
     audio_process? && trailer_cdn_path.present? && BunnySignedUrlService.configured?
+  end
+
+  # A manually changed trailer path must never inherit the previous film's image.
+  def trailer_poster_available?
+    trailer_poster.attached? && trailer_poster.blob.metadata["trailer_cdn_path"] == trailer_cdn_path
   end
 
   # The attachment is the whole state - purged on success and on final failure

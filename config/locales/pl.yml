@@ -173,10 +173,14 @@ pl:
       many: "Czas trwania wsparcia: %{count} tygodni"
       other: "Czas trwania wsparcia: %{count} tygodnia"
   products:
+    browse_categories: "Przejdź do sekcji sklepu"
+    category_navigation: "Kategoria i sklep"
+    audio_delivery: "Dla materiałów audio"
     trailer: "Zobacz wprowadzenie"
     trailer_label: "Film wprowadzający: %{name}"
     chapters:
       title: "Program audioprocesu"
+      preview_title: "Podgląd programu — dostępne nagrania"
     kinds:
       audio_process: "Audioproces"
       bedtime_story: "Bajka na dobranoc"
@@ -252,7 +256,8 @@ pl:
     read_more: "Czytaj więcej"
     read_less: "Zwiń tekst"
   offers:
-    audio: "Audioproces"
+    audio: "Audioprocesy"
+    stories: "Bajki audio"
     one_to_one: "Współpraca 1:1"
     explore: "Poznaj ofertę"
     instagram_cta: "Napisz na Instagramie"

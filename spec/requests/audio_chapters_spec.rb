@@ -14,7 +14,8 @@ RSpec.describe "Audio process chapters", type: :request do
     chapter.update!(duration_seconds: 83)
 
     get audio_process_path
-    expect(response.body).to include("Nagranie", "1:23")
+    expect(Capybara.string(response.body)).to have_link(product.name, href: product_path(product))
+    expect(response.body).not_to include("1:23")
     expect(response.body).not_to include(stream_chapter_product_path(product, chapter_id: chapter.id))
 
     get product_path(product)
@@ -38,7 +39,7 @@ RSpec.describe "Audio process chapters", type: :request do
     expect(response.body).not_to include(preview_product_path(product))
 
     get audio_process_path
-    expect(response.body).to include(trailer_product_path(product))
+    expect(response.body).not_to include(trailer_product_path(product))
   end
 
   it "gates every chapter on the product purchase, including one added later" do

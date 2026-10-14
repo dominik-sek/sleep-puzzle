@@ -1,0 +1,20 @@
+<% includes_intro, includes_details = audio_includes_parts(product) %>
+<% heading_id = dom_id(product, :includes_heading) %>
+<% toggle_id = dom_id(product, :includes_toggle) %>
+<h2 id="<%= heading_id %>" class="mb-3.5 font-display font-bold text-t3 text-cream [overflow-wrap:anywhere]"><%= content_block("audio_landing.details.includes") %></h2>
+<% if includes_intro.present? %>
+  <div class="trix-copy audio-includes"><%= includes_intro %></div>
+<% end %>
+<% if includes_details.present? %>
+  <details class="group mt-3">
+    <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-md text-t6 text-accent hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden"
+             aria-labelledby="<%= toggle_id %> <%= heading_id %>">
+      <span id="<%= toggle_id %>">
+        <span class="group-open:hidden"><%= content_block("audio_landing.details.includes_more") %></span>
+        <span class="hidden group-open:inline"><%= content_block("audio_landing.details.includes_less") %></span>
+      </span>
+      <%= icon "chevron-down", class: "size-4 shrink-0 group-open:rotate-180" %>
+    </summary>
+    <div class="trix-copy audio-includes mt-4"><%= includes_details %></div>
+  </details>
+<% end %>

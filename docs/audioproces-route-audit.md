@@ -1,213 +1,280 @@
-# Audioproces route and interface audit
+# Audio catalogue and product-page audit
 
-Audited 14 October 2026 against the local application after migrations were applied.
-Scope: `/audioproces` and `/products/2`. Audit only; no application or content changes.
+Reassessed 14 October 2026 for multiple audioprocesy and multiple bajki audio.
+Targets: `/audioproces`, `/products/2`; `/products` and navigation inspected as
+supporting context. Audit only: no application or catalogue changes.
 
-## Decision
+Implementation follow-up: the requested hardening now lists all published programs
+on `/audioproces`, retaining per-product detail URLs. Product 2's guarded migration
+declares 24 chapters, so its one current recording remains a preview and new sales
+are paused. Incomplete programs no longer show partial duration as total length.
+Suitability and topic disclosure now live on individual program pages. The
+findings and score below record the audit before these changes, not a new audit.
 
-Keep **`/audioproces` as the public sales URL for this featured product**, using its
-landing-page structure. Bring across the useful purchase facts from the product
-page. Redirect this product's `/products/2` HTML detail URL permanently to it, and
-update catalogue links so visitors arrive directly at the chosen URL. Preserve
-locale: `/en/products/2` should lead to `/en/audioproces`.
+Clarify/layout follow-up: navigation and the footer now expose Bajki audio at
+`/products#bajki`. The shop separates both audio kinds and 1:1 offers, with stable
+section anchors, independently capped grids, shorter product-card descriptions,
+and full descriptions retained on product pages. Shared editable delivery facts
+are rendered consistently and explicitly apply to audio. Empty categories retain
+their destination and an editable message. Mobile navigation closes on a category
+selection so the destination heading remains visible below the sticky navbar.
 
-Keep the Product record as the source of product truth and checkout identity.
-Keep product media routes, chapter streams, and other products' detail pages.
-Resolve the featured product explicitly rather than choosing the first item in
-catalogue order. This decision concerns one featured product; future audioprocesses
-must retain distinct product destinations.
+Distill/adapt follow-up: reusable product-kind detail partials now separate
+program suitability and expandable topics from story descriptions. The chapter
+outline follows the program overview; duration is shown once. Product identity
+precedes both trailer and fallback media on phones, and the back link has a 44px
+minimum target. Narrow/enlarged-text checks cover long names, in-cart actions,
+chapter metadata and confirmation messages. These are implementation follow-ups;
+the original score below has not been recalculated.
 
-The landing is the stronger starting point because its introduction speaks to the
-parent's situation, its section names explain suitability, and its long topic list
-uses progressive disclosure. It already receives links from the home page,
-navigation and footer. The generic page contributes useful delivery/access facts
-and a stronger product-name hierarchy, but its catalogue presentation and fully
-expanded copy are less suited to the mobile, social-led first visit in PRODUCT.md.
+## Implementation integrity verdict: fail for the planned catalogue
 
-## Implementation integrity verdict: fail
+The product model already supports many records in two audio kinds. Discovery
+still assumes one promoted audioprocess: the landing selects `ordered.first` and
+renders its full sales page. Product detail pages already resolve a specific ID.
+This is a mismatch between the collection entry point and the catalogue model,
+not a reason to remove individual product URLs.
 
-Shared data and commerce partials are a good foundation, but there are two public
-presentations of one offer with different information hierarchy and purchasing
-facts. More seriously, current local content promises 24 recordings while the
-product is configured as a complete one-chapter program.
+**This reassessment supersedes the earlier recommendation to redirect
+`/products/2` to `/audioproces`. Keep individual product detail URLs.**
 
-The mechanical detector returned five advisories. Neither 110px decorative emoji
-size is a reading-type violation: both containers are `aria-hidden`. The three
-color advisories concern legacy form styling and calendar/package dialog
-backdrops, not these pages. These are not verified defects in the audited surfaces.
-The meaningful integrity failures below were established from rendered content,
-controllers, templates and a read-only local product query.
+## Route decision
 
-## Audit health
-
-| Dimension | Score | Evidence |
+| URL | Responsibility | Content depth |
 | --- | --- | --- |
-| Accessibility | 3/4 | Named controls, landmarks, visible focus styles and keyboard-operable native disclosure; back link below project target size. |
-| Performance | 3/4 | Trailer uses `preload="none"`, fixed aspect ratio and native controls; self-hosted fonts; no production performance trace collected. |
-| Responsive design | 3/4 | Both layouts fit the checked 390px viewport without horizontal overflow; purchase targets approximately 54px high. Long opening copy remains costly on a phone. |
-| Theming | 4/4 | Both surfaces use the same warm dark tokens and typography; no verified palette drift in scope. Dark is the intentional product appearance. |
-| Implementation integrity | 1/4 | Divergent public destinations, unstable featured selection and contradiction between promised and configured program size. |
-| **Total** | **14/20** | **Good technical baseline; significant product-integrity issues remain.** |
+| `/audioproces` | Audioprocesy collection | Short category introduction, all published programs, concise suitability summaries, prices and links to individual products. |
+| `/products/:id` | One product's canonical sales page | Product-specific explanation, preview/trailer, price, delivery/access facts, purchase state and full details. Works for both kinds. |
+| `/products` | All-offers catalogue | Clearly separated Audioprocesy and Bajki audio sections; retain the existing separate 1:1 section. |
+| `/products#bajki` | Proposed direct entry into the stories section | A simple navigation destination; this anchor does not exist yet. |
+| `/packages` | Consultation offers | Existing 1:1 destination. |
 
-This is a scoped implementation assessment, not WCAG certification or a production
-Core Web Vitals result. Checkout, paid playback, trailer contents/captions,
-authenticated variants and 200% text scaling were not exercised. Source review
-covered unavailable/owned/pending commerce branches; those were not all recreated
-in the browser. Observations cover 390px mobile, an intermediate 776px rendering,
-and 1440px desktop views. No purchases were made.
+Retain `/audioproces` initially to preserve existing links; its visible category
+label should become “Audioprocesy”. The path's singular spelling does not block a
+collection. A later `/audioprocesy` rename is optional and would need a permanent
+redirect from the old category URL, not redirects from individual product pages.
 
-Seven findings: **P0: 0 · P1: 2 · P2: 3 · P3: 2**.
+Add visible navigation for **Audioprocesy**, **Bajki audio**, and **Współpraca 1:1**.
+The stories link can target the proposed shop section; a dedicated `/bajki` landing
+is justified later if it needs its own editorial content. Do not introduce an
+extra category page solely for URL symmetry. Keep `/en` equivalents and link each
+product's language alternative to that same product.
 
-## Findings
+A category and a product should have different layouts. The category helps a
+visitor choose; the product page helps them understand and buy the selected item.
+Their product names, prices, availability and access terms must agree.
 
-### 1. [P1] The offer promises 24 recordings but sells a complete one-chapter program
+## Executive summary and health score
 
-- **Location:** local Product 2; `app/models/product.rb:132`,
-  `app/models/product.rb:169`, `app/views/products/_chapter_outline.html.erb:1`.
+**Eight findings: P0: 0 · P1: 2 · P2: 4 · P3: 2.** The two major findings are the
+single-product collection selector and the locally contradictory program offer.
+The other priorities are stories discovery, grouping the catalogue, and moving
+useful sales-page behavior into reusable individual product details.
+
+| Dimension | Score | Key finding |
+| --- | --- | --- |
+| Accessibility | 3/4 | Native disclosure works with Enter; named purchase controls and focus styling. Back link below the project's 44px target. |
+| Performance | 3/4 | Native media with `preload="none"`, fixed aspect ratio, self-hosted fonts. Production loading performance was not profiled. |
+| Responsive design | 3/4 | Both target pages fit 390px without horizontal overflow; 1440px desktop inspected. Missing-trailer variant puts a large decorative tile before the product on mobile. |
+| Theming | 4/4 | Consistent warm dark palette and shared typography; no new surface-level token defects verified. |
+| Implementation integrity | 1/4 | Collection assumes one item; category/product roles overlap; local deliverable contradicts its configured completeness. |
+| **Total** | **14/20** | **Good technical baseline; catalogue architecture needs correction before expansion.** |
+
+The score is unchanged because the code is unchanged; the new requirement changes
+which architecture should be kept. It is not an accessibility certification or a
+production performance result.
+
+## Detailed findings
+
+### 1. [P1] The category entry point silently excludes every additional audioprocess
+
+- **Location:** `app/controllers/audio_processes_controller.rb:3`;
+  `app/views/audio_processes/show.html.erb:9`.
 - **Category:** Implementation integrity.
-- **Evidence:** rendered inclusions say “24 krótkie, ale treściwe nagrania”.
-  Read-only metadata returned `expected_chapter_count: 1`, `chapter_count: 1`,
-  `ready_count: 1`, `program_complete: true`. The chapter is “Wstęp”, 2:52.
-  Both pages offer purchase at 497,00 PLN. `/products/2` labels total length “3 min”.
-- **Impact:** buyers cannot establish what they will receive. Consolidating routes
-  alone would retain this contradiction. This is verified locally; production
-  metadata was not queried.
-- **Recommendation:** reconcile the owner's intended deliverable with the
-  expected count and uploaded recordings before sale. If 24 is correct, declare
-  that count and complete the files; the existing readiness gate can then suppress
-  purchases while incomplete. Distinguish a preview outline from the full program
-  and avoid presenting partial-file duration as a complete program duration.
-- **Suggested command:** `$impeccable harden` after the owner confirms product truth.
-
-### 2. [P1] Two sales destinations diverge, and the landing's product can change implicitly
-
-- **Location:** `app/controllers/audio_processes_controller.rb:3`,
-  `app/controllers/products_controller.rb:19`,
-  `app/views/products/_card.html.erb:33`, `app/views/products/_also_card.html.erb:7`,
-  `app/views/layouts/application.html.erb:1`.
-- **Category:** Implementation integrity.
-- **Evidence:** the landing selects `ordered.first`; the detail route finds its
-  supplied ID. Home/navigation/footer use `/audioproces`, whereas catalogue links
-  use `product_path`. Both render a sales page and neither declares a canonical
-  URL. Catalogue reordering can change the landing's product.
-- **Impact:** visitors arriving from different links see a different offer
-  presentation; maintaining two templates perpetuates drift. Future ordering
-  changes can silently replace the promoted product.
-- **Recommendation:** adopt the route decision above, explicitly configure the
-  featured product, redirect its old HTML destination, and update internal links.
-  Keep language alternatives and canonical URLs consistent. Do not redirect every
-  audio product or any playback endpoint to the featured landing.
+- **Evidence:** `Product.published.audio_process.includes(:audio_chapters).ordered.first`.
+  The view accepts one `@product`, displays a buy action and its full program,
+  and has no product-detail links in its main content.
+- **Impact:** future programs will not appear through the main Audioproces entry
+  point; catalogue ordering can silently change which program it sells.
+- **Recommendation:** load the published collection and render a concise card for
+  every program. Each card links to its `/products/:id`. If one product is featured,
+  feature it deliberately and still show the rest. Preserve a collection layout
+  with one item so the second addition does not require another restructuring.
 - **Suggested command:** `$impeccable harden`.
 
-### 3. [P2] The landing omits delivery and access facts shown on the product page
+### 2. [P1] Product 2 promises 24 recordings but is configured as a complete one-chapter program
 
-- **Location:** `app/views/audio_processes/show.html.erb:12`, compared with
-  `app/views/products/show.html.erb:72`.
+- **Location:** local Product 2; `app/models/product.rb:132` and `:169`;
+  `app/views/products/_chapter_outline.html.erb:1`.
 - **Category:** Implementation integrity.
-- **Evidence:** only the generic page shows “Odsłuch online, bez pobierania” and
-  “Bezterminowy, w Twoim koncie” together near the buy action. The landing includes
-  lifetime access in its collapsed topic content, but omits the nearby facts row.
-- **Impact:** visitors must infer how access works before paying, or discover the
-  facts through a different route or long disclosure.
-- **Recommendation:** put a concise, shared format/access summary by the landing's
-  price and action. Display full-program duration only when it is truthful. Keep
-  these facts editable and sourced once.
+- **Evidence:** current inclusions promise 24 recordings. A fresh read-only local
+  query returned expected count 1, actual count 1, ready count 1, complete true,
+  length “3 min”. Both pages list “Wstęp” at 2:52 and enable purchase at 497,00 PLN.
+- **Impact:** the buyer cannot reconcile the promised content with the visible
+  program. Route changes will not fix this underlying contradiction.
+- **Recommendation:** confirm the intended deliverable and align expected chapter
+  count, files and copy. If 24 is correct, the declared count should reflect that;
+  existing readiness logic can suppress purchases until complete. Identify any
+  partial outline as a preview and avoid presenting partial duration as total length.
+  Apply the same truth rules to every future product.
+- **Suggested command:** `$impeccable harden` after product truth is confirmed.
+- **Scope:** verified locally only; production was not queried. Local published
+  counts currently contain one audioprocess and no bajki, so future catalogue
+  behavior was assessed from code rather than fabricated records.
+
+### 3. [P2] Bajki have no visible primary-navigation destination
+
+- **Location:** `app/helpers/navigation_helper.rb:16`;
+  `config/locales/pl.yml:254`; `app/views/shared/_footer.html.erb:26`.
+- **Category:** Implementation integrity / information architecture.
+- **Evidence:** primary navigation contains singular “Audioproces” and 1:1. The
+  general shop is available in the footer, but stories have no direct category entry.
+- **Impact:** as stories are published, visitors have to discover a footer shop
+  link or arrive via a direct product URL. The navigation understates the offer.
+- **Recommendation:** expose plural Audioprocesy and Bajki audio as distinct
+  destinations, keeping 1:1 visible. Start with a link to a real stories section in
+  `/products`; do not add an empty category destination before content exists.
 - **Suggested command:** `$impeccable clarify`.
 
-### 4. [P2] The landing gives the category more emphasis than the actual product
+### 4. [P2] The general catalogue does not separate the two audio audiences
 
-- **Location:** `app/views/audio_processes/show.html.erb:6`.
-- **Category:** Implementation integrity; visual hierarchy judgment.
-- **Evidence:** the kicker and H1 both say “Audioproces”; the named product appears
-  later as a smaller H2, after the landing introduction. A second explanatory
-  paragraph follows the product name.
-- **Impact:** a tired visitor reads two openings before establishing the exact
-  item being offered. This adds mobile reading load without clarifying the choice.
-- **Recommendation:** make the actual product name the H1, use “Audioproces” once
-  as its category, and keep one concise opening benefit statement. Preserve the
-  owner's remaining copy in the appropriate detail section; do not invent claims.
+- **Location:** `app/controllers/products_controller.rb:11`;
+  `app/views/products/index.html.erb:34`; `app/views/products/_card.html.erb:24`.
+- **Category:** Implementation integrity / responsive information structure.
+- **Evidence:** all published audio products enter one ordered grid. Kind is a
+  label on each card, not a collection section. Cards repeat the full description
+  and have no compact suitability or duration summary.
+- **Impact:** parents seeking guidance and parents seeking a bedtime story must
+  scan the same mixed sequence. Long descriptions compound mobile reading load
+  as more products are added.
+- **Recommendation:** use labelled Audioprocesy and Bajki audio sections with
+  stable anchors and concise cards. Existing kind labels and native links are a
+  useful foundation. Use real product metadata; introduce age/suitability fields
+  only when the owner can provide those facts. A small catalogue does not yet
+  require search, advanced filters or pagination.
+- **Suggested command:** `$impeccable layout`.
+
+### 5. [P2] The reusable detail page loses the better program-reading structure
+
+- **Location:** `app/views/products/show.html.erb:94`, compared with
+  `app/views/audio_processes/show.html.erb:38`;
+  `app/helpers/products_helper.rb:3`; `config/content_blocks.yml:766`.
+- **Category:** Implementation integrity / responsive reading.
+- **Evidence:** the individual page uses “O tym nagraniu” for a multi-recording
+  program and renders all rich inclusions expanded. The landing supplies “Dla kogo”
+  and a short introduction plus native disclosure. Format/access facts appear
+  together near purchase only on the individual detail page.
+- **Impact:** choosing `/products/:id` without improving its template discards useful
+  suitability framing and creates a long text wall for each future program.
+- **Recommendation:** transfer the reusable suitability and disclosure patterns to
+  audio-process product details. Retain the actual product-name H1, price and access
+  facts. Keep content in that Product record and editable labels in the CMS. Story
+  details can remain shorter with their sample and description. Do not copy the
+  current single-product landing's full text into every collection listing.
 - **Suggested command:** `$impeccable distill`.
 
-### 5. [P2] The generic detail page expands the full topic list into the main reading flow
+### 6. [P2] Trailer availability changes mobile product priority
 
-- **Location:** `app/views/products/show.html.erb:107`, compared with
-  `app/views/audio_processes/show.html.erb:45`.
-- **Category:** Responsive design / Implementation integrity.
-- **Evidence:** the same rich inclusions render directly on the generic page;
-  the landing exposes short opening paragraphs and a native topic disclosure.
-- **Impact:** the generic layout creates a long mobile reading obligation and
-  a heavily unbalanced desktop text column. The copy is shared; its visibility
-  and arrangement account for much of the perceived information difference.
-- **Recommendation:** keep the landing's disclosure behavior in the consolidated
-  page. Lead with a short overview and retain the full owner-written topics.
-- **Suggested command:** `$impeccable distill`.
+- **Location:** `app/views/products/show.html.erb:19`.
+- **Category:** Responsive design / implementation integrity.
+- **Evidence:** if a trailer is present, the product identity and purchase column
+  comes first on mobile. If absent, an aspect-square decorative emoji tile appears
+  before that column. This branch applies to stories and programs without trailers.
+- **Impact:** the products most likely to lack a trailer consume roughly a screen
+  width of vertical space before the visitor can read the product name. An optional
+  asset changes reading priority instead of merely adding or removing media.
+- **Recommendation:** keep name, short benefit, price and action early in every
+  product variant. Treat a trailer or story sample as optional media; keep large
+  fallback decoration out of the first mobile position. Build type-aware sections
+  within one shared product-page system, not a separate bespoke page per title.
+- **Suggested command:** `$impeccable adapt`.
+- **Verification limit:** this fallback is established from source; no unpublished
+  story or second program was created to simulate it.
 
-### 6. [P3] The trailer presents an empty media rectangle before playback
+### 7. [P3] The trailer has no meaningful initial image
 
-- **Location:** `app/views/products/_trailer.html.erb:4` (shared by both pages).
-- **Category:** Implementation integrity; visual presentation.
-- **Evidence:** `preload="none"` is correct for bandwidth, but there is no poster;
-  the initial player is a blank dark gradient, prominently placed in each hero.
-- **Impact:** prime space offers little recognition or reassurance until pressed.
-  This is not evidence that playback itself is broken.
-- **Recommendation:** use a real, locally served owner-approved poster if available,
-  retaining the native controls, aspect ratio and no-preload behavior.
+- **Location:** `app/views/products/_trailer.html.erb:4`.
+- **Category:** Implementation integrity / presentation.
+- **Evidence:** the shared native video has no poster and initially displays an
+  empty dark media rectangle. `preload="none"` is appropriate and should remain.
+- **Impact:** prominent space provides little product recognition before playback.
+- **Recommendation:** allow a real, owner-approved, locally served product poster
+  when available. Do not require autoplay or preload every product trailer in a grid.
 - **Suggested command:** `$impeccable polish`.
 
-### 7. [P3] The product-page back link misses the project's 44px target
+### 8. [P3] The product back link is smaller than the project touch target
 
 - **Location:** `app/views/products/show.html.erb:14`.
-- **Category:** Accessibility / Responsive design.
-- **Evidence:** measured height approximately 35.6px. The principal purchase
-  controls are approximately 53.6px tall.
-- **Impact:** a smaller target is less forgiving for one-handed phone use.
-- **Standard:** misses the project's 44px target, not by itself a demonstrated
-  WCAG 2.1 AA failure. Do not equate 44px with the AA requirement.
-- **Recommendation:** use a 44px minimum if this back link is retained. The
-  consolidated direct-arrival landing may not need this catalogue back affordance.
+- **Category:** Accessibility / responsive design.
+- **Evidence:** measured height 35.6px; the purchase button measures 53.6px.
+- **Impact:** returning to the collection is less forgiving for one-handed use.
+- **Standard:** misses the project's 44px target; not by itself a demonstrated
+  WCAG 2.1 AA failure.
+- **Recommendation:** use a 44px minimum and give the back link category context.
+  Keep a way to browse all offers without relying on browser history or session state.
 - **Suggested command:** `$impeccable adapt`.
 
-## What to retain
+## Shared system, different page responsibilities
 
-- One warm dark visual system, Baloo 2 headings and Quicksand reading text.
-- Strong primary-text contrast. Token calculations against ink/surface give
-  cream 14.61:1 / 13.05:1, tan 9.90:1 / 8.85:1, taupe 5.52:1 / 4.93:1,
-  and amber 6.69:1 / 5.98:1. These sampled token pairs clear 4.5:1.
-- Large purchase targets, visible focus rules, named native media controls,
-  semantic headings and a skip link into the main landmark.
-- Native reading disclosure: Enter opens it and exposes the full topic list;
-  the accessible label changes to “Zwiń listę tematów Co obejmuje”.
-- Shared cart actions and product data. The divergence is primarily orchestration
-  and presentation, not two separate copies of the product record.
-- Self-hosted fonts and no trailer download on passive page load.
+| Element | Collection | Audioprocess detail | Bajka detail |
+| --- | --- | --- | --- |
+| Main heading | Category name | Exact product name | Exact product name |
+| Opening | Short category explanation | Who it helps and what it covers | What the story is and whom it suits, where known |
+| Media | Compact visual; no wall of players | Optional trailer | Optional public sample |
+| Content | Concise cards for every listed item | Overview, topics disclosure, truthful chapter outline | Description and relevant listening details |
+| Commerce | Same price/availability truth; clear detail link | Shared purchase/owned/pending/unavailable states | Same shared states |
+| Delivery | Brief consistent summary if useful | Format, access, trustworthy total duration/count | Format, access, trustworthy duration |
 
-## Recommended consolidated page order
+Do not add claims or product-specific fields without owner-supplied facts. Shared
+format/access text can remain shared while those terms genuinely apply to all
+products. Related-item ordering may later favor the same kind, but it is not a
+verified defect: the current heading promises only “Inne materiały”.
 
-1. Category, product-name H1, one concise benefit introduction.
-2. Trailer beside the opening on desktop; retain a short purchase-first mobile flow.
-3. Price, truthful availability, purchase/access action, format and access facts.
-4. “Dla kogo”, including the existing scope boundary about independent falling asleep.
-5. Brief “Co obejmuje” overview with the complete topics available by disclosure.
-6. A truthful complete chapter outline, or an explicitly identified preview.
-7. Real approved testimonials only when present; a final purchase action after details.
+## Patterns and positive findings
 
-Avoid maintaining a manual sales topic list and a chapter outline as competing
-claims about completeness. Structured metadata should establish quantity and
-duration; the owner's rich text should explain value and suitability.
+The systemic gap is that product kind exists in the data but is not fully expressed
+in discovery. Meanwhile, category editorial content and one product's sales content
+are interleaved. Separating those responsibilities resolves the apparent layout
+conflict without forcing every page to look identical.
+
+Keep the two-kind Product model, per-ID detail lookup, shared price lookup, cart
+partials and native playback controls. The underlying model does not need separate
+product tables for programs and stories. Preserve the warm palette, self-hosted
+fonts, visible focus rules and native disclosure. At 390px both target pages fit
+without horizontal overflow; disclosure opens with Enter and the purchase target
+is about 54px high. The category disclosure itself meets 44px. Existing sampled
+palette ratios from the earlier pass remain applicable because the audited styles
+are unchanged; body and muted text on the warm dark surfaces clear 4.5:1.
+
+The bundled detector was rerun on both targets and the catalogue/card templates.
+It returned three advisory font-size findings: 110px decorative emoji on the two
+pages and 44px emoji on catalogue cards. All are in `aria-hidden` decoration, not
+reading typography, so none is reported as a verified type-ramp defect.
 
 ## Recommended actions
 
-1. **[P1] `$impeccable harden`** — reconcile program completeness and make the
-   featured route deterministic; consolidate HTML destinations without changing
-   playback or checkout identity.
-2. **[P2] `$impeccable clarify`** — expose delivery/access facts by the buy action
-   and distinguish any partial outline from the full program.
-3. **[P2] `$impeccable distill`** — establish the product-name hierarchy, one
-   opening message and the landing's existing progressive disclosure.
-4. **[P3] `$impeccable adapt`** — apply the project target size to any retained
-   back link and verify the final page at narrow widths and enlarged text.
-5. **[P3] `$impeccable polish`** — finish the trailer presentation and verify the
-   consolidated layout on mobile and desktop.
+1. **[P1] `$impeccable harden`** — make `/audioproces` a true collection, keep
+   per-product URLs, and reconcile the declared/actual deliverable for product 2.
+2. **[P2] `$impeccable clarify`** — establish plural navigation labels and a clear
+   stories entry point; keep shared facts consistent.
+3. **[P2] `$impeccable layout`** — group the existing shop by kind with concise
+   cards and working section anchors.
+4. **[P2] `$impeccable distill`** — move suitability and progressive disclosure into
+   the reusable audioprocess detail variant.
+5. **[P2/P3] `$impeccable adapt`** — keep product identity before fallback media
+   on mobile and enlarge the back link.
+6. **[P3] `$impeccable polish`** — finish real media presentation and check the
+   final collection/detail layouts together.
 
 You can ask me to run these one at a time, all at once, or in any order you prefer.
 Re-run `$impeccable audit` after fixes to reassess the result.
+
+## Verification boundaries
+
+Live local pages and source were rechecked; mobile width 390px and desktop width
+1440px were inspected on the two targets. `/products` was inspected to verify the
+surrounding discovery flow. Product metadata was queried read-only. No files,
+prices, products, purchase state or publication state were changed. Only this audit
+report was updated. No production performance trace, checkout, paid playback,
+trailer-content/caption review, 200% text scaling or synthetic multi-product browser
+fixture was run. Future multi-product limitations are tied to the explicit source
+branches above, not claimed as observations of records that do not yet exist.

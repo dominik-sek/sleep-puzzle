@@ -665,8 +665,47 @@ shop:
           label: Podpowiedź dla powracających kupujących
           type: plain
           default:
-            pl: "Masz już u mnie zakupy? Zaloguj się, żeby zobaczyć swoje nagrania."
-            en: "Bought here before? Sign in to see your recordings."
+            pl: "Kupione nagrania znajdziesz w swoim koncie."
+            en: "Your purchased recordings are in your account."
+    collections:
+      label: Kategorie audio
+      fields:
+        processes_intro:
+          label: Wstęp do audioprocesów
+          type: plain
+          default:
+            pl: "Dla rodziców, którzy chcą lepiej zrozumieć sen dziecka i działać we własnym tempie."
+            en: "For parents who want to understand their child's sleep and work at their own pace."
+        stories_intro:
+          label: Wstęp do bajek audio
+          type: plain
+          default:
+            pl: "Opowieści do wspólnego słuchania i wieczornego wyciszenia."
+            en: "Stories to listen to together and wind down in the evening."
+        processes_link:
+          label: Odnośnik do kolekcji audioprocesów
+          type: plain
+          default:
+            pl: "Zobacz wszystkie audioprocesy"
+            en: "See all audio processes"
+        stories_link:
+          label: Odnośnik do kolekcji bajek
+          type: plain
+          default:
+            pl: "Zobacz wszystkie bajki"
+            en: "See all audio stories"
+        processes_empty:
+          label: Brak opublikowanych audioprocesów
+          type: plain
+          default:
+            pl: "Audioprocesy pojawią się tutaj wkrótce."
+            en: "Audio processes will appear here soon."
+        stories_empty:
+          label: Brak opublikowanych bajek
+          type: plain
+          default:
+            pl: "Bajki audio pojawią się tutaj wkrótce."
+            en: "Audio stories will appear here soon."
     card:
       label: Karta produktu
       fields:
@@ -724,9 +763,34 @@ shop:
         back:
           label: Powrót do sklepu
           type: plain
+          admin_hidden: true
           default:
             pl: "Wróć do sklepu"
             en: "Back to shop"
+        back_processes:
+          label: Powrót do kolekcji audioprocesów
+          type: plain
+          default:
+            pl: "Wróć do audioprocesów"
+            en: "Back to audio processes"
+        back_stories:
+          label: Powrót do kolekcji bajek
+          type: plain
+          default:
+            pl: "Wróć do bajek audio"
+            en: "Back to audio stories"
+        more_processes:
+          label: Nagłówek innych audioprocesów
+          type: plain
+          default:
+            pl: "Inne audioprocesy"
+            en: "Other audio processes"
+        more_stories:
+          label: Nagłówek innych bajek
+          type: plain
+          default:
+            pl: "Inne bajki audio"
+            en: "Other audio stories"
         length:
           label: Etykieta „długość”
           type: plain
@@ -763,6 +827,18 @@ shop:
           default:
             pl: "Posłuchaj 30 sekund"
             en: "Listen to 30 seconds"
+        media_error:
+          label: Błąd odtwarzania wprowadzenia lub próbki
+          type: plain
+          default:
+            pl: "Nie udało się odtworzyć nagrania. Spróbuj ponownie."
+            en: "The recording could not be played. Please try again."
+        media_retry:
+          label: Przycisk ponownego odtworzenia
+          type: plain
+          default:
+            pl: "Spróbuj odtworzyć ponownie"
+            en: "Try playing again"
         about:
           label: Nagłówek opisu
           type: plain
@@ -790,6 +866,7 @@ shop:
         more:
           label: Nagłówek „inne materiały”
           type: plain
+          admin_hidden: true
           default:
             pl: "Inne materiały"
             en: "Other materials"
@@ -1115,8 +1192,8 @@ terms:
               pl: "Informacje o plikach cookies i usługach zewnętrznych znajdują się w Polityce prywatności dostępnej pod adresem /privacy."
               en: "Details of cookies and external services are in the Privacy policy at /en/privacy."
 
-audio_landing:
-  label: Landing audioprocesu
+stories:
+  label: Kolekcja bajek audio
   sections:
     hero:
       label: Wprowadzenie
@@ -1125,20 +1202,44 @@ audio_landing:
           label: Nagłówek
           type: plain
           default:
-            pl: "Audioproces"
-            en: "Audio process"
+            pl: "Bajki audio"
+            en: "Audio stories"
+        intro:
+          label: Wstęp
+          type: plain
+          default:
+            pl: "Poznaj opowieści do wspólnego słuchania. Przy nagraniach z próbką możesz posłuchać 30 sekund przed wyborem."
+            en: "Explore stories to listen to together. Where a sample is available, listen to 30 seconds before choosing."
+        empty:
+          label: Gdy żadna bajka nie jest dostępna
+          type: plain
+          default:
+            pl: "Nie ma jeszcze dostępnych bajek audio. Poznaj pozostałe oferty w sklepie."
+            en: "No audio stories are available yet. Explore the other offers in the shop."
+audio_landing:
+  label: Kolekcja audioprocesów
+  sections:
+    hero:
+      label: Wprowadzenie
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Audioprocesy"
+            en: "Audio processes"
         intro:
           label: Wstęp
           type: rich
           default:
-            pl: "<div>Wsparcie, do którego możesz wracać we własnym tempie. Poznaj audioproces i sprawdź, czy odpowiada potrzebom Twojej rodziny.</div>"
-            en: "<div>Support you can return to at your own pace. Explore the audio process and see if it suits your family.</div>"
+            pl: "<div>Wsparcie, do którego możesz wracać we własnym tempie. Poznaj audioprocesy i sprawdź, który odpowiada potrzebom Twojej rodziny.</div>"
+            en: "<div>Support you can return to at your own pace. Explore the audio processes and find one that suits your family.</div>"
         empty:
-          label: Gdy audioproces nie jest jeszcze dostępny
+          label: Gdy żaden audioproces nie jest jeszcze dostępny
           type: plain
           default:
-            pl: "Audioproces pojawi się tutaj wkrótce."
-            en: "The audio process will appear here soon."
+            pl: "Audioprocesy pojawią się tutaj wkrótce."
+            en: "Audio processes will appear here soon."
         incomplete:
           label: Gdy pełny program nie jest jeszcze gotowy do zakupu
           type: plain
@@ -1146,7 +1247,7 @@ audio_landing:
             pl: "Pełny program nie jest jeszcze dostępny do zakupu. Możesz poznać go tutaj i wrócić później."
             en: "The full program is not available to buy yet. You can explore it here and come back later."
     details:
-      label: Szczegóły
+      label: Nagłówki na stronach audioprocesów
       fields:
         for_whom:
           label: Nagłówek „dla kogo”

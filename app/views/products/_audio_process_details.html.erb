@@ -1,0 +1,20 @@
+<%# Every program owns its suitability, topics and chapter preview. Keep the
+    parent's decision first; the complete recording outline follows the overview. %>
+<% if product.long_description.present? || product.includes_content.present? %>
+  <div class="mt-12 grid gap-8 md:gap-12 [grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))]">
+    <% if product.long_description.present? %>
+      <section class="min-w-0" aria-labelledby="<%= dom_id(product, :suitability_heading) %>">
+        <h2 id="<%= dom_id(product, :suitability_heading) %>" class="mb-3.5 font-display text-t3 font-bold text-cream [overflow-wrap:anywhere]"><%= content_block("audio_landing.details.for_whom") %></h2>
+        <p class="m-0 max-w-[70ch] text-t5 leading-copy text-tan text-pretty [overflow-wrap:anywhere]"><%= product.long_description %></p>
+      </section>
+    <% end %>
+
+    <% if product.includes_content.present? %>
+      <section class="min-w-0" aria-labelledby="<%= dom_id(product, :includes_heading) %>">
+        <%= render "products/audio_includes", product: product %>
+      </section>
+    <% end %>
+  </div>
+<% end %>
+
+<%= render "products/chapter_outline", product: product %>

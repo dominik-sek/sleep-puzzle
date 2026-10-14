@@ -18,12 +18,12 @@ RSpec.describe "Audio process topic disclosure", type: :system do
       page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride",
         width: 390, height: 844, deviceScaleFactor: 1, mobile: false)
       page.driver.browser.execute_cdp("Emulation.setScriptExecutionDisabled", value: true)
-      visit audio_process_path(locale: locale == :en ? :en : nil)
+      visit product_path(@product, locale: locale == :en ? :en : nil)
       more = locale == :en ? "Show all topics" : "Zobacz wszystkie tematy"
       less = locale == :en ? "Hide the topics" : "Zwiń listę tematów"
       title = locale == :en ? "What is included" : "Co obejmuje"
 
-      expect(page).to have_css("h2#audio-includes-title", text: title)
+      expect(page).to have_css("h2#includes_heading_product_#{@product.id}", text: title)
       expect(page).to have_text("Nagrania do słuchania we własnym tempie.")
       expect(page).to have_text("Dla rodziców szukających wsparcia.")
       expect(page).not_to have_css("details .audio-includes")
@@ -39,7 +39,7 @@ RSpec.describe "Audio process topic disclosure", type: :system do
 
   it "shows short CMS content directly" do
     @product.update!(includes_pl: "<p>Jeden krótki opis.</p>")
-    visit audio_process_path
+    visit product_path(@product)
 
     expect(page).to have_text("Jeden krótki opis.")
     expect(page).not_to have_css("summary")

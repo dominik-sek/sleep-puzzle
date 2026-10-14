@@ -34,6 +34,8 @@ RSpec.describe "Front page resilience", type: :system do
       expect(page).to have_css("#{menu} a[href='#{audio_process_path(locale: locale)}']:focus")
 
       press_key(:tab)
+      expect(page).to have_css("#{menu} a[href='#{stories_path(locale: locale)}']:focus")
+      press_key(:tab)
       expect(page).to have_css("#{menu} a[href='#{packages_path(locale: locale)}']:focus")
       press_key(:tab)
       expect(page).to have_css("#{menu} a[hreflang]:focus")
@@ -48,7 +50,7 @@ RSpec.describe "Front page resilience", type: :system do
 
       find(trigger).send_keys(:enter)
       expect(page).to have_css("#{menu} a:focus")
-      4.times { press_key(:tab) }
+      5.times { press_key(:tab) }
       expect(page).to have_css("main a.offer-puzzle--audio:focus")
       expect(page).to have_css("#{trigger}[aria-expanded='false']")
     end

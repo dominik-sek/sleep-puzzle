@@ -766,6 +766,12 @@ export default class extends Controller {
         });
     }
 
+    navigate() {
+        // A same-page category anchor does not replace the navbar via Turbo.
+        // Close the mobile panel before native navigation focuses the target.
+        this.closeMenu(false);
+    }
+
     closeMenu(animate = true) {
         if (!this.isOpen) return;
         animate = animate && !this.prefersReducedMotion();

@@ -1,4 +1,8 @@
 module ProductsHelper
+  def product_collection_path(product)
+    product.audio_process? ? audio_process_path : stories_path
+  end
+
   # Use whole, owner-written opening paragraphs as the overview. Lists, media,
   # headings and longer prose remain intact in the native disclosure below it.
   def audio_includes_parts(product)

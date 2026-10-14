@@ -1,75 +1,39 @@
-<%#
-  One product in the shop grid.
-
-  Plain markup rather than Card::Component: the design's card opens with a
-  full-bleed icon band that runs edge to edge under the rounded corners, which a
-  padded card body cannot produce.
-
-  The price comes from Paddle rather than from us (see Purchasable), so it can be
-  missing - a price archived in Paddle, or Paddle being unreachable. The card
-  still renders, without the amount and without an add button: offering to sell
-  something at an unknown price is worse than showing it as unavailable.
-
-  locals: product
-%>
+<%# Shared concise preview for a catalogue or category. Full owner copy remains
+    on the product page. Price and cart state use the same sources as checkout. %>
 <% price_label = product_price_label(product) %>
-
-<div class="flex flex-col overflow-hidden rounded-[20px] border border-border-strong bg-surface">
-  <div class="flex h-[150px] items-center justify-center bg-linear-[135deg,var(--color-border-strong),var(--color-ink)] text-[44px]"
-       aria-hidden="true">
-    <%= product.display_icon %>
+<article class="flex min-w-0 flex-col gap-4 rounded-2xl border border-border-strong bg-surface p-6">
+  <div class="flex items-start gap-3">
+    <span class="shrink-0 text-t3" aria-hidden="true"><%= product.display_icon %></span>
+    <%= content_tag local_assigns.fetch(:heading, :h2), class: "min-w-0 font-display font-bold text-t3 text-cream m-0 [overflow-wrap:anywhere]" do %>
+      <%= link_to product.name, product_path(product), class: "inline-flex min-h-11 items-center no-underline text-inherit hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+    <% end %>
   </div>
 
-  <div class="flex flex-1 flex-col gap-2.5 p-5.5">
-    <span class="text-t6 uppercase text-taupe">
-      <%= product.kind_label %>
+  <% if product.description.present? %>
+    <p class="text-t5 text-tan m-0 [overflow-wrap:anywhere]"><%= truncate(product.description, length: 160, separator: /\s/) %></p>
+  <% end %>
+
+  <% if product.bedtime_story? && product.length_label %>
+    <p class="m-0 text-t6 text-tan"><%= content_block("shop.product.length") %>: <%= product.length_label %></p>
+  <% end %>
+
+  <% if local_assigns.fetch(:samples, false) %>
+    <%= render "products/preview", product: product %>
+  <% end %>
+
+  <div class="mt-auto flex flex-col gap-3 pt-2">
+    <span class="text-t4 font-display font-bold text-cream tabular-nums">
+      <%= price_label || content_block("shop.card.unavailable") %>
     </span>
 
-    <%# Baloo: the Display-For-Names Rule covers a product's name, and the
-        product page and the packages card both already set it that way.
-        break-words so a long Polish compound wraps instead of clipping against
-        the card's overflow-hidden in a 240px column. %>
-    <h2 class="font-display font-bold text-t3 text-cream m-0 break-words">
-      <%= link_to product.name, product_path(product), class: "no-underline text-inherit hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
-    </h2>
-
-    <% if product.description.present? %>
-      <p class="text-t6 text-tan m-0"><%= product.description %></p>
-    <% end %>
-
-    <%# mt-auto on the row rather than flex-1 on the paragraph above it: the
-        description is optional, so hanging the growth off it left a card without
-        one failing to bottom-align with its neighbours %>
-    <%# Stacked, not a justify-between row. The card is 240px wide and the button
-        is whitespace-nowrap, so side by side the two could not both fit: the
-        price wrapped and the button pushed out past the card's overflow-hidden.
-        Stacking also lets the button run full width, which is the better tap
-        target on the surface built for one-handed use.
-
-        Price at t4, not t3: the name above it is t3, and the piece a buyer scans
-        for first is the name. Two things at the same step is not a hierarchy. %>
-    <div class="mt-auto pt-2 flex flex-col gap-3">
-      <span class="text-t4 font-display font-bold text-cream tabular-nums">
-        <%= price_label || content_block("shop.card.unavailable") %>
-      </span>
-
-      <% if price_label %>
-        <%= render "products/cart_toggle", product: product %>
-      <% else %>
-        <%# not sellable, but still wanted by someone: offer the one route that
-            works rather than a dead end. Packages already does this. %>
-        <%= link_to content_block("shop.card.unavailable_cta"), instagram_contact_url,
-                    class: "text-t6 font-bold text-accent no-underline hover:text-accent-hover rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
-      <% end %>
-    </div>
-
-    <%# a real route into the product. This block has been declared and editable
-        in the panel since the shop was built and rendered nowhere, so the only
-        way in was the name link - 18px, no underline, no link colour. %>
-    <%= link_to product_path(product),
-                class: "group inline-flex items-center gap-1.5 self-start text-t6 font-bold text-tan no-underline hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
-      <%= content_block("shop.card.details") %>
-      <%= icon "arrow-right", class: "size-3.5 shrink-0 transition-transform duration-100 group-hover:translate-x-0.5" %>
-    <% end %>
+    <%= render "products/cart_toggle", product: product %>
   </div>
-</div>
+
+  <% details_label = content_block("shop.card.details") %>
+  <%= link_to product_path(product),
+              aria: { label: "#{details_label} — #{product.name}" },
+              class: "group inline-flex min-h-11 items-center gap-1.5 self-start rounded-md py-2 text-t6 font-bold text-tan no-underline hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+    <%= details_label %>
+    <%= icon "arrow-right", class: "size-3.5 shrink-0 transition-transform duration-100 group-hover:translate-x-0.5" %>
+  <% end %>
+</article>

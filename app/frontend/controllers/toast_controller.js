@@ -217,7 +217,7 @@ export default class extends Controller {
         li.innerHTML = `
       <div class="flex items-start gap-3 rounded-xl border border-border-strong bg-surface px-4 py-3 shadow-lg shadow-black/40">
         <span class="mt-0.5 shrink-0 ${TONE_CLASSES[type]}">${ICONS[type]}</span>
-        <div class="min-w-0 flex-1">
+        <div class="min-w-0 flex-1 [overflow-wrap:anywhere]">
           <p class="text-t5 text-cream">${escapeHtml(title)}</p>
           ${description ? `<p class="mt-0.5 text-t6 font-normal tracking-normal text-taupe">${escapeHtml(description)}</p>` : ""}
         </div>

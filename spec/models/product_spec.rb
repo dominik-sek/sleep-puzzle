@@ -58,6 +58,14 @@ RSpec.describe Product, type: :model do
   end
 
   describe "audio program completeness" do
+    it "does not present a partial recording duration as the whole program length" do
+      product = create_product(kind: :audio_process, expected_chapter_count: 24)
+
+      expect(product.length_label).to be_nil
+      product.update!(expected_chapter_count: 1)
+      expect(product.length_label).to eq("10 min")
+    end
+
     it "requires the owner to declare the full count rather than trusting one upload" do
       product = create_product(kind: :audio_process, expected_chapter_count: nil)
 

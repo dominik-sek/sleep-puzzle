@@ -17,6 +17,28 @@ RSpec.describe "Admin::ContentBlocks", type: :request do
   describe "GET /admin/content_blocks" do
     before { sign_in admin }
 
+    it "edits and previews the dedicated stories collection in both languages" do
+      get admin_content_blocks_path(open: "stories.hero", lang: "en")
+      page = Capybara.string(response.body)
+      data = JSON.parse(page.find('[data-controller="content-blocks"]')["data-content-blocks-pages-value"])
+      expect(data.dig("stories", "pl", "url")).to eq(stories_path)
+      expect(data.dig("stories", "en", "url")).to eq(stories_path(locale: :en))
+      expect(page).to have_css('form [name="section"][value="stories.hero"]', visible: :all)
+
+      patch admin_content_blocks_path, params: { section: "stories.hero", lang: "en", fields: {
+        title: { pl: "Moje bajki", en: "My stories" },
+        intro: { pl: "Posłuchaj", en: "Have a listen" },
+        empty: { pl: "Nie ma nagrań", en: "No recordings available" }
+      } }
+
+      [ [ nil, "Moje bajki", "Nie ma nagrań" ], [ :en, "My stories", "No recordings available" ] ].each do |locale, title, empty|
+        get stories_path(locale: locale)
+        page = Capybara.string(response.body)
+        expect(page).to have_css("h1", text: title)
+        expect(page).to have_text(empty)
+      end
+    end
+
     it "lists every visible section for search and renders one section form" do
       get admin_content_blocks_path
 

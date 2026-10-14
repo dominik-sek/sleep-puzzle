@@ -19,6 +19,7 @@ class ProductTrailerUploadJob < ApplicationJob
       attachment.blob.open do |file|
         transcode!(file.path, output.path)
       end
+      poster = TrailerPosterService.call(output.path)
       output.rewind
       result = BunnyStorageService.call(output, kind: :audio_process, media: :video,
                                                 filename: "#{File.basename(attachment.filename.to_s, '.*')}.mp4")
@@ -29,12 +30,18 @@ class ProductTrailerUploadJob < ApplicationJob
         return
       end
 
-      product.reload
-      return unless product.trailer_upload.attachment&.id == attachment_id
+      product.with_lock do
+        return unless product.trailer_upload.attachment&.id == attachment_id
 
-      product.update_columns(trailer_cdn_path: result.path, trailer_upload_error: nil)
-      attachment.purge
+        product.update_columns(trailer_cdn_path: result.path, trailer_upload_error: nil)
+        if poster
+          product.trailer_poster.attach(io: poster, filename: "trailer-poster.jpg", content_type: "image/jpeg",
+                                       metadata: { trailer_cdn_path: result.path })
+        end
+        attachment.purge
+      end
     ensure
+      poster&.close!
       output.close!
     end
   end

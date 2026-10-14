@@ -177,10 +177,14 @@ en:
       one: "Support lasts %{count} week"
       other: "Support lasts %{count} weeks"
   products:
+    browse_categories: "Jump to a shop section"
+    category_navigation: "Category and shop"
+    audio_delivery: "For audio materials"
     trailer: "Watch the introduction"
     trailer_label: "Introduction video: %{name}"
     chapters:
       title: "Audio process chapters"
+      preview_title: "Program preview — available recordings"
     kinds:
       audio_process: "Audio process"
       bedtime_story: "Bedtime story"
@@ -256,7 +260,8 @@ en:
     read_more: "Read more"
     read_less: "Show less"
   offers:
-    audio: "Audio process"
+    audio: "Audio processes"
+    stories: "Audio stories"
     one_to_one: "Work together 1:1"
     explore: "Explore the offer"
     instagram_cta: "Message me on Instagram"

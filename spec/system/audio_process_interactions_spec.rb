@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Audio process landing interactions", type: :system do
+RSpec.describe "Audio process collection interactions", type: :system do
   before do
     ContentBlock.sync!
     @product = create_product(name: "Proces dla rodziców", kind: :audio_process)
@@ -10,26 +10,26 @@ RSpec.describe "Audio process landing interactions", type: :system do
   after { page.driver.browser.execute_cdp("Emulation.clearDeviceMetricsOverride") }
 
   def add_selector
-    'button[aria-label^="Dodaj do koszyka"]'
+    "#cart_toggle_product_#{@product.id} button[aria-label^='Dodaj do koszyka']"
   end
 
   def remove_selector
-    'button[aria-label^="Usuń z koszyka"]'
+    "#cart_toggle_product_#{@product.id} button[aria-label^='Usuń z koszyka']"
   end
 
   [ 1440, 390 ].each do |width|
-    it "keeps the named program H2 and keyboard cart focus at #{width}px" do
+    it "links every program and keeps keyboard cart focus at #{width}px" do
+      other = create_product(name: "Drugi proces", kind: :audio_process)
       page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride",
         width: width, height: 900, deviceScaleFactor: 1, mobile: false)
       visit audio_process_path
       expect(page).to have_css("main h1", count: 1)
-      heading_id = "chapter_outline_heading_product_#{@product.id}"
-      expect(page).to have_css("section[aria-labelledby='#{heading_id}'] h2##{heading_id}", text: "Program audioprocesu")
+      expect(page).to have_css("main h2 a[href='#{product_path(@product)}']", text: @product.name)
 
       find(add_selector).send_keys(:enter)
       expect(page).to have_css("#{remove_selector}:focus")
-      expect(page).to have_link("Przejdź do koszyka")
-      expect(page).to have_css('[aria-live="polite"]', text: "Dodano do koszyka")
+      expect(page).to have_css("#cart_toggle_product_#{@product.id} [aria-live='polite']", text: "Dodano")
+      expect(page).to have_css("#cart_toggle_product_#{other.id} button[aria-label^='Dodaj do koszyka']")
       expect(page.evaluate_script("document.activeElement.matches(':focus-visible')")).to be(true)
 
       find(remove_selector).send_keys(:space)

@@ -1,0 +1,17 @@
+<% if product.long_description.present? || product.includes_content.present? %>
+  <div class="mt-12 grid gap-8 md:gap-12 [grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))]">
+    <% if product.long_description.present? %>
+      <div class="min-w-0">
+        <h2 class="mb-3.5 font-display text-t3 font-bold text-cream [overflow-wrap:anywhere]"><%= content_block("shop.product.about") %></h2>
+        <p class="m-0 max-w-[70ch] text-t5 leading-copy text-tan text-pretty [overflow-wrap:anywhere]"><%= product.long_description %></p>
+      </div>
+    <% end %>
+
+    <% if product.includes_content.present? %>
+      <div class="min-w-0">
+        <h2 class="mb-3.5 font-display text-t3 font-bold text-cream [overflow-wrap:anywhere]"><%= content_block("shop.product.includes") %></h2>
+        <div class="product-includes"><%= product.includes_content %></div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

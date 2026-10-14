@@ -27,7 +27,8 @@ Rails.application.routes.draw do
   scope "(:locale)", locale: /en/ do
     # Defines the root path route ("/")
     root "home#index"
-    get "audioproces", to: "audio_processes#show", as: :audio_process
+    get "audio-processes", to: "audio_processes#show", as: :audio_process
+    resources :stories, only: [ :index ]
     # one page: each card carries everything a package has to say, so there is
     # no per-package page to link to
     resources :packages, only: [ :index ]
@@ -67,7 +68,7 @@ Rails.application.routes.draw do
     end
     # one page that both shows the form and takes it, so there is no id to carry
     resource :contact, only: [ :show, :create ]
-    resources :testimonial_invitations, only: [ :show, :update ], param: :token, path: "opinia"
+    resources :testimonial_invitations, only: [ :show, :update ], param: :token, path: "testimonials"
     # create only: the form lives on the home page, and everything after the
     # address is handed over - the confirmation, the list, the unsubscribe - is
     # Brevo's, so there is nothing here to show, edit or destroy

@@ -27,6 +27,9 @@ RSpec.describe ProductTrailerUploadJob, type: :job do
       described_class.perform_now(product, product.trailer_upload.attachment.id)
       expect(product.reload.trailer_cdn_path).to eq("/audioprocesy/intro.mp4")
       expect(product.trailer_upload).not_to be_attached
+      expect(product.trailer_poster_available?).to be(true)
+      expect(product.trailer_poster.blob.content_type).to eq("image/jpeg")
+      expect(product.trailer_poster.download.byteslice(0, 2)).to eq("\xFF\xD8".b)
     ensure
       source.close!
     end
@@ -35,6 +38,9 @@ RSpec.describe ProductTrailerUploadJob, type: :job do
   it "keeps the existing trailer when the replacement is not a video" do
     product = create_product(kind: :audio_process)
     product.update_column(:trailer_cdn_path, "/audioprocesy/old.mp4")
+    product.trailer_poster.attach(io: File.open(Rails.root.join("spec/fixtures/files/photo.png")), filename: "poster.png",
+                                 content_type: "image/png", metadata: { trailer_cdn_path: product.trailer_cdn_path })
+    old_poster_id = product.trailer_poster.blob.id
     product.trailer_upload.attach(io: StringIO.new("broken"), filename: "intro.mov", content_type: "video/quicktime")
 
     described_class.perform_now(product, product.trailer_upload.attachment.id)
@@ -42,5 +48,7 @@ RSpec.describe ProductTrailerUploadJob, type: :job do
     expect(product.reload.trailer_cdn_path).to eq("/audioprocesy/old.mp4")
     expect(product.trailer_upload_error).to be_present
     expect(product.trailer_upload).not_to be_attached
+    expect(product.trailer_poster_available?).to be(true)
+    expect(product.trailer_poster.blob.id).to eq(old_poster_id)
   end
 end

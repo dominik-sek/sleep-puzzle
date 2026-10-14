@@ -414,6 +414,17 @@ on phones and 24px on all sides from `sm`; large bodies use 24px then 32px. Foot
 fill is ink-soft, dividers are Hairline. Use the component's edge rather than
 repeating it at call sites. `stretch_body: true` enables equal-height overview cards.
 
+Audio catalogue cards use 16px corners, a surface fill, 24px padding and a compact
+product icon beside the name. A short 16px description preview leads to the full
+product page; price and cart state stay together near the bottom. Category pages
+use H2 product names; the grouped shop uses H2 section names and H3 product names.
+Each kind keeps its own grid cap (320px for one, 664px for two, 1008px for three),
+with 24px card gaps and 64px between catalogue sections. Wrapping category links
+lead to focusable `#audioprocesy`, `#bajki` and `#wspolpraca` targets with a 96px
+scroll margin below the sticky navbar. Empty audio categories retain their anchors
+and a short owner-editable message. Shared delivery facts are explicitly scoped to
+audio rather than the consultation packages alongside it.
+
 ### Inputs / Fields
 
 Inset and legible rather than bright white.
@@ -456,6 +467,21 @@ localized read-more/read-less labels. Its accessible name includes the section
 heading. Expanded content uses `trix-copy`; native disclosure remains usable
 without custom JavaScript. The separate FAQ uses the shared button-based accordion
 with `aria-expanded` and a labelled content region.
+
+### Audio Product Details
+
+The product name leads the shared purchase area. Identity and purchase information
+come before supporting media in DOM order and on phones; from `md`, media sits in
+the left column and identity in the right. Fallback artwork uses a video-shaped
+area on phones and a square on larger screens. The shop back link has a 44px
+minimum target. Duration appears once in the facts strip.
+
+Audioprocess details use a reusable suitability/topics variant, followed by the
+recording outline. Short topic copy stays visible; longer topics use the native
+reading disclosure with product-specific heading and toggle IDs. Stories keep
+their simpler description and includes variant. Empty optional sections disappear.
+Product names, headings, chapter titles and cart messages wrap at narrow widths
+and enlarged text sizes without removing the full owner-written content.
 
 ### Package Details Dialog
 

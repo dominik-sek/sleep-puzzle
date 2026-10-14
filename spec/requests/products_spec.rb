@@ -80,10 +80,12 @@ RSpec.describe "Products", type: :request do
       expect(response.body).not_to include("sm:max-w-[320px]")
     end
 
-    it "renders the CMS empty state when there is nothing to sell" do
+    it "keeps both category destinations with their editable empty states when nothing is published" do
       get products_path
 
-      expect(response.body).to include("Oferty pojawią się tu wkrótce")
+      page = Capybara.string(response.body)
+      expect(page).to have_css("section#audio-processes", text: "Audioprocesy pojawią się tutaj wkrótce")
+      expect(page).to have_css("section#stories", text: "Bajki audio pojawią się tutaj wkrótce")
     end
 
     # Paddle owns the money, so an unreachable Paddle means no price - better to
@@ -247,14 +249,14 @@ RSpec.describe "Products", type: :request do
       end
     end
 
-    describe "Inne materiały" do
+    describe "Inne bajki audio" do
       it "links up to three other published products" do
         product = create_product(name: "Główny")
         4.times { |i| create_product(name: "Inny #{i}") }
 
         get product_path(product)
 
-        expect(response.body).to include("Inne materiały")
+        expect(response.body).to include("Inne bajki audio")
         expect(response.body.scan(/Inny \d/).size).to eq(ProductsController::ALSO_LIMIT)
       end
 
@@ -267,7 +269,7 @@ RSpec.describe "Products", type: :request do
         # scoped to the section rather than counting the name across the whole
         # page: the product legitimately names itself in the heading and again in
         # <title>, so a body-wide count measures the wrong thing
-        also = response.body[/Inne materiały.*/m]
+        also = response.body[/Inne bajki audio.*/m]
         expect(also).to include("Inny")
         expect(also).not_to include("Główny")
       end
@@ -275,7 +277,7 @@ RSpec.describe "Products", type: :request do
       it "leaves the section out when there is nothing else to show" do
         get product_path(create_product)
 
-        expect(response.body).not_to include("Inne materiały")
+        expect(response.body).not_to include("Inne bajki audio")
       end
 
       it "does not suggest an unpublished product" do

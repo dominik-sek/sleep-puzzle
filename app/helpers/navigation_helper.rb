@@ -16,6 +16,7 @@ module NavigationHelper
   def primary_nav_items
     [
       { label: t("offers.audio"), href: audio_process_path },
+      { label: t("offers.stories"), href: stories_path },
       { label: t("offers.one_to_one"), href: packages_path }
       # { label: t("nav.blog"), href: blog_path },
       # Hidden entries retained for restoration:
