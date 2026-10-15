@@ -8,24 +8,30 @@ or audio, and passive reading never fetches the CDN film.
 
 ## Trailer posters
 
-`ProductTrailerUploadJob` extracts a JPEG still from the real transcoded film
-before purging the upload. The poster stays in first-party Active Storage and is
-served through its proxy route. Its metadata records the trailer path: replacing
-that path cannot display the previous film's poster. Poster extraction failure
+`ProductTrailerUploadJob` extracts a JPEG still and measures the real transcoded
+film before purging the upload. The poster stays in first-party Active Storage and
+is served through its proxy route. Its metadata records the trailer path and
+duration: replacing that path cannot display the previous film's poster or length.
+The trailer partial renders the duration below the player before Play, while
+`preload="none"` keeps passive reading from fetching the CDN film. Poster extraction failure
 does not reject a successful video upload. Invalid replacement videos retain the
 existing trailer and its poster.
 
-Existing trailers can use the same extractor without re-uploading a film. Supply
-the actual original MP4 downloaded from the product's configured storage:
+Existing trailers can use the same extractor without re-uploading a film. By
+default it reads the product's signed Bunny URL; an original local MP4 can also be
+supplied:
 
 ```sh
+bin/rails 'products:trailer_poster[2]'
 bin/rails 'products:trailer_poster[2,/absolute/path/to/original-trailer.mp4]'
 ```
 
-This command has been run for product 2 in the local development database. Its
-poster is attached data, not a checked-in asset; existing records on another
-environment need the same backfill or a normal trailer replacement. No database
-migration or new system dependency is needed.
+Product 2's poster and duration (94 seconds) were backfilled in local development
+and production on 15 October 2026. The production poster is immediately visible;
+the duration caption and automatic duration extraction require deploying this
+application change. Posters are attached data, not checked-in assets; other
+existing records need the same backfill or a normal trailer replacement. No
+database migration or new system dependency is needed.
 
 ## Playback recovery
 
@@ -34,16 +40,21 @@ Trailer and story sample players share an error message and a keyboard-operable,
 (`media_error`, `media_retry`), with PL and EN defaults. Native controls remain
 available without JavaScript.
 
-## External delivery issue found
+## External delivery issue resolved — 15 October 2026
 
 Product 2's `/audioprocesy/film-mniejszy-plik-54ad9c01.mp4` exists in the configured
-Bunny storage zone (22,140,025 bytes; 1280×720; about 94 seconds). Both HEAD and
-byte-range GET through the configured pull-zone URL return HTTP 404. The response
-is a Rails “The page you were looking for doesn't exist” document. A pull-zone
-origin pointing at the application rather than the media storage is a likely
-explanation, not a verified configuration finding. No external configuration was
-changed. Correct the pull-zone origin/path and verify a signed range request
-returns the MP4 before treating live playback as ready.
+Bunny storage zone (22,140,025 bytes; 1280×720; about 94 seconds). The pull zone
+`sleep-puzzle-pz` (6723587) had its Origin URL set to `https://sleeppuzzle.com`,
+so CDN requests fetched a Rails 404 page instead of the uploaded file.
+
+Changed the pull zone's origin type to Storage Zone, selected
+`sleep-puzzle-audio-zone` (1960752), and purged the cached responses. Signed
+byte-range requests now return HTTP 206 with `Content-Type: video/mp4` and the
+expected file size. Unsigned requests still return HTTP 403.
+
+The page's `/audioprocesses/:slug/trailer` source is intentional: the app redirects
+to a freshly signed Bunny URL when playback starts. Both local development and
+production use the repaired pull zone; no application deployment is required.
 
 ## Verification
 

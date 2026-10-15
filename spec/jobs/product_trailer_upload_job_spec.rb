@@ -29,6 +29,7 @@ RSpec.describe ProductTrailerUploadJob, type: :job do
       expect(product.trailer_upload).not_to be_attached
       expect(product.trailer_poster_available?).to be(true)
       expect(product.trailer_poster.blob.content_type).to eq("image/jpeg")
+      expect(product.trailer_duration_label).to eq("0:01")
       expect(product.trailer_poster.download.byteslice(0, 2)).to eq("\xFF\xD8".b)
     ensure
       source.close!

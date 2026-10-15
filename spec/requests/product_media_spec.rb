@@ -7,7 +7,7 @@ RSpec.describe "Product media presentation", type: :request do
     allow(PaddlePriceCatalogService).to receive(:call).and_return([])
     @product = create_product(kind: :audio_process, trailer_cdn_path: "/audioprocesy/intro.mp4")
     @product.trailer_poster.attach(io: File.open(Rails.root.join("spec/fixtures/files/photo.png")), filename: "poster.png",
-                                  content_type: "image/png", metadata: { trailer_cdn_path: @product.trailer_cdn_path })
+                                  content_type: "image/png", metadata: { trailer_cdn_path: @product.trailer_cdn_path, duration_seconds: 94 })
   end
 
   it "serves the real poster through the app without preloading the CDN film" do
@@ -18,6 +18,7 @@ RSpec.describe "Product media presentation", type: :request do
     expect(video["autoplay"]).to be_nil
     expect(video["src"]).to eq(trailer_audio_process_path(slug: @product.slug))
     expect(video["aria-label"]).to include(@product.name)
+    expect(response.body).to include("Film wprowadzający · 1:34")
     get video["poster"]
     expect(response).to have_http_status(:ok)
     expect(response.media_type).to eq("image/png")
@@ -27,11 +28,19 @@ RSpec.describe "Product media presentation", type: :request do
     @product.update_column(:trailer_cdn_path, "/audioprocesy/replacement.mp4")
     get catalogue_product_path(@product)
     expect(Nokogiri::HTML(response.body).at_css("video")["poster"]).to be_nil
+    expect(response.body).not_to include("Film wprowadzający · 1:34")
+  end
+
+  it "omits an unknown duration rather than showing a zero length" do
+    @product.trailer_poster.blob.update!(metadata: { trailer_cdn_path: @product.trailer_cdn_path })
+    get catalogue_product_path(@product)
+    expect(response.body).not_to include("Film wprowadzający ·")
   end
 
   it "keeps editable localized playback recovery beside the player" do
     get catalogue_product_path(@product, locale: :en)
     expect(response.body).to include("The recording could not be played", "Try playing again")
+    expect(response.body).to include("Introduction video · 1:34")
     expect(Nokogiri::HTML(response.body).at_css('[data-media-preview-target="recovery"]')["hidden"]).not_to be_nil
   end
 end

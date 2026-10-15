@@ -20,6 +20,7 @@ class ProductTrailerUploadJob < ApplicationJob
         transcode!(file.path, output.path)
       end
       poster = TrailerPosterService.call(output.path)
+      duration = MediaDurationService.call(output.path)
       output.rewind
       result = BunnyStorageService.call(output, kind: :audio_process, media: :video,
                                                 filename: "#{File.basename(attachment.filename.to_s, '.*')}.mp4")
@@ -36,7 +37,7 @@ class ProductTrailerUploadJob < ApplicationJob
         product.update_columns(trailer_cdn_path: result.path, trailer_upload_error: nil)
         if poster
           product.trailer_poster.attach(io: poster, filename: "trailer-poster.jpg", content_type: "image/jpeg",
-                                       metadata: { trailer_cdn_path: result.path })
+                                       metadata: { trailer_cdn_path: result.path, duration_seconds: duration })
         end
         attachment.purge
       end

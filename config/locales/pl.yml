@@ -178,6 +178,7 @@ pl:
     audio_delivery: "Dla materiałów audio"
     trailer: "Zobacz wprowadzenie"
     trailer_label: "Film wprowadzający: %{name}"
+    trailer_duration: "Film wprowadzający · %{duration}"
     chapters:
       title: "Program audioprocesu"
       preview_title: "Podgląd programu — dostępne nagrania"

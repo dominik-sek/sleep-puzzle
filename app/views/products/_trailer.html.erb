@@ -6,6 +6,9 @@
            <% if product.trailer_poster_available? %>poster="<%= rails_storage_proxy_path(product.trailer_poster) %>"<% end %>
            data-media-preview-target="player" data-action="play->media-preview#starting error->media-preview#failed playing->media-preview#playing"
            aria-label="<%= t('products.trailer_label', name: product.name) %>"></video>
+    <% if (duration = product.trailer_duration_label) %>
+      <p class="mt-2 text-t6 text-tan"><%= t('products.trailer_duration', duration: duration) %></p>
+    <% end %>
     <%= render "products/media_recovery" %>
   </div>
 <% end %>

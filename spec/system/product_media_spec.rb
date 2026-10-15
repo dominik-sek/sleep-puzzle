@@ -6,8 +6,12 @@ RSpec.describe "Product media recovery", type: :system do
     with_bunny_cdn
     allow(PaddlePriceCatalogService).to receive(:call).and_return([])
     product = create_product(kind: :audio_process, trailer_cdn_path: "/missing-intro.mp4")
+    product.trailer_poster.attach(io: File.open(Rails.root.join("spec/fixtures/files/photo.png")), filename: "poster.png",
+                                 content_type: "image/png", metadata: { trailer_cdn_path: product.trailer_cdn_path, duration_seconds: 94 })
     allow(BunnySignedUrlService).to receive(:call).with(product.trailer_cdn_path).and_return("/audioprocesses/missing/trailer")
     visit catalogue_product_path(product)
+    expect(page).to have_text("Film wprowadzający · 1:34")
+    expect(find("video")["poster"]).to include("/rails/active_storage/blobs/proxy/")
     expect(page.evaluate_script("document.querySelector('video').networkState")).to eq(1) # NETWORK_IDLE
     expect(page.evaluate_script("performance.getEntriesByType('resource').some(r => r.name.includes('/trailer') || r.name.includes('b-cdn.net'))")).to be(false)
     expect(page).not_to have_button("Spróbuj odtworzyć ponownie")

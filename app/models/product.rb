@@ -231,6 +231,15 @@ class Product < ApplicationRecord
     trailer_poster.attached? && trailer_poster.blob.metadata["trailer_cdn_path"] == trailer_cdn_path
   end
 
+  def trailer_duration_label
+    return unless trailer_poster_available?
+
+    seconds = trailer_poster.blob.metadata["duration_seconds"].to_i
+    return unless seconds.positive?
+
+    "#{seconds / 60}:#{(seconds % 60).to_s.rjust(2, '0')}"
+  end
+
   # The attachment is the whole state - purged on success and on final failure
   # alike, so no status column can be left stale by a worker that died.
   def audio_upload_pending?

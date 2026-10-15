@@ -182,6 +182,7 @@ en:
     audio_delivery: "For audio materials"
     trailer: "Watch the introduction"
     trailer_label: "Introduction video: %{name}"
+    trailer_duration: "Introduction video · %{duration}"
     chapters:
       title: "Audio process chapters"
       preview_title: "Program preview — available recordings"
