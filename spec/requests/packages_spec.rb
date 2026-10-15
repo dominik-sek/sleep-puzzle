@@ -46,6 +46,16 @@ RSpec.describe "Packages", type: :request do
       expect(response.body).to include(I18n.t("bookings.calendar.unavailable"))
     end
 
+    it "keeps the landing available without Google OAuth configuration" do
+      stub_const("ENV", ENV.to_h.except("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"))
+      allow(GoogleCalendarService).to receive(:call).and_call_original
+
+      get packages_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t("bookings.calendar.unavailable"))
+    end
+
     %i[pl en].each do |locale|
       it "offers direct calendar recovery in #{locale} without a dead picker" do
         allow(GoogleCalendarService).to receive(:call).and_raise(GoogleCalendarService::NotConnected)

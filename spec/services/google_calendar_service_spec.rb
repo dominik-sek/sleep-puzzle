@@ -15,6 +15,16 @@ RSpec.describe GoogleCalendarService do
   end
 
   describe "when there is no usable calendar" do
+    %w[GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET].each do |missing_key|
+      it "reports missing #{missing_key} as not connected" do
+        stub_const("ENV", ENV.to_h.merge("GOOGLE_CLIENT_ID" => "test-client-id", "GOOGLE_CLIENT_SECRET" => "test-client-secret").except(missing_key))
+        allow(AuthorizeCalendarService).to receive(:call).and_call_original
+
+        expect { described_class.call }
+          .to raise_error(described_class::NotConnected, /OAuth configuration is unavailable/)
+      end
+    end
+
     # Nothing in the token store, because nobody has been through the OAuth flow
     # in the panel yet. This used to hand back a service with a nil authorization,
     # which looked fine until the first API call answered 401.

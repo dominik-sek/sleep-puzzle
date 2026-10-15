@@ -136,7 +136,7 @@ class GoogleCalendarService < ApplicationService
 
   def google_calendar_authorizer
     AuthorizeCalendarService.call
-  rescue ArgumentError => error
+  rescue ArgumentError, Google::Auth::InitializationError => error
     raise NotConnected, "Google Calendar OAuth configuration is unavailable (#{error.message})"
   end
 end
