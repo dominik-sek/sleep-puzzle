@@ -7,7 +7,22 @@ module Admin
 
     manages Product,
             label: "produkt",
-            plain_attributes: %i[paddle_price_id kind icon length_minutes cdn_path position published expected_chapter_count]
+            plain_attributes: %i[paddle_price_id kind icon length_minutes cdn_path position published expected_chapter_count regenerate_slug slug_preview]
+
+    # Use the same allocator as save, including reservations for previous URLs.
+    # Only names and kind are needed; a preview never saves form data or uploads.
+    def slug_preview
+      product = Product.find(params[:id])
+      values = params.require(:record).permit(:kind, translations: { name: %i[pl en] })
+      product.kind = values[:kind] if values.key?(:kind)
+      Translatable::LOCALES.each do |locale|
+        name = values.dig(:translations, :name, locale.to_s)
+        product.assign_translation(:name, locale, name) unless name.nil?
+      end
+      product.slug = product.suggested_slug
+
+      render json: { slug: product.slug, path: helpers.catalogue_product_path(product, locale: nil) }
+    end
 
     private
 

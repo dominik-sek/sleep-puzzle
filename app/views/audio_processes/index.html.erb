@@ -2,11 +2,8 @@
 <div class="min-h-screen flex flex-col items-center">
   <%= render Section::Component.new(background: :ink, align: :left) do %>
     <div class="mx-auto w-full max-w-[1080px]">
-      <h1 class="font-display text-t1 font-bold text-cream text-pretty"><%= content_block("audio_landing.hero.title") %></h1>
-      <div class="trix-lead mt-5 max-w-[70ch]"><%= content_block("audio_landing.hero.intro") %></div>
-      <dl class="mt-6 grid max-w-xl grid-cols-2 gap-4">
-        <%= render "products/delivery_specs" %>
-      </dl>
+      <h1 class="page-title"><%= content_block("audio_landing.hero.title") %></h1>
+      <div class="page-subtitle mt-3 max-w-[70ch]"><%= content_block("audio_landing.hero.intro") %></div>
 
       <% if @products.any? %>
         <div class="mt-8">

@@ -179,6 +179,21 @@
   }
 }
 
+/* Page typography belongs to the design system, regardless of whether the
+   copy comes from a template, a plain CMS field or Action Text. Keep layout
+   (margins and measure) on the caller so the same roles work in every header. */
+@layer components {
+  .page-title {
+    @apply font-display text-t1 font-bold text-cream text-pretty;
+    overflow-wrap: anywhere;
+  }
+
+  .page-subtitle {
+    @apply font-sans text-t4 text-tan;
+    overflow-wrap: anywhere;
+  }
+}
+
 
 /* The row the shop's "Posłuchaj w koncie" button just sent someone to. Without
    it a buyer lands in a list of identical rows with nothing saying which one they
@@ -751,6 +766,20 @@ trix-editor:empty:not(:focus)::before {
 
 .trix-content .attachment__caption {
   @apply mt-2 text-t6 text-taupe;
+}
+
+/* Action Text supplies its own wrapper and heading styles. In a subtitle it
+   must inherit the role instead of switching back to body or display type.
+   Keep semantic emphasis and links, but use the subtitle's text color. */
+.page-subtitle .trix-content,
+.page-subtitle .trix-content :is(h1, h2, h3, h4, h5, h6) {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+.page-subtitle .trix-content strong {
+  color: inherit;
 }
 
 /* The cards share one edge; only the hovered card and that edge light up. */

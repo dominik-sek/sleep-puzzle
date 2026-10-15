@@ -25,6 +25,8 @@
   <%= render "admin/shared/translated_input", record: product, field: "name",
              label: "Nazwa", type: :text %>
 
+  <%= render "admin/products/slug", product: product if product.persisted? %>
+
   <%= render "admin/shared/translated_input", record: product, field: "description",
              label: "Opis", type: :textarea %>
 

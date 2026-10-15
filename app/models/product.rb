@@ -13,6 +13,7 @@
 #  position               :integer          default(0), not null
 #  preview_cdn_path       :string
 #  published              :boolean          default(FALSE), not null
+#  slug                   :string           not null
 #  trailer_cdn_path       :string
 #  trailer_upload_error   :string
 #  translations           :jsonb            not null
@@ -20,14 +21,37 @@
 #  updated_at             :datetime         not null
 #  paddle_price_id        :string
 #
+# Indexes
+#
+#  index_products_on_slug  (slug) UNIQUE
+#
 class Product < ApplicationRecord
   include Purchasable
+
+  attribute :regenerate_slug, :boolean, default: false
+  attr_accessor :slug_preview
+  before_validation :assign_slug, on: :create
+  before_validation :regenerate_slug_from_name, on: :update, if: :regenerate_slug?
+  after_save :remember_slug, if: :saved_change_to_slug?
+  after_save :clear_slug_regeneration
+  validates :slug, presence: true, uniqueness: true,
+                   format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/ }
+  validate :authorized_slug_change
+  validate :slug_not_reserved
 
   # restrict_with_error rather than destroy: an order is a record of what someone
   # paid for, so deleting a bought product would rewrite their history. The panel
   # unpublishes instead.
   has_many :order_items, dependent: :restrict_with_error
   has_many :audio_chapters, -> { ordered }, dependent: :destroy
+  has_many :slug_histories, class_name: "ProductSlugHistory", dependent: :destroy
+
+  def suggested_slug
+    ProductSlug.generate(translations, taken: ->(candidate) {
+      self.class.where.not(id: id).exists?(slug: candidate) ||
+        ProductSlugHistory.where.not(product_id: id).exists?(slug: candidate)
+    })
+  end
 
   # Where a recording waits between the admin pressing save and Bunny having it.
   # Nothing streams from here; ProductAudioUploadJob purges it once `cdn_path` is
@@ -219,6 +243,38 @@ class Product < ApplicationRecord
   end
 
   private
+
+  def assign_slug
+    self.slug = suggested_slug if slug.blank?
+  end
+
+  def regenerate_slug_from_name
+    self.slug = suggested_slug
+    if slug_preview.blank? || slug_preview != slug
+      errors.add(:base, "Adres URL jest nieaktualny. Wygeneruj podgląd ponownie przed zapisaniem.")
+    end
+  end
+
+  def authorized_slug_change
+    return unless persisted? && will_save_change_to_slug? && !regenerate_slug?
+
+    errors.add(:slug, "można zmienić tylko przez wygenerowanie adresu z nazwy")
+  end
+
+  def slug_not_reserved
+    return unless ProductSlugHistory.where.not(product_id: id).exists?(slug: slug)
+
+    errors.add(:slug, :taken)
+  end
+
+  def remember_slug
+    slug_histories.find_or_create_by!(slug: slug)
+  end
+
+  def clear_slug_regeneration
+    self.regenerate_slug = false
+    self.slug_preview = nil
+  end
 
   def legacy_includes_html(items)
     lines = Array(items).flat_map { |item| item.to_s.lines }.map(&:strip).reject(&:blank?)

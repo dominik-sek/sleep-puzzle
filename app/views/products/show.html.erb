@@ -18,21 +18,21 @@
 
       <% has_trailer = @product.trailerable? %>
       <% if @product.audio_process? %>
-        <h1 class="mt-6.5 mb-0 font-display text-t1 font-bold text-cream text-pretty [overflow-wrap:anywhere]">
+        <h1 class="page-title mt-6.5 mb-0">
           <%= @product.name %>
         </h1>
       <% end %>
       <div class="mt-6.5 grid grid-cols-1 items-start gap-7 md:grid-cols-2 md:gap-12">
         <div class="product-identity flex min-w-0 flex-col gap-4 md:order-2">
           <% unless @product.audio_process? %>
-            <h1 class="m-0 font-display text-t1 font-bold text-cream text-pretty [overflow-wrap:anywhere]">
+            <h1 class="page-title m-0">
               <%= @product.name %>
             </h1>
             <p class="m-0 text-t6 text-taupe"><%= @product.kind_label %></p>
           <% end %>
 
           <% if @product.description.present? %>
-            <p class="m-0 text-t4 text-tan text-pretty [overflow-wrap:anywhere]"><%= @product.description %></p>
+            <p class="page-subtitle m-0 text-pretty"><%= @product.description %></p>
           <% end %>
 
           <% price_label = product_price_label(@product) %>

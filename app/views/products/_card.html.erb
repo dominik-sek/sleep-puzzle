@@ -5,7 +5,7 @@
   <div class="flex items-start gap-3">
     <span class="shrink-0 text-t3" aria-hidden="true"><%= product.display_icon %></span>
     <%= content_tag local_assigns.fetch(:heading, :h2), class: "min-w-0 font-display font-bold text-t3 text-cream m-0 [overflow-wrap:anywhere]" do %>
-      <%= link_to product.name, product_path(product), class: "inline-flex min-h-11 items-center no-underline text-inherit hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+      <%= link_to product.name, catalogue_product_path(product), class: "inline-flex min-h-11 items-center no-underline text-inherit hover:text-accent rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
     <% end %>
   </div>
 
@@ -30,7 +30,7 @@
   </div>
 
   <% details_label = content_block("shop.card.details") %>
-  <%= link_to product_path(product),
+  <%= link_to catalogue_product_path(product),
               aria: { label: "#{details_label} — #{product.name}" },
               class: "group inline-flex min-h-11 items-center gap-1.5 self-start rounded-md py-2 text-t6 font-bold text-tan no-underline hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
     <%= details_label %>

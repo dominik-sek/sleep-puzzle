@@ -151,7 +151,7 @@ RSpec.describe "Packages", type: :request do
       expect(image[:width]).to eq("1")
       expect(image[:height]).to eq("1")
       expect(image[:decoding]).to eq("async")
-      expect(page).to have_no_css(".trix-lead.max-w-2xl img")
+      expect(page).to have_no_css(".page-subtitle.max-w-2xl img")
       expect(response.body.index("Szybka ulga")).to be < response.body.index('id="package-comparison"')
       expect(response.body.index('id="package-comparison"')).to be < response.body.index('<dialog')
       expect(response.body).to include("Opis współpracy")

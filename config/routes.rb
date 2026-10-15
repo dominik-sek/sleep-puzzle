@@ -27,8 +27,14 @@ Rails.application.routes.draw do
   scope "(:locale)", locale: /en/ do
     # Defines the root path route ("/")
     root "home#index"
-    get "audio-processes", to: "audio_processes#show", as: :audio_process
-    resources :stories, only: [ :index ]
+    resources :audio_processes, path: "audioprocesses", param: :slug, only: [ :index, :show ] do
+      get :trailer, on: :member
+      get "chapters/:chapter_id/stream", to: "audio_processes#stream_chapter", on: :member, as: :stream_chapter
+    end
+    resources :stories, param: :slug, only: [ :index, :show ] do
+      get :preview, on: :member
+      get :stream, on: :member
+    end
     # one page: each card carries everything a package has to say, so there is
     # no per-package page to link to
     resources :packages, only: [ :index ]
@@ -39,20 +45,7 @@ Rails.application.routes.draw do
       # the browser reporting that the Paddle overlay was closed without paying
       delete :abandon, on: :member
     end
-    resources :products, only: [ :index, :show ] do
-      # what a buyer's player points at: it authorises, then redirects to a
-      # freshly signed CDN URL. This legacy member route serves bedtime stories;
-      # audioprocess chapter streams have their own route below.
-      get :stream, on: :member
-
-      # deliberately outside the authenticate_user! that guards :stream - the
-      # whole point of a sample is that someone who has not bought anything, and
-      # may not have an account, can hear it. It signs the preview's own path,
-      # never the full recording's.
-      get :preview, on: :member
-      get :trailer, on: :member
-      get "chapters/:chapter_id/stream", to: "products#stream_chapter", on: :member, as: :stream_chapter
-    end
+    resources :products, only: [ :index ]
     # singular: one cart per visitor, kept in the session, so there is no id to
     # carry. Its lines are addressed by product id - there are no cart item rows.
     resource :cart, only: [ :show ], controller: "cart" do
@@ -127,6 +120,7 @@ Rails.application.routes.draw do
       post :preview, on: :collection
     end
     resources :products, except: [ :show ] do
+      post :slug_preview, on: :member
       resources :audio_chapters, except: [ :index, :show ], controller: "audio_chapters"
     end
     resources :staged_media_uploads, only: [ :create ] do

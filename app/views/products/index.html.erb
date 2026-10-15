@@ -3,10 +3,10 @@
   <%= render Section::Component.new(background: :ink, align: :left) do %>
     <div class="mx-auto w-full max-w-[1240px]">
       <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
-        <h1 class="min-w-0 font-display text-t1 font-bold text-cream"><%= content_block("shop.hero.title") %></h1>
+        <h1 class="page-title min-w-0"><%= content_block("shop.hero.title") %></h1>
         <%= render "shared/cart_pill" %>
       </div>
-      <p class="mt-2.5 max-w-[70ch] text-t4 text-tan"><%= content_block("shop.hero.subtitle") %></p>
+      <p class="page-subtitle mt-2.5 max-w-[70ch]"><%= content_block("shop.hero.subtitle") %></p>
 
       <% unless user_signed_in? %>
         <p class="mt-2 text-t6 text-taupe">
@@ -31,7 +31,7 @@
           <section id="<%= anchor %>" tabindex="-1" aria-labelledby="<%= anchor %>-title" class="scroll-mt-24 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
             <h2 id="<%= anchor %>-title" class="font-display text-t2 font-bold text-cream"><%= t("offers.#{label}") %></h2>
             <p class="mt-3 max-w-[70ch] text-t5 text-tan"><%= content_block("shop.collections.#{copy}_intro") %></p>
-            <%= link_to content_block("shop.collections.#{copy}_link"), kind == "audio_process" ? audio_process_path : stories_path,
+            <%= link_to content_block("shop.collections.#{copy}_link"), kind == "audio_process" ? audio_processes_path : stories_path,
                         class: "mt-2 inline-flex min-h-11 items-center rounded-md py-2 text-t6 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
             <div class="mt-4">
               <% if products.any? %>

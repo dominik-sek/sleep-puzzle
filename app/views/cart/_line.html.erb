@@ -14,7 +14,7 @@
   <span class="text-[30px] leading-none" aria-hidden="true"><%= line.product.display_icon %></span>
 
   <div class="flex-1 min-w-0">
-    <%= link_to line.product.name, product_path(line.product),
+    <%= link_to line.product.name, catalogue_product_path(line.product),
           class: "block text-[15px] font-bold text-cream no-underline hover:text-accent truncate" %>
     <span class="text-[13px] text-taupe"><%= line.product.kind_label %></span>
   </div>

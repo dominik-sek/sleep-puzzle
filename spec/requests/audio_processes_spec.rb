@@ -15,13 +15,13 @@ RSpec.describe "Audio process collection", type: :request do
     missing.audio_chapters.update_all(cdn_path: nil)
 
     [ :pl, :en ].each do |locale|
-      get audio_process_path(locale: locale == :en ? :en : nil)
+      get audio_processes_path(locale: locale == :en ? :en : nil)
 
       page = Capybara.string(response.body)
       expect(response).to have_http_status(:ok)
       links = page.all("main h2 a")
       expect(links.map(&:text)).to eq([ first.name, second.name ])
-      expect(links.map { |link| link[:href] }).to eq([ first, second ].map { |p| product_path(p, locale: locale == :en ? :en : nil) })
+      expect(links.map { |link| link[:href] }).to eq([ first, second ].map { |p| catalogue_product_path(p, locale: locale == :en ? :en : nil) })
       expect(page).to have_button("Dodaj do koszyka", count: 2) if locale == :pl
       expect(page).not_to have_text("Bajka")
       expect(page).not_to have_text("Szkic")
@@ -30,12 +30,12 @@ RSpec.describe "Audio process collection", type: :request do
     end
   end
 
-  it "keeps each program's existing product URL and detailed content" do
+  it "serves each program's detailed content at its typed slug URL" do
     product = create_product(name: "Proces dla rodziców", kind: :audio_process,
                              long_description: "Dla zmęczonych rodziców.", includes: [ "Program", "Tematy" ])
     create_product(name: "Inny proces", kind: :audio_process)
 
-    get product_path(product)
+    get catalogue_product_path(product)
 
     page = Capybara.string(response.body)
     expect(response).to have_http_status(:ok)
@@ -49,7 +49,7 @@ RSpec.describe "Audio process collection", type: :request do
     product = create_product(kind: :audio_process)
 
     [ :pl, :en ].each do |locale|
-      get product_path(product, locale: locale == :en ? :en : nil)
+      get catalogue_product_path(product, locale: locale == :en ? :en : nil)
 
       page = Capybara.string(response.body)
       heading = page.find("h2", text: I18n.t("products.chapters.title", locale: locale))
@@ -64,7 +64,7 @@ RSpec.describe "Audio process collection", type: :request do
     product = create_product(name: "Pełny proces", kind: :audio_process, expected_chapter_count: 24,
                              includes: [ "24 nagrania" ])
 
-    [ audio_process_path, product_path(product), products_path ].each do |path|
+    [ audio_processes_path, catalogue_product_path(product), products_path ].each do |path|
       get path
 
       page = Capybara.string(response.body)
@@ -73,11 +73,11 @@ RSpec.describe "Audio process collection", type: :request do
       expect(page).not_to have_text("10 min")
     end
 
-    get audio_process_path
-    expect(Capybara.string(response.body)).to have_link(product.name, href: product_path(product))
+    get audio_processes_path
+    expect(Capybara.string(response.body)).to have_link(product.name, href: catalogue_product_path(product))
 
     [ :pl, :en ].each do |locale|
-      get product_path(product, locale: locale == :en ? :en : nil)
+      get catalogue_product_path(product, locale: locale == :en ? :en : nil)
       page = Capybara.string(response.body)
       expect(page).to have_css("h2", text: I18n.t("products.chapters.preview_title", locale: locale))
       expect(page).to have_css(".audio-includes", text: "24 nagrania", visible: :all)
@@ -87,7 +87,7 @@ RSpec.describe "Audio process collection", type: :request do
   it "does not silently confirm a legacy program without a declared count" do
     create_product(kind: :audio_process, expected_chapter_count: nil)
 
-    get audio_process_path
+    get audio_processes_path
 
     page = Capybara.string(response.body)
     expect(page).not_to have_button("Dodaj do koszyka")
@@ -98,11 +98,11 @@ RSpec.describe "Audio process collection", type: :request do
     create_product(name: "Bez ceny", kind: :audio_process, paddle_price_id: "pri_missing")
     priced = create_product(name: "Z ceną", kind: :audio_process)
 
-    get audio_process_path
+    get audio_processes_path
 
     page = Capybara.string(response.body)
     expect(page).to have_link("Bez ceny")
-    expect(page).to have_link(priced.name, href: product_path(priced))
+    expect(page).to have_link(priced.name, href: catalogue_product_path(priced))
     expect(page).to have_button("Dodaj do koszyka", count: 1)
   end
 
@@ -113,7 +113,7 @@ RSpec.describe "Audio process collection", type: :request do
     product.update!(expected_chapter_count: nil)
     sign_in user
 
-    get audio_process_path
+    get audio_processes_path
 
     page = Capybara.string(response.body)
     expect(page).to have_link(href: dashboard_index_path(anchor: "product_#{product.id}"))
@@ -123,7 +123,7 @@ RSpec.describe "Audio process collection", type: :request do
   it "formats legacy includes on the individual product without losing the topic disclosure" do
     product = create_product(kind: :audio_process, includes: [ "Wstęp do procesu", "**Program**", "- **Siedem** nagrań", "- Plan działania" ])
 
-    get product_path(product)
+    get catalogue_product_path(product)
 
     page = Capybara.string(response.body)
     expect(page).to have_css(".trix-content p", text: "Wstęp do procesu")
@@ -135,7 +135,7 @@ RSpec.describe "Audio process collection", type: :request do
     create_product(kind: :bedtime_story)
 
     [ :pl, :en ].each do |locale|
-      get audio_process_path(locale: locale == :en ? :en : nil)
+      get audio_processes_path(locale: locale == :en ? :en : nil)
 
       page = Capybara.string(response.body)
       text = locale == :en ? "Audio processes will appear here soon." : "Audioprocesy pojawią się tutaj wkrótce."

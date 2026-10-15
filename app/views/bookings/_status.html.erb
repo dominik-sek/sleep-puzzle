@@ -1,19 +1,19 @@
 <div id="booking_status" class="w-full max-w-xl flex flex-col gap-6 text-center">
   <% if booking.canceled_at? %>
-    <h1 class="text-t1 text-cream font-display"><%= content_block("refunds.notifications.canceled_title") %></h1>
+    <h1 class="page-title"><%= content_block("refunds.notifications.canceled_title") %></h1>
     <p class="text-tan text-t5"><%= content_block("refunds.notifications.canceled_body") %></p>
   <% elsif booking.confirmed? %>
-    <h1 class="text-t1 text-cream font-display"><%= t("bookings.summary.confirmed_title") %></h1>
+    <h1 class="page-title"><%= t("bookings.summary.confirmed_title") %></h1>
     <span class="text-tan text-t5">
       <%= t("bookings.summary.confirmed_body") %>
     </span>
   <% elsif booking.payment_failed? || booking.canceled? %>
-    <h1 class="text-t1 text-cream font-display"><%= t("bookings.summary.failed_title") %></h1>
+    <h1 class="page-title"><%= t("bookings.summary.failed_title") %></h1>
     <span class="text-tan text-t5">
       <%= t("bookings.summary.failed_body") %>
     </span>
   <% else %>
-    <h1 class="text-t1 text-cream font-display"><%= t("bookings.summary.processing_title") %></h1>
+    <h1 class="page-title"><%= t("bookings.summary.processing_title") %></h1>
     <span class="text-tan text-t5">
       <%= t("bookings.summary.processing_body") %>
     </span>

@@ -1,6 +1,14 @@
 module ProductsHelper
+  def catalogue_product_path(product, **options)
+    if product.audio_process?
+      audio_process_path(**options, slug: product.slug)
+    else
+      story_path(**options, slug: product.slug)
+    end
+  end
+
   def product_collection_path(product)
-    product.audio_process? ? audio_process_path : stories_path
+    product.audio_process? ? audio_processes_path : stories_path
   end
 
   def product_purchased?(product)

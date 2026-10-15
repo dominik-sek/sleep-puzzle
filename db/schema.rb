@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_14_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -334,6 +334,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_140000) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "product_slug_histories", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.string "slug", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_product_slug_histories_on_product_id"
+    t.index ["slug"], name: "index_product_slug_histories_on_slug", unique: true
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "audio_upload_error"
     t.integer "category"
@@ -351,6 +360,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_140000) do
     t.string "trailer_cdn_path"
     t.string "trailer_upload_error"
     t.integer "expected_chapter_count"
+    t.string "slug", null: false
+    t.index ["slug"], name: "index_products_on_slug", unique: true
     t.check_constraint "expected_chapter_count IS NULL OR expected_chapter_count > 0", name: "products_expected_chapter_count_positive"
   end
 
@@ -563,6 +574,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_140000) do
   add_foreign_key "pay_charges", "pay_subscriptions", column: "subscription_id"
   add_foreign_key "pay_payment_methods", "pay_customers", column: "customer_id"
   add_foreign_key "pay_subscriptions", "pay_customers", column: "customer_id"
+  add_foreign_key "product_slug_histories", "products"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

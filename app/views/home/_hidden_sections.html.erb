@@ -196,7 +196,7 @@
           <%# the whole tile is the link. These sit beside package cards that are
               navigable and carry the same radius, border and amber title, so a
               tile that did nothing read as a dead affordance four times over. %>
-          <%= link_to product_path(product),
+          <%= link_to catalogue_product_path(product),
                       class: "group block h-full rounded-2xl no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
             <%= render Card::Component.new(padding: :sm, classes: "h-full transition-colors duration-100 group-hover:border-accent!") do |card| %>
               <% card.with_body do %>

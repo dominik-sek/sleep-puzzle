@@ -1,7 +1,7 @@
 # The public routes sit under an optional `(:locale)` segment, and an optional
 # *leading* dynamic segment swallows the first positional argument: without this,
-# `product_path(product)` binds the product to :locale and raises "missing
-# required keys: [:id]".
+# `story_path(slug)` binds the slug to :locale and raises "missing
+# required keys: [:slug]".
 #
 # Declaring the key here - nil, so Polish paths stay unprefixed - means the
 # segment is always considered supplied, and positional arguments land on the

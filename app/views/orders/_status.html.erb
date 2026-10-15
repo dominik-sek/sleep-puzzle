@@ -71,7 +71,7 @@
       <% order.order_items.each do |item| %>
         <li>
           <%# linked, so the confirmation is also the way into what was bought %>
-          <%= link_to product_path(item.product),
+          <%= link_to catalogue_product_path(item.product),
                 class: "group flex items-center gap-4 rounded-xl border border-border-strong bg-surface px-4 py-3.5 no-underline" do %>
             <%# a fixed tile, not a bare emoji: glyph widths differ enough that
                 unboxed icons leave the names on a ragged left edge %>

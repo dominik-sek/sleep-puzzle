@@ -13,7 +13,7 @@ RSpec.describe "Deferred page features", type: :system do
   after { Warden.test_reset! }
 
   it "leaves the editor and calendar unloaded on the audio landing page" do
-    visit audio_process_path
+    visit audio_processes_path
     expect(page).to have_css("[data-controller='navbar']")
     expect(page.evaluate_script("Boolean(customElements.get('trix-editor'))")).to be(false)
     expect(page.evaluate_script("Boolean(customElements.get('calendar-date'))")).to be(false)
@@ -24,7 +24,7 @@ RSpec.describe "Deferred page features", type: :system do
   end
 
   it "initializes the calendar on a Turbo visit and accepts the first date selection" do
-    visit audio_process_path
+    visit audio_processes_path
     page.execute_script("Turbo.visit(arguments[0])", packages_path)
     expect(page).to have_css("calendar-date")
     expect(page.evaluate_script("Boolean(document.querySelector('calendar-month').shadowRoot)")).to be(true)
@@ -56,7 +56,7 @@ RSpec.describe "Deferred page features", type: :system do
   end
 
   it "upgrades a rich editor inserted into an existing page by a Turbo Stream" do
-    visit audio_process_path
+    visit audio_processes_path
     page.execute_script(<<~JS)
       Turbo.renderStreamMessage(`<turbo-stream action="append" target="main-content"><template>
         <input type="hidden" id="stream-editor-value">

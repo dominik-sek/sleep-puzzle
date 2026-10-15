@@ -161,7 +161,8 @@ The product's name is the design brief. Karola describes her work as assembling 
 family's sleep like a puzzle, piece by piece. The interface follows that metaphor:
 discrete, softly cornered pieces, generous space, and a visible connection between
 related choices. A package, a product and a disclosure each hold a manageable part
-of the story. Empty collections disappear rather than leaving hollow containers.
+of the story. Empty optional sections disappear; catalogue categories retain a
+short empty state so their navigation targets remain useful.
 
 The material is soft, tactile, generous and playful. The ground is a warm near-black,
 brown-leaning rather than blue-leaning, with progressively lighter warm surfaces.
@@ -268,9 +269,16 @@ headings explicitly opt into `font-display`.
 - **Label / t6** (Quicksand, 700, 14px / 1.4, +0.02em): Card categories, compact
   actions and footer links. Labels are not a substitute for reading text.
 - **Rich lead** (`trix-lead`, 19px / 1.75): Styles the nested `.trix-content` itself.
-  Defaults to cream; `trix-lead text-tan` gives a supporting introduction.
+  Defaults to cream for editorial prose, such as the about-page biography.
 - **Rich body** (`trix-copy`, 16px / 1.75): Expanded prose. Base `.trix-content` remains
   body size; paragraphs have a 16px bottom gap except the last paragraph.
+
+Public page headers use `.page-title` (Display / t1, cream) and `.page-subtitle`
+(Lead / t4, tan). These roles share font family, size, weight, line height and color
+across template copy, plain CMS fields and rich CMS fields. Action Text wrappers
+and headings inside a subtitle inherit the role; bold emphasis and links remain
+available. Keep spacing and width on the view, and reserve `.trix-lead` for
+editorial paragraphs rather than page subtitles.
 
 Common leads are constrained to `max-w-2xl` (672px), closing prose to `max-w-xl`
 (576px). Aim for a comfortable 65–75 characters in wider reading blocks. Headings
@@ -419,11 +427,14 @@ product icon beside the name. A short 16px description preview leads to the full
 product page; price and cart state stay together near the bottom. Category pages
 use H2 product names; the grouped shop uses H2 section names and H3 product names.
 Each kind keeps its own grid cap (320px for one, 664px for two, 1008px for three),
-with 24px card gaps and 64px between catalogue sections. Wrapping category links
-lead to focusable `#audioprocesy`, `#bajki` and `#wspolpraca` targets with a 96px
+with 24px card gaps and 48px between catalogue sections. Wrapping category links
+lead to focusable `#audio-processes`, `#stories` and `#packages` targets with a 96px
 scroll margin below the sticky navbar. Empty audio categories retain their anchors
-and a short owner-editable message. Shared delivery facts are explicitly scoped to
-audio rather than the consultation packages alongside it.
+and a short owner-editable message. The category pages cap their inner content at
+1080px. `/audioprocesses` places the product grid 32px after the introduction, with
+no Format/Access facts block. `/stories` places its grid 24px after the introduction
+and shared delivery facts below the recordings. The grouped shop keeps the concise
+previews and category links without a shared delivery block.
 
 ### Inputs / Fields
 
@@ -448,6 +459,10 @@ booking pill is retained in hidden markup, not currently rendered. Dropdowns hav
 keyboard access, Escape dismissal and focus return, and honour reduced motion.
 Locale flags are local SVGs alongside readable language names.
 
+The current category destinations are `/audioprocesses`, `/stories` and `/packages`,
+with `/en` for English. Product names and details links lead to the matching
+category's slug URL; shop fragments remain separate navigation targets.
+
 Footer headings are uppercase Label in amber. Links keep at least 44px targets and
 visible focus outlines; supporting links use tan, and copyright uses readable taupe.
 
@@ -470,11 +485,14 @@ with `aria-expanded` and a labelled content region.
 
 ### Audio Product Details
 
-The product name leads the shared purchase area. Identity and purchase information
-come before supporting media in DOM order and on phones; from `md`, media sits in
-the left column and identity in the right. Fallback artwork uses a video-shaped
-area on phones and a square on larger screens. The shop back link has a 44px
-minimum target. Duration appears once in the facts strip.
+An audioprocess name spans the page above the two-column purchase area; a story
+name stays inside its identity column. Identity and purchase information come
+before supporting media in DOM order and on phones; from `md`, media sits in the
+left column and identity in the right. Fallback artwork uses a video-shaped area
+on phones and a square on larger screens. The category and shop back links have
+44px minimum targets. Duration appears once below the purchase actions. Program
+delivery facts sit below the supporting media; story delivery facts remain with
+duration in the purchase column.
 
 Audioprocess details use a reusable suitability/topics variant, followed by the
 recording outline. Short topic copy stays visible; longer topics use the native

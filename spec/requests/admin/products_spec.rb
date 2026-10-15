@@ -67,10 +67,13 @@ RSpec.describe "Admin::Products", type: :request do
     end
 
     it "renders the edit form" do
-      get edit_admin_product_path(create_product(name: "Bajka o sowie"))
+      product = create_product(name: "Bajka o sowie")
+      get edit_admin_product_path(product)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Bajka o sowie")
+      expect(Capybara.string(response.body)).to have_css("form[action='/admin/products/#{product.id}']")
+      expect(Capybara.string(response.body)).not_to have_css("input[name='record[slug]']", visible: :all)
     end
 
     it "prefills Trix with the existing includes list and markdown formatting" do
@@ -95,6 +98,7 @@ RSpec.describe "Admin::Products", type: :request do
       product = Product.last
       expect(I18n.with_locale(:pl) { product.name }).to eq("Bajka o sowie")
       expect(I18n.with_locale(:en) { product.name }).to eq("The owl story")
+      expect(product.slug).to eq("bajka-o-sowie")
       expect(product).to be_bedtime_story
       expect(response).to redirect_to(admin_products_path)
     end
@@ -138,6 +142,17 @@ RSpec.describe "Admin::Products", type: :request do
 
   describe "PATCH /admin/products/:id" do
     before { sign_in admin }
+
+    it "keeps the slug when renaming a product and ignores a submitted slug" do
+      product = create_product(name: "Bajka o sowie")
+      patch admin_product_path(product), params: {
+        record: { slug: "replacement", translations: { "name" => { "pl" => "Nowa bajka" } } }
+      }
+
+      expect(response).to redirect_to(admin_products_path)
+      expect(product.reload.name).to eq("Nowa bajka")
+      expect(product.slug).to eq("bajka-o-sowie")
+    end
 
     it "lets the owner declare the complete program count without enabling a partial program" do
       product = create_product(kind: :audio_process, expected_chapter_count: nil)

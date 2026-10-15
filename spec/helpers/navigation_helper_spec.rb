@@ -10,7 +10,7 @@ RSpec.describe NavigationHelper, type: :helper do
     it "points each entry at its page" do
       hrefs = helper.primary_nav_items.to_h { |item| [ item[:label], item[:href] ] }
 
-      expect(hrefs["Audioprocesy"]).to eq(audio_process_path)
+      expect(hrefs["Audioprocesy"]).to eq(audio_processes_path)
       expect(hrefs["Bajki audio"]).to eq(stories_path)
       expect(hrefs["Współpraca 1:1"]).to eq(packages_path)
     end

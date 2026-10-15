@@ -18,7 +18,7 @@ RSpec.describe "Shop collections", type: :request do
     programs = page.find("section#audio-processes")
     stories = page.find("section#stories")
     expect(programs.all("h3 a").map(&:text)).to eq([ first.name, second.name ])
-    expect(stories).to have_css("h3 a[href='#{product_path(story)}']", text: story.name)
+    expect(stories).to have_css("h3 a[href='#{catalogue_product_path(story)}']", text: story.name)
     expect(programs).not_to have_text(story.name)
     expect(stories).not_to have_text(first.name)
     expect(page).not_to have_text("Szkic")
@@ -51,10 +51,10 @@ RSpec.describe "Shop collections", type: :request do
     expect(card).to have_text("Początek opowieści.")
     expect(card).not_to have_text("Ważne zakończenie.")
     details = card.find("a", text: "Zobacz szczegóły")
-    expect(details[:href]).to eq(product_path(product))
+    expect(details[:href]).to eq(catalogue_product_path(product))
     expect(details[:"aria-label"]).to eq("Zobacz szczegóły — #{product.name}")
 
-    get product_path(product)
+    get catalogue_product_path(product)
     expect(Capybara.string(response.body).find("main")).to have_text("Ważne zakończenie.")
   end
 

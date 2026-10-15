@@ -2,7 +2,7 @@
   <div data-controller="media-preview" class="flex min-w-0 flex-col gap-2">
     <span class="text-t6 text-taupe"><%= content_block("shop.product.preview") %></span>
     <audio controls preload="none" class="w-full min-w-0 max-w-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-           src="<%= preview_product_path(product) %>"
+           src="<%= preview_story_path(slug: product.slug) %>"
            data-media-preview-target="player" data-action="play->media-preview#starting error->media-preview#failed playing->media-preview#playing"
            aria-label="<%= t('products.player.preview_label', name: product.name) %>"></audio>
     <%= render "products/media_recovery" %>

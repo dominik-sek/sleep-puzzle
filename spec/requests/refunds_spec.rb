@@ -58,14 +58,14 @@ RSpec.describe "Refunds and consent", type: :request do
     it "does not record playback on page load or issuance of a stream" do
       get dashboard_index_path
       expect(item.reload.first_played_at).to be_nil
-      get stream_product_path(product, order_item_id: item.id)
+      get stream_story_path(slug: product.slug, order_item_id: item.id)
       expect(response).to have_http_status(:redirect)
       expect(item.reload.first_stream_issued_at).to be_present
       expect(item.first_played_at).to be_nil
     end
 
     it "uses server time and preserves the first playing event" do
-      get stream_product_path(product, order_item_id: item.id)
+      get stream_story_path(slug: product.slug, order_item_id: item.id)
       post playback_order_item_path(item), params: { first_played_at: "2000-01-01" }
       expect(response).to have_http_status(:no_content)
       first = item.reload.first_played_at
@@ -88,7 +88,7 @@ RSpec.describe "Refunds and consent", type: :request do
 
     it "refuses new stream issuance and playback after a full refund" do
       item.update!(refunded_at: Time.current)
-      get stream_product_path(product, order_item_id: item.id)
+      get stream_story_path(slug: product.slug, order_item_id: item.id)
       expect(response).to have_http_status(:forbidden)
       post playback_order_item_path(item)
       expect(response).to have_http_status(:not_found)
@@ -97,7 +97,7 @@ RSpec.describe "Refunds and consent", type: :request do
     it "counts a paid chapter toward its purchased audio process" do
       process = create_product(kind: :audio_process, name: "Audioproces")
       process_item = user.orders.create!(status: :paid, order_items: [ OrderItem.new(product: process) ]).order_items.sole
-      get stream_chapter_product_path(process, chapter_id: process.audio_chapters.sole.id, order_item_id: process_item.id)
+      get stream_chapter_audio_process_path(slug: process.slug, chapter_id: process.audio_chapters.sole.id, order_item_id: process_item.id)
       expect(response).to have_http_status(:redirect)
       post playback_order_item_path(process_item)
       expect(process_item.reload.first_played_at).to be_present
@@ -106,16 +106,16 @@ RSpec.describe "Refunds and consent", type: :request do
 
     it "does not count free previews, trailers or failed stream issuance" do
       product.update_columns(preview_cdn_path: "/preview.mp3")
-      get preview_product_path(product)
+      get preview_story_path(slug: product.slug)
       expect(response).to have_http_status(:redirect)
       process = create_product(kind: :audio_process)
       process.update_columns(trailer_cdn_path: "/trailer.mp4")
       process_item = user.orders.create!(status: :paid, order_items: [ OrderItem.new(product: process) ]).order_items.sole
-      get trailer_product_path(process)
+      get trailer_audio_process_path(slug: process.slug)
       expect(response).to have_http_status(:redirect)
       expect(process_item.reload.first_stream_issued_at).to be_nil
       allow(BunnySignedUrlService).to receive(:call).and_return(nil)
-      get stream_product_path(product, order_item_id: item.id)
+      get stream_story_path(slug: product.slug, order_item_id: item.id)
       expect(response).to have_http_status(:not_found)
       expect(item.reload.first_stream_issued_at).to be_nil
       expect(item.first_played_at).to be_nil

@@ -49,5 +49,7 @@ module CatalogueHelpers
 end
 
 RSpec.configure do |config|
+  config.include ProductsHelper, type: :request
+  config.include ProductsHelper, type: :system
   config.include CatalogueHelpers
 end

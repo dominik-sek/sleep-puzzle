@@ -200,9 +200,9 @@ RSpec.describe "Locale", type: :request do
     it "stays on the same record when switching" do
       product = create_product(name: "Bajka o sowie")
 
-      get product_path(product)
+      get catalogue_product_path(product)
 
-      expect(response.body).to include(%(href="/en/products/#{product.id}"))
+      expect(response.body).to include(%(href="/en/stories/#{product.slug}"))
     end
 
     it "carries the query string, so a filter survives the switch" do

@@ -18,7 +18,7 @@ RSpec.describe "Product detail reading order", type: :system do
         page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride",
           width: width, height: 844, deviceScaleFactor: 1, mobile: false)
         product = instance_variable_get("@#{variant}")
-        visit product_path(product)
+        visit catalogue_product_path(product)
 
         expect(page).to have_css("h1", text: product.name)
         if product.audio_process?
@@ -39,7 +39,7 @@ RSpec.describe "Product detail reading order", type: :system do
     it "keeps supporting media left of the product on a wide viewport at #{width}px" do
       page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride",
         width: width, height: 700, deviceScaleFactor: 1, mobile: false)
-      visit product_path(@program)
+      visit catalogue_product_path(@program)
 
       expect(page.evaluate_script("document.querySelector('.product-media').getBoundingClientRect().right <= document.querySelector('.product-identity').getBoundingClientRect().left")).to be(true)
       expect(page.evaluate_script("document.querySelector('main h1').getBoundingClientRect().bottom <= Math.min(document.querySelector('.product-media').getBoundingClientRect().top, document.querySelector('.product-identity').getBoundingClientRect().top)")).to be(true)
@@ -52,7 +52,7 @@ RSpec.describe "Product detail reading order", type: :system do
     @program.save!
     page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride",
       width: 320, height: 844, deviceScaleFactor: 1, mobile: false)
-    visit product_path(@program)
+    visit catalogue_product_path(@program)
     find('button[aria-label^="Dodaj do koszyka"]').click
     expect(page).to have_link("Przejdź do koszyka")
     page.execute_script("document.documentElement.style.fontSize = '200%'")
@@ -63,7 +63,7 @@ RSpec.describe "Product detail reading order", type: :system do
   end
 
   it "supports keyboard navigation back to the localized shop" do
-    visit product_path(@story, locale: :en)
+    visit catalogue_product_path(@story, locale: :en)
     find("main nav a", text: "Shop").send_keys(:enter)
 
     expect(page).to have_current_path(products_path(locale: :en))

@@ -20,7 +20,7 @@ RSpec.describe "Shared testimonials", type: :request do
     item.assign_value("quote", :pl, "Bez podpisu")
     item.save!
 
-    [ root_path, packages_path, audio_process_path ].each do |path|
+    [ root_path, packages_path, audio_processes_path ].each do |path|
       get path
       expect(response.body).not_to include('id="testimonials-title"', "Bez podpisu")
     end
@@ -29,7 +29,7 @@ RSpec.describe "Shared testimonials", type: :request do
   it "renders one Rails Blocks card with the same opinion on all three pages" do
     add_testimonial(position: 1, quote: "Wreszcie mamy spokojne wieczory")
 
-    [ root_path, audio_process_path, packages_path ].each do |path|
+    [ root_path, audio_processes_path, packages_path ].each do |path|
       get path
 
       page = Capybara.string(response.body)

@@ -10,7 +10,7 @@ module Admin::ContentBlocksHelper
     case page_key
     when "home", "footer", "testimonials" then root_path(**options)
     when "packages" then packages_path(**options)
-    when "audio_landing" then audio_process_path(**options)
+    when "audio_landing" then audio_processes_path(**options)
     when "stories" then stories_path(**options)
     when "about" then about_path(**options)
     when "bookings" then bookings_path(**options)

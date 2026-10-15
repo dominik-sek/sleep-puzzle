@@ -145,7 +145,7 @@ RSpec.describe "Cart", type: :request do
       get cart_path
       # counted by the line's own link, not by the name: the "dodano do koszyka"
       # flash repeats the name on the page too
-      expect(response.body.scan(%(href="#{product_path(product)}")).size).to eq(1)
+      expect(response.body.scan(%(href="#{catalogue_product_path(product)}")).size).to eq(1)
     end
   end
 

@@ -7,10 +7,10 @@
     align: :center
   ) do |section| %>
     <div class="flex flex-col gap-4 items-center">
-      <h1 class="text-t1 font-display font-bold text-cream">
+      <h1 class="page-title">
         <%= content_block("packages.hero.title") %>
       </h1>
-      <div class="trix-lead text-t4 text-tan max-w-2xl text-pretty">
+      <div class="page-subtitle max-w-2xl text-pretty">
         <%= collaboration_body.presence || content_block("packages.hero.subtitle") %>
       </div>
     </div>
@@ -43,7 +43,7 @@
         </div>
       <% end %>
     <% else %>
-      <p class="text-t4 text-tan max-w-2xl">
+      <p class="page-subtitle max-w-2xl">
         <%= content_block("packages.empty.body") %>
       </p>
     <% end %>
@@ -86,7 +86,7 @@
       <h2 class="text-t2 font-display font-bold text-cream text-balance">
         <%= content_block("packages.closing.title") %>
       </h2>
-      <p class="text-t4 text-tan max-w-xl text-pretty m-0">
+      <p class="page-subtitle max-w-xl text-pretty m-0">
         <%= content_block("packages.closing.body") %>
       </p>
     </div>

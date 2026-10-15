@@ -18,7 +18,7 @@ RSpec.describe "Stories collection", type: :request do
       expect(response).to have_http_status(:ok)
       page = Capybara.string(response.body)
       expect(page).to have_css("main h1", text: locale ? "Audio stories" : "Bajki audio", count: 1)
-      expect(page.all("main article h2 a").map { |link| link[:href] }).to eq([ first, later ].map { |p| product_path(p, locale: locale) })
+      expect(page.all("main article h2 a").map { |link| link[:href] }).to eq([ first, later ].map { |p| catalogue_product_path(p, locale: locale) })
       expect(page.find("main")).not_to have_text("Program")
       expect(page.find("main")).not_to have_text("Nieopublikowana")
       expect(page.find("main")).not_to have_text("Bez nagrania")
@@ -65,14 +65,14 @@ RSpec.describe "Stories collection", type: :request do
     with_bunny_cdn
     story = create_product(preview_cdn_path: "/previews/story.mp3")
     create_product(name: "Bez próbki")
-    [ stories_path, product_path(story) ].each do |path|
+    [ stories_path, catalogue_product_path(story) ].each do |path|
       get path
       page = Capybara.string(response.body)
-      expect(page).to have_css("audio[controls][preload='none'][src='#{preview_product_path(story)}']", count: 1)
+      expect(page).to have_css("audio[controls][preload='none'][src='#{preview_story_path(slug: story.slug)}']", count: 1)
       expect(page.find("audio")[:"aria-label"]).to include(story.name)
       expect(page).not_to have_css("[id^='cart_'] audio")
     end
-    [ products_path, audio_process_path ].each do |path|
+    [ products_path, audio_processes_path ].each do |path|
       get path
       expect(Capybara.string(response.body)).not_to have_css("main audio")
     end
@@ -109,7 +109,7 @@ RSpec.describe "Stories collection", type: :request do
           sign_in user
         end
         allow(PaddlePriceCatalogService).to receive(:call).and_return([]) if %i[unavailable owned pending].include?(state)
-        path = { stories: stories_path, shop: products_path, detail: product_path(story) }.fetch(surface)
+        path = { stories: stories_path, shop: products_path, detail: catalogue_product_path(story) }.fetch(surface)
 
         get path
 

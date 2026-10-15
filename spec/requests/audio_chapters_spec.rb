@@ -13,33 +13,33 @@ RSpec.describe "Audio process chapters", type: :request do
     chapter = product.audio_chapters.first
     chapter.update!(duration_seconds: 83)
 
-    get audio_process_path
-    expect(Capybara.string(response.body)).to have_link(product.name, href: product_path(product))
+    get audio_processes_path
+    expect(Capybara.string(response.body)).to have_link(product.name, href: catalogue_product_path(product))
     expect(response.body).not_to include("1:23")
-    expect(response.body).not_to include(stream_chapter_product_path(product, chapter_id: chapter.id))
+    expect(response.body).not_to include(stream_chapter_audio_process_path(slug: product.slug, chapter_id: chapter.id))
 
-    get product_path(product)
+    get catalogue_product_path(product)
     expect(response.body).to include("Nagranie", "1:23")
-    expect(response.body).not_to include(stream_chapter_product_path(product, chapter_id: chapter.id))
+    expect(response.body).not_to include(stream_chapter_audio_process_path(slug: product.slug, chapter_id: chapter.id))
   end
 
   it "serves the public trailer through a signed URL but never the audio preview" do
     product.update_columns(trailer_cdn_path: "/audioprocesy/trailer.mp4", preview_cdn_path: "/audioprocesy/preview.mp3")
     with_bunny_cdn
 
-    get trailer_product_path(product)
+    get trailer_audio_process_path(slug: product.slug)
     expect(response).to have_http_status(:redirect)
     expect(response.location).to include("/audioprocesy/trailer.mp4?token=")
 
-    get preview_product_path(product)
+    get preview_story_path(slug: product.slug)
     expect(response).to have_http_status(:not_found)
 
-    get product_path(product)
-    expect(response.body).to include(trailer_product_path(product))
-    expect(response.body).not_to include(preview_product_path(product))
+    get catalogue_product_path(product)
+    expect(response.body).to include(trailer_audio_process_path(slug: product.slug))
+    expect(response.body).not_to include(preview_story_path(slug: product.slug))
 
-    get audio_process_path
-    expect(response.body).not_to include(trailer_product_path(product))
+    get audio_processes_path
+    expect(response.body).not_to include(trailer_audio_process_path(slug: product.slug))
   end
 
   it "gates every chapter on the product purchase, including one added later" do
@@ -47,18 +47,18 @@ RSpec.describe "Audio process chapters", type: :request do
     with_bunny_cdn
     sign_in user
 
-    get stream_chapter_product_path(product, chapter_id: chapter.id)
+    get stream_chapter_audio_process_path(slug: product.slug, chapter_id: chapter.id)
     expect(response).to have_http_status(:forbidden)
 
     buy!
     later = product.audio_chapters.create!(position: 1, cdn_path: "/audioprocesy/later.mp3", duration_seconds: 44,
                                            translations: { "title" => { "pl" => "Później" } })
-    get stream_chapter_product_path(product, chapter_id: later.id)
+    get stream_chapter_audio_process_path(slug: product.slug, chapter_id: later.id)
     expect(response).to have_http_status(:redirect)
     expect(response.location).to include("/audioprocesy/later.mp3?token=")
 
     get dashboard_index_path
-    expect(response.body).to include("Później", stream_chapter_product_path(product, chapter_id: later.id))
+    expect(response.body).to include("Później", stream_chapter_audio_process_path(slug: product.slug, chapter_id: later.id))
     expect(response.body).to include('data-controller="chapter-playlist"')
   end
 
@@ -67,7 +67,7 @@ RSpec.describe "Audio process chapters", type: :request do
     buy!
     sign_in user
 
-    get stream_chapter_product_path(other, chapter_id: other.audio_chapters.first.id)
+    get stream_chapter_audio_process_path(slug: other.slug, chapter_id: other.audio_chapters.first.id)
     expect(response).to have_http_status(:forbidden)
   end
 
@@ -78,7 +78,7 @@ RSpec.describe "Audio process chapters", type: :request do
     with_bunny_cdn
     product.update!(published: false)
 
-    get stream_chapter_product_path(product, chapter_id: chapter.id)
+    get stream_chapter_audio_process_path(slug: product.slug, chapter_id: chapter.id)
     expect(response).to have_http_status(:redirect)
   end
 end

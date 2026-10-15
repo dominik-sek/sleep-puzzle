@@ -2,7 +2,7 @@
   <div data-controller="media-preview" class="<%= 'mt-6' if local_assigns.fetch(:spacing, true) %>">
     <video controls preload="none" playsinline width="1280" height="720"
            class="aspect-video w-full rounded-2xl bg-black object-contain focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-           src="<%= trailer_product_path(product) %>"
+           src="<%= trailer_audio_process_path(slug: product.slug) %>"
            <% if product.trailer_poster_available? %>poster="<%= rails_storage_proxy_path(product.trailer_poster) %>"<% end %>
            data-media-preview-target="player" data-action="play->media-preview#starting error->media-preview#failed playing->media-preview#playing"
            aria-label="<%= t('products.trailer_label', name: product.name) %>"></video>

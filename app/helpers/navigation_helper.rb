@@ -15,7 +15,7 @@ module NavigationHelper
   # markup that would render it.
   def primary_nav_items
     [
-      { label: t("offers.audio"), href: audio_process_path },
+      { label: t("offers.audio"), href: audio_processes_path },
       { label: t("offers.stories"), href: stories_path },
       { label: t("offers.one_to_one"), href: packages_path }
       # { label: t("nav.blog"), href: blog_path },
@@ -55,7 +55,7 @@ module NavigationHelper
   # The current page in the other language.
   #
   # Built from the current route's own parameters rather than by rewriting the
-  # path, so /products/12 switches to /en/products/12 rather than dropping the
+  # path, so /stories/sleepy-owl switches to /en/stories/sleepy-owl rather than dropping the
   # buyer back on the shop index. `only_path` keeps it relative; the query string
   # is carried so a status filter or a page number survives the switch.
   def alternate_locale_url(locale = alternate_locale)

@@ -22,7 +22,7 @@ RSpec.describe "Refunds on mobile", type: :system do
       expect(page.evaluate_script("document.documentElement.scrollWidth")).to be <= 390
     end
     product = create_product
-    visit product_path(product)
+    visit catalogue_product_path(product)
     find("form[action='#{cart_items_path}'] button").click
     expect(page).to have_link(href: cart_path)
     visit cart_path

@@ -15,12 +15,17 @@ require 'rails_helper'
 #  position               :integer          default(0), not null
 #  preview_cdn_path       :string
 #  published              :boolean          default(FALSE), not null
+#  slug                   :string           not null
 #  trailer_cdn_path       :string
 #  trailer_upload_error   :string
 #  translations           :jsonb            not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  paddle_price_id        :string
+#
+# Indexes
+#
+#  index_products_on_slug  (slug) UNIQUE
 #
 RSpec.describe Product, type: :model do
   describe "translated fields" do

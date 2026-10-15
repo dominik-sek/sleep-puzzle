@@ -8,7 +8,7 @@ RSpec.describe "Home", type: :request do
     get root_path
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include("Jak mogę Ci pomóc", audio_process_path, packages_path)
+    expect(response.body).to include("Jak mogę Ci pomóc", audio_processes_path, packages_path)
     expect(response.body).not_to include("Szybka ulga", "Bajka o sowie", "Newsletter Sleep Puzzle")
     expect(response.body).not_to include(%(href="#{contact_path}"))
   end

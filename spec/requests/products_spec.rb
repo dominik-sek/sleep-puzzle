@@ -186,7 +186,7 @@ RSpec.describe "Products", type: :request do
     end
   end
 
-  describe "GET /products/:id" do
+  describe "GET typed product details" do
     before do
       allow(PaddlePriceCatalogService).to receive(:call)
         .and_return([ paddle_price(id: "pri_456", amount: "12900", currency: "PLN") ])
@@ -196,7 +196,7 @@ RSpec.describe "Products", type: :request do
       product = create_product(name: "Bajka o sowie", description: "Kojąca opowieść.",
                                icon: "🐻", length_minutes: 42)
 
-      get product_path(product)
+      get catalogue_product_path(product)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Bajka o sowie")
@@ -212,7 +212,7 @@ RSpec.describe "Products", type: :request do
       product = create_product(long_description: "Nagranie prowadzi Cię przez cały proces.",
                                includes: [ "7 rozdziałów audio", "Plan pierwszych 3 nocy" ])
 
-      get product_path(product)
+      get catalogue_product_path(product)
 
       expect(response.body).to include("O tym nagraniu")
       expect(response.body).to include("Nagranie prowadzi Cię przez cały proces.")
@@ -226,7 +226,7 @@ RSpec.describe "Products", type: :request do
     it "leaves out the sections the owner has not filled in" do
       product = create_product(long_description: nil, includes: nil, length_minutes: nil)
 
-      get product_path(product)
+      get catalogue_product_path(product)
 
       expect(response.body).not_to include("O tym nagraniu")
       expect(response.body).not_to include("Co dostajesz")
@@ -237,7 +237,7 @@ RSpec.describe "Products", type: :request do
       it "offers only the add button while the product is not in the cart" do
         product = create_product
 
-        get product_path(product)
+        get catalogue_product_path(product)
 
         expect(response.body).to include("Dodaj do koszyka")
         expect(response.body).not_to include("Usuń z koszyka")
@@ -251,7 +251,7 @@ RSpec.describe "Products", type: :request do
         product = create_product
         post cart_items_path, params: { product_id: product.id }
 
-        get product_path(product)
+        get catalogue_product_path(product)
 
         expect(response.body).to include("Usuń z koszyka")
         expect(response.body).not_to include("Dodaj do koszyka")
@@ -262,7 +262,7 @@ RSpec.describe "Products", type: :request do
         product = create_product
         post cart_items_path, params: { product_id: product.id }
 
-        get product_path(product)
+        get catalogue_product_path(product)
 
         expect(response.body).to include("Przejdź do koszyka")
         expect(response.body).to include("Dodano do koszyka")
@@ -274,17 +274,17 @@ RSpec.describe "Products", type: :request do
         product = create_product(name: "Główny")
         4.times { |i| create_product(name: "Inny #{i}") }
 
-        get product_path(product)
+        get catalogue_product_path(product)
 
         expect(response.body).to include("Inne bajki audio")
-        expect(response.body.scan(/Inny \d/).size).to eq(ProductsController::ALSO_LIMIT)
+        expect(response.body.scan(/Inny \d/).size).to eq(ProductDelivery::ALSO_LIMIT)
       end
 
       it "never suggests the product being looked at" do
         product = create_product(name: "Główny")
         create_product(name: "Inny")
 
-        get product_path(product)
+        get catalogue_product_path(product)
 
         # scoped to the section rather than counting the name across the whole
         # page: the product legitimately names itself in the heading and again in
@@ -295,7 +295,7 @@ RSpec.describe "Products", type: :request do
       end
 
       it "leaves the section out when there is nothing else to show" do
-        get product_path(create_product)
+        get catalogue_product_path(create_product)
 
         expect(response.body).not_to include("Inne bajki audio")
       end
@@ -304,7 +304,7 @@ RSpec.describe "Products", type: :request do
         product = create_product(name: "Główny")
         create_product(name: "Szkic", published: false)
 
-        get product_path(product)
+        get catalogue_product_path(product)
 
         expect(response.body).not_to include("Szkic")
       end
@@ -313,7 +313,7 @@ RSpec.describe "Products", type: :request do
     it "404s on an unpublished product rather than showing something unbuyable" do
       product = create_product(name: "Szkic", published: false)
 
-      get product_path(product)
+      get catalogue_product_path(product)
 
       expect(response).to have_http_status(:not_found)
     end
@@ -327,7 +327,7 @@ RSpec.describe "Products", type: :request do
 
   # The gate on the audio itself. The pull zone serves anyone holding a signed
   # URL, so this action is the only thing deciding who gets one.
-  describe "GET /products/:id/stream" do
+  describe "GET /stories/:slug/stream" do
     let(:user) { User.create!(email: "customer@example.com", password: "password123") }
     let(:product) { create_product(name: "Bajka o sowie", cdn_path: "/bajki/o-sowie.mp3") }
 
@@ -342,7 +342,7 @@ RSpec.describe "Products", type: :request do
       buy(product)
       sign_in user
 
-      get stream_product_path(product)
+      get stream_story_path(slug: product.slug)
 
       expect(response).to have_http_status(:redirect)
       expect(response.location).to start_with("https://#{BunnyHelpers::HOST}/bajki/o-sowie.mp3?token=HS256-")
@@ -350,7 +350,7 @@ RSpec.describe "Products", type: :request do
     end
 
     it "sends a signed-out visitor to sign in" do
-      get stream_product_path(product)
+      get stream_story_path(slug: product.slug)
 
       expect(response).to redirect_to(new_user_session_path)
     end
@@ -360,7 +360,7 @@ RSpec.describe "Products", type: :request do
     it "refuses someone who has not bought it" do
       sign_in user
 
-      get stream_product_path(product)
+      get stream_story_path(slug: product.slug)
 
       expect(response).to have_http_status(:forbidden)
     end
@@ -371,7 +371,7 @@ RSpec.describe "Products", type: :request do
       user.orders.create!(status: :pending, order_items: [ OrderItem.new(product: product) ])
       sign_in user
 
-      get stream_product_path(product)
+      get stream_story_path(slug: product.slug)
 
       expect(response).to have_http_status(:forbidden)
     end
@@ -380,7 +380,7 @@ RSpec.describe "Products", type: :request do
       buy(create_product(name: "Coś innego", paddle_price_id: "pri_999"))
       sign_in user
 
-      get stream_product_path(product)
+      get stream_story_path(slug: product.slug)
 
       expect(response).to have_http_status(:forbidden)
     end
@@ -389,7 +389,7 @@ RSpec.describe "Products", type: :request do
       buy(product, buyer: User.create!(email: "other@example.com", password: "password123"))
       sign_in user
 
-      get stream_product_path(product)
+      get stream_story_path(slug: product.slug)
 
       expect(response).to have_http_status(:forbidden)
     end
@@ -399,7 +399,7 @@ RSpec.describe "Products", type: :request do
       buy(unpublished)
       sign_in user
 
-      get stream_product_path(unpublished)
+      get stream_story_path(slug: unpublished.slug)
 
       expect(response).to have_http_status(:not_found)
     end
@@ -413,7 +413,7 @@ RSpec.describe "Products", type: :request do
       buy(fileless)
       sign_in user
 
-      get stream_product_path(fileless)
+      get stream_story_path(slug: fileless.slug)
 
       expect(response).to have_http_status(:not_found)
     end
@@ -425,7 +425,7 @@ RSpec.describe "Products", type: :request do
       buy(product)
       sign_in user
 
-      get stream_product_path(product)
+      get stream_story_path(slug: product.slug)
 
       expect(response).to have_http_status(:not_found)
     end
@@ -434,11 +434,11 @@ RSpec.describe "Products", type: :request do
   # The sample exists so someone who has bought nothing can hear the voice they
   # are being asked to pay for, so the route is deliberately open. What it must
   # never do is sign the full recording's path.
-  describe "GET /products/:id/preview" do
+  describe "GET /stories/:slug/preview" do
     let(:product) { create_product(name: "Bajka", cdn_path: "/bajki/pelne.mp3") }
 
     it "404s when the product has no preview" do
-      get preview_product_path(product)
+      get preview_story_path(slug: product.slug)
 
       expect(response).to have_http_status(:not_found)
     end
@@ -447,7 +447,7 @@ RSpec.describe "Products", type: :request do
       product.update_column(:preview_cdn_path, "/bajki/probka.mp3")
       allow(BunnySignedUrlService).to receive(:configured?).and_return(false)
 
-      get preview_product_path(product)
+      get preview_story_path(slug: product.slug)
 
       expect(response).to have_http_status(:not_found)
     end
@@ -456,10 +456,10 @@ RSpec.describe "Products", type: :request do
       product.update_column(:preview_cdn_path, "/bajki/probka.mp3")
       allow(BunnySignedUrlService).to receive(:configured?).and_return(true)
       allow(BunnySignedUrlService).to receive(:call)
-        .with("/bajki/probka.mp3", expires_in: ProductsController::PREVIEW_TTL)
+        .with("/bajki/probka.mp3", expires_in: ProductDelivery::PREVIEW_TTL)
         .and_return("https://cdn.example/bajki/probka.mp3?token=abc")
 
-      get preview_product_path(product)
+      get preview_story_path(slug: product.slug)
 
       expect(response).to redirect_to("https://cdn.example/bajki/probka.mp3?token=abc")
       expect(response.headers["Location"]).not_to include("pelne")
@@ -468,7 +468,7 @@ RSpec.describe "Products", type: :request do
     it "404s for an unpublished product" do
       product.update_columns(preview_cdn_path: "/bajki/probka.mp3", published: false)
 
-      get preview_product_path(product)
+      get preview_story_path(slug: product.slug)
 
       expect(response).to have_http_status(:not_found)
     end
@@ -478,7 +478,7 @@ RSpec.describe "Products", type: :request do
     before { allow(PaddlePriceCatalogService).to receive(:call).and_return([ paddle_price(id: "pri_456") ]) }
 
     it "is absent when the product has no preview" do
-      get product_path(create_product(name: "Bajka"))
+      get catalogue_product_path(create_product(name: "Bajka"))
 
       expect(response.body).not_to include("Posłuchaj 30 sekund")
     end
@@ -488,10 +488,10 @@ RSpec.describe "Products", type: :request do
       product.update_column(:preview_cdn_path, "/bajki/probka.mp3")
       allow(BunnySignedUrlService).to receive(:configured?).and_return(true)
 
-      get product_path(product)
+      get catalogue_product_path(product)
 
       expect(response.body).to include("Posłuchaj 30 sekund")
-      expect(response.body).to include(preview_product_path(product))
+      expect(response.body).to include(preview_story_path(slug: product.slug))
     end
 
     # an owner already has the whole recording in the dashboard; a sample of it
@@ -504,7 +504,7 @@ RSpec.describe "Products", type: :request do
       allow_any_instance_of(User).to receive(:purchased?).with(product).and_return(true)
       sign_in user
 
-      get product_path(product)
+      get catalogue_product_path(product)
 
       expect(response.body).not_to include("Posłuchaj 30 sekund")
     end

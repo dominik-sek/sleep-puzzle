@@ -34,7 +34,7 @@ RSpec.describe "Footer", type: :request do
     get root_path
 
     expect(response.body).to include(%(href="#{packages_path}"), %(href="#{about_path}"))
-    expect(response.body).to include(%(href="#{new_user_session_path}"), %(href="#{privacy_path}"), %(href="#{audio_process_path}"))
+    expect(response.body).to include(%(href="#{new_user_session_path}"), %(href="#{privacy_path}"), %(href="#{audio_processes_path}"))
     expect(response.body).not_to include(%(href="#{contact_path}"))
     expect(response.body).to include(%(href="https://www.instagram.com/sleep.puzzle/"))
     # no page to point at yet, so these must not become dead links

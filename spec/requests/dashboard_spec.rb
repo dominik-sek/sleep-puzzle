@@ -65,7 +65,7 @@ RSpec.describe "Dashboard", type: :request do
 
         get dashboard_index_path
 
-        expect(response.body).not_to include(stream_product_path(product))
+        expect(response.body).not_to include(stream_story_path(slug: product.slug))
       end
 
       it "still shows the empty state when nothing is bought or pending" do
@@ -80,7 +80,7 @@ RSpec.describe "Dashboard", type: :request do
 
         get dashboard_index_path
 
-        expect(response.body.scan(%(href="#{product_path(product)}")).size).to eq(1)
+        expect(response.body.scan(%(href="#{catalogue_product_path(product)}")).size).to eq(1)
       end
 
       it "does not leak another buyer's library" do
@@ -100,7 +100,7 @@ RSpec.describe "Dashboard", type: :request do
 
           get dashboard_index_path
 
-          expect(response.body).to include(%(src="#{stream_product_path(product, order_item_id: user.accessible_order_items.find_by!(product: product).id)}"))
+          expect(response.body).to include(%(src="#{stream_story_path(slug: product.slug, order_item_id: user.accessible_order_items.find_by!(product: product).id)}"))
         end
 
         # nothing is fetched from the CDN, and no token is minted, until the buyer

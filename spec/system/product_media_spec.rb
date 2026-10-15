@@ -6,8 +6,8 @@ RSpec.describe "Product media recovery", type: :system do
     with_bunny_cdn
     allow(PaddlePriceCatalogService).to receive(:call).and_return([])
     product = create_product(kind: :audio_process, trailer_cdn_path: "/missing-intro.mp4")
-    allow(BunnySignedUrlService).to receive(:call).with(product.trailer_cdn_path).and_return("/products/0/trailer")
-    visit product_path(product)
+    allow(BunnySignedUrlService).to receive(:call).with(product.trailer_cdn_path).and_return("/audioprocesses/missing/trailer")
+    visit catalogue_product_path(product)
     expect(page.evaluate_script("document.querySelector('video').networkState")).to eq(1) # NETWORK_IDLE
     expect(page.evaluate_script("performance.getEntriesByType('resource').some(r => r.name.includes('/trailer') || r.name.includes('b-cdn.net'))")).to be(false)
     expect(page).not_to have_button("Spróbuj odtworzyć ponownie")
@@ -36,7 +36,7 @@ RSpec.describe "Product media recovery", type: :system do
       blob = ActiveStorage::Blob.create_and_upload!(io: source, filename: "intro.mp4", content_type: "video/mp4")
       allow(BunnySignedUrlService).to receive(:call).with(product.trailer_cdn_path)
         .and_return(Rails.application.routes.url_helpers.rails_storage_proxy_path(blob, only_path: true))
-      visit product_path(product)
+      visit catalogue_product_path(product)
       find("video").send_keys(:space)
       Selenium::WebDriver::Wait.new(timeout: 5).until { page.evaluate_script("document.querySelector('video').currentTime > 0") }
       expect(page).not_to have_button("Spróbuj odtworzyć ponownie")

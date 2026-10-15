@@ -19,7 +19,7 @@ RSpec.describe "Profile avatar navigation", type: :system do
 
     find("a.offer-puzzle--audio").click
 
-    expect(page).to have_current_path(audio_process_path)
+    expect(page).to have_current_path(audio_processes_path)
     expect(page.evaluate_script('window.avatarBeforeVisit === document.querySelector("[data-controller=avatar]")')).to be(true)
   end
 end

@@ -1,5 +1,13 @@
 class AudioProcessesController < ApplicationController
-  def show
-    @products = Product.published.audio_process.includes(:audio_chapters).ordered
+  include ProductDelivery
+
+  def index
+    @products = product_scope.published.includes(:audio_chapters).ordered
+  end
+
+  private
+
+  def product_scope
+    Product.audio_process
   end
 end

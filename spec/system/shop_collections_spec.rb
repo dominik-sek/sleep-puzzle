@@ -67,7 +67,7 @@ RSpec.describe "Shop category navigation", type: :system do
         expect(page).not_to have_text(@program.name)
         click_link @story.name
       end
-      expect(page).to have_current_path(product_path(@story))
+      expect(page).to have_current_path(catalogue_product_path(@story))
     end
   end
 

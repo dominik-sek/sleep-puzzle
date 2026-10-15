@@ -16,7 +16,7 @@ RSpec.describe "Story samples and collection navigation", type: :system do
       [ 16, 1, 1, 8000, 8000, 1, 8 ].pack("VvvVVvv") + "data" + [ samples.bytesize ].pack("V") + samples
     @blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new(wave), filename: "sample.wav", content_type: "audio/wav")
     [ @story, @other ].each do |story|
-      allow(BunnySignedUrlService).to receive(:call).with(story.preview_cdn_path, expires_in: ProductsController::PREVIEW_TTL)
+      allow(BunnySignedUrlService).to receive(:call).with(story.preview_cdn_path, expires_in: ProductDelivery::PREVIEW_TTL)
         .and_return(Rails.application.routes.url_helpers.rails_storage_proxy_path(@blob, only_path: true))
     end
   end
@@ -27,12 +27,12 @@ RSpec.describe "Story samples and collection navigation", type: :system do
   end
 
   def player(product)
-    find("audio[src='#{preview_product_path(product)}']")
+    find("audio[src='#{preview_story_path(slug: product.slug)}']")
   end
 
   def wait_for_playback(product)
     Selenium::WebDriver::Wait.new(timeout: 5).until do
-      page.evaluate_script("document.querySelector('audio[src=\"#{preview_product_path(product)}\"]').currentTime > 0")
+      page.evaluate_script("document.querySelector('audio[src=\"#{preview_story_path(slug: product.slug)}\"]').currentTime > 0")
     end
   end
 
@@ -72,7 +72,7 @@ RSpec.describe "Story samples and collection navigation", type: :system do
     wait_for_playback(@story)
     page.execute_script("window.departingPlayer = document.querySelector('audio')")
     within("main") { click_link @story.name }
-    expect(page).to have_current_path(product_path(@story))
+    expect(page).to have_current_path(catalogue_product_path(@story))
     expect(page.evaluate_script("window.departingPlayer.paused")).to be(true)
     page.go_back
     expect(page).to have_current_path(stories_path)
@@ -80,8 +80,8 @@ RSpec.describe "Story samples and collection navigation", type: :system do
   end
 
   it "recovers a failed sample locally without blocking details or cart actions" do
-    allow(BunnySignedUrlService).to receive(:call).with(@story.preview_cdn_path, expires_in: ProductsController::PREVIEW_TTL)
-      .and_return("/products/0/preview")
+    allow(BunnySignedUrlService).to receive(:call).with(@story.preview_cdn_path, expires_in: ProductDelivery::PREVIEW_TTL)
+      .and_return("/stories/missing/preview")
     visit stories_path
     player(@story).send_keys(:space)
     card = player(@story).ancestor("article")
@@ -90,7 +90,7 @@ RSpec.describe "Story samples and collection navigation", type: :system do
     expect(card).to have_link("Zobacz szczegóły")
     expect(card).to have_button("Dodaj do koszyka")
 
-    allow(BunnySignedUrlService).to receive(:call).with(@story.preview_cdn_path, expires_in: ProductsController::PREVIEW_TTL)
+    allow(BunnySignedUrlService).to receive(:call).with(@story.preview_cdn_path, expires_in: ProductDelivery::PREVIEW_TTL)
       .and_return(Rails.application.routes.url_helpers.rails_storage_proxy_path(@blob, only_path: true))
     card.find("button", text: "Spróbuj odtworzyć ponownie").send_keys(:enter)
     wait_for_playback(@story)
@@ -120,7 +120,7 @@ RSpec.describe "Story samples and collection navigation", type: :system do
     within("#locale-content") { click_link "English" }
     expect(page).to have_current_path(stories_path(locale: :en))
     within("main") { click_link @story.name }
-    expect(page).to have_current_path(product_path(@story, locale: :en))
+    expect(page).to have_current_path(catalogue_product_path(@story, locale: :en))
     find("main nav a", text: "Back to audio stories").send_keys(:enter)
     expect(page).to have_current_path(stories_path(locale: :en))
   end

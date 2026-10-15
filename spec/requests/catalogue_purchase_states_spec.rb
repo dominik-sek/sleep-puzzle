@@ -29,7 +29,7 @@ RSpec.describe "Catalogue purchase states", type: :request do
     it "uses two ownership queries for one or ten products on #{surface}" do
       user = User.create!(email: "buyer@example.com", password: "password123")
       sign_in user
-      path = { shop: products_path, programs: audio_process_path, stories: stories_path }.fetch(surface)
+      path = { shop: products_path, programs: audio_processes_path, stories: stories_path }.fetch(surface)
 
       [ 1, 10 ].each do |count|
         (count - Product.count).times do |i|
@@ -47,7 +47,7 @@ RSpec.describe "Catalogue purchase states", type: :request do
   end
 
   it "does not query ownership for signed-out or empty collections" do
-    paths = [ products_path, audio_process_path, stories_path ]
+    paths = [ products_path, audio_processes_path, stories_path ]
     sign_in User.create!(email: "buyer@example.com", password: "password123")
     paths.each { |path| expect(ownership_queries { get path }).to be_empty }
     sign_out :user
@@ -75,12 +75,12 @@ RSpec.describe "Catalogue purchase states", type: :request do
       order_for(user, products[:paid_and_pending], status: :pending)
       sign_in user
 
-      path = kind == :audio_process ? audio_process_path : stories_path
+      path = kind == :audio_process ? audio_processes_path : stories_path
       get path
 
       page = Capybara.string(response.body)
       products.each do |state, product|
-        card = page.find("main h2 a[href='#{product_path(product)}']").find(:xpath, "ancestor::article")
+        card = page.find("main h2 a[href='#{catalogue_product_path(product)}']").find(:xpath, "ancestor::article")
         case state
         when :paid, :purchased_again
           expect(card).to have_link("Posłuchaj w koncie", href: dashboard_index_path(anchor: "product_#{product.id}"))

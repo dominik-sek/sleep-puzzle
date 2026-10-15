@@ -5,7 +5,7 @@ RSpec.describe "Canonical catalogue and testimonial routes", type: :request do
     prefix = locale ? "/en" : ""
 
     it "uses English collection URLs and no Polish route aliases in #{locale || :pl}" do
-      expect(audio_process_path(locale: locale)).to eq("#{prefix}/audio-processes")
+      expect(audio_processes_path(locale: locale)).to eq("#{prefix}/audioprocesses")
       expect(stories_path(locale: locale)).to eq("#{prefix}/stories")
       %w[audioproces audioprocesy bajki].each do |segment|
         expect { Rails.application.routes.recognize_path("#{prefix}/#{segment}") }

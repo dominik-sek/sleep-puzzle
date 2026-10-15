@@ -17,15 +17,15 @@ RSpec.describe "Product detail variants", type: :request do
         ContentBlock.create!(key: "shop.product.back_#{key}", value_pl: "Powrót do kolekcji")
         ContentBlock.create!(key: "shop.product.more_#{key}", value_pl: "Polecane nagrania")
 
-        get product_path(product, locale: locale)
+        get catalogue_product_path(product, locale: locale)
 
         page = Capybara.string(response.body)
-        collection = kind == :audio_process ? audio_process_path(locale: locale) : stories_path(locale: locale)
+        collection = kind == :audio_process ? audio_processes_path(locale: locale) : stories_path(locale: locale)
         expect(page.find("main nav")).to have_link("Powrót do kolekcji", href: collection)
         expect(page.find("main nav")).to have_link(href: products_path(locale: locale))
         related = page.find("section[aria-labelledby='related-products-title']")
         expect(related).to have_css("h2", text: "Polecane nagrania")
-        expect(related.all("a").map { |link| link[:href] }).to eq([ earlier, later ].map { |other| product_path(other, locale: locale) })
+        expect(related.all("a").map { |link| link[:href] }).to eq([ earlier, later ].map { |other| catalogue_product_path(other, locale: locale) })
         expect(related).not_to have_text("Inny rodzaj")
         expect(related).not_to have_text("Szkic")
       end
@@ -35,7 +35,7 @@ RSpec.describe "Product detail variants", type: :request do
       product = create_product(kind: kind)
       create_product(kind: kind == :audio_process ? :bedtime_story : :audio_process)
 
-      get product_path(product)
+      get catalogue_product_path(product)
 
       expect(Capybara.string(response.body)).not_to have_css("#related-products-title")
     end
@@ -48,7 +48,7 @@ RSpec.describe "Product detail variants", type: :request do
       long_description: "Dla rodziców szukających innych tematów.", includes: [ "Krótki opis", "- Drugi temat" ])
 
     [ first, second ].each do |product|
-      get product_path(product)
+      get catalogue_product_path(product)
 
       page = Capybara.string(response.body)
       expect(response).to have_http_status(:ok)
@@ -65,7 +65,7 @@ RSpec.describe "Product detail variants", type: :request do
   it "does not add empty suitability or topic sections to an unwritten program" do
     product = create_product(kind: :audio_process)
 
-    get product_path(product)
+    get catalogue_product_path(product)
 
     page = Capybara.string(response.body)
     expect(page).not_to have_css("section[aria-labelledby^='suitability_heading_']")
@@ -78,12 +78,12 @@ RSpec.describe "Product detail variants", type: :request do
     product = create_product(long_description: "Pełny opis bajki.", includes: [ "Jedno nagranie" ],
       preview_cdn_path: "/previews/story.mp3", length_minutes: 12)
 
-    get product_path(product)
+    get catalogue_product_path(product)
 
     page = Capybara.string(response.body)
     expect(page).to have_css("h2", text: "O tym nagraniu")
     expect(page).to have_css(".product-includes", text: "Jedno nagranie")
-    expect(page).to have_css("audio[src='#{preview_product_path(product)}'][preload='none']")
+    expect(page).to have_css("audio[src='#{preview_story_path(slug: product.slug)}'][preload='none']")
     expect(page).not_to have_text("Dla kogo")
     expect(page).not_to have_css(".audio-includes, details")
     expect(page.find("main")).to have_text("12 min", count: 1)

@@ -31,7 +31,7 @@ RSpec.describe "Front page resilience", type: :system do
       trigger = 'button[data-content-id="mobile-menu-content"]'
       find(trigger).send_keys(:enter)
       menu = "#mobile-menu-content"
-      expect(page).to have_css("#{menu} a[href='#{audio_process_path(locale: locale)}']:focus")
+      expect(page).to have_css("#{menu} a[href='#{audio_processes_path(locale: locale)}']:focus")
 
       press_key(:tab)
       expect(page).to have_css("#{menu} a[href='#{stories_path(locale: locale)}']:focus")

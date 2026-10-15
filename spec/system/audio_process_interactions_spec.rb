@@ -22,9 +22,9 @@ RSpec.describe "Audio process collection interactions", type: :system do
       other = create_product(name: "Drugi proces", kind: :audio_process)
       page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride",
         width: width, height: 900, deviceScaleFactor: 1, mobile: false)
-      visit audio_process_path
+      visit audio_processes_path
       expect(page).to have_css("main h1", count: 1)
-      expect(page).to have_css("main h2 a[href='#{product_path(@product)}']", text: @product.name)
+      expect(page).to have_css("main h2 a[href='#{catalogue_product_path(@product)}']", text: @product.name)
 
       find(add_selector).send_keys(:enter)
       expect(page).to have_css("#{remove_selector}:focus")
@@ -40,7 +40,7 @@ RSpec.describe "Audio process collection interactions", type: :system do
   end
 
   it "does not focus the replacement button after pointer activation" do
-    visit audio_process_path
+    visit audio_processes_path
     find(add_selector).click
     expect(page).to have_css(remove_selector)
     expect(page).not_to have_css("#{remove_selector}:focus")
@@ -51,7 +51,7 @@ RSpec.describe "Audio process collection interactions", type: :system do
       sleep 0.3
       action.call
     end
-    visit audio_process_path
+    visit audio_processes_path
     find(add_selector).send_keys(:enter)
     page.driver.browser.action.send_keys(:tab).perform
     expect(page).to have_css(remove_selector)
