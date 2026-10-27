@@ -9,6 +9,9 @@
     align: :center
   ) do |section| %>
     <%= turbo_stream_from @order %>
-    <%= render "orders/status", order: @order %>
+    <div class="w-full" data-controller="payment-status">
+      <p class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-payment-status-target="announcement"></p>
+      <%= render "orders/status", order: @order %>
+    </div>
   <% end %>
 </div>

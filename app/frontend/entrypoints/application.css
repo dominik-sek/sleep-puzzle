@@ -226,9 +226,11 @@
 
 /* Forms */
 
-label,
-.label {
-  @apply text-sm font-medium text-neutral-700 dark:text-neutral-100;
+@layer base {
+  label,
+  .label {
+    @apply text-sm font-medium text-cream;
+  }
 }
 
 .form-input[disabled] {
@@ -491,6 +493,22 @@ calendar-date::part(button):hover {
   background-color: color-mix(in oklab, var(--color-cream) 10%, transparent);
 }
 
+calendar-date::part(header) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 4px;
+}
+
+calendar-date::part(heading) {
+  min-width: 0;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+calendar-month::part(th) {
+  overflow-wrap: anywhere;
+}
+
 calendar-month{
 
   --color-accent: #e2933e;
@@ -640,11 +658,23 @@ calendar-month::part(selected):hover:not(:disabled) {
    rather than replaced. .trix-content styles both the editor body and the
    rendered output on the public site, so what you type matches what ships. */
 trix-toolbar .trix-button-group {
-  @apply mb-2 rounded-lg border border-border-input bg-ink-soft overflow-hidden;
+  @apply mb-2 max-w-full flex-wrap rounded-lg border border-border-input bg-ink-soft;
 }
 
 trix-toolbar .trix-button {
   @apply border-0 border-r border-border-input bg-transparent text-cream text-xs;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+trix-toolbar .trix-button-row {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+trix-toolbar .trix-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -3px;
 }
 
 trix-toolbar .trix-button:last-child {
@@ -671,10 +701,18 @@ trix-toolbar .trix-button--icon.trix-active::before {
 
 trix-toolbar .trix-dialog {
   @apply rounded-lg border border-border-input bg-surface p-3 text-cream;
+  box-shadow: none;
+}
+
+trix-toolbar .trix-dialog__link-fields {
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 trix-toolbar .trix-dialog input[type="url"] {
   @apply rounded-lg border border-border-input bg-ink-soft px-2 py-1 text-cream;
+  min-width: 0;
+  margin: 0;
 }
 
 trix-editor {

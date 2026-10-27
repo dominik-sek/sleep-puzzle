@@ -18,7 +18,7 @@ RSpec.describe "Deferred page features", type: :system do
     expect(page.evaluate_script("Boolean(customElements.get('trix-editor'))")).to be(false)
     expect(page.evaluate_script("Boolean(customElements.get('calendar-date'))")).to be(false)
     resources = page.evaluate_script("performance.getEntriesByType('resource').map(entry => entry.name)")
-    expect(resources.join(" ")).not_to match(/rich_text_editor|cally_controller/)
+    expect(resources.join(" ")).not_to match(/rich_text_editor|cally_controller|sidebar_controller|content_blocks_controller|article_editor_controller|carousel_controller|tooltip_controller|activestorage/)
     find('button[aria-label^="Dodaj do koszyka"]').click
     expect(page).to have_css('button[aria-label^="Usuń z koszyka"]')
   end
@@ -67,5 +67,62 @@ RSpec.describe "Deferred page features", type: :system do
     editor.click
     editor.send_keys("Treść dodana przez stream")
     expect(find("#stream-editor-value", visible: :all).value).to include("Treść dodana przez stream")
+  end
+
+  it "prepares a streamed optional control before its first interaction" do
+    visit audio_processes_path
+    page.execute_script(<<~JS)
+      Turbo.renderStreamMessage(`<turbo-stream action="append" target="main-content"><template>
+        <div data-controller="accordion" id="stream-accordion">
+          <div data-accordion-target="item" data-state="closed">
+            <button type="button" data-accordion-target="trigger" data-action="accordion#toggle" aria-expanded="false">Pokaż odpowiedź</button>
+            <div data-accordion-target="content" hidden><div>Odpowiedź</div></div>
+          </div>
+        </div>
+      </template></turbo-stream>`)
+    JS
+    click_button "Pokaż odpowiedź"
+    expect(page).to have_css('#stream-accordion button[aria-expanded="true"]')
+    expect(page).to have_text("Odpowiedź")
+  end
+
+  it "loads admin tools on Turbo entry and accepts the first package edit" do
+    login_as User.create!(email: "deferred-admin@example.com", password: "password123", admin: true), scope: :user
+    visit audio_processes_path
+    page.execute_script("Turbo.visit(arguments[0])", new_admin_package_path)
+    fill_in "Nazwa — Polski", with: "Pierwsza edycja"
+    expect(page).to have_css('[data-live-preview-target="content"]', text: "Pierwsza edycja")
+    expect(page.evaluate_script("Boolean(window.Stimulus.getControllerForElementAndIdentifier(document.querySelector('[data-controller=sidebar]'), 'sidebar'))")).to be(true)
+    expect(page.evaluate_script("Boolean(customElements.get('calendar-date'))")).to be(false)
+  end
+
+  it "loads direct-upload support only when an upload field arrives" do
+    visit audio_processes_path
+    page.execute_script(<<~JS)
+      Turbo.renderStreamMessage(`<turbo-stream action="append" target="main-content"><template>
+        <label for="stream-upload">Nagranie</label>
+        <input id="stream-upload" type="file" data-direct-upload-url="/rails/active_storage/direct_uploads">
+      </template></turbo-stream>`)
+    JS
+    expect(page).to have_field("Nagranie")
+    resources = page.evaluate_script("performance.getEntriesByType('resource').map(entry => entry.name).join(' ')")
+    expect(resources).to include("activestorage")
+    expect(resources).not_to include("audio_upload_controller", "media_upload_controller")
+  end
+
+  it "loads the optional testimonial carousel and advances on its first click" do
+    3.times do |index|
+      item = ContentItem.new(collection_key: "testimonials.entries", position: index)
+      item.assign_value("quote", :pl, "Opinia #{index + 1}")
+      item.assign_value("author", :pl, "Rodzic #{index + 1}")
+      item.save!
+    end
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit root_path
+    within('[data-controller="carousel"]') do
+      expect(page).to have_css('[data-carousel-target="prevButton"]:disabled')
+      find('[data-carousel-target="nextButton"]').click
+      expect(page).to have_css('[data-carousel-target="prevButton"]:not(:disabled)')
+    end
   end
 end

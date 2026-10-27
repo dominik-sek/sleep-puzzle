@@ -9,41 +9,50 @@
 
       <%= form_with model: @invitation, url: testimonial_invitation_path(@invitation.token), method: :patch,
                     class: "mt-8 flex flex-col gap-5" do |f| %>
+        <% feedback = ->(field, hint = nil) {
+             { invalid: @invitation.errors[field].any?,
+               describedby: [hint, ("testimonial-#{field}-error" if @invitation.errors[field].any?)].compact.join(" ").presence }
+           } %>
+        <% if @invitation.errors.any? %>
+          <div role="alert" class="text-t6 text-red-300">
+            <ul class="list-disc pl-4"><% @invitation.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+          </div>
+        <% end %>
         <div class="flex flex-col gap-2">
           <%= f.label :quote, t("testimonials.quote_label"), class: "text-t5 font-bold text-cream" %>
           <%= f.text_area :quote, rows: 7, maxlength: 2_000, required: true,
-                          class: "form-control resize-y", aria: { invalid: @invitation.errors[:quote].any? } %>
-          <% if @invitation.errors[:quote].any? %><p class="text-t6 text-red-400"><%= @invitation.errors[:quote].to_sentence %></p><% end %>
+                          class: "form-control resize-y", aria: feedback.call(:quote) %>
+          <% if @invitation.errors[:quote].any? %><p id="testimonial-quote-error" class="text-t6 text-red-400"><%= @invitation.errors[:quote].to_sentence %></p><% end %>
         </div>
 
         <div class="flex flex-col gap-2">
           <%= f.label :author, t("testimonials.author_label"), class: "text-t5 font-bold text-cream" %>
           <%= f.text_field :author, maxlength: 100, required: true, class: "form-control",
-                           aria: { invalid: @invitation.errors[:author].any? } %>
-          <p class="text-t6 text-taupe"><%= t("testimonials.author_hint") %></p>
-          <% if @invitation.errors[:author].any? %><p class="text-t6 text-red-400"><%= @invitation.errors[:author].to_sentence %></p><% end %>
+                           aria: feedback.call(:author, "testimonial-author-hint") %>
+          <p id="testimonial-author-hint" class="text-t6 text-taupe"><%= t("testimonials.author_hint") %></p>
+          <% if @invitation.errors[:author].any? %><p id="testimonial-author-error" class="text-t6 text-red-400"><%= @invitation.errors[:author].to_sentence %></p><% end %>
         </div>
 
         <div class="flex flex-col gap-2">
           <%= f.label :author_title, t("testimonials.author_title_label"), class: "text-t5 font-bold text-cream" %>
-          <%= f.text_field :author_title, maxlength: 100, class: "form-control" %>
-          <p class="text-t6 text-taupe"><%= t("testimonials.author_title_hint") %></p>
-          <% if @invitation.errors[:author_title].any? %><p class="text-t6 text-red-400"><%= @invitation.errors[:author_title].to_sentence %></p><% end %>
+          <%= f.text_field :author_title, maxlength: 100, class: "form-control", aria: feedback.call(:author_title, "testimonial-author_title-hint") %>
+          <p id="testimonial-author_title-hint" class="text-t6 text-taupe"><%= t("testimonials.author_title_hint") %></p>
+          <% if @invitation.errors[:author_title].any? %><p id="testimonial-author_title-error" class="text-t6 text-red-400"><%= @invitation.errors[:author_title].to_sentence %></p><% end %>
         </div>
 
         <div class="flex flex-col gap-2">
           <%= f.label :avatar, t("testimonials.avatar_label"), class: "text-t5 font-bold text-cream" %>
-          <%= f.file_field :avatar, accept: ContentBlock::IMAGE_CONTENT_TYPES.join(","), class: "form-control" %>
-          <p class="text-t6 text-taupe"><%= t("testimonials.avatar_hint") %></p>
-          <% if @invitation.errors[:avatar].any? %><p class="text-t6 text-red-400"><%= @invitation.errors[:avatar].to_sentence %></p><% end %>
+          <%= f.file_field :avatar, accept: ContentBlock::IMAGE_CONTENT_TYPES.join(","), class: "form-control", aria: feedback.call(:avatar, "testimonial-avatar-hint") %>
+          <p id="testimonial-avatar-hint" class="text-t6 text-taupe"><%= t("testimonials.avatar_hint") %></p>
+          <% if @invitation.errors[:avatar].any? %><p id="testimonial-avatar-error" class="text-t6 text-red-400"><%= @invitation.errors[:avatar].to_sentence %></p><% end %>
         </div>
 
         <div>
           <label class="flex items-start gap-3 text-t6 text-tan">
-            <%= f.check_box :publication_consent, required: true, class: "mt-1 accent-accent" %>
+            <%= f.check_box :publication_consent, required: true, class: "mt-1 accent-accent", aria: feedback.call(:publication_consent) %>
             <span><%= t("testimonials.consent_label") %></span>
           </label>
-          <% if @invitation.errors[:publication_consent].any? %><p class="text-t6 text-red-400"><%= t("testimonials.consent_error") %></p><% end %>
+          <% if @invitation.errors[:publication_consent].any? %><p id="testimonial-publication_consent-error" class="text-t6 text-red-400"><%= t("testimonials.consent_error") %></p><% end %>
           <p class="mt-2 text-t6 text-taupe"><%= link_to t("testimonials.privacy"), privacy_path, class: "text-accent" %></p>
         </div>
 

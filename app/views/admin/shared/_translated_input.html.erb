@@ -14,7 +14,7 @@
   <div class="flex flex-wrap items-baseline gap-2">
     <span class="text-t6 uppercase text-taupe"><%= label %></span>
     <% if local_assigns[:hint].present? %>
-      <span class="text-t6 text-taupe-dark"><%= hint %></span>
+      <span id="record-<%= field %>-hint" class="text-t6 text-taupe"><%= hint %></span>
     <% end %>
   </div>
 
@@ -25,23 +25,25 @@
         dom_id = "record-#{field}-#{locale}"
         raw = record.raw_translation(field, locale)
         value = type == :list ? Array(raw).join("\n") : raw
+        description_ids = [("record-#{field}-hint" if local_assigns[:hint].present?),
+                           ("#{dom_id}-warning" if local_assigns[:copy_kind])].compact.join(" ").presence
       %>
 
       <div class="flex flex-col gap-1.5">
-        <span class="text-t6 text-taupe"><%= locale == :pl ? "Polski" : "English" %></span>
+        <label for="<%= dom_id %>" class="text-t6 text-taupe"><span class="sr-only"><%= label %> — </span><%= locale == :pl ? "Polski" : "English" %></label>
 
         <% case type %>
         <% when :textarea %>
           <%= text_area_tag name, value, id: dom_id, rows: 4, class: "form-control",
                             data: { package_copy_kind: local_assigns[:copy_kind] },
-                            aria: { describedby: local_assigns[:copy_kind] ? "#{dom_id}-warning" : nil } %>
+                            aria: { describedby: description_ids } %>
         <% when :list %>
           <%= text_area_tag name, value, id: dom_id, rows: 4, class: "form-control",
                             placeholder: "Jedna pozycja w linii",
                             data: { package_copy_kind: local_assigns[:copy_kind] },
-                            aria: { describedby: local_assigns[:copy_kind] ? "#{dom_id}-warning" : nil } %>
+                            aria: { describedby: description_ids } %>
         <% else %>
-          <%= text_field_tag name, value, id: dom_id, class: "form-control" %>
+          <%= text_field_tag name, value, id: dom_id, class: "form-control", aria: { describedby: description_ids } %>
         <% end %>
         <% if local_assigns[:copy_kind] %>
           <% warning = package_copy_warning(copy_kind, value) %>

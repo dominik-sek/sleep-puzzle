@@ -118,13 +118,13 @@
 
         <% availability[:dates].each do |date| %>
           <% available_count = date[:hours].count { |hour| hour[:available] } %>
-          <div data-cally-target="hoursPanel" data-date="<%= date[:date] %>" data-timezone="<%= date[:zone] %>" data-available-label="<%= t("bookings.available_slots", count: available_count) %>" hidden class="grid grid-cols-3 gap-4">
+          <div data-cally-target="hoursPanel" data-date="<%= date[:date] %>" data-timezone="<%= date[:zone] %>" data-available-label="<%= t("bookings.available_slots", count: available_count) %>" hidden class="grid grid-cols-3 gap-2">
             <% date[:hours].each do |hour| %>
               <%= render Buttons::Component.new(
                 text: hour[:hour],
                 disabled: !hour[:available],
                 variant: :secondary,
-                classes: "min-h-11 text-t5! hover:cursor-pointer disabled:text-taupe-dark",
+                classes: "min-h-11 px-1! whitespace-normal! text-t5! hover:cursor-pointer disabled:text-taupe-dark",
                 data: { action: "click->cally#timeSelected", hour: hour[:hour] }
               ) %>
 

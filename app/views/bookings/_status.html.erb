@@ -1,4 +1,4 @@
-<div id="booking_status" class="w-full max-w-xl flex flex-col gap-6 text-center">
+<div id="booking_status" data-payment-status-target="panel" class="w-full max-w-xl flex flex-col gap-6 text-center [overflow-wrap:anywhere]">
   <% if booking.canceled_at? %>
     <h1 class="page-title"><%= content_block("refunds.notifications.canceled_title") %></h1>
     <p class="text-tan text-t5"><%= content_block("refunds.notifications.canceled_body") %></p>
@@ -35,26 +35,26 @@
         </div>
       <% else %>
         <dl class="flex flex-col gap-3 text-left">
-          <div class="flex justify-between gap-4">
+          <div class="grid min-w-0 grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-4">
             <dt class="text-tan text-t5"><%= t("bookings.summary.package") %></dt>
-            <dd class="text-cream text-t5"><%= booking.package.name %></dd>
+            <dd class="min-w-0 text-cream text-t5 [overflow-wrap:anywhere]"><%= booking.package.name %></dd>
           </div>
-          <div class="flex justify-between gap-4">
+          <div class="grid min-w-0 grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-4">
             <dt class="text-tan text-t5"><%= t("bookings.summary.starts_at") %></dt>
-            <dd class="text-cream text-t5"><%= l booking.starts_at, format: :long, default: booking.starts_at.to_fs(:short) %></dd>
+            <dd class="min-w-0 text-cream text-t5 [overflow-wrap:anywhere]"><%= l booking.starts_at, format: :long, default: booking.starts_at.to_fs(:short) %></dd>
           </div>
-          <div class="flex justify-between gap-4">
+          <div class="grid min-w-0 grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-4">
             <dt class="text-tan text-t5"><%= t("bookings.summary.payment_status") %></dt>
-            <dd class="text-cream text-t5"><%= content_block(booking.confirmed_at? ? "refunds.notifications.paid" : "refunds.notifications.unpaid") %></dd>
+            <dd class="min-w-0 text-cream text-t5 [overflow-wrap:anywhere]"><%= content_block(booking.confirmed_at? ? "refunds.notifications.paid" : "refunds.notifications.unpaid") %></dd>
           </div>
-          <div class="flex justify-between gap-4">
+          <div class="grid min-w-0 grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-4">
             <dt class="text-tan text-t5"><%= content_block("refunds.notifications.booking_status") %></dt>
-            <dd class="text-cream text-t5"><%= booking.status_label %></dd>
+            <dd class="min-w-0 text-cream text-t5 [overflow-wrap:anywhere]"><%= booking.status_label %></dd>
           </div>
           <% if booking.canceled_at? || booking.refund_adjustments.exists? %>
-            <div class="flex justify-between gap-4">
+            <div class="grid min-w-0 grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-4">
               <dt class="text-tan text-t5"><%= content_block("refunds.notifications.refund_status") %></dt>
-              <dd class="text-cream text-t5"><%= booking.refund_label %></dd>
+              <dd class="min-w-0 text-cream text-t5 [overflow-wrap:anywhere]"><%= booking.refund_label %></dd>
             </div>
           <% end %>
         </dl>
@@ -66,7 +66,9 @@
     <%= render Buttons::Component.new(
       text: t("bookings.status.back"),
       href: dashboard_index_path,
-      variant: :primary
+      variant: :primary,
+      pill: true,
+      classes: "min-h-11 whitespace-normal! py-4 text-t6! font-bold!"
     ) %>
   <% end %>
 </div>

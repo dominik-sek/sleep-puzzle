@@ -10,6 +10,7 @@ export default class extends Controller {
         "desktopContent",
         "mobileBackdrop",
         "mobilePanel",
+        "mobileToggle",
     ];
     static values = {
         storageKey: { type: String, default: "sidebarOpen" },
@@ -18,6 +19,13 @@ export default class extends Controller {
     connect() {
         // Bind the handler once so we can properly remove it later
         this.boundHandleToggle = this.handleToggle.bind(this);
+        this.desktopMedia = window.matchMedia("(min-width: 768px)");
+        this.onBreakpoint = () => {
+            if (this.desktopMedia.matches) this.closeMobile(false);
+        };
+        this.beforeCache = () => this.closeMobile(false);
+        this.desktopMedia.addEventListener("change", this.onBreakpoint);
+        document.addEventListener("turbo:before-cache", this.beforeCache);
 
         // Clone the sidebar content for both mobile and desktop
         if (this.hasContentTemplateTarget) {
@@ -40,7 +48,9 @@ export default class extends Controller {
                     if (closeButton) {
                         closeButton.setAttribute("data-action", "click->sidebar#closeMobile");
                         closeButton.classList.remove("cursor-w-resize");
-                        closeButton.setAttribute("aria-label", "Close sidebar");
+                        closeButton.setAttribute("aria-label", "Zamknij nawigację");
+                        closeButton.removeAttribute("aria-expanded");
+                        closeButton.setAttribute("autofocus", "");
 
                         // Replace the collapse icon with an X icon
                         const svg = closeButton.querySelector("svg");
@@ -80,6 +90,9 @@ export default class extends Controller {
     }
 
     disconnect() {
+        this.closeMobile(false);
+        this.desktopMedia?.removeEventListener("change", this.onBreakpoint);
+        document.removeEventListener("turbo:before-cache", this.beforeCache);
         if (this.hasDesktopSidebarTarget && this.boundHandleToggle) {
             this.desktopSidebarTarget.removeEventListener("toggle", this.boundHandleToggle);
         }
@@ -108,47 +121,61 @@ export default class extends Controller {
         }
     }
 
-    openMobile() {
-        if (this.hasMobileSidebarTarget) {
-            // Set initial hidden states
-            if (this.hasMobileBackdropTarget) {
-                this.mobileBackdropTarget.style.opacity = "0";
-            }
-            if (this.hasMobilePanelTarget) {
-                this.mobilePanelTarget.style.transform = "translateX(-100%)";
-            }
+    openMobile(event) {
+        if (!this.hasMobileSidebarTarget || this.mobileSidebarTarget.open) return;
+        clearTimeout(this.closeTimer);
+        this.returnFocus = event?.currentTarget || document.activeElement;
+        const animate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (this.hasMobileBackdropTarget) this.mobileBackdropTarget.style.opacity = animate ? "0" : "1";
+        if (this.hasMobilePanelTarget) this.mobilePanelTarget.style.transform = animate ? "translateX(-100%)" : "translateX(0)";
+        this.mobileSidebarTarget.showModal();
+        if (this.hasMobileToggleTarget) this.mobileToggleTarget.setAttribute("aria-expanded", "true");
+        this.openFrame = requestAnimationFrame(() => {
+            if (!this.mobileSidebarTarget.open) return;
+            if (this.hasMobileBackdropTarget) this.mobileBackdropTarget.style.opacity = "1";
+            if (this.hasMobilePanelTarget) this.mobilePanelTarget.style.transform = "translateX(0)";
+        });
+    }
 
-            // Remove hidden class
-            this.mobileSidebarTarget.classList.remove("hidden");
+    cancelMobile(event) {
+        event.preventDefault();
+        this.closeMobile();
+    }
 
-            // Trigger transition on next frame
-            requestAnimationFrame(() => {
-                if (this.hasMobileBackdropTarget) {
-                    this.mobileBackdropTarget.style.opacity = "1";
-                }
-                if (this.hasMobilePanelTarget) {
-                    this.mobilePanelTarget.style.transform = "translateX(0)";
-                }
-            });
+    keepMobileFocus(event) {
+        if (event.key !== "Tab") return;
+        const items = Array.from(this.mobileSidebarTarget.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]'
+        )).filter((element) => element.tabIndex >= 0 && element.getClientRects().length);
+        const first = items[0];
+        const last = items.at(-1);
+        if (first && event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (last && !event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
         }
     }
 
-    closeMobile() {
-        if (this.hasMobileSidebarTarget) {
-            // Trigger closing transition
-            if (this.hasMobileBackdropTarget) {
-                this.mobileBackdropTarget.style.opacity = "0";
+    closeMobile(animate = true) {
+        clearTimeout(this.closeTimer);
+        cancelAnimationFrame(this.openFrame);
+        if (!this.hasMobileSidebarTarget || !this.mobileSidebarTarget.open) return;
+        if (this.hasMobileToggleTarget) this.mobileToggleTarget.setAttribute("aria-expanded", "false");
+        const finish = () => {
+            this.mobileSidebarTarget.close();
+            if (this.returnFocus?.isConnected && this.returnFocus.getClientRects().length) {
+                this.returnFocus.focus({ preventScroll: true });
             }
-            if (this.hasMobilePanelTarget) {
-                this.mobilePanelTarget.style.transform = "translateX(-100%)";
-            }
-
-            // Wait for transition to complete before hiding
-            setTimeout(() => {
-                if (this.hasMobileSidebarTarget) {
-                    this.mobileSidebarTarget.classList.add("hidden");
-                }
-            }, 300); // Match the transition duration
+            this.returnFocus = null;
+        };
+        if (animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            if (this.hasMobileBackdropTarget) this.mobileBackdropTarget.style.opacity = "0";
+            if (this.hasMobilePanelTarget) this.mobilePanelTarget.style.transform = "translateX(-100%)";
+            this.closeTimer = setTimeout(finish, 300);
+        } else {
+            finish();
         }
     }
 }

@@ -11,7 +11,7 @@
     align: :left
   ) do |section| %>
     <div class="max-w-[1000px] mx-auto w-full">
-      <p class="mb-4 text-t6"><%= link_to t("refunds.link"), refunds_path, class: "text-accent" %></p>
+      <p class="mb-4 text-t6"><%= link_to t("refunds.link"), refunds_path, class: "inline-flex min-h-11 items-center rounded-md text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %></p>
       <div class="mb-10 flex flex-wrap items-center justify-between gap-3.5">
         <div>
           <h1 class="page-title m-0">
@@ -74,7 +74,7 @@
 
                 <%# the bookings section's pill, unchanged: one shape for "still
                     waiting on a payment" across the whole account %>
-                <span class="self-start shrink-0 inline-flex items-center gap-1.5 rounded-full border border-border-input px-3 py-1.5 text-t6 font-bold text-cream sm:self-auto">
+                <span class="self-start max-w-full flex-wrap inline-flex items-center gap-1.5 rounded-full border border-border-input px-3 py-1.5 text-t6 font-bold text-cream sm:self-auto">
                   <%= icon "clock", class: "size-3.5 shrink-0" %>
                   <%= content_block("dashboard.library.awaiting_status") %>
                 </span>
@@ -156,20 +156,20 @@
       <% if @bookings.any? %>
         <div class="mb-11 flex flex-col gap-3">
           <% @bookings.each do |booking| %>
-            <div class="flex items-center gap-4 rounded-2xl border border-border-strong bg-surface px-5.5 py-4.5">
+            <div class="flex min-w-0 flex-wrap items-start gap-3 rounded-2xl border border-border-strong bg-surface p-5">
               <span class="text-t3 leading-none" aria-hidden="true">📅</span>
               <div class="flex-1 min-w-0">
                 <%# Baloo: Display-For-Names covers durations and dates %>
                 <div class="font-display font-bold text-t5 text-cream">
                   <%= l(booking.starts_at, format: :long) %>
                 </div>
-                <div class="text-t6 text-taupe"><%= booking.package.name %></div>
+                <div class="text-t6 text-taupe [overflow-wrap:anywhere]"><%= booking.package.name %></div>
               </div>
 
               <%# only when it is not simply confirmed: a booking still waiting on
                   a payment has to say so, or the buyer reads it as settled %>
               <% unless booking.confirmed? %>
-                <span class="shrink-0 rounded-full border border-border-input px-3 py-1.5 text-t6 font-bold text-cream">
+                <span class="max-w-full rounded-lg border border-border-input px-3 py-1.5 text-t6 font-bold text-cream [overflow-wrap:anywhere]">
                   <%= booking.status_label %>
                 </span>
               <% end %>
@@ -189,7 +189,7 @@
       <%# the design leaves this a block of text; Devise already owns the form, so
           this points at it rather than growing a second one %>
       <div class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border-strong bg-surface p-5.5">
-        <div>
+        <div class="min-w-0 flex-1 [overflow-wrap:anywhere]">
           <%# a Google sign-up has never had a password, so promising to change one
               is a promise the next screen contradicts - it offers to *set* one.
               The controller and the Devise view already branch on this; only the

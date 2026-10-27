@@ -10,11 +10,11 @@
 
   locals: order
 %>
-<%= tag.div id: "order_status", class: "max-w-[640px] mx-auto w-full rounded-3xl border border-border-strong bg-surface p-8 sm:p-14 text-center" do %>
+<%= tag.div id: "order_status", data: { payment_status_target: "panel" }, class: "max-w-[640px] mx-auto w-full rounded-3xl border border-border-strong bg-surface p-5 sm:p-10 text-center [overflow-wrap:anywhere]" do %>
   <% if order.paid? %>
     <div class="text-5xl mb-5" aria-hidden="true">🎉</div>
 
-    <h1 class="text-t2 font-display font-bold text-accent mb-3.5">
+    <h1 class="text-t2 font-display font-bold text-accent mb-3.5 text-pretty">
       <%= content_block("cart.done.title") %>
     </h1>
 
@@ -31,7 +31,7 @@
       <%= render LoadingIndicator::Component.new(type: :spinner, size: :xl, color: :accent) %>
     </div>
 
-    <h1 class="text-t2 font-display font-bold text-cream mb-3.5">
+    <h1 class="text-t2 font-display font-bold text-cream mb-3.5 text-pretty">
       <%= content_block("cart.done.pending_title") %>
     </h1>
 
@@ -45,7 +45,7 @@
       <%= icon "circle-x", size: 44, class: "text-taupe" %>
     </div>
 
-    <h1 class="text-t2 font-display font-bold text-cream mb-3.5">
+    <h1 class="text-t2 font-display font-bold text-cream mb-3.5 text-pretty">
       <%= content_block("cart.done.failed_title") %>
     </h1>
 
@@ -60,7 +60,7 @@
       what the buyer just paid for looks like what they will find on their
       account. %>
   <div class="mb-8 rounded-2xl border border-border-strong bg-ink-soft p-4 sm:p-5 text-left">
-    <div class="mb-3.5 flex items-baseline justify-between gap-4">
+    <div class="mb-3.5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <h2 class="text-t6 text-taupe m-0"><%= t("orders.summary.items_title") %></h2>
       <span class="text-t6 text-taupe tabular-nums">
         <%= t("orders.summary.item_count", count: order.order_items.size) %>
@@ -72,14 +72,14 @@
         <li>
           <%# linked, so the confirmation is also the way into what was bought %>
           <%= link_to catalogue_product_path(item.product),
-                class: "group flex items-center gap-4 rounded-xl border border-border-strong bg-surface px-4 py-3.5 no-underline" do %>
+                class: "group flex flex-col items-start gap-3 sm:flex-row sm:items-center rounded-xl border border-border-strong bg-surface px-4 py-3.5 no-underline" do %>
             <%# a fixed tile, not a bare emoji: glyph widths differ enough that
                 unboxed icons leave the names on a ragged left edge %>
             <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ink text-[22px] leading-none" aria-hidden="true">
               <%= item.product.display_icon %>
             </span>
 
-            <span class="flex-1 min-w-0">
+            <span class="min-w-0 w-full sm:flex-1">
               <%# wraps rather than truncates: this is the receipt for what was
                   just paid for, and a clipped Polish name is the wrong thing to
                   clip on the one screen the buyer is anxious about %>
@@ -104,7 +104,7 @@
       pill: true,
       variant: order.paid? ? :primary : :outline,
       href: dashboard_index_path,
-      classes: order.paid? ? "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!" : "hover:cursor-pointer text-t6! py-3 px-6 font-bold! border-border-input! text-tan! hover:text-cream!"
+      classes: order.paid? ? "hover:cursor-pointer bg-accent! text-t6! min-h-11 whitespace-normal! py-3 px-6 font-bold!" : "hover:cursor-pointer text-t6! min-h-11 whitespace-normal! py-3 px-6 font-bold! border-border-input! text-tan! hover:text-cream!"
     ) %>
   <% else %>
     <%= render Buttons::Component.new(
@@ -112,7 +112,7 @@
       pill: true,
       variant: :primary,
       href: products_path,
-      classes: "hover:cursor-pointer bg-accent! text-t6! py-3 px-6 font-bold!"
+      classes: "hover:cursor-pointer bg-accent! text-t6! min-h-11 whitespace-normal! py-3 px-6 font-bold!"
     ) %>
   <% end %>
   <% if order.paid? %>

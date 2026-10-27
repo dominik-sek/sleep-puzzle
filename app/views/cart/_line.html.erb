@@ -10,22 +10,21 @@
 
   locals: line
 %>
-<div class="flex items-center gap-4 rounded-2xl border border-border-strong bg-surface px-5.5 py-4.5">
-  <span class="text-[30px] leading-none" aria-hidden="true"><%= line.product.display_icon %></span>
-
-  <div class="flex-1 min-w-0">
-    <%= link_to line.product.name, catalogue_product_path(line.product),
-          class: "block text-[15px] font-bold text-cream no-underline hover:text-accent truncate" %>
-    <span class="text-[13px] text-taupe"><%= line.product.kind_label %></span>
+<div class="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-3 rounded-2xl border border-border-strong bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:p-6">
+  <div class="col-span-2 flex min-w-0 items-start gap-3 sm:col-span-1">
+    <span class="shrink-0 text-t3 leading-title" aria-hidden="true"><%= line.product.display_icon %></span>
+    <div class="min-w-0 flex-1">
+      <%= link_to line.product.name, catalogue_product_path(line.product),
+            class: "block rounded-md text-t5 font-bold text-cream no-underline [overflow-wrap:anywhere] hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+      <span class="mt-1 block text-t6 text-taupe"><%= line.product.kind_label %></span>
+    </div>
   </div>
-
-  <span class="text-[15px] font-extrabold text-cream tabular-nums whitespace-nowrap">
+  <span class="min-w-0 text-t5 font-bold text-cream tabular-nums [overflow-wrap:anywhere]">
     <%= line.price_label || content_block("shop.card.unavailable") %>
   </span>
-
   <%= button_to cart_item_path(product_id: line.product.id), method: :delete,
-        class: "cursor-pointer border-0 bg-transparent px-2 py-1 text-[20px] leading-none text-taupe hover:text-accent",
+        class: "flex size-11 items-center justify-center rounded-lg border-0 bg-transparent text-taupe hover:bg-ink-soft hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent cursor-pointer",
         form_class: "contents", "aria-label": t("nav.remove_from_cart") do %>
-    ✕
+    <%= icon "x", class: "size-5" %>
   <% end %>
 </div>

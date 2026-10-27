@@ -12,7 +12,7 @@
           <button type="button" data-content-blocks-target="languageTab"
                   data-lang="<%= locale %>" data-action="click->content-blocks#selectLanguage"
                   aria-pressed="<%= editor_locale == locale.to_s %>"
-                  class="rounded-md px-3 py-1.5 text-t6 cursor-pointer <%= editor_locale == locale.to_s ? 'bg-accent text-ink' : 'text-tan hover:text-cream' %>">
+                  class="min-h-11 min-w-11 rounded-md px-3 py-1.5 text-t6 cursor-pointer <%= editor_locale == locale.to_s ? 'bg-accent text-ink' : 'text-tan hover:text-cream' %>">
             <%= locale == :pl ? "Polski" : "English" %>
           </button>
         <% end %>
@@ -40,7 +40,7 @@
           <div class="flex flex-col gap-2 min-w-0">
             <div class="flex items-start justify-between gap-2">
               <span class="text-t6 uppercase text-tan"><%= field.label %></span>
-              <details class="text-xs text-taupe-dark text-right">
+              <details class="text-xs text-taupe text-right">
                 <summary title="Identyfikator pola" class="cursor-pointer list-none text-taupe hover:text-tan">
                   <%= icon "info", class: "size-4" %>
                   <span class="sr-only">Identyfikator pola</span>

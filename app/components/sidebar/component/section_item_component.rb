@@ -22,7 +22,7 @@ module Sidebar
       end
 
       def item_classes
-        base = "w-full flex items-center justify-between gap-2 rounded-md pl-2 pr-9 py-1.5 text-left text-sm"
+        base = "min-h-11 min-w-11 w-full flex items-center justify-between gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent pl-2 pr-9 py-1.5 text-left text-sm"
         state_classes = if @disabled
                           "text-taupe-dark cursor-not-allowed opacity-50"
         elsif @active

@@ -1,0 +1,468 @@
+{
+  "method": {
+    "build": "Vite 8.1.3, mode production",
+    "samples_per_page": 3,
+    "browser_window": [
+      390,
+      844
+    ],
+    "cache": "disabled",
+    "cpu_slowdown": 4,
+    "latency_ms": 150,
+    "download_bytes_per_second": 200000,
+    "upload_bytes_per_second": 93750,
+    "gzip": "offline Zlib.gzip per requested JS file; not measured wire compression"
+  },
+  "before": {
+    "home": [
+      {
+        "domContentLoaded": 4425.300000000745,
+        "fcp": 3068,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          }
+        ],
+        "load": 4438.89999999851,
+        "js_raw_bytes": 303223,
+        "js_gzip_bytes": 84070
+      },
+      {
+        "domContentLoaded": 4366.10000000149,
+        "fcp": 2944,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          }
+        ],
+        "load": 4381.39999999851,
+        "js_raw_bytes": 303223,
+        "js_gzip_bytes": 84070
+      },
+      {
+        "domContentLoaded": 4376.300000000745,
+        "fcp": 2944,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          }
+        ],
+        "load": 4388.10000000149,
+        "js_raw_bytes": 303223,
+        "js_gzip_bytes": 84070
+      }
+    ],
+    "shop": [
+      {
+        "domContentLoaded": 4364.39999999851,
+        "fcp": 2916,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          }
+        ],
+        "load": 4375.5,
+        "js_raw_bytes": 303223,
+        "js_gzip_bytes": 84070
+      },
+      {
+        "domContentLoaded": 4373.39999999851,
+        "fcp": 2904,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          }
+        ],
+        "load": 4383.79999999702,
+        "js_raw_bytes": 303223,
+        "js_gzip_bytes": 84070
+      },
+      {
+        "domContentLoaded": 4378.39999999851,
+        "fcp": 2900,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          }
+        ],
+        "load": 4391.300000000745,
+        "js_raw_bytes": 303223,
+        "js_gzip_bytes": 84070
+      }
+    ],
+    "packages": [
+      {
+        "domContentLoaded": 4614.699999999255,
+        "fcp": 3000,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          },
+          {
+            "bytes": 38826,
+            "path": "/vite-benchmark/assets/cally_controller-DVJW9UM0.js"
+          }
+        ],
+        "load": 4627.29999999702,
+        "js_raw_bytes": 342049,
+        "js_gzip_bytes": 98667
+      },
+      {
+        "domContentLoaded": 4620.300000000745,
+        "fcp": 3000,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          },
+          {
+            "bytes": 38826,
+            "path": "/vite-benchmark/assets/cally_controller-DVJW9UM0.js"
+          }
+        ],
+        "load": 4631.5,
+        "js_raw_bytes": 342049,
+        "js_gzip_bytes": 98667
+      },
+      {
+        "domContentLoaded": 4617.79999999702,
+        "fcp": 2996,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          },
+          {
+            "bytes": 38826,
+            "path": "/vite-benchmark/assets/cally_controller-DVJW9UM0.js"
+          }
+        ],
+        "load": 4630.39999999851,
+        "js_raw_bytes": 342049,
+        "js_gzip_bytes": 98667
+      }
+    ],
+    "admin": [
+      {
+        "domContentLoaded": 3789,
+        "fcp": 2472,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          },
+          {
+            "bytes": 9261,
+            "path": "/vite-benchmark/assets/src-CAVUzBaU.js"
+          },
+          {
+            "bytes": 212730,
+            "path": "/vite-benchmark/assets/rich_text_editor-CaUtTWlw.js"
+          }
+        ],
+        "load": 3810.400000002235,
+        "js_raw_bytes": 525214,
+        "js_gzip_bytes": 142317
+      },
+      {
+        "domContentLoaded": 3774.89999999851,
+        "fcp": 2456,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          },
+          {
+            "bytes": 9261,
+            "path": "/vite-benchmark/assets/src-CAVUzBaU.js"
+          },
+          {
+            "bytes": 212730,
+            "path": "/vite-benchmark/assets/rich_text_editor-CaUtTWlw.js"
+          }
+        ],
+        "load": 3789.5,
+        "js_raw_bytes": 525214,
+        "js_gzip_bytes": 142317
+      },
+      {
+        "domContentLoaded": 3791.699999999255,
+        "fcp": 2464,
+        "js": [
+          {
+            "bytes": 303223,
+            "path": "/vite-benchmark/assets/application-CQTdAcO3.js"
+          },
+          {
+            "bytes": 9261,
+            "path": "/vite-benchmark/assets/src-CAVUzBaU.js"
+          },
+          {
+            "bytes": 212730,
+            "path": "/vite-benchmark/assets/rich_text_editor-CaUtTWlw.js"
+          }
+        ],
+        "load": 3819.300000000745,
+        "js_raw_bytes": 525214,
+        "js_gzip_bytes": 142317
+      }
+    ]
+  },
+  "after": {
+    "home": [
+      {
+        "domContentLoaded": 3353.5,
+        "fcp": 3064,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          }
+        ],
+        "load": 3716.300000000745,
+        "js_raw_bytes": 171476,
+        "js_gzip_bytes": 44328
+      },
+      {
+        "domContentLoaded": 3330.199999999255,
+        "fcp": 2956,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          }
+        ],
+        "load": 3693.900000002235,
+        "js_raw_bytes": 171476,
+        "js_gzip_bytes": 44328
+      },
+      {
+        "domContentLoaded": 3302.60000000149,
+        "fcp": 2964,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          }
+        ],
+        "load": 3691.5,
+        "js_raw_bytes": 171476,
+        "js_gzip_bytes": 44328
+      }
+    ],
+    "shop": [
+      {
+        "domContentLoaded": 3295.199999999255,
+        "fcp": 2920,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          }
+        ],
+        "load": 3684.10000000149,
+        "js_raw_bytes": 171476,
+        "js_gzip_bytes": 44328
+      },
+      {
+        "domContentLoaded": 3337,
+        "fcp": 2916,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          }
+        ],
+        "load": 3694.699999999255,
+        "js_raw_bytes": 171476,
+        "js_gzip_bytes": 44328
+      },
+      {
+        "domContentLoaded": 3322.89999999851,
+        "fcp": 2920,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          }
+        ],
+        "load": 3694.89999999851,
+        "js_raw_bytes": 171476,
+        "js_gzip_bytes": 44328
+      }
+    ],
+    "packages": [
+      {
+        "domContentLoaded": 3927.699999999255,
+        "fcp": 2988,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          },
+          {
+            "bytes": 38826,
+            "path": "/vite-benchmark/assets/cally_controller-w_2rfd0k.js"
+          },
+          {
+            "bytes": 3352,
+            "path": "/vite-benchmark/assets/package_details_controller-BJj5FgZK.js"
+          }
+        ],
+        "load": 3940.599999997765,
+        "js_raw_bytes": 213654,
+        "js_gzip_bytes": 60157
+      },
+      {
+        "domContentLoaded": 3870.300000000745,
+        "fcp": 3020,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          },
+          {
+            "bytes": 38826,
+            "path": "/vite-benchmark/assets/cally_controller-w_2rfd0k.js"
+          },
+          {
+            "bytes": 3352,
+            "path": "/vite-benchmark/assets/package_details_controller-BJj5FgZK.js"
+          }
+        ],
+        "load": 3928.5,
+        "js_raw_bytes": 213654,
+        "js_gzip_bytes": 60157
+      },
+      {
+        "domContentLoaded": 3893.89999999851,
+        "fcp": 3000,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          },
+          {
+            "bytes": 38826,
+            "path": "/vite-benchmark/assets/cally_controller-w_2rfd0k.js"
+          },
+          {
+            "bytes": 3352,
+            "path": "/vite-benchmark/assets/package_details_controller-BJj5FgZK.js"
+          }
+        ],
+        "load": 3926.5,
+        "js_raw_bytes": 213654,
+        "js_gzip_bytes": 60157
+      }
+    ],
+    "admin": [
+      {
+        "domContentLoaded": 2774.5,
+        "fcp": 2476,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          },
+          {
+            "bytes": 9261,
+            "path": "/vite-benchmark/assets/src-CAVUzBaU.js"
+          },
+          {
+            "bytes": 515,
+            "path": "/vite-benchmark/assets/product_kind_controller-C6wS9Uf9.js"
+          },
+          {
+            "bytes": 4750,
+            "path": "/vite-benchmark/assets/sidebar_controller-cEQw9659.js"
+          },
+          {
+            "bytes": 29272,
+            "path": "/vite-benchmark/assets/tooltip_controller-DRdLE5yn.js"
+          },
+          {
+            "bytes": 212730,
+            "path": "/vite-benchmark/assets/rich_text_editor-CaUtTWlw.js"
+          }
+        ],
+        "load": 3200.5,
+        "js_raw_bytes": 428004,
+        "js_gzip_bytes": 114261
+      },
+      {
+        "domContentLoaded": 2781.699999999255,
+        "fcp": 2456,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          },
+          {
+            "bytes": 9261,
+            "path": "/vite-benchmark/assets/src-CAVUzBaU.js"
+          },
+          {
+            "bytes": 515,
+            "path": "/vite-benchmark/assets/product_kind_controller-C6wS9Uf9.js"
+          },
+          {
+            "bytes": 4750,
+            "path": "/vite-benchmark/assets/sidebar_controller-cEQw9659.js"
+          },
+          {
+            "bytes": 29272,
+            "path": "/vite-benchmark/assets/tooltip_controller-DRdLE5yn.js"
+          },
+          {
+            "bytes": 212730,
+            "path": "/vite-benchmark/assets/rich_text_editor-CaUtTWlw.js"
+          }
+        ],
+        "load": 3198.900000002235,
+        "js_raw_bytes": 428004,
+        "js_gzip_bytes": 114261
+      },
+      {
+        "domContentLoaded": 2805.39999999851,
+        "fcp": 2440,
+        "js": [
+          {
+            "bytes": 171476,
+            "path": "/vite-benchmark/assets/application-CUXRDTfj.js"
+          },
+          {
+            "bytes": 9261,
+            "path": "/vite-benchmark/assets/src-CAVUzBaU.js"
+          },
+          {
+            "bytes": 515,
+            "path": "/vite-benchmark/assets/product_kind_controller-C6wS9Uf9.js"
+          },
+          {
+            "bytes": 4750,
+            "path": "/vite-benchmark/assets/sidebar_controller-cEQw9659.js"
+          },
+          {
+            "bytes": 29272,
+            "path": "/vite-benchmark/assets/tooltip_controller-DRdLE5yn.js"
+          },
+          {
+            "bytes": 212730,
+            "path": "/vite-benchmark/assets/rich_text_editor-CaUtTWlw.js"
+          }
+        ],
+        "load": 3183,
+        "js_raw_bytes": 428004,
+        "js_gzip_bytes": 114261
+      }
+    ]
+  }
+}

@@ -1,0 +1,2588 @@
+{
+  "layout": {
+    "shop": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Sklep"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": null,
+            "text": "Dodano"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/products",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Sklep"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": null,
+            "text": "Dodano"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/products",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "story": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Bajka na spokojny wieczór i dobranoc dla małego odkrywcy"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": null,
+            "text": "Dodano do koszyka"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/stories/bajka-na-spokojny-wieczor-i-dobranoc-dla-malego-odkrywcy",
+        "smallTargets": [
+          {
+            "height": 44,
+            "name": "Sklep",
+            "width": 38.359375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Bajka na spokojny wieczór i dobranoc dla małego odkrywcy"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": null,
+            "text": "Dodano do koszyka"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/stories/bajka-na-spokojny-wieczor-i-dobranoc-dla-malego-odkrywcy",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "program": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Krok po kroku do spokojniejszych nocy całej rodziny"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/audioprocesses/krok-po-kroku-do-spokojniejszych-nocy-calej-rodziny",
+        "smallTargets": [
+          {
+            "height": 44,
+            "name": "Sklep",
+            "width": 38.359375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Krok po kroku do spokojniejszych nocy całej rodziny"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/audioprocesses/krok-po-kroku-do-spokojniejszych-nocy-calej-rodziny",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "packages": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Współpraca 1:1"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/packages",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Współpraca 1:1"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/packages",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "cart": {
+      "normal": {
+        "clipped": [
+          {
+            "scroll": 435,
+            "text": "Bajka na spokojny wieczór i dobranoc dla małego odkrywcy",
+            "width": 105
+          }
+        ],
+        "documentWidth": 375,
+        "headings": [
+          "Koszyk"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/cart",
+        "smallTargets": [
+          {
+            "height": 22.5,
+            "name": "Bajka na spokojny wieczór i dobranoc dla małego odkrywcy",
+            "width": 105.203125
+          },
+          {
+            "height": 28,
+            "name": "Usuń z koszyka",
+            "width": 32.765625
+          },
+          {
+            "height": 35.59375,
+            "name": "Zwroty i odwołania",
+            "width": 134.484375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Koszyk"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/cart",
+        "smallTargets": [
+          {
+            "height": 36,
+            "name": "Usuń z koszyka",
+            "width": 48.765625
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "narrow": {
+        "clipped": [
+          {
+            "scroll": 435,
+            "text": "Bajka na spokojny wieczór i dobranoc dla małego odkrywcy",
+            "width": 35
+          }
+        ],
+        "documentWidth": 305,
+        "headings": [
+          "Koszyk"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 305,
+            "width": 305
+          }
+        ],
+        "overflow": [],
+        "path": "/cart",
+        "smallTargets": [
+          {
+            "height": 22.5,
+            "name": "Bajka na spokojny wieczór i dobranoc dla małego odkrywcy",
+            "width": 35.203125
+          },
+          {
+            "height": 28,
+            "name": "Usuń z koszyka",
+            "width": 32.765625
+          },
+          {
+            "height": 35.59375,
+            "name": "Zwroty i odwołania",
+            "width": 134.484375
+          }
+        ],
+        "unnamed": [],
+        "width": 320
+      },
+      "desktop_large": {
+        "clipped": [],
+        "documentWidth": 1265,
+        "headings": [
+          "Koszyk"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 1265,
+            "width": 1265
+          }
+        ],
+        "overflow": [],
+        "path": "/cart",
+        "smallTargets": [
+          {
+            "height": 22.5,
+            "name": "Bajka na spokojny wieczór i dobranoc dla małego odkrywcy",
+            "width": 462.203125
+          },
+          {
+            "height": 36,
+            "name": "Usuń z koszyka",
+            "width": 48.765625
+          }
+        ],
+        "unnamed": [],
+        "width": 1280
+      }
+    },
+    "dashboard": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Moje konto"
+        ],
+        "live": [
+          {
+            "id": "product_348",
+            "live": null,
+            "role": "status",
+            "text": "🧸\n                  \n                    \n                      Opowieść o sowie, która odnalazła spokojny sen\n                    \n                    Bajka na dobranoc\n                  \n          "
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/dashboard",
+        "smallTargets": [
+          {
+            "height": 18,
+            "name": "Zwroty i odwołania",
+            "width": 134.484375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 518,
+        "headings": [
+          "Moje konto"
+        ],
+        "live": [
+          {
+            "id": "product_348",
+            "live": null,
+            "role": "status",
+            "text": "🧸\n                  \n                    \n                      Opowieść o sowie, która odnalazła spokojny sen\n                    \n                    Bajka na dobranoc\n                  \n          "
+          }
+        ],
+        "main": [
+          {
+            "scroll": 518,
+            "width": 375
+          }
+        ],
+        "overflow": [
+          {
+            "classes": "shrink-0 rounded-full border border-border-input px-3 py-1.5 text-t6 font-bold text-cream",
+            "right": 517.828125,
+            "tag": "SPAN",
+            "text": "Oczekuje na płatność"
+          },
+          {
+            "classes": "",
+            "right": 410.71875,
+            "tag": "DIV",
+            "text": "Zmień adres e-mail, hasło i dane konta.\n          \n          audit-cus"
+          },
+          {
+            "classes": "text-t6 text-tan m-0",
+            "right": 410.71875,
+            "tag": "P",
+            "text": "Zmień adres e-mail, hasło i dane konta."
+          },
+          {
+            "classes": "mt-1 text-t6 text-taupe m-0",
+            "right": 410.71875,
+            "tag": "P",
+            "text": "audit-customer@example.com"
+          }
+        ],
+        "path": "/dashboard",
+        "smallTargets": [
+          {
+            "height": 35,
+            "name": "Zwroty i odwołania",
+            "width": 268.984375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "narrow": {
+        "clipped": [],
+        "documentWidth": 305,
+        "headings": [
+          "Moje konto"
+        ],
+        "live": [
+          {
+            "id": "product_348",
+            "live": null,
+            "role": "status",
+            "text": "🧸\n                  \n                    \n                      Opowieść o sowie, która odnalazła spokojny sen\n                    \n                    Bajka na dobranoc\n                  \n          "
+          }
+        ],
+        "main": [
+          {
+            "scroll": 305,
+            "width": 305
+          }
+        ],
+        "overflow": [],
+        "path": "/dashboard",
+        "smallTargets": [
+          {
+            "height": 18,
+            "name": "Zwroty i odwołania",
+            "width": 134.484375
+          }
+        ],
+        "unnamed": [],
+        "width": 320
+      },
+      "desktop_large": {
+        "clipped": [],
+        "documentWidth": 1265,
+        "headings": [
+          "Moje konto"
+        ],
+        "live": [
+          {
+            "id": "product_348",
+            "live": null,
+            "role": "status",
+            "text": "🧸\n                  \n                    \n                      Opowieść o sowie, która odnalazła spokojny sen\n                    \n                    Bajka na dobranoc\n                  \n          "
+          }
+        ],
+        "main": [
+          {
+            "scroll": 1265,
+            "width": 1265
+          }
+        ],
+        "overflow": [],
+        "path": "/dashboard",
+        "smallTargets": [
+          {
+            "height": 35,
+            "name": "Zwroty i odwołania",
+            "width": 268.984375
+          }
+        ],
+        "unnamed": [],
+        "width": 1280
+      }
+    },
+    "account": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Dane konta"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/users/edit",
+        "smallTargets": [
+          {
+            "height": 18,
+            "name": "Wróć do konta",
+            "width": 103.515625
+          },
+          {
+            "height": 37.59375,
+            "name": "Usuń konto",
+            "width": 113.03125
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Dane konta"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/users/edit",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "order_pending": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Potwierdzamy płatność"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": null,
+            "role": "status",
+            "text": "To potrwa tylko chwilę - ta strona zaktualizuje się sama. Możesz ją spokojnie zostawić otwartą."
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/orders/GekWB2nvhmJc4hB6WLGnex8b",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 447,
+        "headings": [
+          "Potwierdzamy płatność"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": null,
+            "role": "status",
+            "text": "To potrwa tylko chwilę - ta strona zaktualizuje się sama. Możesz ją spokojnie zostawić otwartą."
+          }
+        ],
+        "main": [
+          {
+            "scroll": 447,
+            "width": 375
+          }
+        ],
+        "overflow": [
+          {
+            "classes": "text-t6 text-taupe tabular-nums",
+            "right": 422.859375,
+            "tag": "SPAN",
+            "text": "1 pozycja"
+          }
+        ],
+        "path": "/orders/GekWB2nvhmJc4hB6WLGnex8b",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      },
+      "narrow": {
+        "clipped": [],
+        "documentWidth": 305,
+        "headings": [
+          "Potwierdzamy płatność"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": null,
+            "role": "status",
+            "text": "To potrwa tylko chwilę - ta strona zaktualizuje się sama. Możesz ją spokojnie zostawić otwartą."
+          }
+        ],
+        "main": [
+          {
+            "scroll": 305,
+            "width": 305
+          }
+        ],
+        "overflow": [],
+        "path": "/orders/GekWB2nvhmJc4hB6WLGnex8b",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 320
+      },
+      "desktop_large": {
+        "clipped": [],
+        "documentWidth": 1265,
+        "headings": [
+          "Potwierdzamy płatność"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": null,
+            "role": "status",
+            "text": "To potrwa tylko chwilę - ta strona zaktualizuje się sama. Możesz ją spokojnie zostawić otwartą."
+          }
+        ],
+        "main": [
+          {
+            "scroll": 1265,
+            "width": 1265
+          }
+        ],
+        "overflow": [],
+        "path": "/orders/GekWB2nvhmJc4hB6WLGnex8b",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 1280
+      }
+    },
+    "order_paid": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Dziękujemy za zakup!"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/orders/DhFouVwBuwHxrwQ3rd1nkSbf",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 444,
+        "headings": [
+          "Dziękujemy za zakup!"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 444,
+            "width": 375
+          }
+        ],
+        "overflow": [
+          {
+            "classes": "text-t6 text-taupe tabular-nums",
+            "right": 422.859375,
+            "tag": "SPAN",
+            "text": "1 pozycja"
+          }
+        ],
+        "path": "/orders/DhFouVwBuwHxrwQ3rd1nkSbf",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "booking_pending": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Przetwarzamy płatność"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": "status",
+            "text": "Czekamy na potwierdzenie od operatora płatności…"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings/rebjwdjifDd8UmMysdQHS43p",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Przetwarzamy płatność"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": "status",
+            "text": "Czekamy na potwierdzenie od operatora płatności…"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings/rebjwdjifDd8UmMysdQHS43p",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "booking_confirmed": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Rezerwacja potwierdzona"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings/DRTwT5sRNs6dZNvReooenWs1",
+        "smallTargets": [
+          {
+            "height": 38,
+            "name": "Wróć do panelu",
+            "width": 335
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Rezerwacja potwierdzona"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [
+          {
+            "classes": "text-cream text-t5",
+            "right": 450.671875,
+            "tag": "DD",
+            "text": "Brak potwierdzonej płatności"
+          },
+          {
+            "classes": "text-cream text-t5",
+            "right": 401.75,
+            "tag": "DD",
+            "text": "Opłacona"
+          }
+        ],
+        "path": "/bookings/DRTwT5sRNs6dZNvReooenWs1",
+        "smallTargets": [
+          {
+            "height": 38,
+            "name": "Wróć do panelu",
+            "width": 335
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "narrow": {
+        "clipped": [],
+        "documentWidth": 305,
+        "headings": [
+          "Rezerwacja potwierdzona"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 305,
+            "width": 305
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings/DRTwT5sRNs6dZNvReooenWs1",
+        "smallTargets": [
+          {
+            "height": 38,
+            "name": "Wróć do panelu",
+            "width": 265
+          }
+        ],
+        "unnamed": [],
+        "width": 320
+      },
+      "desktop_large": {
+        "clipped": [],
+        "documentWidth": 1265,
+        "headings": [
+          "Rezerwacja potwierdzona"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 1265,
+            "width": 1265
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings/DRTwT5sRNs6dZNvReooenWs1",
+        "smallTargets": [
+          {
+            "height": 38,
+            "name": "Wróć do panelu",
+            "width": 1152
+          }
+        ],
+        "unnamed": [],
+        "width": 1280
+      }
+    },
+    "booking_form": {
+      "normal": {
+        "clipped": [],
+        "documentWidth": 375,
+        "headings": [
+          "Umów konsultację"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": "status",
+            "text": "Dostępne godziny - 16 listopada 2026\n          1 termin dostępny"
+          },
+          {
+            "id": "booking_form",
+            "live": "polite",
+            "role": null,
+            "text": "Twoje dane\n\n\n  \n    \n      Imię i nazwisko\n      *\n    \n\n  \n\n            \n\n\n  \n\n\n\n\n  \n    \n      Email\n      *\n    \n\n  \n\n            \n\n\n  \n\n\n    Adres e-mail z Twojego konta\n\n\n  \n    \n      Wybierz pa"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings",
+        "smallTargets": [
+          {
+            "height": 35.59375,
+            "name": "Zwroty i odwołania",
+            "width": 134.484375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [],
+        "documentWidth": 499,
+        "headings": [
+          "Umów konsultację"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": "status",
+            "text": "Dostępne godziny - 16 listopada 2026\n          1 termin dostępny"
+          },
+          {
+            "id": "booking_form",
+            "live": "polite",
+            "role": null,
+            "text": "Twoje dane\n\n\n  \n    \n      Imię i nazwisko\n      *\n    \n\n  \n\n            \n\n\n  \n\n\n\n\n  \n    \n      Email\n      *\n    \n\n  \n\n            \n\n\n  \n\n\n    Adres e-mail z Twojego konta\n\n\n  \n    \n      Wybierz pa"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 499,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      },
+      "narrow": {
+        "clipped": [],
+        "documentWidth": 305,
+        "headings": [
+          "Umów konsultację"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": "status",
+            "text": "Dostępne godziny - 16 listopada 2026\n          1 termin dostępny"
+          },
+          {
+            "id": "booking_form",
+            "live": "polite",
+            "role": null,
+            "text": "Twoje dane\n\n\n  \n    \n      Imię i nazwisko\n      *\n    \n\n  \n\n            \n\n\n  \n\n\n\n\n  \n    \n      Email\n      *\n    \n\n  \n\n            \n\n\n  \n\n\n    Adres e-mail z Twojego konta\n\n\n  \n    \n      Wybierz pa"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 305,
+            "width": 305
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings",
+        "smallTargets": [
+          {
+            "height": 35.59375,
+            "name": "Zwroty i odwołania",
+            "width": 134.484375
+          }
+        ],
+        "unnamed": [],
+        "width": 320
+      },
+      "desktop_large": {
+        "clipped": [],
+        "documentWidth": 1265,
+        "headings": [
+          "Umów konsultację"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": "status",
+            "text": "Dostępne godziny - 16 listopada 2026\n          1 termin dostępny"
+          },
+          {
+            "id": "booking_form",
+            "live": "polite",
+            "role": null,
+            "text": "Twoje dane\n\n\n  \n    \n      Imię i nazwisko\n      *\n    \n\n  \n\n            \n\n\n  \n\n\n\n\n  \n    \n      Email\n      *\n    \n\n  \n\n            \n\n\n  \n\n\n    Adres e-mail z Twojego konta\n\n\n  \n    \n      Wybierz pa"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 1265,
+            "width": 1265
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 1280
+      }
+    },
+    "admin_dashboard": {
+      "normal": {
+        "clipped": [
+          {
+            "scroll": 134,
+            "text": "Otwórz nawigację",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Pulpit"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [
+          {
+            "classes": "w-full",
+            "right": 844.078125,
+            "tag": "TABLE",
+            "text": "Termin\n                \n                \n                  Klient\n    "
+          },
+          {
+            "classes": "bg-surface-dark",
+            "right": 844.078125,
+            "tag": "THEAD",
+            "text": "Termin\n                \n                \n                  Klient\n    "
+          },
+          {
+            "classes": "text-t6 font-bold uppercase text-taupe *:py-3 *:text-left *:[box-shadow:inset_0_-1px_0_0_rgb(53_48_44)]",
+            "right": 844.078125,
+            "tag": "TR",
+            "text": "Termin\n                \n                \n                  Klient\n    "
+          },
+          {
+            "classes": "text-t6 font-bold uppercase text-taupe text-left px-3 first:pl-6 last:pr-6",
+            "right": 414.1875,
+            "tag": "TH",
+            "text": "Pakiet"
+          },
+          {
+            "classes": "text-t6 font-bold uppercase text-taupe text-left px-3 first:pl-6 last:pr-6",
+            "right": 606.75,
+            "tag": "TH",
+            "text": "Stan rezerwacji"
+          },
+          {
+            "classes": "text-t6 font-bold uppercase text-taupe text-left px-3 first:pl-6 last:pr-6",
+            "right": 712.859375,
+            "tag": "TH",
+            "text": "Zwrot"
+          },
+          {
+            "classes": "text-t6 font-bold uppercase text-taupe text-left px-3 first:pl-6 last:pr-6",
+            "right": 844.078125,
+            "tag": "TH",
+            "text": "Utworzono"
+          },
+          {
+            "classes": "*:*:py-4",
+            "right": 844.078125,
+            "tag": "TBODY",
+            "text": "22 lis 23:34\n\n\n    \n    \n              Marta\n        audit-customer@ex"
+          },
+          {
+            "classes": "hover:bg-ink-soft [box-shadow:inset_0_-1px_0_0_rgb(53_48_44)] last:[box-shadow:none]",
+            "right": 844.078125,
+            "tag": "TR",
+            "text": "22 lis 23:34\n\n\n    \n    \n              Marta\n        audit-customer@ex"
+          },
+          {
+            "classes": "text-t6 font-medium text-tan px-3 first:pl-6 last:pr-6",
+            "right": 414.1875,
+            "tag": "TD",
+            "text": "Spokojne noce i wsparcie dla całej rodziny"
+          }
+        ],
+        "path": "/admin",
+        "smallTargets": [
+          {
+            "height": 19.59375,
+            "name": "Szczegóły",
+            "width": 69.296875
+          },
+          {
+            "height": 39.1875,
+            "name": "Zobacz wszystkie",
+            "width": 106.203125
+          },
+          {
+            "height": 18,
+            "name": "Marta",
+            "width": 40.828125
+          },
+          {
+            "height": 18,
+            "name": "Marta",
+            "width": 40.828125
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [
+          {
+            "scroll": 268,
+            "text": "Otwórz nawigację",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Pulpit"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 491,
+            "width": 375
+          }
+        ],
+        "overflow": [
+          {
+            "classes": "text-t6 uppercase",
+            "right": 467.484375,
+            "tag": "SPAN",
+            "text": "Oczekujące"
+          },
+          {
+            "classes": "text-t6 uppercase",
+            "right": 490.59375,
+            "tag": "SPAN",
+            "text": "Użytkownicy"
+          },
+          {
+            "classes": "text-t6",
+            "right": 471.9375,
+            "tag": "A",
+            "text": "Zobacz wszystkie"
+          },
+          {
+            "classes": "w-full",
+            "right": 1685.109375,
+            "tag": "TABLE",
+            "text": "Termin\n                \n                \n                  Klient\n    "
+          },
+          {
+            "classes": "bg-surface-dark",
+            "right": 1685.109375,
+            "tag": "THEAD",
+            "text": "Termin\n                \n                \n                  Klient\n    "
+          },
+          {
+            "classes": "text-t6 font-bold uppercase text-taupe *:py-3 *:text-left *:[box-shadow:inset_0_-1px_0_0_rgb(53_48_44)]",
+            "right": 1685.109375,
+            "tag": "TR",
+            "text": "Termin\n                \n                \n                  Klient\n    "
+          },
+          {
+            "classes": "text-t6 font-bold uppercase text-taupe text-left px-3 first:pl-6 last:pr-6",
+            "right": 652.671875,
+            "tag": "TH",
+            "text": "Klient"
+          },
+          {
+            "classes": "text-t6 font-bold uppercase text-taupe text-left px-3 first:pl-6 last:pr-6",
+            "right": 827.359375,
+            "tag": "TH",
+            "text": "Pakiet"
+          },
+          {
+            "classes": "text-t6 font-bold uppercase text-taupe text-left px-3 first:pl-6 last:pr-6",
+            "right": 1210.46875,
+            "tag": "TH",
+            "text": "Stan rezerwacji"
+          },
+          {
+            "classes": "text-t6 font-bold uppercase text-taupe text-left px-3 first:pl-6 last:pr-6",
+            "right": 1422.671875,
+            "tag": "TH",
+            "text": "Zwrot"
+          }
+        ],
+        "path": "/admin",
+        "smallTargets": [
+          {
+            "height": 39.1875,
+            "name": "Szczegóły",
+            "width": 138.578125
+          },
+          {
+            "height": 35,
+            "name": "Marta",
+            "width": 81.65625
+          },
+          {
+            "height": 35,
+            "name": "Marta",
+            "width": 81.65625
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "admin_products": {
+      "normal": {
+        "clipped": [
+          {
+            "scroll": 134,
+            "text": "Otwórz nawigację",
+            "width": 1
+          },
+          {
+            "scroll": 63,
+            "text": "Nazwa —",
+            "width": 1
+          },
+          {
+            "scroll": 63,
+            "text": "Nazwa —",
+            "width": 1
+          },
+          {
+            "scroll": 47,
+            "text": "Opis —",
+            "width": 1
+          },
+          {
+            "scroll": 47,
+            "text": "Opis —",
+            "width": 1
+          },
+          {
+            "scroll": 124,
+            "text": "O tym nagraniu —",
+            "width": 1
+          },
+          {
+            "scroll": 124,
+            "text": "O tym nagraniu —",
+            "width": 1
+          },
+          {
+            "scroll": 206,
+            "text": "Co obejmuje / Co dostajesz —",
+            "width": 1
+          },
+          {
+            "scroll": 206,
+            "text": "Co obejmuje / Co dostajesz —",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Nowy produkt"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/admin/products/new",
+        "smallTargets": [
+          {
+            "height": 24,
+            "name": "Bold",
+            "width": 22.609375
+          },
+          {
+            "height": 24,
+            "name": "Italic",
+            "width": 22.96875
+          },
+          {
+            "height": 24,
+            "name": "Strikethrough",
+            "width": 22.96875
+          },
+          {
+            "height": 24,
+            "name": "Link",
+            "width": 22.59375
+          },
+          {
+            "height": 24,
+            "name": "Heading",
+            "width": 22.515625
+          },
+          {
+            "height": 24,
+            "name": "Quote",
+            "width": 22.90625
+          },
+          {
+            "height": 24,
+            "name": "Code",
+            "width": 22.890625
+          },
+          {
+            "height": 24,
+            "name": "Bullets",
+            "width": 22.890625
+          },
+          {
+            "height": 24,
+            "name": "Numbers",
+            "width": 22.890625
+          },
+          {
+            "height": 24,
+            "name": "Decrease Level",
+            "width": 22.890625
+          },
+          {
+            "height": 24,
+            "name": "Increase Level",
+            "width": 22.515625
+          },
+          {
+            "height": 24,
+            "name": "Attach Files",
+            "width": 22.78125
+          },
+          {
+            "height": 24,
+            "name": "Undo",
+            "width": 22.796875
+          },
+          {
+            "height": 24,
+            "name": "Redo",
+            "width": 22.78125
+          },
+          {
+            "height": 24,
+            "name": "Bold",
+            "width": 22.609375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [
+          {
+            "scroll": 268,
+            "text": "Otwórz nawigację",
+            "width": 1
+          },
+          {
+            "scroll": 125,
+            "text": "Nazwa —",
+            "width": 1
+          },
+          {
+            "scroll": 125,
+            "text": "Nazwa —",
+            "width": 1
+          },
+          {
+            "scroll": 93,
+            "text": "Opis —",
+            "width": 1
+          },
+          {
+            "scroll": 93,
+            "text": "Opis —",
+            "width": 1
+          },
+          {
+            "scroll": 247,
+            "text": "O tym nagraniu —",
+            "width": 1
+          },
+          {
+            "scroll": 247,
+            "text": "O tym nagraniu —",
+            "width": 1
+          },
+          {
+            "scroll": 412,
+            "text": "Co obejmuje / Co dostajesz —",
+            "width": 1
+          },
+          {
+            "scroll": 412,
+            "text": "Co obejmuje / Co dostajesz —",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Nowy produkt"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 485,
+            "width": 375
+          }
+        ],
+        "overflow": [
+          {
+            "classes": "text-t6 text-taupe no-underline hover:text-cream",
+            "right": 407.21875,
+            "tag": "A",
+            "text": "Anuluj"
+          }
+        ],
+        "path": "/admin/products/new",
+        "smallTargets": [
+          {
+            "height": 48,
+            "name": "Bold",
+            "width": 18.890625
+          },
+          {
+            "height": 48,
+            "name": "Italic",
+            "width": 19.828125
+          },
+          {
+            "height": 48,
+            "name": "Strikethrough",
+            "width": 19.8125
+          },
+          {
+            "height": 48,
+            "name": "Link",
+            "width": 18.890625
+          },
+          {
+            "height": 48,
+            "name": "Heading",
+            "width": 18.6875
+          },
+          {
+            "height": 48,
+            "name": "Quote",
+            "width": 19.625
+          },
+          {
+            "height": 48,
+            "name": "Code",
+            "width": 19.625
+          },
+          {
+            "height": 48,
+            "name": "Bullets",
+            "width": 19.625
+          },
+          {
+            "height": 48,
+            "name": "Numbers",
+            "width": 19.625
+          },
+          {
+            "height": 48,
+            "name": "Decrease Level",
+            "width": 19.625
+          },
+          {
+            "height": 48,
+            "name": "Increase Level",
+            "width": 18.6875
+          },
+          {
+            "height": 48,
+            "name": "Attach Files",
+            "width": 19.359375
+          },
+          {
+            "height": 48,
+            "name": "Undo",
+            "width": 19.359375
+          },
+          {
+            "height": 48,
+            "name": "Redo",
+            "width": 19.359375
+          },
+          {
+            "height": 48,
+            "name": "Bold",
+            "width": 18.890625
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "admin_packages": {
+      "normal": {
+        "clipped": [
+          {
+            "scroll": 134,
+            "text": "Otwórz nawigację",
+            "width": 1
+          },
+          {
+            "scroll": 63,
+            "text": "Nazwa —",
+            "width": 1
+          },
+          {
+            "scroll": 63,
+            "text": "Nazwa —",
+            "width": 1
+          },
+          {
+            "scroll": 78,
+            "text": "Dla kogo —",
+            "width": 1
+          },
+          {
+            "scroll": 78,
+            "text": "Dla kogo —",
+            "width": 1
+          },
+          {
+            "scroll": 83,
+            "text": "W skrócie —",
+            "width": 1
+          },
+          {
+            "scroll": 83,
+            "text": "W skrócie —",
+            "width": 1
+          },
+          {
+            "scroll": 127,
+            "text": "Co otrzymujecie —",
+            "width": 1
+          },
+          {
+            "scroll": 127,
+            "text": "Co otrzymujecie —",
+            "width": 1
+          },
+          {
+            "scroll": 95,
+            "text": "Dodatkowo —",
+            "width": 1
+          },
+          {
+            "scroll": 95,
+            "text": "Dodatkowo —",
+            "width": 1
+          },
+          {
+            "scroll": 182,
+            "text": "Przygotowanie i kontakt —",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Nowy pakiet"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": null,
+            "role": "status",
+            "text": "Podgląd aktualny"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/admin/packages/new",
+        "smallTargets": [
+          {
+            "height": 19.59375,
+            "name": "Przejdź do podglądu",
+            "width": 327
+          },
+          {
+            "height": 19.59375,
+            "name": "Odśwież listę",
+            "width": 90.75
+          },
+          {
+            "height": 19.59375,
+            "name": "Anuluj",
+            "width": 42.96875
+          },
+          {
+            "height": 19.59375,
+            "name": "Odśwież podgląd",
+            "width": 120.109375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [
+          {
+            "scroll": 268,
+            "text": "Otwórz nawigację",
+            "width": 1
+          },
+          {
+            "scroll": 125,
+            "text": "Nazwa —",
+            "width": 1
+          },
+          {
+            "scroll": 125,
+            "text": "Nazwa —",
+            "width": 1
+          },
+          {
+            "scroll": 155,
+            "text": "Dla kogo —",
+            "width": 1
+          },
+          {
+            "scroll": 155,
+            "text": "Dla kogo —",
+            "width": 1
+          },
+          {
+            "scroll": 166,
+            "text": "W skrócie —",
+            "width": 1
+          },
+          {
+            "scroll": 166,
+            "text": "W skrócie —",
+            "width": 1
+          },
+          {
+            "scroll": 254,
+            "text": "Co otrzymujecie —",
+            "width": 1
+          },
+          {
+            "scroll": 254,
+            "text": "Co otrzymujecie —",
+            "width": 1
+          },
+          {
+            "scroll": 190,
+            "text": "Dodatkowo —",
+            "width": 1
+          },
+          {
+            "scroll": 190,
+            "text": "Dodatkowo —",
+            "width": 1
+          },
+          {
+            "scroll": 364,
+            "text": "Przygotowanie i kontakt —",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Nowy pakiet"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": null,
+            "role": "status",
+            "text": "Podgląd aktualny"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 385,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/admin/packages/new",
+        "smallTargets": [
+          {
+            "height": 39.1875,
+            "name": "Odśwież listę",
+            "width": 181.5
+          },
+          {
+            "height": 39.1875,
+            "name": "Anuluj",
+            "width": 85.9375
+          },
+          {
+            "height": 39.1875,
+            "name": "Odśwież podgląd",
+            "width": 240.21875
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "admin_articles": {
+      "normal": {
+        "clipped": [
+          {
+            "scroll": 134,
+            "text": "Otwórz nawigację",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Nowy artykuł"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/admin/articles/new",
+        "smallTargets": [
+          {
+            "height": 41.59375,
+            "name": "Podgląd",
+            "width": 116.09375
+          },
+          {
+            "height": 24,
+            "name": "Bold",
+            "width": 20.125
+          },
+          {
+            "height": 24,
+            "name": "Italic",
+            "width": 20.59375
+          },
+          {
+            "height": 24,
+            "name": "Strikethrough",
+            "width": 20.59375
+          },
+          {
+            "height": 24,
+            "name": "Link",
+            "width": 20.109375
+          },
+          {
+            "height": 24,
+            "name": "Heading",
+            "width": 20
+          },
+          {
+            "height": 24,
+            "name": "Quote",
+            "width": 20.5
+          },
+          {
+            "height": 24,
+            "name": "Code",
+            "width": 20.484375
+          },
+          {
+            "height": 24,
+            "name": "Bullets",
+            "width": 20.5
+          },
+          {
+            "height": 24,
+            "name": "Numbers",
+            "width": 20.5
+          },
+          {
+            "height": 24,
+            "name": "Decrease Level",
+            "width": 20.5
+          },
+          {
+            "height": 24,
+            "name": "Increase Level",
+            "width": 20.015625
+          },
+          {
+            "height": 24,
+            "name": "Attach Files",
+            "width": 20.359375
+          },
+          {
+            "height": 24,
+            "name": "Undo",
+            "width": 20.359375
+          },
+          {
+            "height": 24,
+            "name": "Redo",
+            "width": 20.359375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [
+          {
+            "scroll": 268,
+            "text": "Otwórz nawigację",
+            "width": 1
+          },
+          {
+            "scroll": 64,
+            "text": "Bold\n        Italic\n        Strikethrough\n        Link",
+            "width": 59
+          },
+          {
+            "scroll": 113,
+            "text": "Heading\n        Quote\n        Code\n        Bullets\n        Numbers\n        Decrease Level\n        In",
+            "width": 103
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Nowy artykuł"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 429,
+            "width": 375
+          }
+        ],
+        "overflow": [
+          {
+            "classes": "text-t6 text-taupe no-underline hover:text-cream",
+            "right": 428.875,
+            "tag": "A",
+            "text": "Anuluj"
+          }
+        ],
+        "path": "/admin/articles/new",
+        "smallTargets": [
+          {
+            "height": 48,
+            "name": "Bold",
+            "width": 15.375
+          },
+          {
+            "height": 48,
+            "name": "Italic",
+            "width": 16.375
+          },
+          {
+            "height": 48,
+            "name": "Strikethrough",
+            "width": 16.375
+          },
+          {
+            "height": 48,
+            "name": "Link",
+            "width": 15.375
+          },
+          {
+            "height": 48,
+            "name": "Heading",
+            "width": 15.375
+          },
+          {
+            "height": 48,
+            "name": "Quote",
+            "width": 16.375
+          },
+          {
+            "height": 48,
+            "name": "Code",
+            "width": 16.375
+          },
+          {
+            "height": 48,
+            "name": "Bullets",
+            "width": 16.375
+          },
+          {
+            "height": 48,
+            "name": "Numbers",
+            "width": 16.375
+          },
+          {
+            "height": 48,
+            "name": "Decrease Level",
+            "width": 16.375
+          },
+          {
+            "height": 48,
+            "name": "Increase Level",
+            "width": 15.375
+          },
+          {
+            "height": 48,
+            "name": "Attach Files",
+            "width": 14.640625
+          },
+          {
+            "height": 48,
+            "name": "Undo",
+            "width": 15.375
+          },
+          {
+            "height": 48,
+            "name": "Redo",
+            "width": 15.375
+          },
+          {
+            "height": 39.1875,
+            "name": "Anuluj",
+            "width": 85.9375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "admin_calendar": {
+      "normal": {
+        "clipped": [
+          {
+            "scroll": 134,
+            "text": "Otwórz nawigację",
+            "width": 1
+          },
+          {
+            "scroll": 102,
+            "text": "Wolny termin.",
+            "width": 1
+          },
+          {
+            "scroll": 102,
+            "text": "Wolny termin.",
+            "width": 1
+          },
+          {
+            "scroll": 102,
+            "text": "Wolny termin.",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Kalendarz konsultacji"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": null,
+            "role": "status",
+            "text": "Trwa przenoszenie kalendarza. Klientów nadal obowiązują także blokady Google. Ten podgląd pokazuje terminy i blokady w aplikacji. Przepisz blokady z Google, a następnie przełącz dostępność w ustawieni"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/admin/consultation_calendar",
+        "smallTargets": [
+          {
+            "height": 42,
+            "name": "← Poprzedni miesiąc",
+            "width": 180.5
+          },
+          {
+            "height": 42,
+            "name": "Następny miesiąc →",
+            "width": 177.953125
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [
+          {
+            "scroll": 268,
+            "text": "Otwórz nawigację",
+            "width": 1
+          },
+          {
+            "scroll": 204,
+            "text": "Wolny termin.",
+            "width": 1
+          },
+          {
+            "scroll": 204,
+            "text": "Wolny termin.",
+            "width": 1
+          },
+          {
+            "scroll": 204,
+            "text": "Wolny termin.",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Kalendarz konsultacji"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": null,
+            "role": "status",
+            "text": "Trwa przenoszenie kalendarza. Klientów nadal obowiązują także blokady Google. Ten podgląd pokazuje terminy i blokady w aplikacji. Przepisz blokady z Google, a następnie przełącz dostępność w ustawieni"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [],
+        "path": "/admin/consultation_calendar",
+        "smallTargets": [
+          {
+            "height": 128,
+            "name": "28 września 2026",
+            "width": 37.5625
+          },
+          {
+            "height": 128,
+            "name": "29 września 2026",
+            "width": 37.578125
+          },
+          {
+            "height": 128,
+            "name": "30 września 2026",
+            "width": 37.5625
+          },
+          {
+            "height": 128,
+            "name": "1 października 2026",
+            "width": 37.578125
+          },
+          {
+            "height": 128,
+            "name": "2 października 2026",
+            "width": 37.5625
+          },
+          {
+            "height": 128,
+            "name": "3 października 2026",
+            "width": 37.578125
+          },
+          {
+            "height": 128,
+            "name": "4 października 2026",
+            "width": 37.578125
+          },
+          {
+            "height": 128,
+            "name": "5 października 2026",
+            "width": 37.5625
+          },
+          {
+            "height": 128,
+            "name": "6 października 2026",
+            "width": 37.578125
+          },
+          {
+            "height": 128,
+            "name": "7 października 2026",
+            "width": 37.5625
+          },
+          {
+            "height": 128,
+            "name": "8 października 2026",
+            "width": 37.578125
+          },
+          {
+            "height": 128,
+            "name": "9 października 2026",
+            "width": 37.5625
+          },
+          {
+            "height": 128,
+            "name": "10 października 2026",
+            "width": 37.578125
+          },
+          {
+            "height": 128,
+            "name": "11 października 2026",
+            "width": 37.578125
+          },
+          {
+            "height": 128,
+            "name": "12 października 2026",
+            "width": 37.5625
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      }
+    },
+    "admin_content": {
+      "normal": {
+        "clipped": [
+          {
+            "scroll": 134,
+            "text": "Otwórz nawigację",
+            "width": 1
+          },
+          {
+            "scroll": 99,
+            "text": "Identyfikator pola",
+            "width": 1
+          },
+          {
+            "scroll": 99,
+            "text": "Identyfikator pola",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Treści"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [
+          {
+            "classes": "",
+            "right": 434.03125,
+            "tag": "CODE",
+            "text": "home.hero.title"
+          },
+          {
+            "classes": "",
+            "right": 455.625,
+            "tag": "CODE",
+            "text": "home.hero.subtitle"
+          }
+        ],
+        "path": "/admin/content_blocks",
+        "smallTargets": [
+          {
+            "height": 41.59375,
+            "name": "Podgląd",
+            "width": 116.09375
+          },
+          {
+            "height": 40,
+            "name": "Sekcja główna",
+            "width": 309
+          },
+          {
+            "height": 40,
+            "name": "O mnie",
+            "width": 309
+          },
+          {
+            "height": 40,
+            "name": "Dwie ścieżki oferty",
+            "width": 309
+          },
+          {
+            "height": 40,
+            "name": "Metodologia",
+            "width": 309
+          },
+          {
+            "height": 40,
+            "name": "Z czym się nie zgadzam",
+            "width": 309
+          },
+          {
+            "height": 40,
+            "name": "Najczęściej zadawane pytania",
+            "width": 309
+          },
+          {
+            "height": 40,
+            "name": "Zakończenie",
+            "width": 309
+          },
+          {
+            "height": 40,
+            "name": "Blog",
+            "width": 309
+          },
+          {
+            "height": 37.59375,
+            "name": "Pokaż na stronie",
+            "width": 164.859375
+          }
+        ],
+        "unnamed": [],
+        "width": 390
+      },
+      "large": {
+        "clipped": [
+          {
+            "scroll": 268,
+            "text": "Otwórz nawigację",
+            "width": 1
+          },
+          {
+            "scroll": 198,
+            "text": "Identyfikator pola",
+            "width": 1
+          },
+          {
+            "scroll": 198,
+            "text": "Identyfikator pola",
+            "width": 1
+          }
+        ],
+        "documentWidth": 390,
+        "headings": [
+          "Treści"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 375,
+            "width": 375
+          }
+        ],
+        "overflow": [
+          {
+            "classes": "",
+            "right": 494.046875,
+            "tag": "CODE",
+            "text": "home.hero.title"
+          },
+          {
+            "classes": "",
+            "right": 537.25,
+            "tag": "CODE",
+            "text": "home.hero.subtitle"
+          }
+        ],
+        "path": "/admin/content_blocks",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 390
+      }
+    }
+  },
+  "announcements": {
+    "order": {
+      "before": {
+        "clipped": [],
+        "documentWidth": 765,
+        "headings": [
+          "Potwierdzamy płatność"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": null,
+            "role": "status",
+            "text": "To potrwa tylko chwilę - ta strona zaktualizuje się sama. Możesz ją spokojnie zostawić otwartą."
+          }
+        ],
+        "main": [
+          {
+            "scroll": 765,
+            "width": 765
+          }
+        ],
+        "overflow": [],
+        "path": "/orders/chJMDjYWrAzCu4EuNDZWhWkq",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 780
+      },
+      "ax_before": [
+        {
+          "role": "status",
+          "name": "",
+          "live": "polite",
+          "atomic": true
+        }
+      ],
+      "after": {
+        "clipped": [],
+        "documentWidth": 765,
+        "headings": [
+          "Dziękujemy za zakup!"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 765,
+            "width": 765
+          }
+        ],
+        "overflow": [],
+        "path": "/orders/chJMDjYWrAzCu4EuNDZWhWkq",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 780
+      },
+      "ax_after": [],
+      "focus": "BODY"
+    },
+    "booking": {
+      "before": {
+        "clipped": [],
+        "documentWidth": 765,
+        "headings": [
+          "Przetwarzamy płatność"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": "status",
+            "text": "Czekamy na potwierdzenie od operatora płatności…"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 765,
+            "width": 765
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings/UJNUf9GWfdnssEdSnPRAnDdY",
+        "smallTargets": [],
+        "unnamed": [],
+        "width": 780
+      },
+      "ax_before": [
+        {
+          "role": "status",
+          "name": "",
+          "live": "polite",
+          "atomic": true
+        }
+      ],
+      "after": {
+        "clipped": [],
+        "documentWidth": 765,
+        "headings": [
+          "Rezerwacja potwierdzona"
+        ],
+        "live": [],
+        "main": [
+          {
+            "scroll": 765,
+            "width": 765
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings/UJNUf9GWfdnssEdSnPRAnDdY",
+        "smallTargets": [
+          {
+            "height": 38,
+            "name": "Wróć do panelu",
+            "width": 576
+          }
+        ],
+        "unnamed": [],
+        "width": 780
+      },
+      "ax_after": [],
+      "focus": "BODY"
+    },
+    "auth_errors": {
+      "dom": {
+        "clipped": [],
+        "documentWidth": 765,
+        "headings": [
+          "Załóż konto"
+        ],
+        "live": [
+          {
+            "id": "error_explanation",
+            "live": null,
+            "role": "alert",
+            "text": "Nie udało się zapisać - 3 błędy:\n    \n\n    \n        Adres e-mail zostało już zajęte\n        Powtórzone hasło musi być taki sam jak w Hasło\n        Hasło jest za krótkie (przynajmniej 6 znaków)"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 765,
+            "width": 765
+          }
+        ],
+        "overflow": [],
+        "path": "/users/sign_up",
+        "smallTargets": [
+          {
+            "height": 43.59375,
+            "name": "Kontynuuj z Google",
+            "width": 338
+          },
+          {
+            "height": 18,
+            "name": "Polityka prywatności",
+            "width": 147.125
+          },
+          {
+            "height": 19.59375,
+            "name": "Zaloguj się",
+            "width": 76.453125
+          }
+        ],
+        "unnamed": [],
+        "width": 780
+      },
+      "ax": [
+        {
+          "role": "alert",
+          "name": "",
+          "live": "assertive",
+          "atomic": true
+        }
+      ]
+    },
+    "cart_added": {
+      "dom": {
+        "clipped": [],
+        "documentWidth": 765,
+        "headings": [
+          "Nowa bajka do koszyka"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": "status",
+            "text": "Nowa bajka do koszyka - dodano do koszyka."
+          },
+          {
+            "id": "",
+            "live": "polite",
+            "role": null,
+            "text": "Dodano do koszyka"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 765,
+            "width": 765
+          }
+        ],
+        "overflow": [],
+        "path": "/stories/nowa-bajka-do-koszyka",
+        "smallTargets": [
+          {
+            "height": 44,
+            "name": "Sklep",
+            "width": 38.359375
+          }
+        ],
+        "unnamed": [],
+        "width": 780
+      },
+      "ax": [
+        {
+          "role": "status",
+          "name": "",
+          "live": "polite",
+          "atomic": true
+        },
+        {
+          "role": "paragraph",
+          "name": "",
+          "live": "polite",
+          "atomic": false
+        }
+      ]
+    },
+    "booking_errors": {
+      "dom": {
+        "clipped": [],
+        "documentWidth": 765,
+        "headings": [
+          "Umów konsultację"
+        ],
+        "live": [
+          {
+            "id": "",
+            "live": "polite",
+            "role": "status",
+            "text": "Dostępne godziny - 16 listopada 2026\n          1 termin dostępny"
+          },
+          {
+            "id": "booking_form",
+            "live": "polite",
+            "role": null,
+            "text": "Name Podaj imię i nazwisko\n      \n    \n\n    \n    \n\n  Twoje dane\n\n\n  \n    \n      Imię i nazwisko\n      *\n    \n\n  \n\n            \n\n\n  \n\n\n    Podaj imię i nazwisko\n\n\n  \n    \n      Email\n      *\n    \n\n  \n\n"
+          },
+          {
+            "id": "",
+            "live": null,
+            "role": "alert",
+            "text": "Name Podaj imię i nazwisko"
+          }
+        ],
+        "main": [
+          {
+            "scroll": 765,
+            "width": 765
+          }
+        ],
+        "overflow": [],
+        "path": "/bookings",
+        "smallTargets": [
+          {
+            "height": 35.59375,
+            "name": "Zwroty i odwołania",
+            "width": 134.484375
+          }
+        ],
+        "unnamed": [],
+        "width": 780
+      },
+      "ax": [
+        {
+          "role": "status",
+          "name": "",
+          "live": "polite",
+          "atomic": true
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "live": "polite",
+          "atomic": false
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "live": "polite",
+          "atomic": true
+        },
+        {
+          "role": "alert",
+          "name": "",
+          "live": "assertive",
+          "atomic": true
+        }
+      ]
+    }
+  }
+}

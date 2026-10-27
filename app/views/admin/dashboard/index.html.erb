@@ -1,12 +1,12 @@
 <% content_for :title, "Pulpit - Panel" %>
 
-<div class="p-6 sm:p-8 flex flex-col gap-8 max-w-[1100px]">
+<div class="p-6 sm:p-8 min-w-0 [overflow-wrap:anywhere] flex flex-col gap-8 max-w-[1100px]">
   <div class="flex flex-col gap-1">
     <h1 class="text-t2 font-display text-cream">Pulpit</h1>
     <p class="text-t5 text-taupe">Cześć, <%= current_user.full_name || current_user.email %>.</p>
   </div>
 
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
     <%= render "admin/shared/stat", label: "Nadchodzące", value: @upcoming_count,
                hint: "opłacone konsultacje", icon_name: "calendar-days" %>
     <%= render "admin/shared/stat", label: "Oczekujące", value: @pending_count,
@@ -39,7 +39,7 @@
   </section>
 
   <section class="flex flex-col gap-3">
-    <div class="flex items-center justify-between gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-4">
       <h2 class="text-t3 font-display text-cream">Ostatnie rezerwacje</h2>
       <a href="<%= admin_bookings_path %>" class="text-t6">Zobacz wszystkie</a>
     </div>

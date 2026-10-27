@@ -19,8 +19,8 @@
 
 <div class="flex flex-col gap-1.5">
   <div class="flex flex-wrap items-baseline gap-2">
-    <span class="text-t6 uppercase text-taupe">Cena w Paddle</span>
-    <span class="text-t6 text-taupe-dark">kwotę ustawiasz w Paddle, nie tutaj</span>
+    <label for="record-paddle-price-id" class="text-t6 uppercase text-taupe">Cena w Paddle</label>
+    <span id="record-paddle-price-hint" class="text-t6 text-taupe">kwotę ustawiasz w Paddle, nie tutaj</span>
 
     <%# link_to rather than button_to: this partial renders inside the record's
         form, and button_to would nest a <form> in it. Reloads the page, so it is
@@ -35,17 +35,17 @@
                    options_for_select(options, record.paddle_price_id),
                    include_blank: "- wybierz cenę -",
                    id: "record-paddle-price-id",
-                   class: "form-control" %>
+                   class: "form-control", aria: { describedby: "record-paddle-price-hint#{' record-paddle-price-error' if record.errors[:paddle_price_id].any?}", invalid: record.errors[:paddle_price_id].any? } %>
   <% else %>
     <%= text_field_tag "record[paddle_price_id]", record.paddle_price_id,
                        id: "record-paddle-price-id", class: "form-control",
-                       placeholder: "pri_..." %>
-    <span class="text-t6 text-orange-400">
+                       placeholder: "pri_...", aria: { describedby: "record-paddle-price-hint record-paddle-price-unavailable#{' record-paddle-price-error' if record.errors[:paddle_price_id].any?}", invalid: record.errors[:paddle_price_id].any? } %>
+    <span id="record-paddle-price-unavailable" class="text-t6 text-orange-400">
       Nie udało się pobrać cen z Paddle. Wklej identyfikator ceny ręcznie.
     </span>
   <% end %>
 
   <% if record.errors[:paddle_price_id].any? %>
-    <span class="text-t6 text-red-400"><%= record.errors[:paddle_price_id].to_sentence %></span>
+    <span id="record-paddle-price-error" class="text-t6 text-red-400"><%= record.errors[:paddle_price_id].to_sentence %></span>
   <% end %>
 </div>

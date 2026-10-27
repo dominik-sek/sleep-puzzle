@@ -1,13 +1,12 @@
-import { application } from "../controllers/application"
+import { controllerFeatures } from "../controllers"
 
-// Keep the shared navigation and form controllers ready immediately. Only the
-// two large features absent from most pages cross an asynchronous boundary.
+// Match capabilities in the incoming markup, rather than guessing from the URL:
+// the same controls can arrive in an initial page, a Turbo frame, or a stream.
 const features = [
+    ...controllerFeatures,
     {
-        selector: '[data-controller~="cally"]',
-        load: () => import("../controllers/cally_controller").then(({ default: controller }) => {
-            application.register("cally", controller)
-        })
+        selector: "input[data-direct-upload-url]",
+        load: () => import("@rails/activestorage").then((storage) => storage.start())
     },
     {
         selector: "trix-editor",
@@ -34,7 +33,7 @@ function report(error) {
 }
 
 // Pause Turbo's page/frame replacement until custom elements and controllers
-// are ready, so a newly visible calendar accepts the first interaction.
+// are ready, so newly visible controls accept the first interaction.
 for (const eventName of ["turbo:before-render", "turbo:before-frame-render"]) {
     document.addEventListener(eventName, (event) => {
         const root = event.detail.newBody || event.detail.newFrame
@@ -45,6 +44,16 @@ for (const eventName of ["turbo:before-render", "turbo:before-frame-render"]) {
     })
 }
 
+// Stream templates are still detached here: load their controllers before the
+// controls become visible, just as for full-page and frame navigations.
+document.addEventListener("turbo:before-stream-render", (event) => {
+    const render = event.detail.render
+    event.detail.render = async (stream) => {
+        await prepare(stream.templateElement.content).catch(report)
+        return render(stream)
+    }
+})
+
 // Covers initial HTML and Turbo Stream insertions, including a rich editor
 // added to a section that previously contained only plain-text fields.
 new MutationObserver((mutations) => {
@@ -54,6 +63,6 @@ new MutationObserver((mutations) => {
             if (node.nodeType === Node.ELEMENT_NODE) prepare(node).catch(report)
         }
     }
-}).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-controller"] })
+}).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-controller", "data-direct-upload-url"] })
 
 prepare(document).catch(report)

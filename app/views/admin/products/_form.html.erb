@@ -38,7 +38,7 @@
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="flex flex-col gap-1.5">
-      <span class="text-t6 uppercase text-taupe">Rodzaj</span>
+      <label for="record-kind" class="text-t6 uppercase text-taupe">Rodzaj</label>
       <%= select_tag "record[kind]",
                      options_for_select(Product.kind_options, product.kind),
                      include_blank: "- wybierz rodzaj -",
@@ -47,7 +47,7 @@
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <span class="text-t6 uppercase text-taupe">Ikona</span>
+      <label for="record-icon" class="text-t6 uppercase text-taupe">Ikona</label>
       <%# one emoji, shown on the shop card and in the cart. Blank falls back to
           one per rodzaj, so this can be left alone. %>
       <%= text_field_tag "record[icon]", product.icon, id: "record-icon",
@@ -56,7 +56,7 @@
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <span class="text-t6 uppercase text-taupe">Długość (min)</span>
+      <label for="record-length-minutes" class="text-t6 uppercase text-taupe">Długość (min)</label>
       <%= number_field_tag "record[length_minutes]", product.length_minutes, id: "record-length-minutes",
                            min: 1, class: "form-control" %>
     </div>
@@ -65,7 +65,7 @@
   </div>
 
   <div class="flex flex-col gap-1.5" data-product-kind-target="story">
-    <span class="text-t6 uppercase text-taupe">Plik audio (Bunny)</span>
+    <label for="<%= BunnyStorageService.configured? ? 'record-audio' : 'record-cdn-path' %>" class="text-t6 uppercase text-taupe">Plik audio (Bunny)</label>
 
     <%= render "admin/products/audio_status", product: product %>
 
@@ -124,12 +124,12 @@
 
   <%= render "admin/shared/publication_fields", record: product %>
 
-  <div class="flex items-center gap-3">
+  <div class="flex flex-wrap items-center gap-3">
     <%= submit_tag product.persisted? ? "Zapisz produkt" : "Dodaj produkt",
                    data: { audio_upload_target: "submit" },
-                   class: "inline-flex items-center justify-center rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink shadow-sm cursor-pointer hover:bg-accent-hover" %>
+                   class: "inline-flex min-h-11 max-w-full whitespace-normal items-center justify-center rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink shadow-sm cursor-pointer hover:bg-accent-hover" %>
 
     <%= link_to "Anuluj", admin_products_path,
-                class: "text-t6 text-taupe no-underline hover:text-cream" %>
+                class: "inline-flex min-h-11 min-w-11 items-center rounded-lg text-t6 text-taupe no-underline hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
   </div>
 <% end %>

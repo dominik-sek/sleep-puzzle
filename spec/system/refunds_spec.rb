@@ -24,7 +24,9 @@ RSpec.describe "Refunds on mobile", type: :system do
     product = create_product
     visit catalogue_product_path(product)
     find("form[action='#{cart_items_path}'] button").click
-    expect(page).to have_link(href: cart_path)
+    # Wait for the add response before navigating: the navbar's cart link was
+    # already present and did not prove that the session cart had been updated.
+    expect(page).to have_css("main form[action$='/cart_items/#{product.id}']")
     visit cart_path
     expect(page).to have_unchecked_field("digital_content_consent")
     expect(find_field("digital_content_consent")[:required]).to eq("true")

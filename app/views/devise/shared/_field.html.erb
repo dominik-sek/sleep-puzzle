@@ -4,12 +4,21 @@
 
   locals: form, name, label, type (default :text), hint, options
 %>
+<% hint_id = "#{form.object_name}_#{name}_hint" if local_assigns[:hint].present? %>
+<% error_id = "#{form.object_name}_#{name}_error" if form.object.errors[name].any? %>
+<% field_options = { class: "form-control" }.merge(local_assigns.fetch(:options, {})) %>
+<% field_options[:aria] = field_options.fetch(:aria, {}).merge(
+     invalid: error_id ? "true" : nil,
+     describedby: [field_options.dig(:aria, :describedby), hint_id, error_id].compact.join(" ").presence) %>
 <div class="flex flex-col gap-1.5">
   <%= form.label name, label, class: "text-t6 text-taupe" %>
   <%= form.public_send(:"#{local_assigns.fetch(:type, :text)}_field", name,
-        { class: "form-control" }.merge(local_assigns.fetch(:options, {}))) %>
+        field_options) %>
 
   <% if local_assigns[:hint].present? %>
-    <span class="text-t6 text-taupe-dark"><%= hint %></span>
+    <span id="<%= hint_id %>" class="text-t6 text-taupe"><%= hint %></span>
+  <% end %>
+  <% if error_id %>
+    <span id="<%= error_id %>" class="text-t6 text-red-400"><%= form.object.errors[name].to_sentence %></span>
   <% end %>
 </div>

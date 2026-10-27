@@ -62,7 +62,7 @@ module Sidebar
       position: :left,
       storage_key: "sidebarOpen",
       width: "w-64",
-      collapsed_width: "w-13",
+      collapsed_width: "w-16",
       min_height_class: "min-h-screen",
       show_mobile_toggle: true,
       classes: nil
@@ -99,7 +99,7 @@ module Sidebar
     end
 
     def mobile_panel_classes
-      base = "absolute inset-y-0 w-64 shadow-xl transition-transform duration-300 ease-out"
+      base = "absolute inset-y-0 w-64 max-w-full motion-safe:transition-transform motion-safe:duration-300 ease-out"
       position_class = @position == :right ? "right-0" : "left-0"
 
       variant_class = case @variant

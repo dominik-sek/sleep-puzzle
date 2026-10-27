@@ -7,10 +7,10 @@
 %>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
   <div class="flex flex-col gap-1.5">
-    <span class="text-t6 uppercase text-taupe">Kolejność</span>
+    <label for="record-position" class="text-t6 uppercase text-taupe">Kolejność</label>
     <%= number_field_tag "record[position]", record.position, id: "record-position", min: 0,
-                         class: "form-control" %>
-    <span class="text-t6 text-taupe-dark">Niższa liczba wyświetla się wyżej.</span>
+                         class: "form-control", aria: { describedby: "record-position-hint" } %>
+    <span id="record-position-hint" class="text-t6 text-taupe">Niższa liczba wyświetla się wyżej.</span>
   </div>
 
   <div class="flex flex-col gap-1.5">

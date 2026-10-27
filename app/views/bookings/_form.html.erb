@@ -1,5 +1,12 @@
-<%= turbo_frame_tag "booking_form", data: { cally_target: "bookingFrame" } do %>
+<%= turbo_frame_tag "booking_form", data: { cally_target: "bookingFrame" }, aria: { live: "polite" } do %>
 <%= form_with model: booking, url: bookings_path do |f| %>
+  <% if booking.errors.any? %>
+    <div role="alert" class="mb-4 rounded-xl border border-red-400 p-4 text-t6 text-red-300">
+      <ul class="m-0 list-disc pl-4">
+        <% booking.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
 
     <%= hidden_field_tag "booking[date]", local_assigns[:submitted_date], data: { cally_target: "dateField" } %>
     <%= hidden_field_tag "booking[hour]", local_assigns[:submitted_hour], data: { cally_target: "timeField" } %>
@@ -9,7 +16,7 @@
 <div class="space-y-4">
   <%= render Forms::Component.new(label: t("bookings.form.name"), name: "booking[name]", required: true, error: booking.errors[:name].first) do |c| %>
     <% c.with_input do %>
-      <%= f.text_field :name, class: "form-control", placeholder: t("bookings.form.name_placeholder") %>
+      <%= f.text_field :name, class: "form-control", placeholder: t("bookings.form.name_placeholder"), required: true, autocomplete: "name", aria: c.input_aria %>
     <% end %>
   <% end %>
 
@@ -17,7 +24,7 @@
       whatever is posted here in favour of current_user.email %>
   <%= render Forms::Component.new(label: t("bookings.form.email"), name: "booking[email]", required: true, helper_text: t("bookings.form.email_hint"), error: booking.errors[:email].first) do |c| %>
     <% c.with_input do %>
-      <%= f.email_field :email, class: "form-control", readonly: true %>
+      <%= f.email_field :email, class: "form-control", readonly: true, aria: c.input_aria %>
     <% end %>
   <% end %>
 
@@ -28,7 +35,7 @@
     <% c.with_input do %>
       <%= f.select :package_id, package_options,
                    { prompt: t("bookings.form.package_prompt") },
-                   { class: "form-control" } %>
+                   { class: "form-control", required: true, aria: c.input_aria } %>
     <% end %>
   <% end %>
 </div>

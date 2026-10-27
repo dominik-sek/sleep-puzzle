@@ -32,7 +32,7 @@ RSpec.describe "Interactive consultation calendar", type: :system do
     day("2026-10-12").send_keys(:enter)
     within(dialog) do
       expect(page).to have_content("12 października 2026")
-      box = page.evaluate_script("document.querySelector('dialog').getBoundingClientRect().toJSON()")
+      box = page.evaluate_script("document.querySelector('dialog.consultation-calendar-dialog[open]').getBoundingClientRect().toJSON()")
       expect(box["left"] + box["width"] / 2).to be_within(1).of(720)
       expect(box["top"] + box["height"] / 2).to be_within(1).of(page.evaluate_script("window.innerHeight / 2"))
       page.save_screenshot(Rails.root.join("tmp", "interactive-consultation-desktop.png"))
@@ -204,7 +204,7 @@ RSpec.describe "Interactive consultation calendar", type: :system do
     expect(tiles.last["right"]).to be <= 390
     day("2026-10-11").click
     expect(dialog).to have_content("11 października 2026")
-    box = page.evaluate_script("document.querySelector('dialog').getBoundingClientRect().toJSON()")
+    box = page.evaluate_script("document.querySelector('dialog.consultation-calendar-dialog[open]').getBoundingClientRect().toJSON()")
     expect(box["left"] + box["width"] / 2).to be_within(1).of(195)
     expect(box["top"] + box["height"] / 2).to be_within(1).of(422)
     expect(box["width"]).to be <= 358

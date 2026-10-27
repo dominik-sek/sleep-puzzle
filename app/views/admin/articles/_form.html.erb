@@ -29,7 +29,7 @@
             <button type="button" data-article-editor-target="languageTab" data-lang="<%= locale %>"
                     data-action="click->article-editor#selectLanguage"
                     aria-pressed="<%= locale == :pl %>"
-                    class="rounded-md px-3 py-1.5 text-t6 cursor-pointer <%= locale == :pl ? 'bg-accent text-ink' : 'text-tan hover:text-cream' %>">
+                    class="min-h-11 min-w-11 rounded-md px-3 py-1.5 text-t6 cursor-pointer <%= locale == :pl ? 'bg-accent text-ink' : 'text-tan hover:text-cream' %>">
               <%= locale == :pl ? "Polski" : "English" %>
             </button>
           <% end %>
@@ -39,19 +39,20 @@
           <span class="text-t6 uppercase text-taupe">Tytuł</span>
           <% Translatable::LOCALES.each do |locale| %>
             <div data-article-editor-target="localePanel" data-lang="<%= locale %>" <%= "hidden" unless locale == :pl %>>
+              <%= label_tag "record-title-#{locale}", "Tytuł — #{locale == :pl ? 'Polski' : 'English'}", class: "sr-only" %>
               <%= text_field_tag "record[translations][title][#{locale}]",
                                  article.raw_translation(:title, locale),
-                                 id: "record-title-#{locale}", class: "form-control" %>
+                                 id: "record-title-#{locale}", aria: { label: "Tytuł — #{locale == :pl ? 'Polski' : 'English'}" }, class: "form-control" %>
             </div>
           <% end %>
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <span class="text-t6 uppercase text-taupe">Adres (slug)</span>
-          <%= text_field_tag "record[slug]", article.slug, id: "record-slug",
+          <label for="record-slug" class="text-t6 uppercase text-taupe">Adres (slug)</label>
+          <%= text_field_tag "record[slug]", article.slug, id: "record-slug", aria: { describedby: "record-slug-hint" },
                              placeholder: "np. sen-niemowlaka",
                              class: "form-control" %>
-          <span class="text-t6 text-taupe-dark">
+          <span id="record-slug-hint" class="text-t6 text-taupe">
             Zostaw puste, aby wygenerować z tytułu. Tylko małe litery, cyfry i myślniki.
           </span>
         </div>
@@ -60,28 +61,30 @@
           <span class="text-t6 uppercase text-taupe">Zajawka</span>
           <% Translatable::LOCALES.each do |locale| %>
             <div data-article-editor-target="localePanel" data-lang="<%= locale %>" <%= "hidden" unless locale == :pl %>>
+              <%= label_tag "record-excerpt-#{locale}", "Zajawka — #{locale == :pl ? 'Polski' : 'English'}", class: "sr-only" %>
               <%= text_area_tag "record[translations][excerpt][#{locale}]",
                                 article.raw_translation(:excerpt, locale),
-                                id: "record-excerpt-#{locale}", rows: 3, class: "form-control" %>
+                                id: "record-excerpt-#{locale}", aria: { label: "Zajawka — #{locale == :pl ? 'Polski' : 'English'}" }, rows: 3, class: "form-control" %>
             </div>
           <% end %>
-          <span class="text-t6 text-taupe-dark">Krótki opis na liście artykułów; używany też jako opis SEO, gdy nie ma własnego.</span>
+          <span class="text-t6 text-taupe">Krótki opis na liście artykułów; używany też jako opis SEO, gdy nie ma własnego.</span>
         </div>
 
         <div class="flex flex-col gap-2">
           <span class="text-t6 uppercase text-taupe">Treść</span>
           <% Translatable::LOCALES.each do |locale| %>
             <div data-article-editor-target="localePanel" data-lang="<%= locale %>" <%= "hidden" unless locale == :pl %>>
+              <%= label_tag "record-body-#{locale}", "Treść — #{locale == :pl ? 'Polski' : 'English'}", class: "sr-only" %>
               <%= rich_text_area_tag "record[body][#{locale}]", article.body_editor_html(locale),
-                                     id: "record-body-#{locale}" %>
+                                     id: "record-body-#{locale}", aria: { label: "Treść — #{locale == :pl ? 'Polski' : 'English'}" } %>
             </div>
           <% end %>
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <span class="text-t6 uppercase text-taupe">Zdjęcie na okładkę</span>
+          <label for="record-cover-image" class="text-t6 uppercase text-taupe">Zdjęcie na okładkę</label>
           <% if article.cover_image.attached? %>
-            <div class="flex items-center gap-3">
+            <div class="flex flex-wrap items-center gap-3">
               <%= image_tag article.cover_image.variant(resize_to_limit: [400, 400]),
                             class: "size-24 rounded-lg border border-border-strong object-cover", alt: "" %>
               <span class="text-t6 text-taupe">Wgranie nowego zdjęcia zastąpi obecne.</span>
@@ -107,11 +110,11 @@
             </div>
 
             <div class="flex flex-col gap-1.5">
-              <span class="text-t6 uppercase text-taupe">Data publikacji (<%= Time.zone.name %>)</span>
+              <label for="record-published-at" class="text-t6 uppercase text-taupe">Data publikacji (<%= Time.zone.name %>)</label>
               <%= datetime_local_field_tag "record[published_at]",
                                            article.published_at&.strftime("%Y-%m-%dT%H:%M"),
                                            id: "record-published-at", class: "form-control" %>
-              <span class="text-t6 text-taupe-dark">Puste pole ustawi datę automatycznie przy publikacji.</span>
+              <span class="text-t6 text-taupe">Puste pole ustawi datę automatycznie przy publikacji.</span>
             </div>
           </div>
         </fieldset>
@@ -123,9 +126,10 @@
             <span class="text-t6 uppercase text-taupe">Tytuł w wynikach wyszukiwania</span>
             <% Translatable::LOCALES.each do |locale| %>
               <div data-article-editor-target="localePanel" data-lang="<%= locale %>" <%= "hidden" unless locale == :pl %>>
-                <%= text_field_tag "record[translations][meta_title][#{locale}]",
+                <%= label_tag "record-meta-title-#{locale}", "Tytuł w wynikach wyszukiwania — #{locale == :pl ? 'Polski' : 'English'}", class: "sr-only" %>
+              <%= text_field_tag "record[translations][meta_title][#{locale}]",
                                    article.raw_translation(:meta_title, locale),
-                                   id: "record-meta-title-#{locale}", class: "form-control" %>
+                                   id: "record-meta-title-#{locale}", aria: { label: "Tytuł w wynikach wyszukiwania — #{locale == :pl ? 'Polski' : 'English'}" }, class: "form-control" %>
               </div>
             <% end %>
           </div>
@@ -133,20 +137,21 @@
             <span class="text-t6 uppercase text-taupe">Opis w wynikach wyszukiwania</span>
             <% Translatable::LOCALES.each do |locale| %>
               <div data-article-editor-target="localePanel" data-lang="<%= locale %>" <%= "hidden" unless locale == :pl %>>
-                <%= text_area_tag "record[translations][meta_description][#{locale}]",
+                <%= label_tag "record-meta-description-#{locale}", "Opis w wynikach wyszukiwania — #{locale == :pl ? 'Polski' : 'English'}", class: "sr-only" %>
+              <%= text_area_tag "record[translations][meta_description][#{locale}]",
                                   article.raw_translation(:meta_description, locale),
-                                  id: "record-meta-description-#{locale}", rows: 3, class: "form-control" %>
+                                  id: "record-meta-description-#{locale}", aria: { label: "Opis w wynikach wyszukiwania — #{locale == :pl ? 'Polski' : 'English'}" }, rows: 3, class: "form-control" %>
               </div>
             <% end %>
           </div>
         </fieldset>
 
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-3">
           <%= submit_tag article.persisted? ? "Zapisz artykuł" : "Dodaj artykuł",
-                         class: "inline-flex items-center justify-center rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink shadow-sm cursor-pointer hover:bg-accent-hover" %>
+                         class: "inline-flex min-h-11 max-w-full whitespace-normal items-center justify-center rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink shadow-sm cursor-pointer hover:bg-accent-hover" %>
 
           <%= link_to "Anuluj", admin_articles_path,
-                      class: "text-t6 text-taupe no-underline hover:text-cream" %>
+                      class: "inline-flex min-h-11 min-w-11 items-center rounded-lg text-t6 text-taupe no-underline hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
         </div>
       <% end %>
     </section>

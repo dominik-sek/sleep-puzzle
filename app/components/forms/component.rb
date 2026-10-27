@@ -59,6 +59,17 @@ module Forms
       "#{@id}_error"
     end
 
+    def hint_id
+      "#{@id}_hint"
+    end
+
+    # The caller owns its input slot, so expose the same relationship metadata
+    # used by the wrapper instead of silently losing it at that boundary.
+    def input_aria
+      { invalid: @error.present? ? "true" : nil,
+        describedby: @error.present? ? error_id : (@helper_text.present? ? hint_id : nil) }
+    end
+
     def wrapper_classes
       base = case @variant
       when :inline then "flex items-center gap-4"

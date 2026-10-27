@@ -1,6 +1,5 @@
 <%#
-  The cart itself, in a turbo frame so adding, changing a quantity or removing a
-  line can replace it without a reload.
+  The cart itself, so adding or removing a line can replace it without a reload.
 
   Wrapped in an id rather than rendered inline by the page: cart_items streams
   target this, and so does orders#abandon when it puts a discarded checkout back.
@@ -50,7 +49,7 @@
       <p class="text-t5 text-taupe m-0"><%= content_block("cart.empty.body") %></p>
 
       <%= link_to products_path,
-            class: "mt-5.5 inline-block rounded-[26px] bg-accent px-6.5 py-3.5 text-[15px] font-bold text-ink no-underline hover:bg-accent-hover" do %>
+            class: "mt-5.5 inline-flex min-h-11 items-center justify-center rounded-full bg-accent px-6 py-4 text-t6 font-bold text-ink no-underline hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [overflow-wrap:anywhere]" do %>
         <%= content_block("cart.empty.cta") %>
       <% end %>
     </div>
@@ -64,9 +63,9 @@
     <%# only when every line has a price: a total that quietly omits a line is
         worse than none, since it is the number the buyer checks %>
     <% if (total = cart.total_label) %>
-      <div class="mt-7.5 flex items-center justify-between rounded-2xl border border-border-strong bg-surface p-5.5">
+      <div class="mt-7.5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border-strong bg-surface p-5.5">
         <span class="text-t5 font-bold text-cream"><%= content_block("cart.hero.total") %></span>
-        <span class="text-[22px] font-extrabold text-accent tabular-nums"><%= total %></span>
+        <span class="text-t3 font-bold text-accent tabular-nums"><%= total %></span>
       </div>
     <% end %>
 
@@ -74,7 +73,7 @@
     <%= form_with url: orders_path, class: "block mt-6.5" do |form| %>
       <%= render "shared/purchase_consent", kind: :audio, field_prefix: nil %>
       <%= form.button type: :submit,
-            class: "w-full cursor-pointer rounded-[28px] border-0 bg-accent px-6 py-4 text-t5 font-bold text-ink hover:bg-accent-hover" do %>
+            class: "w-full cursor-pointer rounded-full border-0 bg-accent px-6 py-4 text-t5 font-bold text-ink hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [overflow-wrap:anywhere]" do %>
         <%= content_block("cart.hero.checkout") %>
       <% end %>
     <% end %>

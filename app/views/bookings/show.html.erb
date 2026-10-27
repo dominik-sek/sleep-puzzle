@@ -3,5 +3,8 @@
   <%# the webhook usually lands a moment after Paddle redirects here, so the status
       partial is swapped in over a stream instead of making the buyer refresh %>
   <%= turbo_stream_from @booking %>
-  <%= render "status", booking: @booking %>
+  <div class="w-full flex flex-col items-center" data-controller="payment-status">
+    <p class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-payment-status-target="announcement"></p>
+    <%= render "status", booking: @booking %>
+  </div>
 <% end %>
