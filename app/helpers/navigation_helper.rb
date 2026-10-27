@@ -10,15 +10,12 @@ module NavigationHelper
   # Kept here rather than in shared/_navbar because the partial renders this list
   # twice - once inline for the bar, once inside the hamburger panel - and two
   # hand-written copies drift the first time a link is added.
-  #
-  # Blog is designed but parked, so its entry stays commented out alongside the
-  # markup that would render it.
   def primary_nav_items
     [
       { label: t("offers.audio"), href: audio_processes_path },
       { label: t("offers.stories"), href: stories_path },
-      { label: t("offers.one_to_one"), href: packages_path }
-      # { label: t("nav.blog"), href: blog_path },
+      { label: t("offers.one_to_one"), href: packages_path },
+      { label: t("nav.blog"), href: articles_path }
       # Hidden entries retained for restoration:
       # { label: t("nav.about"), href: about_path },
       # { label: t("nav.shop"), href: products_path },

@@ -90,6 +90,15 @@ who can't reach 1:1, 1:1 when they can - rather than a single price point.
   does not add its own entry is not editable** - and unrewordable chrome (navbar,
   footer headings, language switcher) belongs in `nav.*` in the locale files
   instead.
+* **The blog publishes longer-form articles.** The owner writes, drafts and
+  publishes articles in the admin panel; they appear at `/blog` (Polish) and
+  `/en/blog` (English), with the newest three teased on the home page. Articles
+  are bilingual with the usual Polish fallback, and each carries its own SEO
+  title and description. The site also serves a sitemap, an RSS feed and
+  `llms.txt` / `llms-full.txt` so search engines and AI crawlers can find the
+  content; those are first-party files that add nothing to a reader's browser.
+  The site-wide SEO copy (brand name, default description, social link) is
+  editable in the content panel, so it can change without a deploy.
 * **The staff side is separate.** Admin panel, Solid Queue dashboard and PgHero all
   live under `/admin`, gated by one `users.admin` boolean.
 
@@ -143,8 +152,7 @@ who can't reach 1:1, 1:1 when they can - rather than a single price point.
 * **Deliberately absent, decided against, not to be re-proposed:** a buyer-facing
   purchase history (Paddle emails the receipt; the dashboard library answers the
   question buyers actually ask); a subscriber model (Brevo owns the list, the double
-  opt-in and the unsubscribe); an English admin panel; the hero kicker badge; the
-  blog teaser.
+  opt-in and the unsubscribe); an English admin panel; the hero kicker badge.
 * **Open / not yet built:** a media-and-podcast strip on the home page.
 
 ## Brand Commitments

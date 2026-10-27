@@ -1,0 +1,174 @@
+<div class="flex flex-col gap-5"
+     data-controller="article-editor"
+     data-article-editor-url-value="<%= preview_admin_articles_path %>"
+     data-article-editor-lang-value="pl"
+     data-action="input->article-editor#schedule change->article-editor#schedule trix-change->article-editor#schedule">
+  <div class="flex items-center justify-end">
+    <button type="button" data-article-editor-target="previewButton"
+            data-action="click->article-editor#togglePreview"
+            aria-controls="article-preview" aria-expanded="false"
+            class="inline-flex items-center gap-2 rounded-lg border border-border-input bg-surface px-4 py-2.5 text-t6 text-cream hover:bg-ink-soft cursor-pointer">
+      <%= icon "external-link", class: "size-4" %>
+      <span data-article-editor-target="previewButtonLabel">Podgląd</span>
+    </button>
+  </div>
+
+  <div class="article-workspace grid grid-cols-1 gap-5 min-w-0 items-start"
+       data-article-editor-target="workspace" data-preview-open="false">
+    <section class="article-editor min-w-0 rounded-xl border border-border-strong bg-surface"
+             aria-label="Edytor artykułu">
+      <%# multipart because the cover image is uploaded through this form; form_with only
+          infers that from a builder-based file field, and this form uses tag helpers %>
+      <%= form_with model: [ :admin, article ], scope: :record, multipart: true,
+                    data: { article_editor_target: "form" },
+                    class: "flex flex-col gap-6 p-4 sm:p-6" do %>
+        <%= render "admin/shared/form_errors", record: article %>
+
+        <div role="group" aria-label="Język edycji" class="inline-flex self-start rounded-lg border border-border-input bg-ink-soft p-1">
+          <% Translatable::LOCALES.each do |locale| %>
+            <button type="button" data-article-editor-target="languageTab" data-lang="<%= locale %>"
+                    data-action="click->article-editor#selectLanguage"
+                    aria-pressed="<%= locale == :pl %>"
+                    class="rounded-md px-3 py-1.5 text-t6 cursor-pointer <%= locale == :pl ? 'bg-accent text-ink' : 'text-tan hover:text-cream' %>">
+              <%= locale == :pl ? "Polski" : "English" %>
+            </button>
+          <% end %>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <span class="text-t6 uppercase text-taupe">Tytuł</span>
+          <% Translatable::LOCALES.each do |locale| %>
+            <div data-article-editor-target="localePanel" data-lang="<%= locale %>" <%= "hidden" unless locale == :pl %>>
+              <%= text_field_tag "record[translations][title][#{locale}]",
+                                 article.raw_translation(:title, locale),
+                                 id: "record-title-#{locale}", class: "form-control" %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <span class="text-t6 uppercase text-taupe">Adres (slug)</span>
+          <%= text_field_tag "record[slug]", article.slug, id: "record-slug",
+                             placeholder: "np. sen-niemowlaka",
+                             class: "form-control" %>
+          <span class="text-t6 text-taupe-dark">
+            Zostaw puste, aby wygenerować z tytułu. Tylko małe litery, cyfry i myślniki.
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <span class="text-t6 uppercase text-taupe">Zajawka</span>
+          <% Translatable::LOCALES.each do |locale| %>
+            <div data-article-editor-target="localePanel" data-lang="<%= locale %>" <%= "hidden" unless locale == :pl %>>
+              <%= text_area_tag "record[translations][excerpt][#{locale}]",
+                                article.raw_translation(:excerpt, locale),
+                                id: "record-excerpt-#{locale}", rows: 3, class: "form-control" %>
+            </div>
+          <% end %>
+          <span class="text-t6 text-taupe-dark">Krótki opis na liście artykułów; używany też jako opis SEO, gdy nie ma własnego.</span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <span class="text-t6 uppercase text-taupe">Treść</span>
+          <% Translatable::LOCALES.each do |locale| %>
+            <div data-article-editor-target="localePanel" data-lang="<%= locale %>" <%= "hidden" unless locale == :pl %>>
+              <%= rich_text_area_tag "record[body][#{locale}]", article.body_editor_html(locale),
+                                     id: "record-body-#{locale}" %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <span class="text-t6 uppercase text-taupe">Zdjęcie na okładkę</span>
+          <% if article.cover_image.attached? %>
+            <div class="flex items-center gap-3">
+              <%= image_tag article.cover_image.variant(resize_to_limit: [400, 400]),
+                            class: "size-24 rounded-lg border border-border-strong object-cover", alt: "" %>
+              <span class="text-t6 text-taupe">Wgranie nowego zdjęcia zastąpi obecne.</span>
+            </div>
+          <% end %>
+          <%= file_field_tag "record[cover_image]", accept: "image/*", id: "record-cover-image",
+                             class: "form-control file:mr-3 file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-cream file:cursor-pointer" %>
+        </div>
+
+        <fieldset class="flex flex-col gap-5 border-t border-border-strong pt-5">
+          <legend class="font-display text-t3 text-cream">Publikacja</legend>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <span class="text-t6 uppercase text-taupe">Widoczność</span>
+              <label class="flex items-center gap-2 text-t5 text-cream">
+                <%# hidden field first, so unchecking actually posts a value %>
+                <%= hidden_field_tag "record[published]", "0", id: nil %>
+                <%= check_box_tag "record[published]", "1", article.published,
+                                  id: "record-published",
+                                  class: "size-4 rounded border-border-input bg-surface accent-accent" %>
+                Opublikowany
+              </label>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <span class="text-t6 uppercase text-taupe">Data publikacji (<%= Time.zone.name %>)</span>
+              <%= datetime_local_field_tag "record[published_at]",
+                                           article.published_at&.strftime("%Y-%m-%dT%H:%M"),
+                                           id: "record-published-at", class: "form-control" %>
+              <span class="text-t6 text-taupe-dark">Puste pole ustawi datę automatycznie przy publikacji.</span>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="flex flex-col gap-5 border-t border-border-strong pt-5">
+          <legend class="font-display text-t3 text-cream">SEO</legend>
+          <p class="text-t6 text-tan">Opcjonalne. Puste pola używają tytułu i zajawki.</p>
+          <div class="flex flex-col gap-2">
+            <span class="text-t6 uppercase text-taupe">Tytuł w wynikach wyszukiwania</span>
+            <% Translatable::LOCALES.each do |locale| %>
+              <div data-article-editor-target="localePanel" data-lang="<%= locale %>" <%= "hidden" unless locale == :pl %>>
+                <%= text_field_tag "record[translations][meta_title][#{locale}]",
+                                   article.raw_translation(:meta_title, locale),
+                                   id: "record-meta-title-#{locale}", class: "form-control" %>
+              </div>
+            <% end %>
+          </div>
+          <div class="flex flex-col gap-2">
+            <span class="text-t6 uppercase text-taupe">Opis w wynikach wyszukiwania</span>
+            <% Translatable::LOCALES.each do |locale| %>
+              <div data-article-editor-target="localePanel" data-lang="<%= locale %>" <%= "hidden" unless locale == :pl %>>
+                <%= text_area_tag "record[translations][meta_description][#{locale}]",
+                                  article.raw_translation(:meta_description, locale),
+                                  id: "record-meta-description-#{locale}", rows: 3, class: "form-control" %>
+              </div>
+            <% end %>
+          </div>
+        </fieldset>
+
+        <div class="flex items-center gap-3">
+          <%= submit_tag article.persisted? ? "Zapisz artykuł" : "Dodaj artykuł",
+                         class: "inline-flex items-center justify-center rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink shadow-sm cursor-pointer hover:bg-accent-hover" %>
+
+          <%= link_to "Anuluj", admin_articles_path,
+                      class: "text-t6 text-taupe no-underline hover:text-cream" %>
+        </div>
+      <% end %>
+    </section>
+
+    <section id="article-preview" data-article-editor-target="preview" hidden
+             class="min-w-0 rounded-xl border border-border-strong bg-ink-soft p-4 sm:p-5 flex flex-col gap-4 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h2 class="text-t4 font-display text-cream">Podgląd artykułu</h2>
+          <p class="text-t6 text-taupe mt-1">Tekst zmienia się podczas pisania. Okładka pojawi się po zapisie.</p>
+        </div>
+        <button type="button" data-action="click->article-editor#togglePreview"
+                aria-label="Zamknij podgląd" class="shrink-0 rounded-lg p-2 text-taupe hover:text-cream hover:bg-surface cursor-pointer">
+          <%= icon "x", class: "size-4" %>
+        </button>
+      </div>
+      <p data-article-editor-target="status" role="status" class="text-t6 text-taupe m-0">Podgląd aktualny</p>
+      <div data-article-editor-target="content" class="min-w-0">
+        <% I18n.with_locale(:pl) do %>
+          <%= render "preview", article: article %>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</div>

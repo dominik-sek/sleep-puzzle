@@ -1,0 +1,10 @@
+# <%= brand_name %> — pełna treść artykułów
+
+<% @articles.each do |article| %>
+
+# <%= article.title %>
+
+<%= article_url(slug: article.slug) %>
+
+<%= article.body&.to_plain_text.to_s %>
+<% end %>

@@ -841,15 +841,17 @@ trix-editor:empty:not(:focus)::before {
   border-bottom-color: var(--color-accent);
 }
 
-/* The CMS editor gets the full workspace until the owner opens the preview. */
+/* The CMS and article editors get the full width until the owner opens the preview. */
 @media (min-width: 1024px) {
-  .cms-workspace[data-preview-open="true"] {
+  .cms-workspace[data-preview-open="true"],
+  .article-workspace[data-preview-open="true"] {
     grid-template-columns: minmax(0, 1fr) minmax(320px, .75fr);
   }
 }
 
 @media (max-width: 1023px) {
-  .cms-workspace[data-preview-open="true"] > .cms-editor {
+  .cms-workspace[data-preview-open="true"] > .cms-editor,
+  .article-workspace[data-preview-open="true"] > .article-editor {
     display: none;
   }
 }

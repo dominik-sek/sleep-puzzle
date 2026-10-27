@@ -1,0 +1,28 @@
+# <%= brand_name %>
+
+<%= meta_description %>
+
+## Oferta
+
+- [<%= t("offers.one_to_one") %>](<%= packages_url %>)
+- [<%= t("offers.audio") %>](<%= audio_processes_url %>)
+- [<%= t("offers.stories") %>](<%= stories_url %>)
+- [<%= t("nav.about") %>](<%= about_url %>)
+
+## Blog
+
+<% @articles.each do |article| %>
+- [<%= article.title %>](<%= article_url(slug: article.slug) %>): <%= article.excerpt %>
+<% end %>
+
+## Informacje
+
+- [<%= t("nav.contact") %>](<%= contact_url %>)
+- [<%= t("nav.terms") %>](<%= terms_url %>)
+- [<%= t("refunds.link") %>](<%= refunds_url %>)
+- [<%= t("nav.privacy") %>](<%= privacy_url %>)
+
+## Więcej
+
+- [Pełna treść artykułów](<%= llms_full_url %>)
+- [Mapa strony](<%= sitemap_url %>)

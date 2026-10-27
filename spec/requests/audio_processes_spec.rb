@@ -23,6 +23,7 @@ RSpec.describe "Audio process collection", type: :request do
       expect(links.map(&:text)).to eq([ first.name, second.name ])
       expect(links.map { |link| link[:href] }).to eq([ first, second ].map { |p| catalogue_product_path(p, locale: locale == :en ? :en : nil) })
       expect(page).to have_button("Dodaj do koszyka", count: 2) if locale == :pl
+      expect(page).to have_link(href: products_path(locale: locale == :en ? :en : nil))
       expect(page).not_to have_text("Bajka")
       expect(page).not_to have_text("Szkic")
       expect(page).not_to have_text("Bez nagrania")

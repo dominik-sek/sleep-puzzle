@@ -293,6 +293,27 @@ home:
           default:
             pl: "Napisz do mnie"
             en: "Write to me"
+    blog:
+      label: Blog
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Na blogu"
+            en: "On the blog"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Dłuższe teksty o śnie, rozwoju i codzienności rodzica."
+            en: "Longer reads about sleep, development and everyday parenting."
+        link:
+          label: Odnośnik do wszystkich artykułów
+          type: plain
+          default:
+            pl: "Czytaj wszystkie artykuły"
+            en: "Read all articles"
 packages:
   label: Pakiety
   sections:
@@ -1699,3 +1720,69 @@ refunds:
             body:
               pl: "Odsłuch audio lub wykonanie konsultacji nie wyłącza prawa do reklamacji. Jeżeli treść lub usługa jest niezgodna z umową, skontaktuj się z Karolą i opisz problem. Reklamacje konsumentów rozpatrujemy w terminie 14 dni; odpowiedź przesyłamy na trwałym nośniku, np. e-mailem."
               en: "Listening to audio or receiving a consultation does not remove your right to complain. If content or a service does not conform to the contract, contact Karola and describe the issue. Consumer complaints are reviewed within 14 days and answered on a durable medium, such as email."
+
+blog:
+  label: Blog
+  sections:
+    index:
+      label: Lista artykułów
+      fields:
+        title:
+          label: Nagłówek
+          type: plain
+          default:
+            pl: "Blog"
+            en: "Blog"
+        subtitle:
+          label: Podtytuł
+          type: plain
+          default:
+            pl: "Dłuższe teksty o śnie dziecka, rozwoju i codzienności rodzica."
+            en: "Longer reads about child sleep, development and everyday parenting."
+        empty:
+          label: Gdy nie ma artykułów
+          type: plain
+          default:
+            pl: "Artykuły pojawią się tutaj wkrótce. Wróć za chwilę."
+            en: "Articles will appear here soon. Check back shortly."
+        offer_title:
+          label: Nagłówek pod artykułem
+          type: plain
+          default:
+            pl: "Chcesz ułożyć sen swojej rodziny?"
+            en: "Want to piece your family's sleep back together?"
+        offer_body:
+          label: Treść pod artykułem
+          type: plain
+          default:
+            pl: "Razem ustalimy małe kroki i tempo, które pasują do Was. Zacznij od rozmowy."
+            en: "Together we will pick small steps and a pace that suits you. Start with a conversation."
+        offer_link:
+          label: Przycisk
+          type: plain
+          default:
+            pl: "Poznaj współpracę 1:1"
+            en: "Explore working together 1:1"
+
+seo:
+  label: SEO
+  sections:
+    site:
+      label: Wyszukiwarka i AI
+      fields:
+        brand_name:
+          label: Nazwa marki
+          type: plain
+          default:
+            pl: "Sleep Puzzle"
+        meta_description:
+          label: Domyślny opis (meta description)
+          type: plain
+          default:
+            pl: "Sleep Puzzle — wsparcie snu dziecka od Karoli: konsultacje 1:1, audioprocesy i bajki audio. Kawałek po kawałku pomagam odzyskać spokojne noce."
+            en: "Sleep Puzzle — child sleep support from Karola: 1:1 consultations, audio processes and bedtime stories. Piece by piece, I help you get calm nights back."
+        instagram:
+          label: Adres Instagram (dane strukturalne)
+          type: plain
+          default:
+            pl: "https://www.instagram.com/sleep.puzzle/"

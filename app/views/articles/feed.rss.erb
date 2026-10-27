@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title><%= brand_name %> — <%= t("nav.blog") %></title>
+    <link><%= articles_url %></link>
+    <description><%= meta_description %></description>
+    <atom:link href="<%= feed_articles_url(format: :rss) %>" rel="self" type="application/rss+xml"/>
+    <language><%= I18n.locale %></language>
+    <% @articles.each do |article| %>
+    <item>
+      <title><%= article.title %></title>
+      <link><%= article_url(slug: article.slug) %></link>
+      <guid isPermaLink="true"><%= article_url(slug: article.slug) %></guid>
+      <pubDate><%= article.display_date.rfc822 %></pubDate>
+      <% description = (article.excerpt.presence || article.body&.to_plain_text.to_s).to_s %>
+      <description><%= h description %></description>
+    </item>
+    <% end %>
+  </channel>
+</rss>

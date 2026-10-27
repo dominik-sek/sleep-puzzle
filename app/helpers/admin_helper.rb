@@ -15,6 +15,8 @@ module AdminHelper
         active: controller_name == "packages" },
       { label: "Produkty", href: admin_products_path, icon: "audio-lines",
         active: controller_name == "products" },
+      { label: "Blog", href: admin_articles_path, icon: "pencil",
+        active: controller_name == "articles" },
       { label: "Treści", href: admin_content_blocks_path, icon: "file-text",
         active: controller_name.in?(%w[content_blocks content_items]) },
       { label: "Opinie", href: admin_testimonial_invitations_path, icon: "file-text",

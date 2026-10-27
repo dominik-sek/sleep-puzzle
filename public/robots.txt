@@ -1,1 +1,10 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# Allow every crawler. This site wants to be indexed - by search engines and by
+# the AI crawlers that read llms.txt and sitemaps. None of this loads anything
+# into a human visitor's browser, so the site's "no third-party requests while
+# reading" commitment is unaffected.
+
+User-agent: *
+Disallow:
+
+# AI crawlers read /llms.txt and /llms-full.txt by convention; see llmstxt.org.
+Sitemap: https://sleeppuzzle.com/sitemap.xml

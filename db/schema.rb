@@ -10,47 +10,65 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_27_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
-  enable_extension "pg_stat_statements"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
-    t.text "body"
-    t.datetime "created_at", null: false
     t.string "name", null: false
-    t.bigint "record_id", null: false
+    t.text "body"
     t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+    t.index [ "record_type", "record_id", "name" ], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
-    t.string "name", null: false
-    t.bigint "record_id", null: false
-    t.string "record_type", null: false
-    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+    t.index [ "blob_id" ], name: "index_active_storage_attachments_on_blob_id"
+    t.index [ "record_type", "record_id", "name", "blob_id" ], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
-    t.bigint "byte_size", null: false
-    t.string "checksum"
-    t.string "content_type"
-    t.datetime "created_at", null: false
-    t.string "filename", null: false
     t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
     t.text "metadata"
     t.string "service_name", null: false
-    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index [ "key" ], name: "index_active_storage_blobs_on_key", unique: true
   end
 
   create_table "active_storage_variant_records", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
-    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+    t.index [ "blob_id", "variation_digest" ], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "article_slug_histories", force: :cascade do |t|
+    t.bigint "article_id", null: false
+    t.string "slug", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "article_id" ], name: "index_article_slug_histories_on_article_id"
+    t.index [ "slug" ], name: "index_article_slug_histories_on_slug", unique: true
+  end
+
+  create_table "articles", force: :cascade do |t|
+    t.string "slug", null: false
+    t.boolean "published", default: false, null: false
+    t.datetime "published_at"
+    t.jsonb "translations", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "slug" ], name: "index_articles_on_slug", unique: true
   end
 
   create_table "audio_chapters", force: :cascade do |t|
@@ -62,8 +80,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
     t.string "upload_error"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["product_id", "position", "id"], name: "index_audio_chapters_on_product_id_and_position_and_id"
-    t.index ["product_id"], name: "index_audio_chapters_on_product_id"
+    t.index [ "product_id", "position", "id" ], name: "index_audio_chapters_on_product_id_and_position_and_id"
+    t.index [ "product_id" ], name: "index_audio_chapters_on_product_id"
   end
 
   create_table "booking_changes", force: :cascade do |t|
@@ -77,23 +95,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
     t.datetime "new_starts_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["admin_id"], name: "index_booking_changes_on_admin_id"
-    t.index ["booking_id"], name: "index_booking_changes_on_booking_id"
+    t.index [ "admin_id" ], name: "index_booking_changes_on_admin_id"
+    t.index [ "booking_id" ], name: "index_booking_changes_on_booking_id"
   end
 
   create_table "bookings", force: :cascade do |t|
-    t.string "calendar_event_id"
-    t.datetime "confirmed_at"
-    t.datetime "created_at", null: false
-    t.string "email", default: "", null: false
     t.string "name"
     t.integer "package_id", null: false
-    t.string "paddle_transaction_id"
-    t.datetime "starts_at"
     t.integer "status", default: 0, null: false
-    t.string "token", null: false
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "starts_at"
+    t.string "email", default: "", null: false
     t.bigint "user_id", null: false
+    t.string "token", null: false
+    t.datetime "confirmed_at"
+    t.string "paddle_transaction_id"
+    t.string "calendar_event_id"
     t.datetime "ends_at"
     t.datetime "consent_accepted_at"
     t.jsonb "legal_snapshot", default: {}, null: false
@@ -102,11 +120,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
     t.datetime "canceled_at"
     t.text "settlement_notes"
     t.boolean "calendar_sync_pending", default: false, null: false
-    t.index ["package_id"], name: "index_bookings_on_package_id"
-    t.index ["paddle_transaction_id"], name: "index_bookings_on_paddle_transaction_id", unique: true
-    t.index ["starts_at", "status"], name: "index_bookings_on_starts_at_and_status"
-    t.index ["token"], name: "index_bookings_on_token", unique: true
-    t.index ["user_id"], name: "index_bookings_on_user_id"
+    t.index [ "package_id" ], name: "index_bookings_on_package_id"
+    t.index [ "paddle_transaction_id" ], name: "index_bookings_on_paddle_transaction_id", unique: true
+    t.index [ "starts_at", "status" ], name: "index_bookings_on_starts_at_and_status"
+    t.index [ "token" ], name: "index_bookings_on_token", unique: true
+    t.index [ "user_id" ], name: "index_bookings_on_user_id"
   end
 
   create_table "consultation_blocks", force: :cascade do |t|
@@ -117,7 +135,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["starts_at", "ends_at"], name: "index_consultation_blocks_on_starts_at_and_ends_at"
+    t.index [ "starts_at", "ends_at" ], name: "index_consultation_blocks_on_starts_at_and_ends_at"
     t.check_constraint "ends_at > starts_at", name: "consultation_block_period"
   end
 
@@ -135,7 +153,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
     t.datetime "starts_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["starts_at"], name: "index_consultation_slots_on_starts_at", unique: true
+    t.index [ "starts_at" ], name: "index_consultation_slots_on_starts_at", unique: true
   end
 
   create_table "consultation_weekly_slots", force: :cascade do |t|
@@ -144,80 +162,80 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
     t.integer "minute_of_day", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["consultation_setting_id"], name: "index_consultation_weekly_slots_on_consultation_setting_id"
+    t.index [ "consultation_setting_id" ], name: "index_consultation_weekly_slots_on_consultation_setting_id"
     t.check_constraint "weekday >= 0 AND weekday <= 6 AND minute_of_day >= 0 AND minute_of_day <= 1439", name: "weekly_slot_time"
-    t.unique_constraint ["weekday", "minute_of_day"], deferrable: :deferred, name: "unique_consultation_weekly_times"
+    t.unique_constraint [ "weekday", "minute_of_day" ], deferrable: :deferred, name: "unique_consultation_weekly_times"
   end
 
   create_table "content_blocks", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.string "key", null: false
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "value_en"
     t.text "value_pl"
-    t.index ["key"], name: "index_content_blocks_on_key", unique: true
+    t.text "value_en"
+    t.index [ "key" ], name: "index_content_blocks_on_key", unique: true
   end
 
   create_table "content_items", force: :cascade do |t|
     t.string "collection_key", null: false
-    t.datetime "created_at", null: false
     t.integer "position", default: 0, null: false
-    t.datetime "updated_at", null: false
     t.jsonb "values", default: {}, null: false
-    t.index ["collection_key", "position"], name: "index_content_items_on_collection_key_and_position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "collection_key", "position" ], name: "index_content_items_on_collection_key_and_position"
   end
 
   create_table "integrations", force: :cascade do |t|
-    t.text "access_token"
-    t.string "calendar_id"
-    t.datetime "created_at", null: false
-    t.datetime "expires_at"
-    t.text "refresh_token"
     t.string "service_name", null: false
+    t.text "access_token"
+    t.text "refresh_token"
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["service_name"], name: "index_integrations_on_service_name", unique: true
+    t.string "calendar_id"
+    t.index [ "service_name" ], name: "index_integrations_on_service_name", unique: true
   end
 
   create_table "order_items", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.bigint "order_id", null: false
     t.bigint "product_id", null: false
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "paddle_price_id"
     t.string "paddle_transaction_item_id"
     t.datetime "first_stream_issued_at"
     t.datetime "first_played_at"
     t.datetime "refunded_at"
-    t.index ["order_id", "product_id"], name: "index_order_items_on_order_id_and_product_id", unique: true
-    t.index ["paddle_transaction_item_id"], name: "index_order_items_on_paddle_transaction_item_id", unique: true
-    t.index ["product_id"], name: "index_order_items_on_product_id"
+    t.index [ "order_id", "product_id" ], name: "index_order_items_on_order_id_and_product_id", unique: true
+    t.index [ "paddle_transaction_item_id" ], name: "index_order_items_on_paddle_transaction_item_id", unique: true
+    t.index [ "product_id" ], name: "index_order_items_on_product_id"
   end
 
   create_table "orders", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "paddle_transaction_id"
-    t.datetime "paid_at"
+    t.bigint "user_id", null: false
     t.integer "status", default: 0, null: false
     t.string "token", null: false
+    t.string "paddle_transaction_id"
+    t.datetime "paid_at"
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
     t.datetime "consent_accepted_at"
     t.jsonb "legal_snapshot", default: {}, null: false
     t.datetime "legal_confirmation_sent_at"
     t.jsonb "paddle_transaction_snapshot", default: {}, null: false
-    t.index ["paddle_transaction_id"], name: "index_orders_on_paddle_transaction_id", unique: true
-    t.index ["token"], name: "index_orders_on_token", unique: true
-    t.index ["user_id"], name: "index_orders_on_user_id"
+    t.index [ "paddle_transaction_id" ], name: "index_orders_on_paddle_transaction_id", unique: true
+    t.index [ "token" ], name: "index_orders_on_token", unique: true
+    t.index [ "user_id" ], name: "index_orders_on_user_id"
   end
 
   create_table "packages", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.integer "duration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "paddle_price_id"
+    t.jsonb "translations", default: {}, null: false
     t.integer "position", default: 0, null: false
     t.boolean "published", default: false, null: false
-    t.jsonb "translations", default: {}, null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "paddle_adjustments", force: :cascade do |t|
@@ -231,106 +249,106 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "events", default: [], null: false
-    t.index ["paddle_id"], name: "index_paddle_adjustments_on_paddle_id", unique: true
-    t.index ["transaction_id"], name: "index_paddle_adjustments_on_transaction_id"
+    t.index [ "paddle_id" ], name: "index_paddle_adjustments_on_paddle_id", unique: true
+    t.index [ "transaction_id" ], name: "index_paddle_adjustments_on_transaction_id"
   end
 
   create_table "pay_charges", force: :cascade do |t|
-    t.integer "amount", null: false
-    t.integer "amount_refunded"
-    t.integer "application_fee_amount"
-    t.datetime "created_at", null: false
-    t.string "currency"
     t.bigint "customer_id", null: false
-    t.jsonb "data"
-    t.jsonb "metadata"
-    t.jsonb "object"
-    t.string "processor_id", null: false
-    t.string "stripe_account"
     t.bigint "subscription_id"
-    t.string "type"
+    t.string "processor_id", null: false
+    t.integer "amount", null: false
+    t.string "currency"
+    t.integer "application_fee_amount"
+    t.integer "amount_refunded"
+    t.jsonb "metadata"
+    t.jsonb "data"
+    t.string "stripe_account"
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["customer_id", "processor_id"], name: "index_pay_charges_on_customer_id_and_processor_id", unique: true
-    t.index ["subscription_id"], name: "index_pay_charges_on_subscription_id"
+    t.string "type"
+    t.jsonb "object"
+    t.index [ "customer_id", "processor_id" ], name: "index_pay_charges_on_customer_id_and_processor_id", unique: true
+    t.index [ "subscription_id" ], name: "index_pay_charges_on_subscription_id"
   end
 
   create_table "pay_customers", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.jsonb "data"
-    t.boolean "default"
-    t.datetime "deleted_at", precision: nil
-    t.jsonb "object"
-    t.bigint "owner_id"
     t.string "owner_type"
+    t.bigint "owner_id"
     t.string "processor", null: false
     t.string "processor_id"
+    t.boolean "default"
+    t.jsonb "data"
     t.string "stripe_account"
-    t.string "type"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["owner_type", "owner_id", "deleted_at"], name: "pay_customer_owner_index", unique: true
-    t.index ["processor", "processor_id"], name: "index_pay_customers_on_processor_and_processor_id", unique: true
+    t.string "type"
+    t.jsonb "object"
+    t.index [ "owner_type", "owner_id", "deleted_at" ], name: "pay_customer_owner_index", unique: true
+    t.index [ "processor", "processor_id" ], name: "index_pay_customers_on_processor_and_processor_id", unique: true
   end
 
   create_table "pay_merchants", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.jsonb "data"
-    t.boolean "default"
-    t.bigint "owner_id"
     t.string "owner_type"
+    t.bigint "owner_id"
     t.string "processor", null: false
     t.string "processor_id"
-    t.string "type"
+    t.boolean "default"
+    t.jsonb "data"
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["owner_type", "owner_id", "processor"], name: "index_pay_merchants_on_owner_type_and_owner_id_and_processor"
+    t.string "type"
+    t.index [ "owner_type", "owner_id", "processor" ], name: "index_pay_merchants_on_owner_type_and_owner_id_and_processor"
   end
 
   create_table "pay_payment_methods", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.bigint "customer_id", null: false
-    t.jsonb "data"
+    t.string "processor_id", null: false
     t.boolean "default"
     t.string "payment_method_type"
-    t.string "processor_id", null: false
+    t.jsonb "data"
     t.string "stripe_account"
-    t.string "type"
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["customer_id", "processor_id"], name: "index_pay_payment_methods_on_customer_id_and_processor_id", unique: true
+    t.string "type"
+    t.index [ "customer_id", "processor_id" ], name: "index_pay_payment_methods_on_customer_id_and_processor_id", unique: true
   end
 
   create_table "pay_subscriptions", force: :cascade do |t|
-    t.decimal "application_fee_percent", precision: 8, scale: 2
-    t.datetime "created_at", null: false
-    t.datetime "current_period_end", precision: nil
-    t.datetime "current_period_start", precision: nil
     t.bigint "customer_id", null: false
-    t.jsonb "data"
-    t.datetime "ends_at", precision: nil
-    t.jsonb "metadata"
-    t.boolean "metered"
     t.string "name", null: false
-    t.jsonb "object"
-    t.string "pause_behavior"
-    t.datetime "pause_resumes_at", precision: nil
-    t.datetime "pause_starts_at", precision: nil
-    t.string "payment_method_id"
     t.string "processor_id", null: false
     t.string "processor_plan", null: false
     t.integer "quantity", default: 1, null: false
     t.string "status", null: false
-    t.string "stripe_account"
+    t.datetime "current_period_start", precision: nil
+    t.datetime "current_period_end", precision: nil
     t.datetime "trial_ends_at", precision: nil
-    t.string "type"
+    t.datetime "ends_at", precision: nil
+    t.boolean "metered"
+    t.string "pause_behavior"
+    t.datetime "pause_starts_at", precision: nil
+    t.datetime "pause_resumes_at", precision: nil
+    t.decimal "application_fee_percent", precision: 8, scale: 2
+    t.jsonb "metadata"
+    t.jsonb "data"
+    t.string "stripe_account"
+    t.string "payment_method_id"
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["customer_id", "processor_id"], name: "index_pay_subscriptions_on_customer_id_and_processor_id", unique: true
-    t.index ["metered"], name: "index_pay_subscriptions_on_metered"
-    t.index ["pause_starts_at"], name: "index_pay_subscriptions_on_pause_starts_at"
+    t.string "type"
+    t.jsonb "object"
+    t.index [ "customer_id", "processor_id" ], name: "index_pay_subscriptions_on_customer_id_and_processor_id", unique: true
+    t.index [ "metered" ], name: "index_pay_subscriptions_on_metered"
+    t.index [ "pause_starts_at" ], name: "index_pay_subscriptions_on_pause_starts_at"
   end
 
   create_table "pay_webhooks", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.jsonb "event"
-    t.string "event_type"
     t.string "processor"
+    t.string "event_type"
+    t.jsonb "event"
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
@@ -339,172 +357,172 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
     t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["product_id"], name: "index_product_slug_histories_on_product_id"
-    t.index ["slug"], name: "index_product_slug_histories_on_slug", unique: true
+    t.index [ "product_id" ], name: "index_product_slug_histories_on_product_id"
+    t.index [ "slug" ], name: "index_product_slug_histories_on_slug", unique: true
   end
 
   create_table "products", force: :cascade do |t|
-    t.string "audio_upload_error"
     t.integer "category"
-    t.string "cdn_path"
-    t.datetime "created_at", null: false
-    t.string "icon"
     t.integer "kind"
-    t.integer "length_minutes"
-    t.string "paddle_price_id"
-    t.integer "position", default: 0, null: false
-    t.string "preview_cdn_path"
-    t.boolean "published", default: false, null: false
-    t.jsonb "translations", default: {}, null: false
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "paddle_price_id"
+    t.jsonb "translations", default: {}, null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "published", default: false, null: false
+    t.string "icon"
+    t.integer "length_minutes"
+    t.string "cdn_path"
+    t.string "audio_upload_error"
+    t.string "preview_cdn_path"
     t.string "trailer_cdn_path"
     t.string "trailer_upload_error"
     t.integer "expected_chapter_count"
     t.string "slug", null: false
-    t.index ["slug"], name: "index_products_on_slug", unique: true
+    t.index [ "slug" ], name: "index_products_on_slug", unique: true
     t.check_constraint "expected_chapter_count IS NULL OR expected_chapter_count > 0", name: "products_expected_chapter_count_positive"
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|
     t.binary "channel", null: false
-    t.bigint "channel_hash", null: false
-    t.datetime "created_at", null: false
     t.binary "payload", null: false
-    t.index ["channel"], name: "index_solid_cable_messages_on_channel"
-    t.index ["channel_hash"], name: "index_solid_cable_messages_on_channel_hash"
-    t.index ["created_at"], name: "index_solid_cable_messages_on_created_at"
+    t.datetime "created_at", null: false
+    t.bigint "channel_hash", null: false
+    t.index [ "channel" ], name: "index_solid_cable_messages_on_channel"
+    t.index [ "channel_hash" ], name: "index_solid_cable_messages_on_channel_hash"
+    t.index [ "created_at" ], name: "index_solid_cable_messages_on_created_at"
   end
 
   create_table "solid_cache_entries", force: :cascade do |t|
-    t.integer "byte_size", null: false
-    t.datetime "created_at", null: false
     t.binary "key", null: false
-    t.bigint "key_hash", null: false
     t.binary "value", null: false
-    t.index ["byte_size"], name: "index_solid_cache_entries_on_byte_size"
-    t.index ["key_hash", "byte_size"], name: "index_solid_cache_entries_on_key_hash_and_byte_size"
-    t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
+    t.datetime "created_at", null: false
+    t.bigint "key_hash", null: false
+    t.integer "byte_size", null: false
+    t.index [ "byte_size" ], name: "index_solid_cache_entries_on_byte_size"
+    t.index [ "key_hash", "byte_size" ], name: "index_solid_cache_entries_on_key_hash_and_byte_size"
+    t.index [ "key_hash" ], name: "index_solid_cache_entries_on_key_hash", unique: true
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
-    t.string "concurrency_key", null: false
-    t.datetime "created_at", null: false
-    t.datetime "expires_at", null: false
     t.bigint "job_id", null: false
-    t.integer "priority", default: 0, null: false
     t.string "queue_name", null: false
-    t.index ["concurrency_key", "priority", "job_id"], name: "index_solid_queue_blocked_executions_for_release"
-    t.index ["expires_at", "concurrency_key"], name: "index_solid_queue_blocked_executions_for_maintenance"
-    t.index ["job_id"], name: "index_solid_queue_blocked_executions_on_job_id", unique: true
+    t.integer "priority", default: 0, null: false
+    t.string "concurrency_key", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.index [ "concurrency_key", "priority", "job_id" ], name: "index_solid_queue_blocked_executions_for_release"
+    t.index [ "expires_at", "concurrency_key" ], name: "index_solid_queue_blocked_executions_for_maintenance"
+    t.index [ "job_id" ], name: "index_solid_queue_blocked_executions_on_job_id", unique: true
   end
 
   create_table "solid_queue_claimed_executions", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.bigint "job_id", null: false
     t.bigint "process_id"
-    t.index ["job_id"], name: "index_solid_queue_claimed_executions_on_job_id", unique: true
-    t.index ["process_id", "job_id"], name: "index_solid_queue_claimed_executions_on_process_id_and_job_id"
+    t.datetime "created_at", null: false
+    t.index [ "job_id" ], name: "index_solid_queue_claimed_executions_on_job_id", unique: true
+    t.index [ "process_id", "job_id" ], name: "index_solid_queue_claimed_executions_on_process_id_and_job_id"
   end
 
   create_table "solid_queue_failed_executions", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.text "error"
     t.bigint "job_id", null: false
-    t.index ["job_id"], name: "index_solid_queue_failed_executions_on_job_id", unique: true
+    t.text "error"
+    t.datetime "created_at", null: false
+    t.index [ "job_id" ], name: "index_solid_queue_failed_executions_on_job_id", unique: true
   end
 
   create_table "solid_queue_jobs", force: :cascade do |t|
-    t.string "active_job_id"
-    t.text "arguments"
+    t.string "queue_name", null: false
     t.string "class_name", null: false
+    t.text "arguments"
+    t.integer "priority", default: 0, null: false
+    t.string "active_job_id"
+    t.datetime "scheduled_at"
+    t.datetime "finished_at"
     t.string "concurrency_key"
     t.datetime "created_at", null: false
-    t.datetime "finished_at"
-    t.integer "priority", default: 0, null: false
-    t.string "queue_name", null: false
-    t.datetime "scheduled_at"
     t.datetime "updated_at", null: false
-    t.index ["active_job_id"], name: "index_solid_queue_jobs_on_active_job_id"
-    t.index ["class_name"], name: "index_solid_queue_jobs_on_class_name"
-    t.index ["finished_at"], name: "index_solid_queue_jobs_on_finished_at"
-    t.index ["queue_name", "finished_at"], name: "index_solid_queue_jobs_for_filtering"
-    t.index ["scheduled_at", "finished_at"], name: "index_solid_queue_jobs_for_alerting"
+    t.index [ "active_job_id" ], name: "index_solid_queue_jobs_on_active_job_id"
+    t.index [ "class_name" ], name: "index_solid_queue_jobs_on_class_name"
+    t.index [ "finished_at" ], name: "index_solid_queue_jobs_on_finished_at"
+    t.index [ "queue_name", "finished_at" ], name: "index_solid_queue_jobs_for_filtering"
+    t.index [ "scheduled_at", "finished_at" ], name: "index_solid_queue_jobs_for_alerting"
   end
 
   create_table "solid_queue_pauses", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.string "queue_name", null: false
-    t.index ["queue_name"], name: "index_solid_queue_pauses_on_queue_name", unique: true
+    t.datetime "created_at", null: false
+    t.index [ "queue_name" ], name: "index_solid_queue_pauses_on_queue_name", unique: true
   end
 
   create_table "solid_queue_processes", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "hostname"
     t.string "kind", null: false
     t.datetime "last_heartbeat_at", null: false
-    t.text "metadata"
-    t.string "name", null: false
-    t.integer "pid", null: false
     t.bigint "supervisor_id"
-    t.index ["last_heartbeat_at"], name: "index_solid_queue_processes_on_last_heartbeat_at"
-    t.index ["name", "supervisor_id"], name: "index_solid_queue_processes_on_name_and_supervisor_id", unique: true
-    t.index ["supervisor_id"], name: "index_solid_queue_processes_on_supervisor_id"
+    t.integer "pid", null: false
+    t.string "hostname"
+    t.text "metadata"
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.index [ "last_heartbeat_at" ], name: "index_solid_queue_processes_on_last_heartbeat_at"
+    t.index [ "name", "supervisor_id" ], name: "index_solid_queue_processes_on_name_and_supervisor_id", unique: true
+    t.index [ "supervisor_id" ], name: "index_solid_queue_processes_on_supervisor_id"
   end
 
   create_table "solid_queue_ready_executions", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.bigint "job_id", null: false
-    t.integer "priority", default: 0, null: false
     t.string "queue_name", null: false
-    t.index ["job_id"], name: "index_solid_queue_ready_executions_on_job_id", unique: true
-    t.index ["priority", "job_id"], name: "index_solid_queue_poll_all"
-    t.index ["queue_name", "priority", "job_id"], name: "index_solid_queue_poll_by_queue"
+    t.integer "priority", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.index [ "job_id" ], name: "index_solid_queue_ready_executions_on_job_id", unique: true
+    t.index [ "priority", "job_id" ], name: "index_solid_queue_poll_all"
+    t.index [ "queue_name", "priority", "job_id" ], name: "index_solid_queue_poll_by_queue"
   end
 
   create_table "solid_queue_recurring_executions", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.bigint "job_id", null: false
-    t.datetime "run_at", null: false
     t.string "task_key", null: false
-    t.index ["job_id"], name: "index_solid_queue_recurring_executions_on_job_id", unique: true
-    t.index ["task_key", "run_at"], name: "index_solid_queue_recurring_executions_on_task_key_and_run_at", unique: true
+    t.datetime "run_at", null: false
+    t.datetime "created_at", null: false
+    t.index [ "job_id" ], name: "index_solid_queue_recurring_executions_on_job_id", unique: true
+    t.index [ "task_key", "run_at" ], name: "index_solid_queue_recurring_executions_on_task_key_and_run_at", unique: true
   end
 
   create_table "solid_queue_recurring_tasks", force: :cascade do |t|
-    t.text "arguments"
-    t.string "class_name"
-    t.string "command", limit: 2048
-    t.datetime "created_at", null: false
-    t.text "description"
     t.string "key", null: false
-    t.integer "priority", default: 0
-    t.string "queue_name"
     t.string "schedule", null: false
+    t.string "command", limit: 2048
+    t.string "class_name"
+    t.text "arguments"
+    t.string "queue_name"
+    t.integer "priority", default: 0
     t.boolean "static", default: true, null: false
+    t.text "description"
+    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["key"], name: "index_solid_queue_recurring_tasks_on_key", unique: true
-    t.index ["static"], name: "index_solid_queue_recurring_tasks_on_static"
+    t.index [ "key" ], name: "index_solid_queue_recurring_tasks_on_key", unique: true
+    t.index [ "static" ], name: "index_solid_queue_recurring_tasks_on_static"
   end
 
   create_table "solid_queue_scheduled_executions", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.bigint "job_id", null: false
-    t.integer "priority", default: 0, null: false
     t.string "queue_name", null: false
+    t.integer "priority", default: 0, null: false
     t.datetime "scheduled_at", null: false
-    t.index ["job_id"], name: "index_solid_queue_scheduled_executions_on_job_id", unique: true
-    t.index ["scheduled_at", "priority", "job_id"], name: "index_solid_queue_dispatch_all"
+    t.datetime "created_at", null: false
+    t.index [ "job_id" ], name: "index_solid_queue_scheduled_executions_on_job_id", unique: true
+    t.index [ "scheduled_at", "priority", "job_id" ], name: "index_solid_queue_dispatch_all"
   end
 
   create_table "solid_queue_semaphores", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "expires_at", null: false
     t.string "key", null: false
-    t.datetime "updated_at", null: false
     t.integer "value", default: 1, null: false
-    t.index ["expires_at"], name: "index_solid_queue_semaphores_on_expires_at"
-    t.index ["key", "value"], name: "index_solid_queue_semaphores_on_key_and_value"
-    t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "expires_at" ], name: "index_solid_queue_semaphores_on_expires_at"
+    t.index [ "key", "value" ], name: "index_solid_queue_semaphores_on_key_and_value"
+    t.index [ "key" ], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
   create_table "staged_media_uploads", force: :cascade do |t|
@@ -518,9 +536,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["target_type", "target_id"], name: "index_staged_media_uploads_on_target_type_and_target_id"
-    t.index ["token"], name: "index_staged_media_uploads_on_token", unique: true
-    t.index ["user_id"], name: "index_staged_media_uploads_on_user_id"
+    t.index [ "target_type", "target_id" ], name: "index_staged_media_uploads_on_target_type_and_target_id"
+    t.index [ "token" ], name: "index_staged_media_uploads_on_token", unique: true
+    t.index [ "user_id" ], name: "index_staged_media_uploads_on_user_id"
   end
 
   create_table "testimonial_invitations", force: :cascade do |t|
@@ -536,31 +554,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_110000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "author_title"
-    t.index ["published_content_item_id"], name: "index_testimonial_invitations_on_published_content_item_id"
-    t.index ["status"], name: "index_testimonial_invitations_on_status"
-    t.index ["token"], name: "index_testimonial_invitations_on_token", unique: true
+    t.index [ "published_content_item_id" ], name: "index_testimonial_invitations_on_published_content_item_id"
+    t.index [ "status" ], name: "index_testimonial_invitations_on_status"
+    t.index [ "token" ], name: "index_testimonial_invitations_on_token", unique: true
   end
 
   create_table "users", force: :cascade do |t|
-    t.boolean "admin", default: false, null: false
-    t.string "avatar_url"
-    t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "provider"
+    t.string "uid"
     t.string "first_name"
     t.string "last_name"
-    t.string "provider"
-    t.datetime "remember_created_at"
-    t.datetime "reset_password_sent_at"
-    t.string "reset_password_token"
-    t.string "uid"
-    t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.string "avatar_url"
+    t.boolean "admin", default: false, null: false
+    t.index [ "email" ], name: "index_users_on_email", unique: true
+    t.index [ "reset_password_token" ], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "article_slug_histories", "articles"
   add_foreign_key "audio_chapters", "products"
   add_foreign_key "booking_changes", "bookings"
   add_foreign_key "booking_changes", "users", column: "admin_id"

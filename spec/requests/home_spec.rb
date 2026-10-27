@@ -114,4 +114,14 @@ RSpec.describe "Home", type: :request do
 
     expect(response.body).to include("How can I help you?", "Audio process", "Work together 1:1")
   end
+
+  it "shows the blog strip once articles are published and hides it before" do
+    get root_path
+    expect(response.body).not_to include('aria-labelledby="blog-title"')
+
+    create_article(title: "Sen niemowlaka")
+
+    get root_path
+    expect(response.body).to include('aria-labelledby="blog-title"', "Sen niemowlaka")
+  end
 end

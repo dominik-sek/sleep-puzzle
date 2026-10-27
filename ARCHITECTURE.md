@@ -146,6 +146,12 @@ Key runtime facts for a rewrite:
    checkout, uploads, accordions, carousel, lightbox, Trix editor).
 4. Locale is URL-first: bare paths are Polish, `/en/...` is English. Non-locale-scoped
    routes (Devise, admin, OAuth callback) carry locale via `?locale=` and the session.
+5. The public layout emits per-page `title`, `meta description`, `canonical`, Open
+   Graph and Schema.org JSON-LD (sitewide `Organization`/`WebSite`, per-article
+   `BlogPosting`). Discovery files — `/sitemap.xml`, `/blog/feed.rss`, `/llms.txt`,
+   `/llms-full.txt` — are first-party; their *copy* (brand name, default
+   description, social link) reads from content blocks (`seo.site.*`), so it is
+   owner-editable without a deploy, while the schema structure stays in code.
 
 The frontend JS entry (`app/frontend/entrypoints/application.js`) imports Turbo,
 ActiveStorage, the Stimulus controller manifest, page-feature loaders, and Trix CSS.
@@ -180,6 +186,8 @@ enums stored as integers.
 | `staged_media_uploads` | Chunked admin upload tracking | `token`, `target_type/id`, `filename`, `byte_size`, `chunk_count` |
 | `paddle_adjustments` | Refund records from Paddle | `paddle_id`, `transaction_id`, `customer_id`, `status`, `action`, `payload` |
 | `product_slug_histories` | Slug reuse guard | `product_id`, `slug` (unique) |
+| `articles` | Blog articles (owner-published long-form) | `slug` (unique), `published`, `published_at`, `translations` jsonb, Action Text `body_pl`/`body_en`, `cover_image` |
+| `article_slug_histories` | Slug reuse guard + old-URL redirects | `article_id`, `slug` (unique) |
 
 Supporting tables: `action_text_rich_texts`, Active Storage (`blobs`, `attachments`,
 `variant_records`), Pay gem tables (`pay_customers`, `pay_charges`,
@@ -362,7 +370,7 @@ with types `plain`, `rich` (Action Text/Trix), and `image`, plus `collection`
 | --- | --- | --- |
 | Design tokens | `DESIGN.md` frontmatter + `app/frontend/entrypoints/application.css` | Warm near-black palette, Baloo 2 + Quicksand, dark-only, no light theme |
 | ViewComponents | `app/components/*` | `Card`, `Section`, `Container`, `Button`, `Alert`, `Accordion`, `Navbar`, `Sidebar`, `Table`, `Pagination`, `Lightbox`, `Carousel`, `Toast`, `TreeView`, `Forms`, `LoadingIndicator`, `Testimonial` |
-| Stimulus controllers | `app/frontend/controllers/*_controller.js` | `paddle`, `consultation_calendar`, `cally`, `playback`, `audio_upload`, `media_upload`, `media_preview`, `package_details`, `lightbox`, `carousel`, `accordion`, `navbar`, `toast`, `turnstile`, `tree_view`, `content_blocks`, `product_slug`, `product_kind`, `chapter_playlist`, `avatar`, `image_fallback`, `copy`, `locale`, `tooltip`, `sidebar`, `flash`, `consultation_block_form`, `package_copy`, `package_preview`, `cart_focus` |
+| Stimulus controllers | `app/frontend/controllers/*_controller.js` | `paddle`, `consultation_calendar`, `cally`, `playback`, `audio_upload`, `media_upload`, `media_preview`, `package_details`, `lightbox`, `carousel`, `accordion`, `navbar`, `toast`, `turnstile`, `tree_view`, `content_blocks`, `product_slug`, `product_kind`, `chapter_playlist`, `avatar`, `image_fallback`, `copy`, `locale`, `tooltip`, `sidebar`, `flash`, `consultation_block_form`, `package_copy`, `live_preview`, `article_editor`, `cart_focus` |
 | JS libs | `app/frontend/lib/` | `paddle.js` (lazy Paddle load), `lightbox_viewer.js`, `page_features.js`, `rich_text_editor.js` |
 | Rich text | Trix + `@rails/actiontext` | CMS `rich` fields |
 
@@ -379,8 +387,9 @@ query feeding an editable CMS.
 Polish-only staff UI, all behind `users.admin`. Areas: dashboard, bookings (index/
 show + cancel/reschedule/settlement), orders (index/show), content blocks/items,
 testimonial invitations (create/approve/decline), packages & products (+ audio
-chapters, slug preview), consultation calendar + settings + blocks + slots, Paddle
-price refresh, staged media uploads, Solid Queue (`/admin/jobs`), PgHero (`/admin/db`).
+chapters, slug preview), articles (the blog), consultation calendar + settings +
+blocks + slots, Paddle price refresh, staged media uploads, Solid Queue
+(`/admin/jobs`), PgHero (`/admin/db`).
 
 ---
 

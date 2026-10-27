@@ -434,7 +434,10 @@ and a short owner-editable message. The category pages cap their inner content a
 1080px. `/audioprocesses` places the product grid 32px after the introduction, with
 no Format/Access facts block. `/stories` places its grid 24px after the introduction
 and shared delivery facts below the recordings. The grouped shop keeps the concise
-previews and category links without a shared delivery block.
+previews and category links without a shared delivery block. The empty message
+renders at body size (`text-t5`) and the `Sklep` return link at body size in amber
+(`text-t5`, `text-accent`) with a 44px minimum touch target; that link is shown on
+both category pages in both the empty and populated states.
 
 ### Inputs / Fields
 

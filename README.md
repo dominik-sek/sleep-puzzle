@@ -28,6 +28,10 @@ without a redeploy.
 5. **Is bilingual** - Polish on the bare path, English under `/en`, down to the
    emails and the error pages.
 
+6. **Publishes a blog** - long-form articles the owner writes and schedules in the
+   panel, with per-article SEO, a sitemap, an RSS feed and `llms.txt` so search
+   engines and AI assistants can discover them.
+
 ## Screenshots
 
 ### What a buyer sees
@@ -106,6 +110,7 @@ Needs Ruby 4.0.5, PostgreSQL, libvips and ffmpeg.
 | | |
 | --- | --- |
 | [docs/content-blocks.md](docs/content-blocks.md) | The content-block schema in full |
+| [docs/blog-plan.md](docs/blog-plan.md) | The blog and SEO/AI-discovery feature: design and decisions |
 | [docs/production-db-local.md](docs/production-db-local.md) | Download and restore a production database copy locally |
 | [PRODUCT.md](PRODUCT.md) | Who this is for and what it's meant to do |
 | [DESIGN.md](DESIGN.md) | The design system it's built to |

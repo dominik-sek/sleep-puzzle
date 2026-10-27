@@ -288,6 +288,13 @@ pl:
     see_packages: "Zobacz pakiety"
     go_to_shop: "Przejdź do sklepu"
     copyright: "© %{year} Sleep Puzzle. Wszelkie prawa zastrzeżone."
+  blog:
+    back_to_blog: "Wróć na blog"
+    reading_time:
+      one: "%{count} minuta czytania"
+      few: "%{count} minuty czytania"
+      many: "%{count} minut czytania"
+      other: "%{count} minuty czytania"
   orders:
     summary:
       items_title: "Twoje zamówienie"

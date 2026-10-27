@@ -12,6 +12,12 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Search-engine and AI-crawler discovery. Deliberately outside the locale scope:
+  # a sitemap and llms.txt are one file at the site root, not a page per language.
+  get "sitemap.xml", to: "sitemap#index", as: :sitemap
+  get "llms.txt", to: "llms#index", as: :llms
+  get "llms-full.txt", to: "llms#full", as: :llms_full
+
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
@@ -38,6 +44,11 @@ Rails.application.routes.draw do
     # one page: each card carries everything a package has to say, so there is
     # no per-package page to link to
     resources :packages, only: [ :index ]
+    # the owner's long-form articles; addressed by slug so a title can change
+    # without moving the page, and so /blog/:slug has one canonical address
+    resources :articles, path: "blog", param: :slug, only: [ :index, :show ] do
+      get :feed, on: :collection
+    end
     resources :dashboard, only: [ :index ]
     # looked up by token rather than id: the URL is handed to Paddle as the checkout
     # success redirect, so it shouldn't expose sequential ids
@@ -122,6 +133,9 @@ Rails.application.routes.draw do
     resources :products, except: [ :show ] do
       post :slug_preview, on: :member
       resources :audio_chapters, except: [ :index, :show ], controller: "audio_chapters"
+    end
+    resources :articles, except: [ :show ] do
+      post :preview, on: :collection
     end
     resources :staged_media_uploads, only: [ :create ] do
       put "chunks/:index", to: "staged_media_uploads#chunk", on: :member, as: :chunk

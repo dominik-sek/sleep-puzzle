@@ -1,0 +1,22 @@
+<% content_for :title, page_title(content_block("blog.index.title")) %>
+<div class="min-h-screen flex flex-col items-center">
+  <%= render Section::Component.new(background: :ink, align: :left) do %>
+    <div class="mx-auto w-full max-w-[1080px]">
+      <h1 class="page-title"><%= content_block("blog.index.title") %></h1>
+      <p class="page-subtitle mt-3 max-w-[70ch]"><%= content_block("blog.index.subtitle") %></p>
+
+      <% if @articles.any? %>
+        <div class="mt-8 grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))]">
+          <%= render @articles %>
+        </div>
+        <% if @pagy.pages > 1 %>
+          <div class="mt-8">
+            <%= render Pagination::Component.new(pagy: @pagy) %>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="mt-6 text-t5 text-tan [overflow-wrap:anywhere]"><%= content_block("blog.index.empty") %></p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

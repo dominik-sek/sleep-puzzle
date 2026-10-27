@@ -292,6 +292,11 @@ en:
     see_packages: "See the packages"
     go_to_shop: "Go to the shop"
     copyright: "© %{year} Sleep Puzzle. All rights reserved."
+  blog:
+    back_to_blog: "Back to blog"
+    reading_time:
+      one: "%{count} minute read"
+      other: "%{count} minutes read"
   orders:
     summary:
       items_title: "Your order"

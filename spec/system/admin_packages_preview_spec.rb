@@ -114,7 +114,7 @@ RSpec.describe "Admin package preview", type: :system do
       dimensions = page.evaluate_script(<<~JS)
         (() => {
           const main = document.querySelector("main");
-          const form = document.querySelector('[data-package-preview-target="form"]').getBoundingClientRect();
+          const form = document.querySelector('[data-live-preview-target="form"]').getBoundingClientRect();
           const preview = document.querySelector("#package-preview").getBoundingClientRect();
           return { width: main.clientWidth, scrollWidth: main.scrollWidth,
                    formRight: form.right, formBottom: form.bottom,

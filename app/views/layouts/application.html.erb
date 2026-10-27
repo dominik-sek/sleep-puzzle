@@ -12,6 +12,24 @@
       <%= tag.link rel: "alternate", hreflang: locale, href: alternate_locale_url(locale) %>
     <% end %>
 
+    <meta name="description" content="<%= meta_description %>">
+    <link rel="canonical" href="<%= canonical_url %>">
+
+    <%# Open Graph + Twitter, for link previews and AI/answer-engine summaries %>
+    <meta property="og:site_name" content="<%= brand_name %>">
+    <meta property="og:type" content="<%= content_for?(:og_type) ? content_for(:og_type) : "website" %>">
+    <meta property="og:title" content="<%= content_for(:title) || "Sleep Puzzle" %>">
+    <meta property="og:description" content="<%= meta_description %>">
+    <meta property="og:url" content="<%= canonical_url %>">
+    <meta property="og:image" content="<%= og_image_url %>">
+    <meta property="og:locale" content="<%= I18n.locale %>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for(:title) || "Sleep Puzzle" %>">
+    <meta name="twitter:description" content="<%= meta_description %>">
+    <meta name="twitter:image" content="<%= og_image_url %>">
+
+    <%= json_ld(site_json_ld) %>
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 

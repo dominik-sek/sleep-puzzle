@@ -41,6 +41,19 @@ module CatalogueHelpers
     end
   end
 
+  def build_article(title: "Sen niemowlaka", title_en: nil, excerpt: nil, body: nil, **attributes)
+    Article.new({ published: true }.merge(attributes)).tap do |article|
+      article.assign_translation(:title, :pl, title)
+      article.assign_translation(:title, :en, title_en) if title_en
+      article.assign_translation(:excerpt, :pl, excerpt) if excerpt
+      article.body_pl = body if body
+    end
+  end
+
+  def create_article(**attributes)
+    build_article(**attributes).tap(&:save!)
+  end
+
   def paddle_price(id: "pri_123", product_name: "Pakiet", description: "Jednorazowo", amount: "24900", currency: "PLN")
     PaddlePriceCatalogService::Price.new(
       id: id, description: description, product_name: product_name, amount: amount, currency: currency

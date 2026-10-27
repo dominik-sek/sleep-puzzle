@@ -1,0 +1,63 @@
+<% content_for :title, "Blog - Panel" %>
+
+<div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[1100px]">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div class="flex flex-col gap-1">
+      <h1 class="text-t2 font-display text-cream">Blog</h1>
+      <p class="text-t5 text-taupe">
+        Artykuły na bloga. Zanim zaznaczysz publikację, artykuł jest widoczny tylko tutaj.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <%= link_to new_admin_article_path,
+                  class: "inline-flex items-center gap-1.5 rounded-lg border border-accent-terracotta/30 bg-accent px-3.5 py-2 text-sm font-medium text-ink no-underline shadow-sm hover:bg-accent-hover" do %>
+        <%= icon "plus", class: "size-3.5 shrink-0" %>
+        Nowy artykuł
+      <% end %>
+    </div>
+  </div>
+
+  <% if @articles.any? %>
+    <%= render Table::Component.new(hoverable: true) do |table| %>
+      <% table.with_column(label: "Tytuł") %>
+      <% table.with_column(label: "Języki") %>
+      <% table.with_column(label: "Data") %>
+      <% table.with_column(label: "Widoczność") %>
+      <% table.with_column(label: "", align: :right) %>
+
+      <% @articles.each do |article| %>
+        <% table.with_row do |row| %>
+          <% row.with_cell(primary: true) do %>
+            <div><%= link_to article.title, edit_admin_article_path(article) %></div>
+            <div class="text-taupe"><%= truncate(article.excerpt, length: 60) %></div>
+          <% end %>
+
+          <% row.with_cell do %>
+            <%= admin_translation_badges(article, :title) %>
+          <% end %>
+
+          <% row.with_cell(classes: "tabular-nums whitespace-nowrap") do %>
+            <%= l(article.display_date.to_date, format: :long) %>
+          <% end %>
+
+          <% row.with_cell do %>
+            <%= admin_published_badge(article) %>
+          <% end %>
+
+          <% row.with_cell(align: :right, classes: "whitespace-nowrap") do %>
+            <%= link_to "Edytuj", edit_admin_article_path(article),
+                        class: "text-t6 text-cream no-underline hover:text-accent" %>
+            <%= link_to "Usuń", admin_article_path(article),
+                        data: { turbo_method: :delete, turbo_confirm: "Usunąć „#{article.title}”?" },
+                        class: "ml-3 text-t6 text-red-400 no-underline hover:text-red-300" %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render Pagination::Component.new(pagy: @pagy) %>
+  <% else %>
+    <p class="text-t5 text-taupe">Brak artykułów. Dodaj pierwszy, żeby pojawił się na blogu.</p>
+  <% end %>
+</div>

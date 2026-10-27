@@ -1,0 +1,12 @@
+<% content_for :title, "#{@article.title} - Panel" %>
+
+<div class="p-6 sm:p-8 flex flex-col gap-6 max-w-[1440px]">
+  <div class="flex flex-col gap-1">
+    <h1 class="text-t2 font-display text-cream"><%= @article.title %></h1>
+    <p class="text-t5 text-taupe">
+      Pusta wersja angielska wyświetli polską.
+    </p>
+  </div>
+
+  <%= render "form", article: @article %>
+</div>

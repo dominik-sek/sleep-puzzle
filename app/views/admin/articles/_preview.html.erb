@@ -1,0 +1,19 @@
+<%# The article as it will render publicly, from the unsaved submitted copy. %>
+<div lang="<%= I18n.locale %>">
+  <h2 class="m-0 text-balance font-display font-bold text-t2 text-cream"><%= article.title %></h2>
+
+  <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-t6 text-taupe">
+    <% preview_date = article.display_date || Time.current %>
+    <time datetime="<%= preview_date.iso8601 %>"><%= l(preview_date.to_date, format: :long) %></time>
+    <span aria-hidden="true">·</span>
+    <span><%= t("blog.reading_time", count: article.reading_minutes) %></span>
+  </div>
+
+  <% if article.excerpt.present? %>
+    <p class="mt-4 text-t4 text-tan"><%= article.excerpt %></p>
+  <% end %>
+
+  <div class="trix-copy mt-4">
+    <%= article.body %>
+  </div>
+</div>

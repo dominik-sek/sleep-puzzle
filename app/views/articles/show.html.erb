@@ -1,0 +1,55 @@
+<% content_for :title, page_title(@article.title) %>
+<% content_for :meta_description, (@article.meta_description.presence || @article.excerpt).to_s %>
+<% content_for :og_type, "article" %>
+<% if @article.cover_image.attached? %>
+  <% content_for :og_image, url_for(@article.cover_image.variant(resize_to_limit: [ 1200, 630 ])) %>
+<% end %>
+<% content_for :head, json_ld(article_json_ld(@article)) %>
+<div class="min-h-screen flex flex-col items-center">
+  <%= render Section::Component.new(background: :ink, align: :left) do %>
+    <article class="mx-auto w-full max-w-[720px]">
+      <nav aria-label="<%= t('blog.back_to_blog') %>">
+        <%= link_to articles_path,
+                    class: "group inline-flex min-h-11 min-w-11 items-center gap-1.5 rounded-md py-2 text-t6 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+          <%= icon "arrow-left", class: "size-3.5 shrink-0 transition-transform duration-100 group-hover:-translate-x-0.5" %>
+          <%= t("blog.back_to_blog") %>
+        <% end %>
+      </nav>
+
+      <h1 class="page-title mt-6 mb-0 text-balance"><%= @article.title %></h1>
+
+      <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-t6 text-taupe">
+        <time datetime="<%= @article.display_date.iso8601 %>"><%= l(@article.display_date.to_date, format: :long) %></time>
+        <span aria-hidden="true">·</span>
+        <span><%= t("blog.reading_time", count: @article.reading_minutes) %></span>
+      </div>
+
+      <% if @article.cover_image.attached? %>
+        <%= image_tag @article.cover_image.variant(resize_to_limit: [1440, 810]),
+                      class: "mt-6 w-full rounded-2xl border border-border-strong",
+                      alt: "" %>
+      <% end %>
+
+      <% if @article.excerpt.present? %>
+        <p class="page-subtitle mt-8 text-pretty"><%= @article.excerpt %></p>
+      <% end %>
+
+      <div class="trix-copy mt-6">
+        <%= @article.body %>
+      </div>
+
+      <%# Cross-link to the offer: the article earns the read, and the internal
+          link points the reader - and search engines - at what is for sale. %>
+      <section aria-labelledby="article-offer" class="mt-12 border-t border-border pt-8">
+        <h2 id="article-offer" class="m-0 text-balance font-display font-bold text-t2 text-cream">
+          <%= content_block("blog.index.offer_title") %>
+        </h2>
+        <p class="mt-3 max-w-[60ch] text-t5 text-tan"><%= content_block("blog.index.offer_body") %></p>
+        <%= link_to packages_path,
+                    class: "mt-5 inline-flex min-h-11 items-center justify-center rounded-full border border-accent-terracotta/30 bg-accent px-7 py-4 text-t6 font-bold text-ink no-underline hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+          <%= content_block("blog.index.offer_link") %>
+        <% end %>
+      </section>
+    </article>
+  <% end %>
+</div>

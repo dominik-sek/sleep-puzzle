@@ -1,0 +1,23 @@
+<%# One article card, used on the blog index and the home-page strip. %>
+<article class="flex min-w-0 flex-col gap-3 rounded-2xl border border-border-strong bg-surface p-6">
+  <%= link_to article_path(slug: article.slug), class: "group no-underline" do %>
+    <% if article.cover_image.attached? %>
+      <%= image_tag article.cover_image.variant(resize_to_limit: [800, 450]),
+                    class: "mb-4 aspect-[16/9] w-full rounded-lg border border-border object-cover",
+                    alt: "" %>
+    <% end %>
+    <h2 class="m-0 text-balance font-display font-bold text-t3 text-cream [overflow-wrap:anywhere] group-hover:text-accent">
+      <%= article.title %>
+    </h2>
+  <% end %>
+
+  <% if article.excerpt.present? %>
+    <p class="m-0 text-t5 text-tan [overflow-wrap:anywhere]"><%= truncate(article.excerpt, length: 160, separator: /\s/) %></p>
+  <% end %>
+
+  <div class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 text-t6 text-taupe">
+    <time datetime="<%= article.display_date.iso8601 %>"><%= l(article.display_date.to_date, format: :long) %></time>
+    <span aria-hidden="true">·</span>
+    <span><%= t("blog.reading_time", count: article.reading_minutes) %></span>
+  </div>
+</article>

@@ -91,6 +91,29 @@
     <% next_background = next_background == :ink ? :ink_soft : :ink %>
   <% end %>
 
+  <% if @articles.any? %>
+    <section class="w-full <%= next_background == :ink ? "bg-ink" : "bg-ink-soft" %> section-padding" aria-labelledby="blog-title">
+      <div class="mx-auto max-w-[1080px]">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div class="flex max-w-[60ch] flex-col gap-1">
+            <h2 id="blog-title" class="text-balance font-display text-t2 font-bold text-cream"><%= content_block("home.blog.title") %></h2>
+            <p class="text-t5 text-tan"><%= content_block("home.blog.subtitle") %></p>
+          </div>
+          <%= link_to articles_path,
+                      class: "group inline-flex min-h-11 min-w-11 items-center gap-1.5 rounded-md py-2 text-t6 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
+            <%= content_block("home.blog.link") %>
+            <%= icon "arrow-right", class: "size-3.5 shrink-0 transition-transform duration-100 group-hover:translate-x-0.5" %>
+          <% end %>
+        </div>
+
+        <div class="mt-8 grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))]">
+          <%= render @articles %>
+        </div>
+      </div>
+    </section>
+    <% next_background = next_background == :ink ? :ink_soft : :ink %>
+  <% end %>
+
   <%= render Section::Component.new(background: next_background, align: :center) do |section| %>
     <h2 class="text-balance font-display text-t2 font-bold text-cream"><%= content_block("home.closing.quote") %></h2>
     <p class="page-subtitle"><%= content_block("home.closing.lead") %></p>

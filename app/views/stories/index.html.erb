@@ -14,11 +14,11 @@
           <%= render "products/delivery_specs" %>
         </dl>
       <% else %>
-        <p class="mt-6 text-t5 text-tan [overflow-wrap:anywhere]"><%= content_block("stories.hero.empty") %></p>
+        <p class="mt-8 text-t5 text-tan"><%= content_block("stories.hero.empty") %></p>
       <% end %>
 
       <%= link_to t("nav.shop"), products_path,
-                  class: "mt-6 inline-flex min-h-11 min-w-11 items-center rounded-md py-2 text-t6 font-bold text-tan no-underline hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+                  class: "mt-6 inline-flex min-h-11 min-w-11 items-center rounded-md py-2 text-t5 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
     </div>
   <% end %>
 </div>
