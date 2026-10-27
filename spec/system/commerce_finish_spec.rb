@@ -49,13 +49,25 @@ RSpec.describe "Commerce finishing pass", type: :system do
     [ cart_path, booking_path(booking), dashboard_index_path, new_admin_product_path, new_admin_article_path ].each do |path|
       visit path
       page.execute_script("document.documentElement.style.fontSize='200%'")
-      expect(page.evaluate_script("document.documentElement.scrollWidth <= innerWidth")).to be(true)
+      expect(page.evaluate_script("document.documentElement.scrollWidth <= innerWidth")).to be(true), -> {
+        overflow = page.evaluate_script(<<~JS)
+          Array.from(document.querySelectorAll('main *')).filter(element => {
+            const rect = element.getBoundingClientRect();
+            return rect.width && (rect.right > innerWidth || rect.left < 0);
+          }).map(element => ({ tag: element.tagName, class: element.className, text: element.textContent.trim().slice(0, 80), right: element.getBoundingClientRect().right }))
+        JS
+        "Horizontal overflow on #{path}: #{overflow.inspect}"
+      }
       expect(page.evaluate_script("document.querySelector('main').scrollWidth <= document.querySelector('main').clientWidth + 1")).to be(true)
       if path == cart_path
         link = find("main a", text: product.name)
         expect(link[:class]).not_to include("truncate")
         expect(link.evaluate_script("this.scrollWidth <= this.clientWidth + 1")).to be(true)
         page.save_screenshot(Rails.root.join("tmp/polish-cart-mobile-200.png"))
+      end
+      if path == dashboard_index_path
+        page.scroll_to(find_link("Edytuj dane konta"), align: :bottom)
+        page.save_screenshot(Rails.root.join("tmp/polish-dashboard-mobile-200.png"))
       end
     end
     page.driver.browser.manage.window.resize_to(1280, 900)
