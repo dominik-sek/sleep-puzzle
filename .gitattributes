@@ -1,5 +1,14 @@
 # See https://git-scm.com/docs/gitattributes for more about git attribute files.
 
+# Normalize line endings: always store LF in the repository.
+* text=auto
+
+# Shebang scripts must stay LF on every platform — a CRLF shebang line
+# (`#!/usr/bin/env ruby\r`) breaks when the production image runs them.
+bin/* text eol=lf
+script/* text eol=lf
+.githooks/* text eol=lf
+
 # Mark the database schema as having been generated.
 db/schema.rb linguist-generated
 
