@@ -25,9 +25,11 @@
       </div>
 
       <% if @article.cover_image.attached? %>
-        <%= image_tag @article.cover_image.variant(resize_to_limit: [1440, 810]),
-                      class: "mt-6 w-full rounded-2xl border border-border-strong",
-                      alt: "" %>
+        <div class="mt-6 aspect-[2/1] overflow-hidden rounded-2xl border border-border-strong sm:aspect-[5/2]">
+          <%= image_tag @article.cover_image.variant(resize_to_fill: [1440, 720]),
+                        class: "h-full w-full object-cover",
+                        alt: "" %>
+        </div>
       <% end %>
 
       <% if @article.excerpt.present? %>

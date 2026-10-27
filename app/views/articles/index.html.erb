@@ -6,7 +6,7 @@
       <p class="page-subtitle mt-3 max-w-[70ch]"><%= content_block("blog.index.subtitle") %></p>
 
       <% if @articles.any? %>
-        <div class="mt-8 grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))]">
+        <div class="mt-8 grid items-start gap-6 [grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr))]">
           <%= render @articles %>
         </div>
         <% if @pagy.pages > 1 %>

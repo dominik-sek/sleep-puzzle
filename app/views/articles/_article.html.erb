@@ -2,9 +2,11 @@
 <article class="flex min-w-0 flex-col gap-3 rounded-2xl border border-border-strong bg-surface p-6">
   <%= link_to article_path(slug: article.slug), class: "group no-underline" do %>
     <% if article.cover_image.attached? %>
-      <%= image_tag article.cover_image.variant(resize_to_limit: [800, 450]),
-                    class: "mb-4 aspect-[16/9] w-full rounded-lg border border-border object-cover",
-                    alt: "" %>
+      <div class="mb-4 aspect-[2/1] overflow-hidden rounded-lg border border-border">
+        <%= image_tag article.cover_image.variant(resize_to_fill: [800, 400]),
+                      class: "h-full w-full object-cover",
+                      alt: "", loading: "lazy" %>
+      </div>
     <% end %>
     <h2 class="m-0 text-balance font-display font-bold text-t3 text-cream [overflow-wrap:anywhere] group-hover:text-accent">
       <%= article.title %>
