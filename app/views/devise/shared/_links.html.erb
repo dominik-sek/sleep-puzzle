@@ -9,25 +9,25 @@
 %>
 <div class="flex flex-col items-center gap-2 text-t6">
   <% if controller_name != "sessions" %>
-    <%= link_to t("auth.sign_in.title"), new_session_path(resource_name), class: "text-accent no-underline hover:text-accent-hover" %>
+    <%= link_to t("auth.sign_in.title"), new_session_path(resource_name), class: "inline-flex min-h-11 items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent text-accent no-underline hover:text-accent-hover" %>
   <% end %>
 
   <% if devise_mapping.registerable? && controller_name != "registrations" %>
-    <span class="text-taupe">
+    <span class="flex flex-wrap items-center justify-center gap-x-1 text-taupe">
       <%= t("auth.sign_in.no_account") %>
-      <%= link_to t("auth.sign_in.sign_up_link"), new_registration_path(resource_name), class: "font-bold text-accent no-underline hover:text-accent-hover" %>
+      <%= link_to t("auth.sign_in.sign_up_link"), new_registration_path(resource_name), class: "inline-flex min-h-11 items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent font-bold text-accent no-underline hover:text-accent-hover" %>
     </span>
   <% end %>
 
   <% if devise_mapping.recoverable? && controller_name != "passwords" && controller_name != "registrations" %>
-    <%= link_to t("auth.sign_in.forgot"), new_password_path(resource_name), class: "text-taupe no-underline hover:text-accent" %>
+    <%= link_to t("auth.sign_in.forgot"), new_password_path(resource_name), class: "inline-flex min-h-11 items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent text-taupe no-underline hover:text-accent" %>
   <% end %>
 
   <% if devise_mapping.confirmable? && controller_name != "confirmations" %>
-    <%= link_to t("devise.confirmations.send_instructions"), new_confirmation_path(resource_name), class: "text-taupe no-underline hover:text-accent" %>
+    <%= link_to t("devise.confirmations.send_instructions"), new_confirmation_path(resource_name), class: "inline-flex min-h-11 items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent text-taupe no-underline hover:text-accent" %>
   <% end %>
 
   <% if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != "unlocks" %>
-    <%= link_to t("devise.unlocks.send_instructions"), new_unlock_path(resource_name), class: "text-taupe no-underline hover:text-accent" %>
+    <%= link_to t("devise.unlocks.send_instructions"), new_unlock_path(resource_name), class: "inline-flex min-h-11 items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent text-taupe no-underline hover:text-accent" %>
   <% end %>
 </div>

@@ -14,8 +14,8 @@ export function showToast(options) {
 }
 
 const COLLAPSED_PEEK = 16; // px each stacked toast peeks out from under the front one
-const ENTER_DURATION = 400;
-const EXIT_DURATION = 250;
+const ENTER_DURATION = 200;
+const EXIT_DURATION = 150;
 
 const TONE_CLASSES = {
     success: "text-emerald-400",
@@ -34,7 +34,7 @@ const ICONS = {
     error: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="size-5"><circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6"></path><path d="m9 9 6 6"></path></svg>`,
     warning: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="size-5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>`,
     info: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="size-5"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>`,
-    loading: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="size-5 animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>`,
+    loading: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="size-5 motion-safe:animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>`,
     default: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="size-5"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>`,
 };
 
@@ -59,7 +59,10 @@ export default class extends Controller {
         this.toasts = [];
         this.hovering = false;
 
-        this.containerTarget.style.transition = `height ${ENTER_DURATION}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+        this.motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+        this.handleMotionChange = () => this.applyMotionPreferences();
+        this.motionPreference.addEventListener("change", this.handleMotionChange);
+        this.applyMotionPreferences();
 
         // Toast copy wraps to a different number of lines per breakpoint, so the
         // stack has to be re-measured whenever a toast changes height.
@@ -76,6 +79,7 @@ export default class extends Controller {
     }
 
     disconnect() {
+        this.motionPreference.removeEventListener("change", this.handleMotionChange);
         window.removeEventListener("toast:show", this.handleWindowToast);
         this.resizeObserver.disconnect();
         this.toasts.forEach((toast) => this.pauseTimer(toast));
@@ -101,9 +105,8 @@ export default class extends Controller {
 
         element.querySelector("[data-toast-close]").addEventListener("click", () => this.dismiss(toast));
 
-        // Start off-screen, in the direction the stack enters from.
-        element.style.transform = `translateY(${this.direction * -100}%) scale(0.96)`;
-        element.style.opacity = "0";
+        element.style.transform = `translateY(${this.motionPreference.matches ? 0 : this.direction * -12}px)`;
+        element.style.opacity = this.motionPreference.matches ? "1" : "0";
 
         this.containerTarget.prepend(element);
         this.toasts.unshift(toast);
@@ -111,7 +114,8 @@ export default class extends Controller {
         this.resizeObserver.observe(element);
 
         requestAnimationFrame(() => {
-            element.style.transition = `transform ${ENTER_DURATION}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${ENTER_DURATION}ms ease-out`;
+            if (!this.toasts.includes(toast)) return;
+            element.style.transition = this.toastTransition;
             this.layoutToasts();
         });
 
@@ -129,11 +133,28 @@ export default class extends Controller {
         const index = this.toasts.indexOf(toast);
         if (index !== -1) this.toasts.splice(index, 1);
 
-        toast.element.style.transition = `transform ${EXIT_DURATION}ms ease-in, opacity ${EXIT_DURATION}ms ease-in`;
-        toast.element.style.transform = `translateY(${toast.y}px) scale(0.92)`;
+        toast.element.style.transition = this.motionPreference.matches ? "none" :
+            `transform ${EXIT_DURATION}ms ease-out, opacity ${EXIT_DURATION}ms ease-out`;
+        toast.element.style.transform = `translateY(${toast.y - this.direction * 8}px)`;
         toast.element.style.opacity = "0";
 
-        setTimeout(() => toast.element.remove(), EXIT_DURATION);
+        if (this.motionPreference.matches) {
+            toast.element.remove();
+        } else {
+            setTimeout(() => toast.element.remove(), EXIT_DURATION);
+        }
+        this.layoutToasts();
+    }
+
+    get toastTransition() {
+        return this.motionPreference.matches ? "none" :
+            `transform ${ENTER_DURATION}ms ease-out, opacity ${ENTER_DURATION}ms ease-out`;
+    }
+
+    applyMotionPreferences() {
+        this.containerTarget.style.transition = this.motionPreference.matches ? "none" :
+            `height ${ENTER_DURATION}ms ease-out`;
+        this.toasts.forEach((toast) => { toast.element.style.transition = this.toastTransition; });
         this.layoutToasts();
     }
 
@@ -221,7 +242,7 @@ export default class extends Controller {
           <p class="text-t5 text-cream">${escapeHtml(title)}</p>
           ${description ? `<p class="mt-0.5 text-t6 font-normal tracking-normal text-taupe">${escapeHtml(description)}</p>` : ""}
         </div>
-        <button type="button" data-toast-close class="-mr-1 shrink-0 rounded-md p-1 text-taupe transition-colors hover:text-cream" aria-label="${escapeHtml(this.closeLabelValue)}">
+        <button type="button" data-toast-close class="relative -mr-1 flex size-6 shrink-0 items-center justify-center rounded-md p-1 text-taupe transition-colors hover:text-cream before:absolute before:-inset-2.5 before:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label="${escapeHtml(this.closeLabelValue)}">
           ${CLOSE_ICON}
         </button>
       </div>

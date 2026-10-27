@@ -67,7 +67,7 @@
         form_class: "contents",
         aria: { label: "#{label} - #{product.name}" },
         data: { turbo_submits_with: t("forms.removing") },
-        class: "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-border-input bg-ink text-cream font-bold text-t6 cursor-pointer transition-all duration-100 ease-in-out select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent #{shape}" do %>
+        class: "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-border-input bg-ink text-cream font-bold text-t6 cursor-pointer transition-colors duration-100 ease-in-out select-none hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent #{shape}" do %>
     <%= label %>
   <% end %>
 <% elsif !product_price_label(product) %>
@@ -83,7 +83,7 @@
     <%= form.button type: :submit,
           aria: { label: "#{label} - #{product.name}" },
           data: { turbo_submits_with: t("forms.adding") },
-          class: "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-accent-terracotta/30 bg-accent text-ink font-bold text-t6 cursor-pointer transition-all duration-100 ease-in-out select-none hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent #{shape}" do %>
+          class: "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-accent-terracotta/30 bg-accent text-ink font-bold text-t6 cursor-pointer transition-colors duration-100 ease-in-out select-none hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent #{shape}" do %>
       <%= label %>
     <% end %>
   <% end %>

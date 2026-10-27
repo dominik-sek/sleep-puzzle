@@ -473,7 +473,7 @@ select.form-control:not([multiple]) option {
 calendar-date{
 
   &::part(button) {
-    @apply text-cream bg-transparent border-none shadow-none appearance-none transition-all duration-100 ease-in-out w-11 h-11 rounded-lg
+    @apply text-cream bg-transparent border-none shadow-none appearance-none transition-colors duration-100 ease-in-out w-11 h-11 rounded-lg
   }
   &::part(months) {
       @apply text-t5
@@ -527,7 +527,7 @@ calendar-month{
   }
   /* Sizing lives in the flat rule below, not here - see the note there. */
   &::part(button){
-    @apply rounded-md flex items-center justify-center text-center w-full box-border text-t6 font-sans transition-all duration-100 ease-in-out bg-ink
+    @apply rounded-md flex items-center justify-center text-center w-full box-border text-t6 font-sans transition-colors duration-100 ease-in-out bg-ink
   }
   &::part(week){
     @apply text-t2

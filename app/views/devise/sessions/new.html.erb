@@ -12,7 +12,7 @@
                options: { autocomplete: "current-password", required: true } %>
 
     <% if devise_mapping.rememberable? %>
-      <label class="flex items-center gap-2.5 text-t6 text-tan">
+      <label class="flex min-h-11 cursor-pointer items-center gap-2.5 text-t6 text-tan">
         <%= f.check_box :remember_me, class: "size-4 rounded-sm border-border-input bg-ink-soft" %>
         <%= t("auth.fields.remember_me") %>
       </label>
