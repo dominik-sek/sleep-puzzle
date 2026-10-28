@@ -1,0 +1,196 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Sleep Puzzle content and payment discovery",
+    "version": "1.0.0",
+    "description": "Public content and payment discovery for audio products and sleep consultations. Checkout operations are authenticated browser forms using Paddle card checkout, with CSRF protection and explicit purchase consent. Payment metadata describes discovery only; checkout does not accept MPP Authorization: Payment credentials or issue HTTP 402 payment challenges."
+  },
+  "servers": [
+    { "url": "https://sleeppuzzle.com" }
+  ],
+  "externalDocs": {
+    "description": "Usage and response formats",
+    "url": "https://sleeppuzzle.com/api-docs.txt"
+  },
+  "security": [],
+  "x-service-info": {
+    "categories": ["media"],
+    "docs": {
+      "homepage": "https://sleeppuzzle.com",
+      "apiReference": "https://sleeppuzzle.com/api-docs.txt",
+      "llms": "https://sleeppuzzle.com/llms.txt"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "browserSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "_sleep_puzzle_session",
+        "description": "Customer browser session established by sign-in. See /auth.md. Form submissions also require the current authenticity_token."
+      }
+    }
+  },
+  "paths": {
+    "/orders": {
+      "post": {
+        "operationId": "createAudioOrder",
+        "summary": "Start Paddle card checkout for audio products in the session cart",
+        "description": "Sign in, add products through the storefront, then submit the current cart form with its CSRF and policy tokens and the customer's explicit digital content consent. A Turbo Stream response opens Paddle checkout in the browser. The order remains pending until Paddle confirms payment by webhook. English storefront: /en/orders.",
+        "security": [{ "browserSession": [] }],
+        "x-payment-info": {
+          "intent": "charge",
+          "method": "card",
+          "amount": null,
+          "description": "One-time card payment through Paddle. The cart contents determine the price; Paddle checkout displays the final amount, currency, and taxes before payment. Requires interactive browser checkout."
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": ["authenticity_token", "policy_token", "digital_content_consent"],
+                "properties": {
+                  "authenticity_token": { "type": "string", "description": "CSRF token from the current cart form." },
+                  "policy_token": { "type": "string", "description": "Signed policy snapshot from the current cart form." },
+                  "digital_content_consent": { "type": "string", "enum": ["1"], "description": "Submit only after the customer explicitly accepts the purchase consent." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Turbo Stream opens checkout or displays a checkout preparation error; this does not confirm payment.",
+            "content": { "text/vnd.turbo-stream.html": { "schema": { "type": "string" } } }
+          },
+          "302": { "description": "Redirect to sign-in or the cart for an HTML form submission or invalid cart or consent." },
+          "422": { "description": "Invalid CSRF token." }
+        }
+      }
+    },
+    "/bookings": {
+      "post": {
+        "operationId": "createConsultationBooking",
+        "summary": "Reserve a consultation and start Paddle card checkout",
+        "description": "Sign in and use the current booking form to select an available date, hour, and published package. Submit the form's CSRF and policy tokens and the customer's explicit early service consent. A successful reservation holds the slot while the browser completes Paddle checkout. Paddle's payment webhook confirms the booking. English storefront: /en/bookings.",
+        "security": [{ "browserSession": [] }],
+        "x-payment-info": {
+          "intent": "charge",
+          "method": "card",
+          "amount": null,
+          "description": "One-time card payment through Paddle. The selected consultation package determines the price; Paddle checkout displays the final amount, currency, and taxes before payment. Requires interactive browser checkout."
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": ["authenticity_token", "booking[name]", "booking[package_id]", "booking[date]", "booking[hour]", "booking[policy_token]", "booking[early_service_consent]"],
+                "properties": {
+                  "authenticity_token": { "type": "string", "description": "CSRF token from the current booking form." },
+                  "booking[name]": { "type": "string" },
+                  "booking[package_id]": { "type": "integer", "description": "Published package selected in the booking form." },
+                  "booking[date]": { "type": "string", "format": "date", "description": "Available date from the booking calendar." },
+                  "booking[hour]": { "type": "string", "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$", "description": "Available hour in the site's booking timezone, as shown in the form." },
+                  "booking[policy_token]": { "type": "string", "description": "Signed policy snapshot from the current booking form." },
+                  "booking[early_service_consent]": { "type": "string", "enum": ["1"], "description": "Submit only after the customer explicitly accepts the purchase consent." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Turbo Stream refreshes availability and opens checkout or displays a preparation error; this does not confirm payment.",
+            "content": { "text/vnd.turbo-stream.html": { "schema": { "type": "string" } } }
+          },
+          "302": { "description": "Redirect to sign-in or the booking page for an HTML form submission." },
+          "422": {
+            "description": "Invalid CSRF token or booking validation failure, including unavailable slot, unpriceable package, or missing consent.",
+            "content": { "text/html": { "schema": { "type": "string" } } }
+          }
+        }
+      }
+    },
+    "/llms.txt": {
+      "get": {
+        "operationId": "getContentIndex",
+        "summary": "List key public pages and published article links",
+        "responses": {
+          "200": {
+            "description": "Polish-language content index with absolute links and article excerpts.",
+            "content": { "text/plain": { "schema": { "type": "string" } } }
+          }
+        }
+      }
+    },
+    "/llms-full.txt": {
+      "get": {
+        "operationId": "getPublishedArticleText",
+        "summary": "Read the full plain text of published articles",
+        "responses": {
+          "200": {
+            "description": "Polish-language article titles, URLs, and full text, newest first.",
+            "content": { "text/plain": { "schema": { "type": "string" } } }
+          }
+        }
+      }
+    },
+    "/sitemap.xml": {
+      "get": {
+        "operationId": "getSitemap",
+        "summary": "Discover public page URLs in Polish and English",
+        "responses": {
+          "200": {
+            "description": "Sitemap XML with language alternates and published article modification dates.",
+            "content": { "application/xml": { "schema": { "type": "string" } } }
+          }
+        }
+      }
+    },
+    "/blog/feed.rss": {
+      "get": {
+        "operationId": "getArticleFeed",
+        "summary": "Read the latest 20 published articles as RSS",
+        "description": "The default feed is Polish. Use /en/blog/feed.rss for English.",
+        "responses": {
+          "200": {
+            "description": "RSS 2.0 feed containing article titles, links, publication dates, and descriptions.",
+            "content": { "application/rss+xml": { "schema": { "type": "string" } } }
+          }
+        }
+      }
+    },
+    "/en/blog/feed.rss": {
+      "get": {
+        "operationId": "getEnglishArticleFeed",
+        "summary": "Read the latest 20 published articles in English as RSS",
+        "responses": {
+          "200": {
+            "description": "English-language RSS 2.0 article feed.",
+            "content": { "application/rss+xml": { "schema": { "type": "string" } } }
+          }
+        }
+      }
+    },
+    "/up": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Check whether the Rails application boots successfully",
+        "description": "This is an application liveness check, not a check of external integrations.",
+        "responses": {
+          "200": {
+            "description": "The application booted successfully.",
+            "content": { "text/html": { "schema": { "type": "string" } } }
+          },
+          "500": {
+            "description": "Application health check failed."
+          }
+        }
+      }
+    }
+  }
+}

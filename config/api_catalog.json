@@ -1,0 +1,26 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://sleeppuzzle.com/llms.txt",
+      "service-desc": [
+        {
+          "href": "https://sleeppuzzle.com/openapi.json",
+          "type": "application/json",
+          "title": "Sleep Puzzle public content discovery API"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://sleeppuzzle.com/api-docs.txt",
+          "type": "text/plain"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://sleeppuzzle.com/up",
+          "type": "text/html"
+        }
+      ]
+    }
+  ]
+}

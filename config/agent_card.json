@@ -1,0 +1,33 @@
+{
+  "name": "Sleep Puzzle Resource Guide",
+  "version": "1.0.0",
+  "description": "A read-only guide to Sleep Puzzle's public children's sleep resources, audio programmes, bedtime stories and consultation information. Returns a directory of public links; it does not provide personalised advice, make purchases or book consultations.",
+  "supportedInterfaces": [
+    {
+      "url": "https://sleeppuzzle.com/a2a",
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "provider": {
+    "organization": "Sleep Puzzle",
+    "url": "https://sleeppuzzle.com"
+  },
+  "documentationUrl": "https://sleeppuzzle.com/llms.txt",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extendedAgentCard": false
+  },
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain"],
+  "skills": [
+    {
+      "id": "public-resource-discovery",
+      "name": "Discover Sleep Puzzle resources",
+      "description": "Returns links to the public resource index, articles, audio programmes, bedtime stories and consultation information in Polish and English.",
+      "tags": ["sleep", "resource-discovery", "audio", "consultations"],
+      "examples": ["Where can I find Sleep Puzzle's resources?"]
+    }
+  ]
+}

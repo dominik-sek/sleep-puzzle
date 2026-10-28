@@ -105,12 +105,47 @@ bin/dev
 
 Needs Ruby 4.0.5, PostgreSQL, libvips and ffmpeg.
 
+### Markdown for agents
+
+Pages support content negotiation: request the same URL with
+`Accept: text/markdown` to receive the main content as Markdown, with headings,
+lists and links. Browser requests keep the HTML representation. Both variants
+include `Vary: Accept` so caches distinguish them; normal access controls and
+publication rules still apply. An explicitly requested format such as `.rss`
+keeps its original representation.
+
+```sh
+curl -i -H 'Accept: text/markdown' http://localhost:3000/
+curl -i -H 'Accept: text/html' http://localhost:3000/
+```
+
+The Markdown response uses `Content-Type: text/markdown; charset=utf-8`.
+`x-markdown-tokens` is omitted because no tokenizer is configured.
+
 ## Docs
+
+The public content-discovery API is listed at
+[`/.well-known/api-catalog`](https://sleeppuzzle.com/.well-known/api-catalog)
+using RFC 9727 Linkset JSON. Its [OpenAPI specification](public/openapi.json) and
+[usage notes](public/api-docs.txt) cover the existing text, sitemap, RSS, and
+health endpoints. Update `config/api_catalog.json` and these documents when the
+public API changes.
+
+After deployment, run the discovery check:
+
+```sh
+curl --fail-with-body https://isitagentready.com/api/scan \
+  -H 'Content-Type: application/json' \
+  -d '{"url":"https://sleeppuzzle.com"}'
+```
+
+The response's `checks.discovery.apiCatalog.status` should be `"pass"`.
 
 | | |
 | --- | --- |
 | [docs/content-blocks.md](docs/content-blocks.md) | The content-block schema in full |
 | [docs/blog-plan.md](docs/blog-plan.md) | The blog and SEO/AI-discovery feature: design and decisions |
 | [docs/production-db-local.md](docs/production-db-local.md) | Download and restore a production database copy locally |
+| [docs/oauth-discovery.md](docs/oauth-discovery.md) | Google provider metadata, authentication scope, and discovery validation |
 | [PRODUCT.md](PRODUCT.md) | Who this is for and what it's meant to do |
 | [DESIGN.md](DESIGN.md) | The design system it's built to |

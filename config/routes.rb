@@ -17,6 +17,22 @@ Rails.application.routes.draw do
   get "sitemap.xml", to: "sitemap#index", as: :sitemap
   get "llms.txt", to: "llms#index", as: :llms
   get "llms-full.txt", to: "llms#full", as: :llms_full
+  get "/.well-known/acp.json", to: "acp_discovery#show", format: false
+
+  get "/.well-known/agent-skills/index.json", to: "agent_skills#index", format: false
+  get "/.well-known/agent-skills/sleep-puzzle-guide/SKILL.md", to: "agent_skills#show", format: false
+
+  # Publish the existing Google identity provider's metadata at both discovery paths.
+  get "/.well-known/openid-configuration", to: "oauth_discovery#show", format: false
+  get "/.well-known/oauth-authorization-server", to: "oauth_discovery#show", format: false
+  get ".well-known/api-catalog", to: "api_catalog#index", as: :api_catalog, format: false
+  get "/.well-known/agent-card.json", to: "a2a#card", as: :agent_card
+  post "/a2a", to: "a2a#message"
+  get "auth.md", to: "auth_discovery#show", format: false, as: :auth_discovery
+  get ".well-known/ucp", to: "ucp_discovery#show", format: false
+  get "ucp/specification", to: "ucp_discovery#specification", format: false
+  get "ucp/schemas/browser-checkout.json", to: "ucp_discovery#schema", format: false
+  get "ucp/services/browser.openapi.json", to: "ucp_discovery#service_schema", format: false
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest

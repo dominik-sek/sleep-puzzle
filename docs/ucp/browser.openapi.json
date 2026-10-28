@@ -1,0 +1,43 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Sleep Puzzle browser commerce entry points",
+    "version": "2026-08-25",
+    "description": "Browser navigation for the com.sleeppuzzle.shopping.browser_checkout capability. Payments use the site's existing authenticated Paddle flow."
+  },
+  "servers": [{ "url": "https://sleeppuzzle.com" }],
+  "paths": {
+    "/products": {
+      "get": {
+        "operationId": "browseContent",
+        "summary": "Browse digital audio products in the customer's browser",
+        "responses": {
+          "200": {
+            "description": "Public product catalog",
+            "content": {
+              "text/html": {
+                "schema": { "$ref": "https://sleeppuzzle.com/ucp/schemas/browser-checkout.json#/$defs/browser_page" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart": {
+      "get": {
+        "operationId": "reviewCheckout",
+        "summary": "Review the current browser session's cart before consenting to payment",
+        "responses": {
+          "200": {
+            "description": "Cart page; checkout requires sign-in, consent and Paddle interaction",
+            "content": {
+              "text/html": {
+                "schema": { "$ref": "https://sleeppuzzle.com/ucp/schemas/browser-checkout.json#/$defs/browser_page" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

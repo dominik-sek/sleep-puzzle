@@ -1,4 +1,6 @@
 class HomeController < ApplicationController
+  after_action :advertise_agent_resources, only: :index
+
   # The home page is a shop window, not the catalogue: it shows the first few and
   # links to the full lists.
   PACKAGES_SHOWN = 3
@@ -11,5 +13,15 @@ class HomeController < ApplicationController
     @packages = Package.published.ordered.limit(PACKAGES_SHOWN)
     @products = Product.published.includes(:audio_chapters).ordered.limit(PRODUCTS_SHOWN)
     @articles = Article.published.newest.with_attached_cover_image.with_rich_text_body_pl.with_rich_text_body_en.limit(ARTICLES_SHOWN)
+  end
+
+  private
+
+  def advertise_agent_resources
+    # Append after rendering so Vite's asset preload links remain intact.
+    links = [ llms_path(locale: nil), llms_full_path(locale: nil) ].map do |path|
+      %(<#{path}>; rel="describedby"; type="text/plain")
+    end
+    response.headers["Link"] = [ response.headers["Link"].presence, *links ].compact.join(", ")
   end
 end

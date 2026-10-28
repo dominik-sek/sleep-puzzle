@@ -1,0 +1,54 @@
+Sleep Puzzle public content discovery API
+========================================
+
+Base URL: https://sleeppuzzle.com
+OpenAPI 3.1 specification: https://sleeppuzzle.com/openapi.json
+API catalog: https://sleeppuzzle.com/.well-known/api-catalog
+
+These read-only endpoints expose public content without authentication or an
+API key. Use HTTP GET. Responses use UTF-8; they are not JSON unless indicated.
+
+GET /llms.txt
+  text/plain: key public page links and published article links with excerpts.
+  The default content is Polish.
+
+GET /llms-full.txt
+  text/plain: titles, URLs, and full text of published articles, newest first.
+  The default content is Polish.
+
+GET /sitemap.xml
+  application/xml: public pages and published articles, with Polish and English
+  language alternates and article modification dates.
+
+GET /blog/feed.rss
+GET /en/blog/feed.rss
+  application/rss+xml: the latest 20 published articles in Polish or English,
+  respectively, as RSS 2.0. Items contain titles, URLs, dates, and descriptions.
+
+GET /up
+  text/html: HTTP 200 when the Rails application boots successfully, otherwise
+  HTTP 500. This liveness check does not verify payment, email, or calendar services.
+
+GET /.well-known/api-catalog
+  application/linkset+json: RFC 9727 catalog linking this API's specification,
+  documentation, and health endpoint. HEAD returns the catalog's discovery Link
+  header with an empty body.
+
+Payment discovery
+-----------------
+
+The OpenAPI document also describes POST /orders and POST /bookings with
+x-payment-info (intent: charge, method: card, amount: null). Null means dynamic
+pricing: the cart or consultation package determines the price. Paddle checkout
+shows the final amount, currency, and taxes before the customer pays.
+
+These operations use signed-in browser sessions, current CSRF and policy tokens,
+and explicit customer purchase consent. See /auth.md for sign-in. Use the current
+cart or booking form; checkout requires the browser's Paddle overlay. English
+storefront forms submit to /en/orders and /en/bookings with the same payment terms.
+Request Turbo Stream responses with Accept: text/vnd.turbo-stream.html.
+
+This metadata provides payment discovery. The checkout operations do not accept
+MPP Authorization: Payment credentials or return HTTP 402 payment challenges.
+Starting checkout does not confirm payment; Paddle's webhook confirms payment.
+Account and administration operations are outside this discovery document.

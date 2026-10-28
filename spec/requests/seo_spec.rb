@@ -1,6 +1,35 @@
 require "rails_helper"
 
 RSpec.describe "SEO and AI discovery", type: :request do
+  [ nil, :en ].each do |locale|
+    it "advertises machine-readable descriptions on the #{locale || :pl} homepage" do
+      get root_path(locale: locale)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Link"]).to include(
+        '</llms.txt>; rel="describedby"; type="text/plain"',
+        '</llms-full.txt>; rel="describedby"; type="text/plain"'
+      )
+      expect(response.headers["Link"]).to match(/rel=(?:"?preload|"?modulepreload)/)
+    end
+  end
+
+  it "includes discovery links on HEAD responses" do
+    head root_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.headers["Link"]).to include('</llms.txt>; rel="describedby"')
+    expect(response.body).to be_empty
+  end
+
+  it "preserves discovery links when negotiating Markdown" do
+    get root_path, headers: { "Accept" => "text/markdown" }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.media_type).to eq("text/markdown")
+    expect(response.headers["Link"]).to include('</llms.txt>; rel="describedby"')
+  end
+
   it "emits site structured data in the public layout" do
     get root_path
 
@@ -42,6 +71,7 @@ RSpec.describe "SEO and AI discovery", type: :request do
     get llms_path
 
     expect(response).to have_http_status(:ok)
+    expect(response.media_type).to eq("text/plain")
     expect(response.body).to include("Sen niemowlaka", "Zajawka")
   end
 
@@ -51,6 +81,7 @@ RSpec.describe "SEO and AI discovery", type: :request do
     get llms_full_path
 
     expect(response).to have_http_status(:ok)
+    expect(response.media_type).to eq("text/plain")
     expect(response.body).to include("Sen niemowlaka", "Pełna treść artykułu.")
   end
 end

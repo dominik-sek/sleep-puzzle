@@ -1,0 +1,17 @@
+name = "sleep-puzzle-oauth-metadata"
+main = "worker.mjs"
+compatibility_date = "2026-10-28"
+workers_dev = false
+preview_urls = false
+
+# The wildcard also matches query strings. The Worker returns 404 for suffixes
+# so this route cannot accidentally serve metadata for another resource path.
+[[routes]]
+pattern = "sleeppuzzle.com/.well-known/oauth-protected-resource*"
+zone_name = "sleeppuzzle.com"
+
+[vars]
+RESOURCE = "https://sleeppuzzle.com"
+# Required at deployment: --var 'ACCESS_ISSUER:<exact Access OAuth issuer URL>'
+# Copy the issuer from the Access application's authorization-server metadata.
+# Do not substitute a login, token, or .well-known endpoint URL.

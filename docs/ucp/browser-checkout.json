@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sleeppuzzle.com/ucp/schemas/browser-checkout.json",
+  "name": "com.sleeppuzzle.shopping.browser_checkout",
+  "version": "2026-08-25",
+  "title": "Sleep Puzzle browser checkout configuration",
+  "description": "Configuration for handing digital-content purchases to the customer's signed-in browser and Paddle checkout.",
+  "type": "object",
+  "required": ["catalog", "checkout", "authentication", "payment_provider", "requires_authentication"],
+  "properties": {
+    "catalog": { "$ref": "#/$defs/https_url" },
+    "checkout": { "$ref": "#/$defs/https_url" },
+    "authentication": { "$ref": "#/$defs/https_url" },
+    "payment_provider": { "const": "paddle" },
+    "requires_authentication": { "const": true }
+  },
+  "$defs": {
+    "https_url": { "type": "string", "format": "uri", "pattern": "^https://" },
+    "browser_page": { "type": "string", "description": "An HTML page displayed in the customer's browser." }
+  }
+}

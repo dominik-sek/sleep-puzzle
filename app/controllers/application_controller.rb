@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include MarkdownNegotiation
+
   # provides #pagy, used as `@pagy, @records = pagy(scope)`
   include Pagy::Method
 
