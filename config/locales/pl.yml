@@ -173,6 +173,9 @@ pl:
       many: "Czas trwania wsparcia: %{count} tygodni"
       other: "Czas trwania wsparcia: %{count} tygodnia"
   products:
+    shelf:
+      previous: "Poprzednie audioprocesy"
+      next: "Następne audioprocesy"
     browse_categories: "Przejdź do sekcji sklepu"
     category_navigation: "Kategoria i sklep"
     audio_delivery: "Dla materiałów audio"

@@ -1,0 +1,19 @@
+<% rail = products.size >= 4 %>
+<div <%= 'data-controller=product-shelf' if rail %>>
+  <% if rail %>
+    <div class="mb-3 flex justify-end gap-2" data-product-shelf-target="controls" hidden>
+      <% [ [ "previous", "arrow-left" ], [ "next", "arrow-right" ] ].each do |direction, arrow| %>
+        <button type="button" class="inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border-input text-cream hover:text-accent disabled:cursor-default disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                data-product-shelf-target="<%= direction %>" data-action="product-shelf#<%= direction %>" aria-controls="audio-processes-track" aria-label="<%= t("products.shelf.#{direction}") %>">
+          <%= icon arrow, class: "size-4" %>
+        </button>
+      <% end %>
+    </div>
+  <% end %>
+  <div id="audio-processes-track" class="shop-shelf <%= 'shop-shelf-rail' if rail %> <%= 'shop-shelf-single' if products.one? %>" tabindex="0" role="group" aria-labelledby="audio-processes-title"
+       <%= 'data-product-shelf-target=track data-action=scroll->product-shelf#update' if rail %>>
+    <% products.each do |product| %>
+      <%= render "products/card", product: product, heading: :h3, shelf: true %>
+    <% end %>
+  </div>
+</div>

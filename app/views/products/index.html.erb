@@ -1,66 +1,74 @@
 <% content_for :title, page_title(t("nav.shop")) %>
-<div class="min-h-screen flex flex-col items-center">
-  <%= render Section::Component.new(background: :ink, align: :left) do %>
-    <div class="mx-auto w-full max-w-[1240px]">
-      <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
-        <h1 class="page-title min-w-0"><%= content_block("shop.hero.title") %></h1>
-        <%= render "shared/cart_pill" %>
-      </div>
-      <p class="page-subtitle mt-2.5 max-w-[70ch]"><%= content_block("shop.hero.subtitle") %></p>
-
-      <% unless user_signed_in? %>
-        <p class="mt-2 text-t6 text-taupe">
-          <%= content_block("shop.hero.returning") %>
-          <%= link_to t("nav.sign_in"), new_user_session_path,
-                      class: "inline-flex min-h-11 items-center rounded-md font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
-        </p>
-      <% end %>
-
-      <nav aria-label="<%= t('products.browse_categories') %>" class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-        <%= link_to t("offers.audio"), "#audio-processes", class: "inline-flex min-h-11 items-center rounded-md py-2 text-t5 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
-        <%= link_to t("offers.stories"), "#stories", class: "inline-flex min-h-11 items-center rounded-md py-2 text-t5 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
-        <% if @packages.any? %>
-          <%= link_to t("offers.one_to_one"), "#packages", class: "inline-flex min-h-11 items-center rounded-md py-2 text-t5 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
-        <% end %>
-      </nav>
-
-      <% grouped_products = @products.group_by(&:kind) %>
-      <div class="mt-8 flex flex-col gap-12">
-        <% [ [ "audio_process", "audio-processes", "audio", "processes" ], [ "bedtime_story", "stories", "stories", "stories" ] ].each do |kind, anchor, label, copy| %>
-          <% products = grouped_products.fetch(kind, []) %>
-          <section id="<%= anchor %>" tabindex="-1" aria-labelledby="<%= anchor %>-title" class="scroll-mt-24 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
-            <h2 id="<%= anchor %>-title" class="font-display text-t2 font-bold text-cream"><%= t("offers.#{label}") %></h2>
-            <p class="mt-3 max-w-[70ch] text-t5 text-tan"><%= content_block("shop.collections.#{copy}_intro") %></p>
-            <%= link_to content_block("shop.collections.#{copy}_link"), kind == "audio_process" ? audio_processes_path : stories_path,
-                        class: "mt-2 inline-flex min-h-11 items-center rounded-md py-2 text-t6 font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
-            <div class="mt-4">
-              <% if products.any? %>
-                <%= render "products/grid", products: products, heading: :h3 %>
-              <% else %>
-                <p class="text-t5 text-taupe"><%= content_block("shop.collections.#{copy}_empty") %></p>
-              <% end %>
-            </div>
-          </section>
-        <% end %>
-
-        <% if @packages.any? %>
-          <section id="packages" tabindex="-1" aria-labelledby="packages-title" class="scroll-mt-24 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
-            <h2 id="packages-title" class="mb-6 font-display text-t2 font-bold text-cream"><%= t("offers.one_to_one") %></h2>
-            <div class="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))]">
-              <% @packages.each do |package| %>
-                <%= link_to packages_path(anchor: dom_id(package)),
-                            data: { turbo: false },
-                            aria: { label: "#{content_block('shop.collections.packages_link')} — #{package.name}" },
-                            class: "flex min-w-0 flex-col gap-3 rounded-2xl border border-border-strong bg-surface p-6 text-cream no-underline hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
-                  <h3 class="font-display text-t3 font-bold [overflow-wrap:anywhere]"><%= package.name %></h3>
-                  <span class="text-t5 text-tan [overflow-wrap:anywhere]"><%= package.for_whom %></span>
-                  <span class="mt-auto pt-3 text-t5 font-bold text-accent"><%= content_block("shop.collections.packages_link") %> <span aria-hidden="true">→</span></span>
-                <% end %>
-              <% end %>
-            </div>
-          </section>
-        <% end %>
-      </div>
+<div class="shop-index mx-auto w-full max-w-[1240px] px-[clamp(20px,4vw,28px)] pb-[clamp(56px,8vw,90px)]">
+  <header class="pt-[clamp(40px,6vw,64px)] pb-[clamp(28px,4vw,40px)]">
+    <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+      <h1 class="page-title min-w-0"><%= content_block("shop.hero.title") %></h1>
+      <%= render "shared/cart_pill" %>
     </div>
+    <p class="page-subtitle mt-3 max-w-[58ch]"><%= content_block("shop.hero.subtitle") %></p>
+    <% unless user_signed_in? %>
+      <p class="mt-2.5 text-t6 font-medium text-taupe">
+        <%= content_block("shop.hero.returning") %>
+        <%= link_to t("nav.sign_in"), new_user_session_path,
+                    class: "inline-flex min-h-11 items-center rounded-md font-bold text-accent no-underline hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+      </p>
+    <% end %>
+  </header>
+
+  <% if @packages.any? %>
+    <section id="packages" tabindex="-1" aria-labelledby="packages-title" class="shop-section scroll-mt-24 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+      <h2 id="packages-title" class="shop-section-title"><%= t("offers.one_to_one") %></h2>
+      <p class="mt-1.5 max-w-[62ch] text-t5 text-tan text-pretty"><%= shop_collaboration_intro %></p>
+      <%# The second published package leads, matching the approved composition.
+          With one package, it takes the spotlight; all other records stay visible. %>
+      <% featured = @packages.second || @packages.first %>
+      <% supporting = @packages.reject { |package| package == featured } %>
+      <div class="mt-[22px] grid items-start gap-x-9 gap-y-6 <%= 'lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]' if supporting.any? %>">
+        <%= render "products/package_spotlight", package: featured, featured: true %>
+        <% if supporting.any? %>
+          <div class="shop-package-list min-w-0">
+            <% supporting.each do |package| %>
+              <%= render "products/package_spotlight", package: package, featured: false %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </section>
   <% end %>
+
+  <% grouped_products = @products.group_by(&:kind) %>
+  <% processes = grouped_products.fetch("audio_process", []) %>
+  <section id="audio-processes" tabindex="-1" aria-labelledby="audio-processes-title" class="shop-section scroll-mt-24 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+    <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-1.5">
+      <div class="min-w-0">
+        <h2 id="audio-processes-title" class="shop-section-title"><%= t("offers.audio") %></h2>
+        <p class="mt-1.5 max-w-[62ch] text-t5 text-tan text-pretty"><%= content_block("shop.collections.processes_intro") %></p>
+      </div>
+      <%= render "products/collection_link", label: content_block("shop.collections.processes_link"), path: audio_processes_path %>
+    </div>
+    <div class="mt-[22px]">
+      <% if processes.any? %>
+        <%= render "products/shelf", products: processes %>
+      <% else %>
+        <p class="text-t5 text-taupe"><%= content_block("shop.collections.processes_empty") %></p>
+      <% end %>
+    </div>
+  </section>
+
+  <% stories = grouped_products.fetch("bedtime_story", []) %>
+  <section id="stories" tabindex="-1" aria-labelledby="stories-title" class="mt-6 scroll-mt-24 rounded-md border-t border-border pt-5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+    <div class="grid items-baseline gap-x-8 gap-y-1 lg:grid-cols-[200px_minmax(0,1fr)_auto]">
+      <h2 id="stories-title" class="font-display text-[1.375rem] leading-heading font-bold text-cream"><%= t("offers.stories") %></h2>
+      <div class="min-w-0">
+        <p class="text-t5 text-tan"><%= content_block("shop.collections.stories_intro") %></p>
+        <% if stories.empty? %>
+          <p class="mt-0.5 text-t6 font-medium text-taupe"><%= content_block("shop.collections.stories_empty") %></p>
+        <% end %>
+      </div>
+      <%= render "products/collection_link", label: content_block("shop.collections.stories_link"), path: stories_path %>
+    </div>
+    <% if stories.any? %>
+      <div class="mt-4"><%= render "products/grid", products: stories, heading: :h3 %></div>
+    <% end %>
+  </section>
 </div>

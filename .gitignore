@@ -51,6 +51,9 @@ node_modules
 # Local database exports (may contain customer data and tokens).
 /backups/
 
+# Local design mockups and their reference assets.
+/mockups/
+
 !/.env.example
 
 # macOS

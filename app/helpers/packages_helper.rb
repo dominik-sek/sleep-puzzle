@@ -1,4 +1,12 @@
 module PackagesHelper
+  # Reuse the opening prose without the comparison image or later explanation.
+  def shop_collaboration_intro
+    fragment = Nokogiri::HTML.fragment(content_block("packages.collaboration.body").to_s)
+    fragment.css("figure, action-text-attachment, img").remove
+    opening = fragment.css("p, div").find { |node| node.at_css("p, div").nil? && node.text.strip.present? }
+    opening ? opening.text.strip : fragment.text.strip
+  end
+
   def package_details_id(package)
     "package-details-#{package.id}"
   end

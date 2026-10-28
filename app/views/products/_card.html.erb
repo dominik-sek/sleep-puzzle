@@ -1,7 +1,10 @@
 <%# Shared concise preview for a catalogue or category. Full owner copy remains
     on the product page. Price and cart state use the same sources as checkout. %>
 <% price_label = product_price_label(product) %>
-<article class="flex min-w-0 flex-col gap-4 rounded-2xl border border-border-strong bg-surface p-6">
+<% shelf = local_assigns.fetch(:shelf, false) %>
+<% incomplete = shelf && !product.purchase_ready? && !product_purchased?(product) && !product_awaiting_payment?(product) %>
+<article class="<%= shelf ? 'shop-shelf-card' : 'flex min-w-0 flex-col gap-4 rounded-2xl border border-border-strong bg-surface p-6' %>">
+  <div class="<%= shelf ? 'shop-shelf-copy' : 'contents' %>">
   <div class="flex items-start gap-3">
     <span class="shrink-0 text-t3" aria-hidden="true"><%= product.display_icon %></span>
     <%= content_tag local_assigns.fetch(:heading, :h2), class: "min-w-0 font-display font-bold text-t3 text-cream m-0 [overflow-wrap:anywhere]" do %>
@@ -10,7 +13,7 @@
   </div>
 
   <% if product.description.present? %>
-    <p class="text-t5 text-tan m-0 [overflow-wrap:anywhere]"><%= truncate(product.description, length: 160, separator: /\s/) %></p>
+    <p class="<%= shelf ? 'shop-shelf-description mt-2.5' : 'm-0' %> text-t5 text-tan [overflow-wrap:anywhere]"><%= truncate(product.description, length: 160, separator: /\s/) %></p>
   <% end %>
 
   <% if product.bedtime_story? && product.length_label %>
@@ -21,19 +24,33 @@
     <%= render "products/preview", product: product %>
   <% end %>
 
-  <div class="mt-auto flex flex-col gap-3 pt-2">
+  <% if incomplete %>
+    <p class="mt-2.5 max-w-[58ch] text-t6 font-medium leading-body text-taupe"><%= content_block("audio_landing.hero.incomplete") %></p>
+  <% end %>
+  </div>
+
+  <div class="<%= shelf ? 'shop-shelf-aside' : 'mt-auto flex flex-col gap-3 pt-2' %>">
     <span class="text-t4 font-display font-bold text-cream tabular-nums">
       <%= price_label || content_block("shop.card.unavailable") %>
     </span>
 
-    <%= render "products/cart_toggle", product: product %>
+    <% unless incomplete %>
+      <%= render "products/cart_toggle", product: product %>
+    <% end %>
+    <% if shelf %>
+      <%= link_to content_block("shop.card.details"), catalogue_product_path(product),
+                  aria: { label: "#{content_block('shop.card.details')} — #{product.name}" },
+                  class: "shop-shelf-details inline-flex min-h-12 items-center justify-center rounded-full border border-border-input px-6 py-3 text-t6 font-bold text-cream no-underline hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" %>
+    <% end %>
   </div>
 
+  <% unless shelf %>
   <% details_label = content_block("shop.card.details") %>
   <%= link_to catalogue_product_path(product),
               aria: { label: "#{details_label} — #{product.name}" },
               class: "group inline-flex min-h-11 items-center gap-1.5 self-start rounded-md py-2 text-t6 font-bold text-tan no-underline hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" do %>
     <%= details_label %>
     <%= icon "arrow-right", class: "size-3.5 shrink-0 transition-transform duration-100 group-hover:translate-x-0.5" %>
+  <% end %>
   <% end %>
 </article>

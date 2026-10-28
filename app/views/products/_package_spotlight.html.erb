@@ -1,0 +1,26 @@
+<% price_label = package_price_label(package) %>
+<%= link_to packages_path(anchor: dom_id(package)), data: { turbo: false },
+            aria: { label: "#{content_block('shop.collections.packages_link')} — #{package.name}" },
+            class: "shop-package #{featured ? 'shop-package-feature' : 'shop-package-row'} group min-w-0 text-cream no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent" do %>
+  <h3 class="shop-package-name font-display font-bold text-cream [overflow-wrap:anywhere] group-hover:text-accent"><%= package.name %></h3>
+  <% unless featured %>
+    <span class="shop-package-price font-display font-bold tabular-nums"><%= price_label || content_block("packages.card.unavailable") %></span>
+  <% end %>
+  <% if package.card_highlights.first.present? %>
+    <p class="shop-package-highlight text-tan text-pretty [overflow-wrap:anywhere]"><%= package.card_highlights.first %></p>
+  <% end %>
+  <% if package.duration %>
+    <p class="shop-package-duration text-t6 font-medium text-taupe"><%= t("packages.duration", count: package.duration) %></p>
+  <% end %>
+  <% if featured %>
+    <div class="mt-auto flex flex-wrap items-center justify-between gap-x-5 gap-y-3.5 border-t border-border pt-5">
+      <span class="font-display text-t3 font-bold tabular-nums [overflow-wrap:anywhere]"><%= price_label || content_block("packages.card.unavailable") %></span>
+      <span class="shop-package-action inline-flex min-h-12 items-center justify-center rounded-full border px-6 py-3 text-t6 font-bold <%= price_label ? 'border-accent-terracotta/40 bg-accent text-ink group-hover:bg-accent-hover' : 'border-border-input text-cream' %>"><%= content_block("shop.collections.packages_link") %></span>
+    </div>
+  <% else %>
+    <span class="col-span-full inline-flex min-h-11 items-center gap-1.5 text-t6 font-bold text-accent">
+      <%= content_block("shop.collections.packages_link") %>
+      <%= icon "arrow-right", class: "size-3.5 shrink-0 motion-safe:transition-transform duration-100 motion-safe:group-hover:translate-x-0.5" %>
+    </span>
+  <% end %>
+<% end %>

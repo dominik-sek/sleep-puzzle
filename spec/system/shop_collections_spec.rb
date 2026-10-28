@@ -72,12 +72,11 @@ RSpec.describe "Shop category navigation", type: :system do
   end
 
   [ nil, :en ].each do |locale|
-    it "keeps all local shop jumps below the navbar and focuses their destination in #{locale || :pl}" do
-      visit products_path(locale: locale)
+    it "preserves existing fragment destinations without the category chips in #{locale || :pl}" do
       %w[audio-processes stories packages].each do |anchor|
-        find("main nav a[href='##{anchor}']").send_keys(:enter)
+        visit products_path(locale: locale, anchor: anchor)
+        expect(page).not_to have_css("main nav")
         expect(page).to have_current_path(/#{Regexp.escape(products_path(locale: locale, anchor: anchor))}\z/, url: true)
-        expect(page).to have_css("##{anchor}:focus")
         expect(page.evaluate_script("document.getElementById('#{anchor}-title').getBoundingClientRect().top >= document.querySelector('nav[data-controller=navbar]').getBoundingClientRect().bottom")).to be(true)
       end
     end

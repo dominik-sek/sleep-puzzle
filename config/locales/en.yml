@@ -177,6 +177,9 @@ en:
       one: "Support lasts %{count} week"
       other: "Support lasts %{count} weeks"
   products:
+    shelf:
+      previous: "Previous audio processes"
+      next: "Next audio processes"
     browse_categories: "Jump to a shop section"
     category_navigation: "Category and shop"
     audio_delivery: "For audio materials"

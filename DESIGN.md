@@ -426,18 +426,31 @@ Audio catalogue cards use 16px corners, a surface fill, 24px padding and a compa
 product icon beside the name. A short 16px description preview leads to the full
 product page; price and cart state stay together near the bottom. Category pages
 use H2 product names; the grouped shop uses H2 section names and H3 product names.
-Each kind keeps its own grid cap (320px for one, 664px for two, 1008px for three),
-with 24px card gaps and 48px between catalogue sections. Wrapping category links
-lead to focusable `#audio-processes`, `#stories` and `#packages` targets with a 96px
-scroll margin below the sticky navbar. Empty audio categories retain their anchors
+Category grids keep their own cap (320px for one, 664px for two, 1008px for three),
+with 24px card gaps. Empty audio categories retain their anchors
 and a short owner-editable message. The category pages cap their inner content at
 1080px. `/audioprocesses` places the product grid 32px after the introduction, with
 no Format/Access facts block. `/stories` places its grid 24px after the introduction
-and shared delivery facts below the recordings. The grouped shop keeps the concise
-previews and category links without a shared delivery block. The empty message
+and shared delivery facts below the recordings. The empty message
 renders at body size (`text-t5`) and the `Sklep` return link at body size in amber
 (`text-t5`, `text-accent`) with a 44px minimum touch target; that link is shown on
 both category pages in both the empty and populated states.
+
+The shop index follows Option F (local reference: `mockups/products-shop-option-f`). Packages
+lead: the second published package is the spotlight (the first when there is only
+one), with all others as compact rows. Each shows its first card highlight,
+existing localized duration and Paddle price. Only the spotlight has a filled
+action; unavailable prices keep a neutral details link. The shop reuses the
+opening collaboration paragraph, leaving images and full prose on `/packages`.
+
+The audioprocess shelf uses a full-width row for one item, equal cards for two or
+three on desktop (stacked on phones), and a native scroll-snap rail from four.
+Arrows appear only when the rail overflows and honour reduced motion. Descriptions
+clamp to three lines, and cart/account states retain the shared Turbo controls
+with outline styling. Stories use a compact strip when empty and retain cards
+when populated. Category chips are removed; existing focusable fragments keep
+their 96px scroll margin, and category-page links remain. Navbar, footer and the
+cart pill keep their existing components.
 
 ### Inputs / Fields
 

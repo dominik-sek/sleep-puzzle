@@ -195,6 +195,128 @@
 }
 
 
+/* The approved shop composition is scoped here so category cards retain their
+   existing geometry. Colours and fonts continue to use the shared tokens. */
+@layer components {
+  .shop-section { margin-top: 6px; }
+  .shop-section + .shop-section { margin-top: clamp(40px, 5vw, 56px); }
+  .shop-section-title {
+    @apply font-display font-bold text-cream;
+    font-size: clamp(1.5rem, 3.4vw, 2rem);
+    line-height: 1.2;
+  }
+  .shop-package-feature {
+    @apply flex flex-col gap-3 rounded-3xl border border-border-strong bg-surface;
+    padding: clamp(22px, 3vw, 30px);
+  }
+  .shop-package-feature .shop-package-name {
+    font-size: clamp(1.375rem, 2.6vw, 1.75rem);
+    line-height: 1.2;
+  }
+  .shop-package-feature .shop-package-highlight {
+    max-width: 46ch;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .shop-package-feature .shop-package-duration { margin-bottom: 4px; }
+  .shop-package-row {
+    @apply grid border-t border-border;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2px 16px;
+    padding: 18px 0;
+  }
+  .shop-package-row:first-child { padding-top: 0; border-top: 0; }
+  .shop-package-row:last-child { padding-bottom: 0; }
+  .shop-package-row .shop-package-name { font-size: 1.0625rem; line-height: 1.3; }
+  .shop-package-price {
+    grid-column: 2;
+    grid-row: 1;
+    max-width: 18ch;
+    font-size: 1rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+  .shop-package-row .shop-package-highlight {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .shop-package-row .shop-package-duration { grid-column: 1 / -1; margin-top: 6px; }
+  .shop-shelf {
+    @apply grid gap-5 rounded-md;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    padding: 4px;
+    margin: -4px;
+  }
+  .shop-shelf:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+  .shop-shelf-card {
+    @apply flex min-w-0 flex-col gap-4 rounded-[20px] border border-border-strong bg-surface p-6;
+  }
+  .shop-shelf-card h3 { font-size: 1.375rem; line-height: 1.25; }
+  .shop-shelf-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 62ch;
+  }
+  .shop-shelf-aside { @apply mt-auto flex min-w-0 flex-col gap-3; }
+  .shop-shelf-single .shop-shelf-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 20px 40px;
+    padding: 24px 26px;
+  }
+  .shop-shelf-single .shop-shelf-aside { @apply mt-0 items-end; max-width: 26ch; }
+  .shop-shelf-single .shop-shelf-aside > span:first-child {
+    font-size: 1.375rem;
+    line-height: 1.2;
+  }
+  .shop-shelf-rail {
+    grid-auto-columns: minmax(260px, 340px);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 4px;
+    scrollbar-width: thin;
+    mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent);
+  }
+  .shop-shelf-rail.shop-shelf-end { mask-image: none; }
+  .shop-shelf-rail > * { scroll-snap-align: start; }
+  @media (max-width: 1023px) {
+    .shop-package-list { @apply border-t border-border pt-1; }
+    .shop-package-row:first-child { padding-top: 16px; }
+    .shop-shelf-single .shop-shelf-card { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
+    .shop-shelf-single .shop-shelf-aside {
+      @apply flex-row flex-wrap items-center justify-between border-t border-border pt-4;
+      max-width: none;
+      gap: 12px 20px;
+    }
+  }
+  @media (max-width: 720px) {
+    .shop-shelf:not(.shop-shelf-rail) { grid-auto-flow: row; }
+    .shop-shelf-rail { grid-auto-columns: 82%; }
+  }
+  @media (max-width: 420px) {
+    .shop-package-action { width: 100%; }
+    .shop-shelf-single .shop-shelf-aside { @apply flex-col items-stretch; }
+    .shop-shelf-single .shop-shelf-details { width: 100%; }
+  }
+}
+
+/* Scope the shelf's outline treatment outside Tailwind's utility layer so it
+   also survives replacement by the shared cart Turbo Streams. */
+.shop-shelf-card [data-controller="cart-focus"] button[type="submit"] {
+  background-color: transparent;
+  border-color: var(--color-border-input);
+  color: var(--color-cream);
+}
+.shop-shelf-card [data-controller="cart-focus"] button[type="submit"]:hover {
+  background-color: var(--color-ink-soft);
+}
+
 /* The row the shop's "Posłuchaj w koncie" button just sent someone to. Without
    it a buyer lands in a list of identical rows with nothing saying which one they
    came for. Fades rather than holds, so it marks the arrival and then gets out of

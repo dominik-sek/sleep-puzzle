@@ -11,6 +11,13 @@ require 'rails_helper'
 #   end
 # end
 RSpec.describe PackagesHelper, type: :helper do
+  it "reuses only the opening collaboration paragraph on the shop" do
+    allow(helper).to receive(:content_block).with("packages.collaboration.body").and_return(
+      '<div class="trix-content"><p>Opening <strong>words</strong>.</p><p>Later explanation.</p><figure><img src="/comparison.png" alt="Comparison"></figure></div>'
+    )
+    expect(helper.shop_collaboration_intro).to eq("Opening words.")
+  end
+
   it "warns only when a summary exceeds the recommended length" do
     expect(helper.package_copy_warning("summary", "a" * 220)).to eq("")
     expect(helper.package_copy_warning("summary", "a" * 221)).to include("221 znaków", "szczegółach")
