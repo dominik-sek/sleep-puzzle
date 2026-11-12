@@ -1,5 +1,21 @@
 require "rails_helper"
 
+# == Schema Information
+#
+# Table name: articles
+#
+#  id           :bigint           not null, primary key
+#  published    :boolean          default(FALSE), not null
+#  published_at :datetime
+#  slug         :string           not null
+#  translations :jsonb            not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#
+# Indexes
+#
+#  index_articles_on_slug  (slug) UNIQUE
+#
 RSpec.describe Article, type: :model do
   describe "slug" do
     it "generates from the Polish title on create" do

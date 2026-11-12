@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe PaddlePriceCatalogService do
+  include ActiveSupport::Testing::TimeHelpers
+
   # Real Paddle objects rather than doubles: they are OpenStructs built from the
   # API payload, so a verifying double cannot check them and a plain one would not
   # exercise the nesting the service actually reads.
@@ -14,6 +16,16 @@ RSpec.describe PaddlePriceCatalogService do
   end
 
   describe ".call" do
+    def stub_price_response(status, body, content_type: "text/html")
+      connection = Faraday.new(Paddle.config.url) do |conn|
+        conn.response :json
+        conn.adapter :test do |stub|
+          stub.get("/prices") { [ status, { "Content-Type" => content_type }, body ] }
+        end
+      end
+      allow(Paddle::Client).to receive(:connection).and_return(connection)
+    end
+
     it "maps the account's active prices" do
       allow(Paddle::Price).to receive(:list).and_return([ paddle_api_price ])
 
@@ -40,6 +52,63 @@ RSpec.describe PaddlePriceCatalogService do
 
       expect(described_class.call).to eq([])
       expect(Rails.logger).to have_received(:error).with(/price catalogue/)
+    end
+
+    [ 403, 429, 500, 502, 503 ].each do |status|
+      it "returns an empty catalogue for an HTML HTTP #{status} response" do
+        stub_price_response(status, "<html><title>Access denied</title></html>")
+        allow(Rails.logger).to receive(:error)
+
+        expect(described_class.call).to eq([])
+        expect(Rails.logger).to have_received(:error).with(/HTTP #{status}/)
+      end
+    end
+
+    it "still handles structured Paddle API errors" do
+      stub_price_response(429, { error: { code: "too_many_requests", detail: "Retry later" } }.to_json,
+                          content_type: "application/json")
+      allow(Rails.logger).to receive(:error)
+
+      expect(described_class.call).to eq([])
+      expect(Rails.logger).to have_received(:error).with(/too_many_requests/)
+    end
+
+    it "still maps a successful JSON response through the Paddle client" do
+      stub_price_response(200, { data: [ { id: "pri_1", product: { name: "Szybka ulga" },
+                                         unit_price: { amount: "24900", currency_code: "PLN" } } ],
+                                meta: { pagination: {} } }.to_json, content_type: "application/json")
+
+      expect(described_class.call.first.formatted_amount).to eq("249,00 PLN")
+    end
+
+    it "caches a failure for a minute instead of retrying for every catalogue item" do
+      allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+      allow(Paddle::Price).to receive(:list).and_raise(Faraday::TimeoutError)
+
+      2.times { expect(described_class.call).to eq([]) }
+      expect(Paddle::Price).to have_received(:list).once
+
+      travel 61.seconds do
+        expect(described_class.call).to eq([])
+      end
+      expect(Paddle::Price).to have_received(:list).twice
+    end
+
+    it "allows a manual refresh to recover before a cached failure expires" do
+      allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+      allow(Paddle::Price).to receive(:list).and_raise(Faraday::TimeoutError)
+      expect(described_class.call).to eq([])
+
+      allow(Paddle::Price).to receive(:list).and_return([ paddle_api_price ])
+
+      expect(described_class.call(refresh: true).first.id).to eq("pri_1")
+      expect(described_class.call.first.id).to eq("pri_1")
+    end
+
+    it "does not hide unrelated programming errors" do
+      allow(Paddle::Price).to receive(:list).and_raise(NoMethodError, "unexpected bug")
+
+      expect { described_class.call }.to raise_error(NoMethodError, "unexpected bug")
     end
   end
 

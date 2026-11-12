@@ -66,9 +66,6 @@ class PaddlePriceCatalogService < ApplicationService
   # rather than the whole page being unusable while Paddle is down.
   def call
     Rails.cache.fetch(CACHE_KEY, expires_in: CACHE_TTL, force: @refresh) { fetch_prices }
-  rescue Paddle::Error, Paddle::ErrorGenerator, Faraday::Error => e
-    Rails.logger.error("[paddle] could not load the price catalogue: #{e.message}")
-    []
   end
 
   private
@@ -83,5 +80,10 @@ class PaddlePriceCatalogService < ApplicationService
         currency: price.unit_price&.currency_code
       )
     end
+  rescue Paddle::Error, Paddle::ErrorGenerator, Faraday::Error => e
+    Rails.logger.error("[paddle] could not load the price catalogue: #{e.message}")
+    # Cache failures too: retrying for every item and visitor can keep Paddle's
+    # rate limit active. A manual refresh can still bypass the one-minute cache.
+    []
   end
 end
