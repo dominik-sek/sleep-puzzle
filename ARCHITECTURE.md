@@ -35,7 +35,7 @@ application.
 ### Application
 | Concern | Choice |
 | --- | --- |
-| Language / framework | Ruby 4.0.5, Ruby on Rails 8.1.3 |
+| Language / framework | Ruby 4.0.10, Ruby on Rails 8.1.3 |
 | Rendering | Server-rendered ERB + **ViewComponent** + RailsBlocks |
 | Interactivity | **Hotwire** — Turbo (Streams, Drive, Frames) + Stimulus |
 | CSS | **Tailwind CSS 4** via Vite |

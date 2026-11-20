@@ -59,7 +59,7 @@ without a redeploy.
 ## Stack
 
 ### App
-- Ruby 4.0.5, Rails 8.1
+- Ruby 4.0.10, Rails 8.1
 - Hotwire (Turbo + Stimulus), ViewComponent, [RailsBlocks](https://railsblocks.com/)
 - Tailwind 4 through Vite
 - Devise + Google OAuth, Cloudflare Turnstile on public forms
@@ -103,7 +103,7 @@ bin/setup
 bin/dev
 ```
 
-Needs Ruby 4.0.5, PostgreSQL, libvips and ffmpeg.
+Needs Ruby 4.0.10, PostgreSQL, libvips and ffmpeg.
 
 ### Markdown for agents
 
