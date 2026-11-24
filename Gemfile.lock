@@ -417,7 +417,7 @@ GEM
       actionpack (>= 7.0)
       railties (>= 7.0)
     retriable (4.2.0)
-    reverse_markdown (3.0.2)
+    reverse_markdown (3.1.0)
       nokogiri
     rspec-core (3.13.7)
       rspec-support (~> 3.13.0)
@@ -773,7 +773,7 @@ CHECKSUMS
   representable (3.3.1) sha256=8a5fc8eef99f598147eee0390f606386268b429a840419fcfd3f7a8ccc40f566
   responders (3.2.1) sha256=c2772970cbda654c0e772d852e5a851e82cd8e96f5fa958650861ba75b8ffa84
   retriable (4.2.0) sha256=90c3b257472a1c02f2a3dfa64dd35a420f7a624cef1a5981e20fdac5730f8cdc
-  reverse_markdown (3.0.2) sha256=818ebb92ce39dbb1a291690dd1ec9a6d62530d4725296b17e9c8f668f9a5b8af
+  reverse_markdown (3.1.0) sha256=7fc569f3708a90ca3d6661e419d9d1233d57eef5a5b59eb1347c24e6a6b988a4
   rspec-core (3.13.7) sha256=c64ff16d9788119805cbc6a3f4b6d87cc22417c2d25976a3330de136896b5469
   rspec-expectations (3.13.6) sha256=bf538ca6d367ff5b0d85a87fdb5c0c6038f2cd1308a0eeba07476caa02d22f35
   rspec-mocks (3.13.9) sha256=ea5c7ff3054a6098ca6039aacef80aec69d5a8a3ef80be8fc88337359b672a30
